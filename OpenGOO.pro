@@ -3,8 +3,11 @@ QT       += core gui opengl
 TARGET = OpenGOOv2
 TEMPLATE = app
 
+LIBS=-lBox2D
+
 OTHER_FILES += \
-    l01.level
+    l01.level \
+    README
 
 HEADERS += \
     tools.h \
@@ -32,6 +35,7 @@ SOURCES += \
     fixedgoo.cpp \
     dynamicgoo.cpp \
     collisionlistener.cpp
+
 
 
 
