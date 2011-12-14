@@ -46,6 +46,9 @@ public:
     void setTarget(Goo* goo);
 
     void move(QPoint p);
+
+    void jumpTo(QPoint p);
+
     b2Body* getBody();
     b2Vec2 getVPosition();
     QPoint getPPosition();

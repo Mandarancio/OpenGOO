@@ -88,6 +88,17 @@ void Goo::move(QPoint p){
         body->SetTransform(toVec(p),0);
 }
 
+void Goo::jumpTo(QPoint p){
+    this->dragable=false;
+    this->moovable=false;
+    body->SetGravityScale(0);
+    b2Vec2 v=toVec(p)-body->GetPosition();
+    v.x*=100/v.Length();
+    v.y*=100/v.Length();
+    body->SetAngularVelocity(0);
+    body->SetLinearVelocity(v);
+}
+
 b2Body* Goo::getBody(){
     return body;
 }

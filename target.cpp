@@ -37,6 +37,15 @@ void Target::checkTower(QList<Goo *> ps){
     }
 }
 
+void Target::applyForces(QList<Goo *> ps){
+    if (catched){
+        for (int i=0;i<ps.length();i++){
+            if (ps[i]->hasJoint()) applyForce(ps[i]);
+            else applyImpulse(ps[i]);
+        }
+    }
+}
+
 void Target::paint(QPainter &p){
     p.setBrush(Qt::black);
     p.setPen(Qt::black);
@@ -44,5 +53,22 @@ void Target::paint(QPainter &p){
     p.drawRect(position.x()-22,position.y()+5,22*2,-15);
 }
 
-void Target::applyForce(Goo *goo){}
-void Target::applyImpulse(Goo *goo){}
+void Target::applyForce(Goo *goo){
+    if (catched && goo->hasJoint()){
+        b2Vec2 d;
+        d=toVec(position)-goo->getVPosition();
+        d.x/=d.Length();
+        d.y/=d.Length();
+        d*=300/d.Length();
+        goo->getBody()->ApplyForceToCenter(d);
+    }
+}
+
+void Target::applyImpulse(Goo *goo){
+    if (!goo->hasJoint() && !goo->isDragging() && !goo->isFalling()){
+        b2Vec2 d=toVec(position)-goo->getVPosition();
+        if (d.Length()<80){
+            goo->jumpTo(position);
+        }
+    }
+}
