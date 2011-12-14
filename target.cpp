@@ -19,13 +19,13 @@ Target::Target(QPoint position, int height,b2World *world, QObject *parent) :
 
 void Target::checkTower(QList<Goo *> ps){
     b2Vec2 d;
-    bool chek=false;
+    bool check=false;
     for (int i=0;i<ps.length();i++){
         if (ps[i]->hasJoint()){
             d=toVec(position)-ps[i]->getVPosition();
             if (d.Length()<80 && !catched){
                 emit this->towerCatch();
-                chek=true;
+                check=true;
                 catched=true;
             }
             else if (d.Length()<80) check=true;
