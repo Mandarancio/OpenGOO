@@ -1,2 +1,27 @@
-[ita]Il file di livello (l01.level) deve essere nella cartella dell eseguibile.
-[eng]The level file (l01.level) must be in the executable folder.
+Made by Martino Ferrari <manda.mgf@gmail.com>
+This software is under GPLv3
+
+Dependencies
+
+-Box2d 2.2.1
+-Qt4 and opengl module
+-Gcc
+-QMake
+-Make
+
+To compile
+
+move in the folder contains the source [example OpenGOO]
+cd ~/OpenGOO
+qmake
+make
+
+To run
+
+move in the folder contains the build and
+./OpenGOO
+
+
+ATTENZIONE/ATTECTION
+Il file di livello (l01.level) deve essere nella cartella dell eseguibile.
+he level file (l01.level) must be in the executable folder.

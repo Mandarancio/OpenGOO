@@ -34,6 +34,7 @@ public:
     bool isDragable();
     bool isMoovable();
     bool isFalling();
+    bool isDragging();
     bool hasJoint();
     bool canHaveJoint();
     bool isLinked(Goo* goo);

@@ -32,6 +32,11 @@ bool Goo::isMoovable(){
 bool Goo::isFalling(){
     return falling;
 }
+
+bool Goo::isDragging(){
+    return dragging;
+}
+
 bool Goo::hasJoint(){
     if (links.length()) return true;
     else return false;

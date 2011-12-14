@@ -3,7 +3,7 @@ QT       += core gui opengl
 TARGET = OpenGOOv2
 TEMPLATE = app
 
-LIBS=-lBox2D
+unix|win32: LIBS=-lBox2D
 
 OTHER_FILES += \
     l01.level \
