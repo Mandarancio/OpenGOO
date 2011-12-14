@@ -39,7 +39,7 @@ bool Goo::isDragging(){
 }
 
 bool Goo::hasJoint(){
-    if (links.length()) return true;
+    if (links.length()>0) return true;
     else return false;
 }
 
@@ -125,6 +125,7 @@ QPoint Goo::getPPosition(){
 bool Goo::createLink(Goo *goo){
     if (!isLinked(goo) && nJoints()<maxJoints) {
         links.push_back(goo);
+        if (following) stopFollow();
         return true;
     }
     else return false;
@@ -132,8 +133,9 @@ bool Goo::createLink(Goo *goo){
 
 bool Goo::destroyLink(Goo *goo){
     if (isLinked(goo)){
-        links.removeOne(goo);
+        links.removeAt(links.indexOf(goo));
         emit this->loseLink(goo);
+
         return true;
     }
     else return false;
@@ -150,7 +152,7 @@ void Goo::setTarget(Goo *goo){
         if (prevTarget!=NULL) prevTarget->removeGuest();
         prevTarget=target;
         target=goo;
-        connect(goo,SIGNAL(loseLink(Goo*)),this,SLOT(checkForConnection(Goo*)));
+        connect(goo,SIGNAL(loseLink(Goo*)),this,SLOT(checkForConnection(Goo*)),Qt::QueuedConnection);
         following=true;
 }
 

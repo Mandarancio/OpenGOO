@@ -11,7 +11,7 @@
 #include "collisionlistener.h"
 
 Level::Level(QRect geometry, QString level, QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::DoubleBuffer),parent)
+    QGLWidget(QGLFormat(QGL::DoubleBuffer|QGL::SampleBuffers),parent)
 {
     this->setGeometry(geometry);
 
