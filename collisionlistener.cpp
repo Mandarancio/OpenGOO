@@ -1,5 +1,4 @@
 #include "collisionlistener.h"
-#include "goo.h"
 #include "target.h"
 
 CollisionListener::CollisionListener(QObject *parent) :
@@ -16,15 +15,13 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
         Target * t;
         if (!b){
             t=static_cast<Target*>(contact->GetFixtureB()->GetBody()->GetUserData());
-            if (t && a) qWarning("target");
-            else {
+            if (!t && a) {
                 if (a&&a->isFalling())a->contactGround();
             }
         }
         else if (!a){
             t=static_cast<Target*>(contact->GetFixtureA()->GetBody()->GetUserData());
-            if (t&&b) qWarning("target");
-            else {
+            if (!t&&b) {
                 if (b&&b->isFalling())b->contactGround();
 
             }

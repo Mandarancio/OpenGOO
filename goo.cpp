@@ -10,6 +10,7 @@ Goo::Goo( int radius, QObject *parent) :
     this->maxJoints=0;
 
     guestN=0;
+    speed=50;
 
     moovable=false;
     falling=true;
@@ -88,9 +89,19 @@ void Goo::move(QPoint p){
         body->SetTransform(toVec(p),0);
 }
 
+void Goo::catched(){
+    speed*=2;
+}
+
+void Goo::lost(){
+    speed/=2;
+}
+
 void Goo::jumpTo(QPoint p){
+    stopFollow();
     this->dragable=false;
     this->moovable=false;
+    this->falling=true;
     body->SetGravityScale(0);
     b2Vec2 v=toVec(p)-body->GetPosition();
     v.x*=100/v.Length();
@@ -214,8 +225,8 @@ void Goo::moveToTarget(){
             body->SetLinearVelocity(b2Vec2(0,0));
             return;
         }
-        dP.x=dP.x*50/dP.Length();
-        dP.y=dP.y*50/dP.Length();
+        dP.x=dP.x*speed/dP.Length();
+        dP.y=dP.y*speed/dP.Length();
         body->SetLinearVelocity(dP);
     }
 }

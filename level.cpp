@@ -1,8 +1,8 @@
 #include "level.h"
-#include <QPainter>
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
+#include <QRadialGradient>
 
 #include "tools.h"
 #include "fixedgoo.h"
@@ -31,10 +31,17 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
 
     createBalls();
 
+    connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
+    connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
+    connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
 
     step=1.0/60.0;
     drag = false;
     dragged=NULL;
+
+    points=0;
+    catched=false;
+
     startTimer(step*1000);
 }
 
@@ -259,6 +266,8 @@ bool Level::createJoints(QPoint p){
 void Level::timerEvent(QTimerEvent *e){
     e->accept();
     world->Step(step,10,10);
+    target->checkTower(goos);
+    target->applyForces(goos);
     repaint();
 }
 
@@ -269,7 +278,7 @@ void Level::paintEvent(QPaintEvent *e){
     p.setPen(Qt::transparent);
     p.setBrush(Qt::darkGray);
 
-    p.drawRect(this->geometry());
+    paintBg(p);
 
     p.setRenderHint(QPainter::Antialiasing);
     p.save();
@@ -287,6 +296,8 @@ void Level::paintEvent(QPaintEvent *e){
     for (int i=0;i<goos.length();i++)
         if (goos[i]) goos[i]->paint(p);
     p.restore();
+    paintWin(p);
+    paintScore(p);
     if (p.end()) e->accept();
     else e->ignore();
 }
@@ -372,8 +383,79 @@ void Level::giveTarget(Goo *previous){
             if (ok) goo->setTarget(next);
         }
         else {
-            int choise=rand()%previous->getLinks().length();
-           goo->setTarget(previous->getLinks().at(choise));
+            if (!catched){
+                int choise=rand()%previous->getLinks().length();
+                goo->setTarget(previous->getLinks().at(choise));
+            }
+            else {
+                Goo * target=previous->getLinks().at(0);
+                b2Vec2 d=this->target->getVPosition()-target->getVPosition();
+                for (int i=1;i<previous->getLinks().length();i++){
+                    if ((this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
+                        target=previous->getLinks().at(i);
+                        d=this->target->getVPosition()-previous->getLinks().at(i)->getVPosition();
+                    }
+                }
+                goo->setTarget(target);
+            }
         }
+    }
+}
+
+void Level::gooCatched(Goo *goo){
+    world->DestroyBody(goo->getBody());
+    goos.removeOne(goo);
+    points++;
+}
+
+void Level::towerCatched(){
+    catched=true;
+    for (int i=0;i<goos.length();i++) goos[i]->catched();
+}
+
+void Level::towerLost(){
+    catched=false;
+    for (int i=0;i<goos.length();i++) goos[i]->lost();
+
+}
+
+void Level::paintBg(QPainter &p){
+    QColor c1,c2;
+    c1.setRgb(95,141,211);
+    c2.setRgb(11,23,40);
+    QRadialGradient g(QPoint(width()/2,height()),2*height());
+    g.setColorAt(0,c1);
+    g.setColorAt(1,c2);
+    p.setPen(Qt::transparent);
+    p.setBrush(g);
+    p.drawRect(0,0,width(),height());
+}
+
+void Level::paintScore(QPainter &p){
+    p.setPen(Qt::white);
+    QFont f;
+    f.setFamily("Times");
+    f.setBold(true);
+    f.setPointSize(30);
+    p.setFont(f);
+    p.drawText(10,35,QString::number(points));
+    f.setPointSize(15);
+    p.setFont(f);
+    p.drawText(10,55,"of "+QString::number(goal));
+}
+
+void Level::paintWin(QPainter &p){
+    if (points>goal){
+        QColor bg(0,0,0,200);
+        p.setBrush(bg);
+        p.setPen(bg);
+        p.drawRect(0,0,width(),height());
+        QFont f;
+        f.setFamily("Times");
+        f.setBold(true);
+        f.setPointSize(30);
+        p.setFont(f);
+        p.setPen(Qt::white);
+        p.drawText(this->geometry(),Qt::AlignCenter,"Win!!");
     }
 }

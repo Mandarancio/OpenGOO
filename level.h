@@ -2,6 +2,7 @@
 #define LEVEL_H
 
 #include <QGLWidget>
+#include <QPainter>
 #include <QPaintEvent>
 #include <QTimerEvent>
 #include <QMouseEvent>
@@ -42,6 +43,8 @@ private:
     //Level
     QString name;
     int goal;
+    int points;
+    bool catched;
     int nBalls;
     QRect startArea;
     b2Vec2 startForce;
@@ -66,6 +69,11 @@ private:
     bool makeJoint(Goo*a,Goo*b);
     QList<QPoint> possibleJoints(QPoint p);
     bool createJoints(QPoint p);
+
+    void paintBg(QPainter &p);
+    void paintScore(QPainter &p);
+    void paintWin(QPainter &p);
+
 protected:
     void timerEvent(QTimerEvent *);
     void paintEvent(QPaintEvent *);
@@ -78,7 +86,10 @@ signals:
 public slots:
 private slots:
     void destroyJoint(Joint * joint);
+    void gooCatched(Goo * goo);
     void giveTarget(Goo* previous);
+    void towerCatched();
+    void towerLost();
 };
 
 #endif // LEVEL_H

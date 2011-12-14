@@ -10,11 +10,15 @@ Target::Target(QPoint position, int height,b2World *world, QObject *parent) :
     def.type=b2_staticBody;
     def.position=toVec(position);
     b2PolygonShape shape;
-    shape.SetAsBox(18,h/2,b2Vec2(0,-h/2),0);
+    shape.SetAsBox(18,h/2,b2Vec2(0,-h/2-15),0);
     body=world->CreateBody(&def);
     body->CreateFixture(&shape,1.0);
     body->SetUserData(this);
     catched=false;
+}
+
+bool Target::isCatched(){
+    return catched;
 }
 
 void Target::checkTower(QList<Goo *> ps){
@@ -59,16 +63,24 @@ void Target::applyForce(Goo *goo){
         d=toVec(position)-goo->getVPosition();
         d.x/=d.Length();
         d.y/=d.Length();
-        d*=300/d.Length();
+        d*=600/d.Length();
         goo->getBody()->ApplyForceToCenter(d);
     }
 }
 
 void Target::applyImpulse(Goo *goo){
-    if (!goo->hasJoint() && !goo->isDragging() && !goo->isFalling()){
+    if (!goo->hasJoint() && !goo->isDragging() && catched){
         b2Vec2 d=toVec(position)-goo->getVPosition();
-        if (d.Length()<80){
+        if (d.Length()<15){
+            emit gooCatched(goo);
+        }
+        else if (d.Length()<80){
             goo->jumpTo(position);
         }
+
     }
+}
+
+b2Vec2 Target::getVPosition(){
+    return toVec(position);
 }

@@ -49,6 +49,9 @@ public:
 
     void jumpTo(QPoint p);
 
+    void catched();
+    void lost();
+
     b2Body* getBody();
     b2Vec2 getVPosition();
     QPoint getPPosition();
@@ -58,6 +61,7 @@ public:
 private:
     QList <Goo*> links;
     int radius;
+    int speed;
     dragInfo info;
 
 protected:
@@ -77,7 +81,7 @@ protected:
 signals:
     void nextTargetPlease(Goo* previous);
     void loseLink(Goo* goo);
-
+    void destroyGoo();
 private slots:
     void checkForConnection(Goo* goo);
 

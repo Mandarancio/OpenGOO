@@ -15,6 +15,8 @@ public:
     explicit Target(QPoint position,int height,b2World * world,QObject *parent = 0);
     void checkTower(QList<Goo*> ps);
     void applyForces(QList<Goo*>ps);
+    bool isCatched();
+    b2Vec2 getVPosition();
 private:
     QPoint position;
     int h;
@@ -25,6 +27,7 @@ private:
 signals:
     void towerCatch();
     void towerLost();
+    void gooCatched(Goo* goo);
 public slots:
     void paint(QPainter &p);
 };
