@@ -278,11 +278,11 @@ void Level::paintEvent(QPaintEvent *e){
     p.setPen(Qt::transparent);
     p.setBrush(Qt::darkGray);
 
-    paintBg(p);
 
     p.setRenderHint(QPainter::Antialiasing);
     p.save();
     p.translate(center+translation);
+    paintBg(p);
 
     if (ground) ground->paint(p);
     if (target) target->paint(p);
@@ -423,12 +423,12 @@ void Level::paintBg(QPainter &p){
     QColor c1,c2;
     c1.setRgb(95,141,211);
     c2.setRgb(11,23,40);
-    QRadialGradient g(QPoint(width()/2,height()),2*height());
+    QRadialGradient g(QPoint(0,height()/2),2*height());
     g.setColorAt(0,c1);
     g.setColorAt(1,c2);
     p.setPen(Qt::transparent);
     p.setBrush(g);
-    p.drawRect(0,0,width(),height());
+    p.drawRect(-width()/2+limit.x(),-height()/2-limit.y(),width()+limit.width()+5,height()-limit.height()*2);
 }
 
 void Level::paintScore(QPainter &p){
