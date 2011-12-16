@@ -1,7 +1,7 @@
 #Level one
 Name:Level ONE
 Goal:10
-nBalls:10
+nBalls:5
 Start area:-480 0,100 30
 Start force:0 200
 Start joint:-410 129,-480 133

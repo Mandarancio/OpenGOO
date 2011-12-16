@@ -78,6 +78,7 @@ protected:
 
     void moveToTarget();
     void stopFollow();
+    void fallDown();
 signals:
     void nextTargetPlease(Goo* previous);
     void loseLink(Goo* goo);

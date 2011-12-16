@@ -266,6 +266,7 @@ bool Level::createJoints(QPoint p){
 void Level::timerEvent(QTimerEvent *e){
     e->accept();
     world->Step(step,10,10);
+    world->ClearForces();
     target->checkTower(goos);
     target->applyForces(goos);
     repaint();
@@ -428,7 +429,7 @@ void Level::paintBg(QPainter &p){
     g.setColorAt(1,c2);
     p.setPen(Qt::transparent);
     p.setBrush(g);
-    p.drawRect(-width()/2+limit.x(),-height()/2-limit.y(),width()+limit.width()+5,height()-limit.height()*2);
+    p.drawRect(-width()/2+limit.x()-5,-height()/2-limit.y()-5,width()+limit.width()*2+5,height()-limit.height()*2);
 }
 
 void Level::paintScore(QPainter &p){

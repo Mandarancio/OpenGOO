@@ -215,13 +215,19 @@ void Goo::moveToTarget(){
             QPoint mePrev=getPPosition()-prevTarget->getPPosition();
             QPoint targetPrev=target->getPPosition()-prevTarget->getPPosition();
             if (abs(mePrev.x())>abs(targetPrev.x())+10 || abs(mePrev.y())>abs(targetPrev.y())+10){
-                drop();
+                stopFollow();
+                fallDown();
                 return;
             }
         }
         b2Vec2 dP;
         if (target)
             dP=target->getVPosition()-this->getVPosition();
+        else {
+            stopFollow();
+            fallDown();
+            return;
+        }
         if (dP.Length()<=1){
             emit this->nextTargetPlease(target);
             body->SetLinearVelocity(b2Vec2(0,0));
@@ -245,6 +251,14 @@ void Goo::stopFollow(){
 
 void Goo::checkForConnection(Goo *goo){
     if (following && prevTarget==goo){
-        drop();
+        stopFollow();
+        fallDown();
     }
+}
+
+void Goo::fallDown(){
+    falling=true;
+    body->SetLinearVelocity(b2Vec2(0,0));
+    body->SetGravityScale(1.0);
+    body->SetAngularVelocity(0);
 }
