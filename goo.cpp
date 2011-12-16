@@ -8,6 +8,7 @@ Goo::Goo( int radius, QObject *parent) :
 {
     this->radius=radius;
     this->maxJoints=0;
+    this->minJoints=0;
 
     guestN=0;
     speed=50;
@@ -17,6 +18,11 @@ Goo::Goo( int radius, QObject *parent) :
     dragging=false;
     following=false;
     dragable=false;
+
+    info.aForce=0;
+    info.gScale=1.0;
+    info.speed.SetZero();
+
 
     target=NULL;
     prevTarget=NULL;
