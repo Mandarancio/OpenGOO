@@ -446,7 +446,7 @@ void Level::paintScore(QPainter &p){
 }
 
 void Level::paintWin(QPainter &p){
-    if (points>goal){
+    if (points>=goal){
         QColor bg(0,0,0,200);
         p.setBrush(bg);
         p.setPen(bg);
