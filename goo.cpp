@@ -18,6 +18,7 @@ Goo::Goo( int radius, QObject *parent) :
     dragging=false;
     following=false;
     dragable=false;
+    onGround=false;
 
     info.aForce=0;
     info.gScale=1.0;
@@ -26,6 +27,10 @@ Goo::Goo( int radius, QObject *parent) :
 
     target=NULL;
     prevTarget=NULL;
+}
+
+bool Goo::isOnGround(){
+    return onGround;
 }
 
 bool Goo::isDragable(){
@@ -148,6 +153,7 @@ bool Goo::destroyLink(Goo *goo){
 }
 
 void Goo::contactGround(){
+    onGround=true;
     if (falling) {
         falling=false;
         emit nextTargetPlease(NULL);
@@ -156,6 +162,7 @@ void Goo::contactGround(){
 
 void Goo::setTarget(Goo *goo){
         if (prevTarget!=NULL) prevTarget->removeGuest();
+        onGround=false;
         prevTarget=target;
         target=goo;
         connect(goo,SIGNAL(loseLink(Goo*)),this,SLOT(checkForConnection(Goo*)),Qt::QueuedConnection);
@@ -171,6 +178,7 @@ void Goo::paint(QPainter &p){
 
 
 void Goo::drag(){
+    onGround=false;
     stopFollow();
     if (!dragging){
         info.gScale=body->GetGravityScale();
@@ -263,6 +271,7 @@ void Goo::checkForConnection(Goo *goo){
 }
 
 void Goo::fallDown(){
+    onGround=false;
     falling=true;
     body->SetLinearVelocity(b2Vec2(0,0));
     body->SetGravityScale(1.0);

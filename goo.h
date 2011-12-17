@@ -38,6 +38,7 @@ public:
     bool hasJoint();
     bool canHaveJoint();
     bool isLinked(Goo* goo);
+    bool isOnGround();
 
     virtual bool createLink(Goo* goo);
     virtual bool destroyLink(Goo* goo);
@@ -52,6 +53,7 @@ public:
     void catched();
     void lost();
 
+
     b2Body* getBody();
     b2Vec2 getVPosition();
     QPoint getPPosition();
@@ -63,7 +65,6 @@ private:
     int radius;
     int speed;
     dragInfo info;
-
 protected:
     b2Body* body;
     bool dragable;
@@ -71,6 +72,7 @@ protected:
     bool falling;
     bool following;
     bool dragging;
+    bool onGround;
     int minJoints,maxJoints;
     int guestN;
 

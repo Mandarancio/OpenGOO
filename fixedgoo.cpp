@@ -17,4 +17,5 @@ FixedGoo::FixedGoo(b2World *world, QPoint p, int radius, QObject *parent):
     fDef.shape=&shape;
     body->CreateFixture(&fDef);
     maxJoints=5;
+    onGround=true;
 }

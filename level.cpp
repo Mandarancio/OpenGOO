@@ -375,7 +375,7 @@ void Level::giveTarget(Goo *previous){
             bool ok=false;
             float distance=300;
             for (int i=0;i<goos.length();i++){
-                if (goos[i]!=goo&&goos[i]->hasJoint()&&abs(goos[i]->getPPosition().y()-pos.y())<15&&(goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
+                if (goos[i]!=goo&&goos[i]->hasJoint()&&goos[i]->isOnGround()&&abs(goos[i]->getPPosition().y()-pos.y())<15&&(goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
                     next=goos[i];
                     distance=(toVec(pos)-goos[i]->getVPosition()).Length();
                     ok=true;
