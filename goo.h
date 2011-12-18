@@ -78,7 +78,7 @@ protected:
 
     Goo* target,*prevTarget;
 
-    void moveToTarget();
+    void moveToTarget(); //Move the goos through the joints
     void stopFollow();
     void fallDown();
 signals:
@@ -89,7 +89,7 @@ private slots:
     void checkForConnection(Goo* goo);
 
 public slots:
-    virtual void paint(QPainter &p);
+    virtual void paint(QPainter &p);//To draw the goo
 
 };
 
