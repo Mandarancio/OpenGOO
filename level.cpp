@@ -373,7 +373,7 @@ void Level::destroyJoint(Joint *joint){
     delete joint;
 }
 
-void Level::giveTarget(Goo *previous){
+void Level::giveTarget(Goo *previous){ //SISTEMARE STO CAZZO DI ALGORITMO!!! Non capisco dove minchia è il problema!
     Goo *goo=dynamic_cast<Goo*>(sender());
     if (goo){
         if (!previous){

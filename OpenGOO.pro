@@ -8,7 +8,8 @@ unix|win32: LIBS=-lBox2D
 
 OTHER_FILES += \
     l01.level \
-    README
+    README \
+    menu.index
 
 HEADERS += \
     tools.h \
