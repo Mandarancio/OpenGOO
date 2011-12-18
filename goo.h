@@ -73,6 +73,7 @@ protected:
     bool following;
     bool dragging;
     bool onGround;
+    QPoint groundPoint;
     int minJoints,maxJoints;
     int guestN;
 

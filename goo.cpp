@@ -19,6 +19,7 @@ Goo::Goo( int radius, QObject *parent) :
     following=false;
     dragable=false;
     onGround=false;
+    groundPoint=QPoint(0,0);
 
     info.aForce=0;
     info.gScale=1.0;
@@ -30,6 +31,8 @@ Goo::Goo( int radius, QObject *parent) :
 }
 
 bool Goo::isOnGround(){
+    if (hasJoint() && isMoovable()) qWarning()<<"Has joint and is "<<onGround;
+   // if (onGround && getPPosition()!=groundPoint) onGround=false;
     return onGround;
 }
 
@@ -153,7 +156,9 @@ bool Goo::destroyLink(Goo *goo){
 }
 
 void Goo::contactGround(){
-    onGround=true;
+    if (hasJoint()) qWarning()<<"CONTACT!";
+        onGround=true;
+        groundPoint=this->getPPosition();
     if (falling) {
         falling=false;
         emit nextTargetPlease(NULL);

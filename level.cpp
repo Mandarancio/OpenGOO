@@ -42,6 +42,9 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     points=0;
     catched=false;
 
+    menu=new Menu(geometry,this);
+    onMenu=false;
+
     startTimer(step*1000);
 }
 
@@ -281,6 +284,8 @@ void Level::paintEvent(QPaintEvent *e){
 
 
     p.setRenderHint(QPainter::Antialiasing);
+
+
     p.save();
     p.translate(center+translation);
     paintBg(p);
@@ -299,6 +304,8 @@ void Level::paintEvent(QPaintEvent *e){
     p.restore();
     paintWin(p);
     paintScore(p);
+    if (onMenu) menu->paint(p);
+
     if (p.end()) e->accept();
     else e->ignore();
 }
@@ -306,7 +313,7 @@ void Level::paintEvent(QPaintEvent *e){
 void Level::keyReleaseEvent(QKeyEvent *e){
     switch(e->key()){
     case (Qt::Key_Escape):
-        this->closing();
+        onMenu=!onMenu;
         break;
     case (Qt::Key_Up):
         moveUp();

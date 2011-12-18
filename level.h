@@ -15,6 +15,7 @@
 #include "ground.h"
 #include "joint.h"
 #include "target.h"
+#include "menu.h"
 
 //This is the Scene Widget
 //It initialize evrithing
@@ -31,6 +32,8 @@ private:
     //Graphic
     QPoint center;          //Center of the display, is used to have a more human coordinate system
     QPoint translation;     //For the level translation
+    bool onMenu;
+    Menu* menu;
     //Physic
     b2World *world;         //world object of the box2d lib
     float step;             //it say how much long is a step
