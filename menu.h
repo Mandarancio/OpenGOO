@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QPainter>
+#include <QStringList>
 
 class Menu : public QObject
 {
@@ -10,7 +11,14 @@ class Menu : public QObject
 public:
     explicit Menu(QRect geometry,QObject *parent = 0);
 private:
+    QStringList index;
     QRect geometry;
+    int selected;
+    int height;
+
+    void loadMenuFile();
+    void computeHeight();
+    void paintButton(int ind,QString text,QPainter &p);
 signals:
 
 public slots:
