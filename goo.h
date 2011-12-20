@@ -44,6 +44,7 @@ public:
     virtual bool destroyLink(Goo* goo);
 
     virtual void contactGround();
+    virtual void destroyThis();
     void setTarget(Goo* goo);
 
     void move(QPoint p);

@@ -7,6 +7,7 @@
 #include "tools.h"
 #include "fixedgoo.h"
 #include "dynamicgoo.h"
+#include "thorn.h"
 
 #include "collisionlistener.h"
 
@@ -31,6 +32,9 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
 
     createBalls();
 
+//    Thorn * t=new Thorn(QPoint(0,-100),50,world,this);
+//    objects.push_back(t);
+
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
@@ -51,6 +55,8 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
 }
 
 Level::~Level(){
+    for (int i=0;i<objects.length();i++)
+        world->DestroyBody(objects[i]->getBody());
     delete world;
 }
 
@@ -189,6 +195,7 @@ void Level::createBalls(){
         dg->getBody()->ApplyForceToCenter(startForce);
         goos.push_back(dg);
         connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+        connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
     }
 }
 
@@ -299,6 +306,8 @@ void Level::paintEvent(QPaintEvent *e){
         for (int i=0;i<possibility.length();i++)
             p.drawLine(dragged->getPPosition(),possibility[i]);
     }
+    for (int i=0;i<objects.length();i++)
+        objects[i]->paint(p);
     for (int i=0;i<joints.length();i++)
         if (joints[i]) joints[i]->paint(p);
     for (int i=0;i<goos.length();i++)
@@ -484,4 +493,14 @@ void Level::resume(){
 
 void Level::closeAll(){
     emit this->closing();
+}
+
+void Level::destroyGOO(){
+    Goo* goo=dynamic_cast<Goo*>(sender());
+    if (goo){
+        goos.removeAt(goos.indexOf(goo));
+        world->Step(step,10,10);
+        world->DestroyBody(goo->getBody());
+        delete goo;
+    }
 }

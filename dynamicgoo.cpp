@@ -5,6 +5,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     Goo(radius,parent)
 {
     b2BodyDef def;
+    def.awake=true;
     def.type=b2_dynamicBody;
     def.position=toVec(p);
     body=world->CreateBody(&def);

@@ -164,6 +164,14 @@ void Goo::contactGround(){
     }
 }
 
+void Goo::destroyThis(){
+    while (links.length()){
+        emit this->loseLink(links.first());
+        this->destroyLink(links.first());
+    }
+    emit this->destroyGoo();
+}
+
 void Goo::setTarget(Goo *goo){
         if (prevTarget!=NULL) prevTarget->removeGuest();
         onGround=false;

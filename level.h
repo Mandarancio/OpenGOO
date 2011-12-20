@@ -16,6 +16,7 @@
 #include "joint.h"
 #include "target.h"
 #include "menu.h"
+#include "object.h"
 
 //This is the Scene Widget
 //It initialize evrithing
@@ -41,6 +42,7 @@ private:
     Ground *ground;         //Ground object
     QList<Goo*> goos;       //All the goos!
     QList<Joint*> joints;   //All the joints!
+    QList<Object*> objects;
     Target* target;         //The target object
     bool drag;              //If the player is dragging some goo
     Goo* dragged;           //The goo that is under the mouse
@@ -95,6 +97,7 @@ signals:
 public slots:
 private slots:
     void destroyJoint(Joint * joint);   //Destroy a joint
+    void destroyGOO();                  //Destroy a GOO!
     void gooCatched(Goo * goo);         //Target catch a goo
     void giveTarget(Goo* previous);     //Function to give a jointed goo to follow to a free goo
     void towerCatched();                //Actions to do when the tower is near the target
