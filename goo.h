@@ -59,7 +59,7 @@ public:
     QPoint getPPosition();
 
     QList <Goo*> getLinks();
-
+    Goo* getPrevious();
 private:
     QList <Goo*> links;
     int radius;

@@ -156,9 +156,8 @@ bool Goo::destroyLink(Goo *goo){
 }
 
 void Goo::contactGround(){
-    if (hasJoint()) qWarning()<<"CONTACT!";
-        onGround=true;
-        groundPoint=this->getPPosition();
+    onGround=true;
+    groundPoint=this->getPPosition();
     if (falling) {
         falling=false;
         emit nextTargetPlease(NULL);
@@ -219,6 +218,10 @@ void Goo::drop(b2Vec2 speed){
 
 QList<Goo*> Goo::getLinks(){
     return links;
+}
+
+Goo* Goo::getPrevious(){
+    return prevTarget;
 }
 
 void Goo::moveToTarget(){
