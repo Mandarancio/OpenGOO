@@ -3,16 +3,16 @@
 #include <QTextStream>
 #include <QFile>
 #include <QFont>
-
+#include <QFontMetrics>
 #include <QDebug>
 
 Menu::Menu(QRect geometry, QObject *parent) :
     QObject(parent)
 {
     this->geometry=geometry;
+    computeHeight();
 
     loadMenuFile();
-    computeHeight();
     selected=0;
 
 }
@@ -25,7 +25,7 @@ void Menu::paint(QPainter &p){
     p.setPen(Qt::white);
     p.setBrush(Qt::white);
     for (int i=0;i<index.length();i++)
-        paintButton(i,index[i],p);
+        paintButton(i,p);
 }
 
 void Menu::loadMenuFile(){
@@ -33,13 +33,17 @@ void Menu::loadMenuFile(){
     if (file.open(QFile::ReadOnly)){
         QTextStream in(&file);
         QString tmp;
+        int y;
+        int i=0;
         while(!in.atEnd()){
             tmp=in.readLine();
             if (tmp.at(0)=='#') continue;//comment!
             else if (tmp.at(0)=='-') {
                 tmp.remove(0,1);
-
+                y=(height+30)*i+30;
+                buttons.push_back(QRect(geometry.width()/2-30,y,geometry.width()/2,height));
                 index.push_back(tmp);
+                i++;
             }
         }
 
@@ -48,18 +52,44 @@ void Menu::loadMenuFile(){
     else qWarning("Menu file dosn't exist!");
 }
 
-void Menu::paintButton(int ind, QString text, QPainter &p){
-    int y=10+ind*(height);
-    QRect r(0,y,geometry.width(),height-10);
+void Menu::paintButton(int ind, QPainter &p){
+
     QFont f;
     f.setFamily("Times");
     f.setPointSize(32);
     p.setFont(f);
-    p.drawText(r,Qt::AlignCenter,text);
+    p.drawText(buttons.at(ind),Qt::AlignCenter,index.at(ind));
+    QColor bBg(255,255,255,30);
+    p.setBrush(bBg);
+    p.drawRoundedRect(buttons.at(ind),15,15);
 }
 
 void Menu::computeHeight(){
-    int h=geometry.height();
-    int t=index.length();
-    height=float(h)/((t));
+    QFont f;
+    f.setFamily("Times");
+    f.setPointSize(32);
+    height=QFontMetrics(f).height()+30;
+}
+
+void Menu::mouseRelease(QMouseEvent *e){
+    if (e->button()==Qt::LeftButton){
+        int index=-1;
+        for (int i=0;i<buttons.length();i++){
+            if (buttons[i].contains(e->pos())) index=i;
+        }
+        switch(index){
+        case(-1):
+            return;
+            break;
+        case (0):
+            emit this->eventResume();
+            break;
+        case(1):
+            emit this->eventClose();
+            break;
+        default:
+            return;
+            break;
+        }
+    }
 }

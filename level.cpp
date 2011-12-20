@@ -44,6 +44,8 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
 
     menu=new Menu(geometry,this);
     onMenu=false;
+    connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
+    connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
 
     startTimer(step*1000);
 }
@@ -332,6 +334,9 @@ void Level::keyReleaseEvent(QKeyEvent *e){
 
 
 void Level::mouseMoveEvent(QMouseEvent *e){
+    if (onMenu){
+        return;
+    }
     if (e->x()<=5) moveLeft();
     if (e->y()<=5) moveUp();
     if (e->x()>=width()-5) moveRight();
@@ -346,7 +351,8 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     }
 }
 void Level::mousePressEvent(QMouseEvent *e){
-   if (e->button()==Qt::LeftButton ) {
+    if (onMenu) return;
+    if (e->button()==Qt::LeftButton ) {
        dragged=getGooAt(e->pos()-(center+translation));
        if (dragged) {
            possibility.clear();
@@ -358,6 +364,10 @@ void Level::mousePressEvent(QMouseEvent *e){
    }
 }
 void Level::mouseReleaseEvent(QMouseEvent *e){
+    if (onMenu){
+        menu->mouseRelease(e);
+        return;
+    }
     if (drag){
         if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
@@ -466,4 +476,12 @@ void Level::paintWin(QPainter &p){
         p.setPen(Qt::white);
         p.drawText(this->geometry(),Qt::AlignCenter,"Win!!");
     }
+}
+
+void Level::resume(){
+    onMenu=false;
+}
+
+void Level::closeAll(){
+    emit this->closing();
 }

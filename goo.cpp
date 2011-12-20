@@ -31,7 +31,7 @@ Goo::Goo( int radius, QObject *parent) :
 }
 
 bool Goo::isOnGround(){
-    if (hasJoint() && isMoovable()) qWarning()<<"Has joint and is "<<onGround;
+    //if (hasJoint() && isMoovable()) qWarning()<<"Has joint and is "<<onGround;
    // if (onGround && getPPosition()!=groundPoint) onGround=false;
     return onGround;
 }

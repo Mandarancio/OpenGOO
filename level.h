@@ -99,6 +99,8 @@ private slots:
     void giveTarget(Goo* previous);     //Function to give a jointed goo to follow to a free goo
     void towerCatched();                //Actions to do when the tower is near the target
     void towerLost();                   //Actions to do when the tower in no more near the target
+    void resume();
+    void closeAll();
 };
 
 #endif // LEVEL_H
