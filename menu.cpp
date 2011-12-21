@@ -87,6 +87,9 @@ void Menu::mouseRelease(QMouseEvent *e){
         case(1):
             emit this->eventClose();
             break;
+        case(2):
+            emit this->eventClose();
+            break;
         default:
             return;
             break;
