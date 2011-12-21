@@ -1,17 +1,24 @@
 #ifndef THORN_H
 #define THORN_H
 
-#include <QObject>
+#include "object.h"
 
-class Thorn : public QObject
+#include <QObject>
+#include <QPainter>
+#include <Box2D/Box2D.h>
+
+class Thorn : public Object
 {
     Q_OBJECT
 public:
-    explicit Thorn(QObject *parent = 0);
+    explicit Thorn(QPoint p,int h,b2World * world,QObject *parent = 0);
 
+private:
+    QPolygon polygon;
 signals:
 
 public slots:
+    void paint(QPainter &p);
 
 };
 

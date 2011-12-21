@@ -7,6 +7,7 @@
 #include "tools.h"
 #include "fixedgoo.h"
 #include "dynamicgoo.h"
+#include "thorn.h"
 
 #include "collisionlistener.h"
 
@@ -31,6 +32,9 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
 
     createBalls();
 
+//    Thorn * t=new Thorn(QPoint(0,-100),50,world,this);
+//    objects.push_back(t);
+
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
@@ -44,11 +48,15 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
 
     menu=new Menu(geometry,this);
     onMenu=false;
+    connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
+    connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
 
     startTimer(step*1000);
 }
 
 Level::~Level(){
+    for (int i=0;i<objects.length();i++)
+        world->DestroyBody(objects[i]->getBody());
     delete world;
 }
 
@@ -187,6 +195,7 @@ void Level::createBalls(){
         dg->getBody()->ApplyForceToCenter(startForce);
         goos.push_back(dg);
         connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+        connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
     }
 }
 
@@ -297,6 +306,8 @@ void Level::paintEvent(QPaintEvent *e){
         for (int i=0;i<possibility.length();i++)
             p.drawLine(dragged->getPPosition(),possibility[i]);
     }
+    for (int i=0;i<objects.length();i++)
+        objects[i]->paint(p);
     for (int i=0;i<joints.length();i++)
         if (joints[i]) joints[i]->paint(p);
     for (int i=0;i<goos.length();i++)
@@ -332,6 +343,9 @@ void Level::keyReleaseEvent(QKeyEvent *e){
 
 
 void Level::mouseMoveEvent(QMouseEvent *e){
+    if (onMenu){
+        return;
+    }
     if (e->x()<=5) moveLeft();
     if (e->y()<=5) moveUp();
     if (e->x()>=width()-5) moveRight();
@@ -346,7 +360,8 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     }
 }
 void Level::mousePressEvent(QMouseEvent *e){
-   if (e->button()==Qt::LeftButton ) {
+    if (onMenu) return;
+    if (e->button()==Qt::LeftButton ) {
        dragged=getGooAt(e->pos()-(center+translation));
        if (dragged) {
            possibility.clear();
@@ -358,6 +373,10 @@ void Level::mousePressEvent(QMouseEvent *e){
    }
 }
 void Level::mouseReleaseEvent(QMouseEvent *e){
+    if (onMenu){
+        menu->mouseRelease(e);
+        return;
+    }
     if (drag){
         if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
@@ -399,7 +418,7 @@ void Level::giveTarget(Goo *previous){ //SISTEMARE STO CAZZO DI ALGORITMO!!! Non
                 Goo * target=previous->getLinks().at(0);
                 b2Vec2 d=this->target->getVPosition()-target->getVPosition();
                 for (int i=1;i<previous->getLinks().length();i++){
-                    if ((this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
+                    if ((goo->getPrevious()!=target->getLinks().at(i)) && (this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
                         target=previous->getLinks().at(i);
                         d=this->target->getVPosition()-previous->getLinks().at(i)->getVPosition();
                     }
@@ -465,5 +484,23 @@ void Level::paintWin(QPainter &p){
         p.setFont(f);
         p.setPen(Qt::white);
         p.drawText(this->geometry(),Qt::AlignCenter,"Win!!");
+    }
+}
+
+void Level::resume(){
+    onMenu=false;
+}
+
+void Level::closeAll(){
+    emit this->closing();
+}
+
+void Level::destroyGOO(){
+    Goo* goo=dynamic_cast<Goo*>(sender());
+    if (goo){
+        goos.removeAt(goos.indexOf(goo));
+        world->Step(step,10,10);
+        world->DestroyBody(goo->getBody());
+        delete goo;
     }
 }

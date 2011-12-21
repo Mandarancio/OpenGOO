@@ -23,7 +23,8 @@ HEADERS += \
     fixedgoo.h \
     dynamicgoo.h \
     collisionlistener.h \
-    menu.h
+    menu.h \
+    object.h
 
 SOURCES += \
     tools.cpp \
@@ -38,4 +39,5 @@ SOURCES += \
     fixedgoo.cpp \
     dynamicgoo.cpp \
     collisionlistener.cpp \
-    menu.cpp
+    menu.cpp \
+    object.cpp
