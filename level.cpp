@@ -301,7 +301,7 @@ void Level::paintEvent(QPaintEvent *e){
 
     if (ground) ground->paint(p);
     if (target) target->paint(p);
-    if (drag && possibility.length())
+    if (drag && possibility.length()>1)
     {
         for (int i=0;i<possibility.length();i++)
             p.drawLine(dragged->getPPosition(),possibility[i]);
