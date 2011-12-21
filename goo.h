@@ -90,7 +90,7 @@ private slots:
     void checkForConnection(Goo* goo);
 
 public slots:
-    virtual void paint(QPainter &p);//To draw the goo
+    virtual void paint(QPainter &p);//Draw the goo
 
 };
 
