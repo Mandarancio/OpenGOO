@@ -14,6 +14,7 @@ public:
     explicit Joint(Goo* a,Goo* b, b2World * world,QObject *parent = 0);
     void paint(QPainter &p);
     b2Joint* getJoint();
+    bool has(Goo*a,Goo*b);
 protected:
     b2DistanceJoint* joint;
     Goo *a,*b;

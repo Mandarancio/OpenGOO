@@ -87,6 +87,7 @@ signals:
     void nextTargetPlease(Goo* previous);
     void loseLink(Goo* goo);
     void destroyGoo();
+    void destroyJoint(Goo* a,Goo*b);
 private slots:
     void checkForConnection(Goo* goo);
 

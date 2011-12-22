@@ -118,8 +118,8 @@ void Goo::jumpTo(QPoint p){
     this->falling=true;
     body->SetGravityScale(0);
     b2Vec2 v=toVec(p)-body->GetPosition();
-    v.x*=100/v.Length();
-    v.y*=100/v.Length();
+    v.x*=200/v.Length();
+    v.y*=200/v.Length();
     body->SetAngularVelocity(0);
     body->SetLinearVelocity(v);
 }
@@ -165,9 +165,10 @@ void Goo::contactGround(){
 }
 
 void Goo::destroyThis(){
-    while (links.length()){
-        emit this->loseLink(links.first());
-        this->destroyLink(links.first());
+    for (int i=0;i<links.length();i++){
+        emit this->loseLink(links[i]);
+        links[i]->destroyLink(this);
+        emit this->destroyJoint(this,links[i]);
     }
     emit this->destroyGoo();
 }
@@ -293,3 +294,5 @@ void Goo::fallDown(){
     body->SetGravityScale(1.0);
     body->SetAngularVelocity(0);
 }
+
+

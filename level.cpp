@@ -23,16 +23,14 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     center=geometry.center();
     translation=QPoint(0,0);
 
-    world = new b2World(b2Vec2(0,200));
+    world = new b2World(b2Vec2(0,500));
 
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
 
     readLevel(level);    
     createBalls();
-
-//    Thorn * t=new Thorn(QPoint(0,-100),50,world,this);
-//    objects.push_back(t);
+    createThorns();
 
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
@@ -196,7 +194,25 @@ void Level::createBalls(){
         goos.push_back(dg);
         connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
         connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+        connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
     }
+}
+
+void Level::createThorns(){
+    int xi,xe,ym;
+    xi=-200.0*width()/1000.0;
+    xe=280.0*width()/1000.0;
+    ym=280.0*width()/1000.0;
+    int r=10.0*(xe-xi)/100.0;
+    int h,x;
+    for (int i=0;i<r;i++){
+        h=50+rand()%50;
+        x=xi+rand()%(xe-xi);
+        Thorn *t=new Thorn(QPoint(x,ym-h),h,world,this);
+        objects.push_back(t);
+    }
+
+
 }
 
 Goo* Level::getGooAt(QPoint p){
@@ -279,6 +295,21 @@ void Level::timerEvent(QTimerEvent *e){
     e->accept();
     world->Step(step,10,10);
     world->ClearForces();
+
+    for (int i=0;i<jointsToDestroy.length();i++){
+        world->DestroyJoint(jointsToDestroy[i]->getJoint());
+        joints.removeAt(joints.indexOf(jointsToDestroy[i]));
+        delete jointsToDestroy[i];
+    }
+    jointsToDestroy.clear();
+
+    for (int i=0;i<goosToDestroy.length();i++){
+        world->DestroyBody(goosToDestroy[i]->getBody());
+        goos.removeAt(goos.indexOf(goosToDestroy[i]));
+        delete goosToDestroy[i];
+    }
+    goosToDestroy.clear();
+
     target->checkTower(goos);
     target->applyForces(goos);
     repaint();
@@ -301,7 +332,7 @@ void Level::paintEvent(QPaintEvent *e){
 
     if (ground) ground->paint(p);
     if (target) target->paint(p);
-    if (drag && possibility.length())
+    if (drag && possibility.length()>1)
     {
         for (int i=0;i<possibility.length();i++)
             p.drawLine(dragged->getPPosition(),possibility[i]);
@@ -387,9 +418,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 }
 
 void Level::destroyJoint(Joint *joint){
-    world->DestroyJoint(joint->getJoint());
-    joints.removeOne(joint);
-    delete joint;
+    jointsToDestroy.push_back(joint);
 }
 
 void Level::giveTarget(Goo *previous){ //SISTEMARE STO CAZZO DI ALGORITMO!!! Non capisco dove minchia è il problema!
@@ -503,9 +532,14 @@ void Level::closeAll(){
 void Level::destroyGOO(){
     Goo* goo=dynamic_cast<Goo*>(sender());
     if (goo){
-        goos.removeAt(goos.indexOf(goo));
-        world->Step(step,10,10);
-        world->DestroyBody(goo->getBody());
-        delete goo;
+        goosToDestroy.push_back(goo);
+    }
+}
+
+void Level::destroyJoint(Goo *a, Goo *b){
+    for (int i=0;i<joints.length();i++){
+        if (joints[i]->has(a,b)){
+            jointsToDestroy.push_back(joints[i]);
+        }
     }
 }

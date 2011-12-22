@@ -41,7 +41,9 @@ private:
     //Game
     Ground *ground;         //Ground object
     QList<Goo*> goos;       //All the goos!
+    QList<Goo*> goosToDestroy;  //GOOs to be destroyed the next update!
     QList<Joint*> joints;   //All the joints!
+    QList<Joint*> jointsToDestroy; //Joints to be destroyed the next update!
     QList<Object*> objects;
     Target* target;         //The target object
     bool drag;              //If the player is dragging some goo
@@ -68,6 +70,7 @@ private:
     bool parseInfo(QString tag,QString info); //Recognize the tag and use the info
 
     void createBalls(); //To initialize the dynamic goos
+    void createThorns(); //To initialize thorns
 
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
 
@@ -80,6 +83,7 @@ private:
     bool makeJoint(Goo*a,Goo*b);    //Function to create a single joint between two goos
     QList<QPoint> possibleJoints(QPoint p); //Function to show all the possible joint from a point
     bool createJoints(QPoint p);    //Function to create
+
 
     //Funcion to draw background, score and win
     void paintBg(QPainter &p);
@@ -101,6 +105,7 @@ private slots:
     void destroyGOO();                  //Destroy a GOO!
     void gooCatched(Goo * goo);         //Target catch a goo
     void giveTarget(Goo* previous);     //Function to give a jointed goo to follow to a free goo
+    void destroyJoint(Goo*a,Goo*b);
     void towerCatched();                //Actions to do when the tower is near the target
     void towerLost();                   //Actions to do when the tower in no more near the target
     void resume();                      //Close the menu
