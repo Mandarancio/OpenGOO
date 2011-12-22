@@ -28,8 +28,7 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
 
-    readLevel(level);
-
+    readLevel(level);    
     createBalls();
 
 //    Thorn * t=new Thorn(QPoint(0,-100),50,world,this);
@@ -50,6 +49,7 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     onMenu=false;
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
     connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
+    connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
 
     startTimer(step*1000);
 }
@@ -435,12 +435,13 @@ void Level::gooCatched(Goo *goo){
     points++;
 }
 
-void Level::towerCatched(){
+void Level::towerCatched(){    
     catched=true;
     for (int i=0;i<goos.length();i++) goos[i]->catched();
+
 }
 
-void Level::towerLost(){
+void Level::towerLost(){    
     catched=false;
     for (int i=0;i<goos.length();i++) goos[i]->lost();
 
@@ -489,6 +490,10 @@ void Level::paintWin(QPainter &p){
 
 void Level::resume(){
     onMenu=false;
+}
+
+void Level::restart(){
+    //TODO
 }
 
 void Level::closeAll(){

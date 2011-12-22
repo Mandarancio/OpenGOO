@@ -50,6 +50,7 @@ private:
     b2Vec2 mousePos;        //Mouse current position (is needed to calculate the speed of the mouse
     b2Vec2 mouseSpeed;      //Mouse speed (so when release the dragged goo, he take the mouse speed)
     //Level
+    QString pathLevel;      //Name of the level file
     QString name;           //Level name
     int goal;               //Number of goo to collect to win
     int points;             //Number of goo collected
@@ -102,7 +103,8 @@ private slots:
     void giveTarget(Goo* previous);     //Function to give a jointed goo to follow to a free goo
     void towerCatched();                //Actions to do when the tower is near the target
     void towerLost();                   //Actions to do when the tower in no more near the target
-    void resume();
+    void resume();                      //Close the menu
+    void restart();                     //Restart the level
     void closeAll();
 };
 
