@@ -15,11 +15,11 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     b2FixtureDef fixDef;
     fixDef.restitution=0.3;
     fixDef.density=1.0;
-    fixDef.friction=0.9;
+    fixDef.friction=0.8;
     fixDef.shape=&shape;
     fixDef.userData=this;
     body->CreateFixture(&fixDef);
-    body->SetLinearDamping(0.8);//Not sure about this parameter
+   // body->SetLinearDamping(0.8);//Not sure about this parameter
     moovable=true;
     dragable=true;
     maxJoints=7;

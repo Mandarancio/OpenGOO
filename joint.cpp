@@ -34,6 +34,10 @@ void Joint::paint(QPainter &p){
 }
 
 void Joint::status(){
+    if (joint==NULL){
+        emit destroyJoint(this);
+        return;
+    }
     float dx=(joint->GetBodyA()->GetPosition().x-joint->GetBodyB()->GetPosition().x);
     float dy=(joint->GetBodyA()->GetPosition().y-joint->GetBodyB()->GetPosition().y);
     float l=sqrt(dx*dx+dy*dy);
@@ -47,4 +51,10 @@ void Joint::status(){
 
 b2Joint* Joint::getJoint(){
     return joint;
+}
+
+bool Joint::has(Goo *a, Goo *b){
+    if (this->a==a && this->b==b) return true;
+    if (this->b==a && this->a==b) return true;
+    return false;
 }
