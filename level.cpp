@@ -28,7 +28,9 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
 
-    readLevel(level);    
+    pathLevel=level;
+    readLevel(pathLevel);
+
     createBalls();
     createThorns();
 
@@ -522,7 +524,20 @@ void Level::resume(){
 }
 
 void Level::restart(){
-    //TODO
+    goos.clear();
+    joints.clear();
+    objects.clear();
+    world = new b2World(b2Vec2(0,500));
+    CollisionListener *cl=new CollisionListener(this);
+    world->SetContactListener(cl);
+    readLevel(pathLevel);
+    createBalls();
+    createThorns();
+    points=0;
+    catched=false;
+    connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
+    connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
+    connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
 }
 
 void Level::closeAll(){
