@@ -31,7 +31,7 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     readLevel(level);
 
     createBalls();
-    createThorns();
+   // createThorns();
 
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
