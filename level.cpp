@@ -32,7 +32,7 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     readLevel(pathLevel);
 
     createBalls();
-    createThorns();
+   // createThorns();
 
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
@@ -299,10 +299,13 @@ void Level::timerEvent(QTimerEvent *e){
     world->ClearForces();
 
     for (int i=0;i<jointsToDestroy.length();i++){
-        world->DestroyJoint(jointsToDestroy[i]->getJoint());
-        joints.removeAt(joints.indexOf(jointsToDestroy[i]));
-        delete jointsToDestroy[i];
-    }
+        if (!joints.contains(jointsToDestroy[i]))  continue;
+        else {
+            world->DestroyJoint(jointsToDestroy[i]->getJoint());
+            joints.removeAt(joints.indexOf(jointsToDestroy[i]));
+            delete jointsToDestroy[i];
+        }
+     }
     jointsToDestroy.clear();
 
     for (int i=0;i<goosToDestroy.length();i++){
@@ -425,7 +428,7 @@ void Level::destroyJoint(Joint *joint){
 
 void Level::giveTarget(Goo *previous){ //SISTEMARE STO CAZZO DI ALGORITMO!!! Non capisco dove minchia è il problema!
     Goo *goo=dynamic_cast<Goo*>(sender());
-    if (goo){
+    if (goo!=NULL){
         if (!previous){
             QPoint pos=goo->getPPosition();
             Goo * next;
@@ -441,11 +444,11 @@ void Level::giveTarget(Goo *previous){ //SISTEMARE STO CAZZO DI ALGORITMO!!! Non
             if (ok) goo->setTarget(next);
         }
         else {
-            if (!catched){
+            if (!catched && previous!=NULL && previous->getLinks().length()){
                 int choise=rand()%previous->getLinks().length();
                 goo->setTarget(previous->getLinks().at(choise));
             }
-            else {
+            else if (previous->getLinks().length()) {
                 Goo * target=previous->getLinks().at(0);
                 b2Vec2 d=this->target->getVPosition()-target->getVPosition();
                 for (int i=1;i<previous->getLinks().length();i++){
@@ -546,7 +549,7 @@ void Level::closeAll(){
 
 void Level::destroyGOO(){
     Goo* goo=dynamic_cast<Goo*>(sender());
-    if (goo){
+    if (goo && !goosToDestroy.contains(goo)){
         goosToDestroy.push_back(goo);
     }
 }

@@ -129,10 +129,12 @@ b2Body* Goo::getBody(){
 }
 
 b2Vec2 Goo::getVPosition(){
+    if (body==NULL && !body->IsActive()) return b2Vec2(0,0);
     return body->GetPosition();
 }
 
 QPoint Goo::getPPosition(){
+    if (body==NULL || !body->IsActive()) return QPoint(0,0);
     return toPoint(body->GetPosition());
 }
 
@@ -252,7 +254,7 @@ void Goo::moveToTarget(){
             }
         }
         b2Vec2 dP;
-        if (target)
+        if (target && target->getBody()!=NULL)
             dP=target->getVPosition()-this->getVPosition();
         else {
             stopFollow();
@@ -272,7 +274,9 @@ void Goo::moveToTarget(){
 
 void Goo::stopFollow(){
     if (following){
-        disconnect(target,SIGNAL(loseLink(Goo*)),this,SLOT(checkForConnection(Goo*)));
+        disconnect(this,SLOT(checkForConnection(Goo*)));
+        if (target==NULL) return;
+        //disconnect(target,SIGNAL(loseLink(Goo*)),this,SLOT(checkForConnection(Goo*)));
         target->removeGuest();
         following=false;
         target=NULL;
@@ -282,6 +286,8 @@ void Goo::stopFollow(){
 
 void Goo::checkForConnection(Goo *goo){
     if (following && prevTarget==goo){
+        prevTarget=NULL;
+        target=NULL;
         stopFollow();
         fallDown();
     }

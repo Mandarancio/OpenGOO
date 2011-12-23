@@ -42,7 +42,7 @@ void Joint::status(){
     float dy=(joint->GetBodyA()->GetPosition().y-joint->GetBodyB()->GetPosition().y);
     float l=sqrt(dx*dx+dy*dy);
     float force= joint->GetReactionForce(1.0/60.0).Length();
-    if (l<50 || l>200 || force>1000) {
+    if (l<50 || l>200 || force>2000) {
         a->destroyLink(b);
         b->destroyLink(a);
         emit destroyJoint(this);
