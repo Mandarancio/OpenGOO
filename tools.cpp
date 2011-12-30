@@ -14,7 +14,7 @@ QPoint toPoint(b2Vec2 v){
 
 b2Vec2* toVecs(QList<QPoint> ps){
     b2Vec2 * vecs=0;
-    vecs= static_cast<b2Vec2*>(qMalloc(ps.lenght()*sizeof(b2Vec2)));
+    vecs= static_cast<b2Vec2*>(qMalloc(ps.length()*sizeof(b2Vec2)));
     for (int i=0;i<ps.length();i++){
         vecs[i]=toVec(ps[i]);
     }
