@@ -527,17 +527,33 @@ void Level::resume(){
 }
 
 void Level::restart(){
-    goos.clear();
+    for (int i=0;i<joints.length();i++){
+        world->DestroyJoint(joints[i]->getJoint());
+        delete joints[i];
+    }
     joints.clear();
+
+    for (int i=0;i<goos.length();i++){
+        world->DestroyBody(goos[i]->getBody());
+        delete goos[i];
+    }
+    goos.clear();
+    for (int i=0;i<objects.length();i++){
+        world->DestroyBody(objects[i]->getBody());
+        delete objects[i];
+    }
     objects.clear();
+    delete world;
+
     world = new b2World(b2Vec2(0,500));
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
     readLevel(pathLevel);
     createBalls();
-    createThorns();
+    //createThorns();
     points=0;
     catched=false;
+    onMenu=false;
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
