@@ -1,5 +1,8 @@
-    #include "tools.h"
+#include "tools.h"
 #include <QDebug>
+/*
+	THANKS TO Slyshyk Oleksly for fix the toVecs(*) function
+*/
 
 b2Vec2 toVec(QPoint p){
     return b2Vec2(p.x(),p.y());
@@ -10,7 +13,8 @@ QPoint toPoint(b2Vec2 v){
 }
 
 b2Vec2* toVecs(QList<QPoint> ps){
-    b2Vec2 vecs[ps.length()];
+    b2Vec2 * vecs=0;
+    vecs= static_cast<b2Vec2*>(qMalloc(ps.lenght()*sizeof(b2Vec2)));
     for (int i=0;i<ps.length();i++){
         vecs[i]=toVec(ps[i]);
     }
