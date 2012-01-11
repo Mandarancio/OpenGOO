@@ -413,7 +413,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     }
 }
 void Level::mousePressEvent(QMouseEvent *e){
-    if (onMenu) return;
+    if (onMenu || points>=goal) return;
     if (e->button()==Qt::LeftButton ) {
         mousePos=toVec(e->pos());
         mouseSpeed.SetZero();
@@ -552,6 +552,7 @@ void Level::paintButton(QPainter &p){
     p.setPen(Qt::darkGray);
     p.setBrush(QColor(255,255,255,60));
     p.drawEllipse(QPoint(this->width(),this->height()),60,60);
+    p.drawEllipse(QPoint(this->width()-20,this->height()-20),7,7);
 }
 
 void Level::clickButton(QPoint p){
