@@ -47,6 +47,7 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
 
     menu=new Menu(geometry,this);
     onMenu=false;
+    mooving=false;
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
     connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
     connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
@@ -245,6 +246,17 @@ void Level::moveLeft(){
         translation.setX(translation.x()+5);
 }
 
+void Level::moveOf(QPoint dP){
+    int xf,yf;
+    xf=translation.x()+dP.x();
+    yf=translation.y()+dP.y();
+    if (xf>= -limit.x()) xf=-limit.x();
+    else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
+    if (yf>=limit.y()) yf=limit.y();
+    else if (yf<=limit.height()) yf=limit.height();
+    translation=QPoint(xf,yf);
+}
+
 bool Level::makeJoint(Goo *a, Goo *b){
     if (!a->createLink(b)) return false;
     if (!b->createLink(a)) {
@@ -352,7 +364,7 @@ void Level::paintEvent(QPaintEvent *e){
     paintWin(p);
     paintScore(p);
     if (onMenu) menu->paint(p);
-
+    paintButton(p);
     if (p.end()) e->accept();
     else e->ignore();
 }
@@ -394,32 +406,46 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         dragged->move(e->pos()-(center+translation));
         possibility=possibleJoints(dragged->getPPosition());
     }
+    else if (mooving) {
+        QPoint d=e->pos()-toPoint(mousePos);
+        mousePos=toVec(e->pos());
+        moveOf(d);
+    }
 }
 void Level::mousePressEvent(QMouseEvent *e){
     if (onMenu) return;
     if (e->button()==Qt::LeftButton ) {
+        mousePos=toVec(e->pos());
+        mouseSpeed.SetZero();
        dragged=getGooAt(e->pos()-(center+translation));
        if (dragged) {
            possibility.clear();
            drag=true;
            dragged->drag();
-           mousePos=toVec(e->pos());
-           mouseSpeed.SetZero();
+
        }
+       else mooving=true;
    }
 }
 void Level::mouseReleaseEvent(QMouseEvent *e){
-    if (onMenu){
-        menu->mouseRelease(e);
-        return;
+    if (e->button()!=Qt::LeftButton) return;
+    if (!drag){
+        clickButton(e->pos());
     }
-    if (drag){
+    else if (drag){
         if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
     }
     dragged=NULL;
     drag=false;
     possibility.clear();
+    mooving=false;
+
+
+    if (onMenu){
+        menu->mouseRelease(e);
+        return;
+    }
 }
 
 void Level::destroyJoint(Joint *joint){
@@ -520,6 +546,17 @@ void Level::paintWin(QPainter &p){
         p.setPen(Qt::white);
         p.drawText(this->geometry(),Qt::AlignCenter,"Win!!");
     }
+}
+
+void Level::paintButton(QPainter &p){
+    p.setPen(Qt::darkGray);
+    p.setBrush(QColor(255,255,255,60));
+    p.drawEllipse(QPoint(this->width(),this->height()),60,60);
+}
+
+void Level::clickButton(QPoint p){
+    QPoint d=p-QPoint(width(),height());
+    if (d.x()*d.x()+d.y()*d.y()<60*60) onMenu=!onMenu;
 }
 
 void Level::resume(){

@@ -58,10 +58,14 @@ void Menu::paintButton(int ind, QPainter &p){
     f.setFamily("Times");
     f.setPointSize(32);
     p.setFont(f);
-    p.drawText(buttons.at(ind),Qt::AlignCenter,index.at(ind));
-    QColor bBg(255,255,255,30);
+    QColor bBg;//(255,255,255,30);
+    bBg.setRgb(0,0,0,100);
     p.setBrush(bBg);
+    p.setPen(Qt::darkGray);
     p.drawRoundedRect(buttons.at(ind),15,15);
+    p.setPen(Qt::white);
+    p.drawText(buttons.at(ind),Qt::AlignCenter,index.at(ind));
+
 }
 
 void Menu::computeHeight(){

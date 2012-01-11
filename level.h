@@ -34,6 +34,7 @@ private:
     QPoint center;          //Center of the display, is used to have a more human coordinate system
     QPoint translation;     //For the level translation
     bool onMenu;
+    bool mooving;
     Menu* menu;
     //Physic
     b2World *world;         //world object of the box2d lib
@@ -79,6 +80,7 @@ private:
     void moveDown();
     void moveLeft();
     void moveRight();
+    void moveOf(QPoint dP);
 
     bool makeJoint(Goo*a,Goo*b);    //Function to create a single joint between two goos
     QList<QPoint> possibleJoints(QPoint p); //Function to show all the possible joint from a point
@@ -89,6 +91,10 @@ private:
     void paintBg(QPainter &p);
     void paintScore(QPainter &p);
     void paintWin(QPainter &p);
+
+    //MENU BUTTON FOR TOUCHSCREEN
+    void paintButton(QPainter &p);
+    void clickButton(QPoint p);
 
 protected:
     void timerEvent(QTimerEvent *); //Timer event function here the world is updated and after the scene is redr
