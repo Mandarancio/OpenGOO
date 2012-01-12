@@ -33,16 +33,17 @@ void Joint::paint(QPainter &p){
     p.drawLine(a.x()+2,a.y()+2,b.x()-2,b.y()-2);
 }
 
+//This function check the status of the joint
 void Joint::status(){
-    if (joint==NULL){
+    if (joint==NULL){ //If the b2Joint is NULL
         emit destroyJoint(this);
         return;
     }
-    float dx=(joint->GetBodyA()->GetPosition().x-joint->GetBodyB()->GetPosition().x);
-    float dy=(joint->GetBodyA()->GetPosition().y-joint->GetBodyB()->GetPosition().y);
-    float l=sqrt(dx*dx+dy*dy);
-    float force= joint->GetReactionForce(1.0/60.0).Length();
-    if (l<50 || l>200 || force>2000) {
+    float dx=(joint->GetBodyA()->GetPosition().x-joint->GetBodyB()->GetPosition().x); //Delta x
+    float dy=(joint->GetBodyA()->GetPosition().y-joint->GetBodyB()->GetPosition().y); //Delta y
+    float l=sqrt(dx*dx+dy*dy); //This is the lenght of the joint
+    float force= joint->GetReactionForce(1.0/60.0).Length(); //Get the force applied at the joint
+    if (l<50 || l>200 || force>2000) { //If the joint is too short or too long or the force is too much broke the joint
         a->destroyLink(b);
         b->destroyLink(a);
         emit destroyJoint(this);
@@ -53,7 +54,7 @@ b2Joint* Joint::getJoint(){
     return joint;
 }
 
-bool Joint::has(Goo *a, Goo *b){
+bool Joint::has(Goo *a, Goo *b){ //Check if the joint link this two goo
     if (this->a==a && this->b==b) return true;
     if (this->b==a && this->a==b) return true;
     return false;
