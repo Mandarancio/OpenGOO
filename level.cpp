@@ -248,8 +248,8 @@ void Level::moveLeft(){
 
 void Level::moveOf(QPoint dP){
     int xf,yf;
-    xf=translation.x()+dP.x();
-    yf=translation.y()+dP.y();
+    xf=translation.x()+dP.x()/2;
+    yf=translation.y()+dP.y()/2;
     if (xf>= -limit.x()) xf=-limit.x();
     else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
     if (yf>=limit.y()) yf=limit.y();
@@ -457,7 +457,7 @@ void Level::giveTarget(Goo *previous){ //SISTEMARE STO CAZZO DI ALGORITMO!!! Non
     if (goo!=NULL){
         if (!previous){
             QPoint pos=goo->getPPosition();
-            Goo * next;
+            Goo * next=NULL ;
             bool ok=false;
             float distance=300;
             for (int i=0;i<goos.length();i++){

@@ -9,4 +9,3 @@ b2Body* Object::getBody(){
     return body;
 }
 
-void Object::paint(QPainter &p){}

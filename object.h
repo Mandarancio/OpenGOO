@@ -16,7 +16,7 @@ protected:
 signals:
 
 public slots:
-    virtual void paint(QPainter &p);
+    virtual void paint(QPainter &p)=0;
 };
 
 #endif // OBJECT_H

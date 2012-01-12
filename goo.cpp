@@ -59,7 +59,7 @@ bool Goo::hasJoint(){
 
 bool Goo::canHaveJoint(){
     if (hasJoint() && nJoints()<maxJoints) return true;
-    else false;
+    else return false;
 }
 
 bool Goo::isLinked(Goo *goo){
