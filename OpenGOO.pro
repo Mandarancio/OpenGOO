@@ -24,7 +24,8 @@ HEADERS += \
     dynamicgoo.h \
     collisionlistener.h \
     menu.h \
-    object.h
+    object.h \
+    levelloader.h
 
 SOURCES += \
     tools.cpp \
@@ -40,4 +41,5 @@ SOURCES += \
     dynamicgoo.cpp \
     collisionlistener.cpp \
     menu.cpp \
-    object.cpp
+    object.cpp \
+    levelloader.cpp
