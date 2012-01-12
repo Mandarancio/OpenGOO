@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    MainWidget w(a.desktop()->screenGeometry());
+    MainWidget w(a.desktop()->screenGeometry()); //screenGeometry() return the geometry of the display
     w.show();
 
     return a.exec();

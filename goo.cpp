@@ -118,8 +118,8 @@ void Goo::jumpTo(QPoint p){
     this->falling=true;
     body->SetGravityScale(0);
     b2Vec2 v=toVec(p)-body->GetPosition();
-    v.x*=200/v.Length();
-    v.y*=200/v.Length();
+    v.x*=250/v.Length();
+    v.y*=250/v.Length();
     body->SetAngularVelocity(0);
     body->SetLinearVelocity(v);
 }
@@ -177,6 +177,7 @@ void Goo::destroyThis(){
 
 void Goo::setTarget(Goo *goo){
         if (prevTarget!=NULL) prevTarget->removeGuest();
+        body->SetGravityScale(0);
         onGround=false;
         prevTarget=target;
         target=goo;
@@ -220,9 +221,11 @@ void Goo::drop(){
 
 void Goo::drop(b2Vec2 speed){
     stopFollow();
-    body->SetLinearVelocity(speed);
+    body->SetLinearVelocity(b2Vec2(0,0));
+
     body->SetGravityScale(1.0);
     body->SetAngularVelocity(info.aForce);
+    body->ApplyLinearImpulse(speed,body->GetPosition());
     falling=true;
     dragging=false;
 }
@@ -247,21 +250,21 @@ void Goo::moveToTarget(){
 //            }
             QPoint mePrev=getPPosition()-prevTarget->getPPosition();
             QPoint targetPrev=target->getPPosition()-prevTarget->getPPosition();
-            if (abs(mePrev.x())>abs(targetPrev.x())+10 || abs(mePrev.y())>abs(targetPrev.y())+10){
+            if (abs(mePrev.x())>abs(targetPrev.x())+12 || abs(mePrev.y())>abs(targetPrev.y())+12){
                 stopFollow();
                 fallDown();
                 return;
             }
         }
         b2Vec2 dP;
-        if (target && target->getBody()!=NULL)
+        if (target!=NULL /*&& target->getBody()!=NULL*/)
             dP=target->getVPosition()-this->getVPosition();
         else {
             stopFollow();
             fallDown();
             return;
         }
-        if (dP.Length()<=1){
+        if (dP.Length()<=4){
             emit this->nextTargetPlease(target);
             body->SetLinearVelocity(b2Vec2(0,0));
             return;

@@ -23,7 +23,7 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     center=geometry.center();
     translation=QPoint(0,0);
 
-    world = new b2World(b2Vec2(0,500));
+    world = new b2World(b2Vec2(0,5000));
 
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
@@ -400,8 +400,8 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (e->y()>=height()-5) moveDown();
     if (drag){
         mouseSpeed=(toVec(e->pos())-mousePos);
-        mouseSpeed.x*=1000;
-        mouseSpeed.y*=1000;
+        mouseSpeed.x*=10000;
+        mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
         dragged->move(e->pos()-(center+translation));
         possibility=possibleJoints(dragged->getPPosition());
@@ -516,7 +516,7 @@ void Level::paintBg(QPainter &p){
     g.setColorAt(1,c2);
     p.setPen(Qt::transparent);
     p.setBrush(g);
-    p.drawRect(-width()/2+limit.x()-5,-height()/2-limit.y()-5,width()+limit.width()*2+5,height()-limit.height()*2);
+    p.drawRect(-width()/2+limit.x()-5,-height()/2-limit.y()-5,width()+limit.width()*2+5,(height()-limit.height())*2);
 }
 
 void Level::paintScore(QPainter &p){
