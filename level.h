@@ -18,6 +18,8 @@
 #include "menu.h"
 #include "object.h"
 
+#include "levelloader.h"
+
 //This is the Scene Widget
 //It initialize evrithing
 //The world (b2World) object is here
@@ -29,6 +31,8 @@ public:
     ~Level();
 
 private:
+    //LOADER
+    LevelLoader * loader;
     //PROPERTY
     //Graphic
     QPoint center;          //Center of the display, is used to have a more human coordinate system
@@ -53,24 +57,19 @@ private:
     b2Vec2 mousePos;        //Mouse current position (is needed to calculate the speed of the mouse
     b2Vec2 mouseSpeed;      //Mouse speed (so when release the dragged goo, he take the mouse speed)
     //Level
-    QString pathLevel;      //Name of the level file
     QString name;           //Level name
     int goal;               //Number of goo to collect to win
     int points;             //Number of goo collected
     bool catched;           //If the tower of Goos is catched
-    int nBalls;             //Number of dynamic goo in the level!
-    QRect startArea;        //Where the dynamic goos are created
-    b2Vec2 startForce;      //If any, is the start force
     QRect limit;            //Translation limit
     QList<QPoint> possibility;  //To show the possible joints on the dragged goo
     //METHOD
     //Level
 
-    void readLevel(QString path);   //Function to load the level from file
-    bool parseString(QString string);   //Split a line of the file in the two component the tag and the real information
-    bool parseInfo(QString tag,QString info); //Recognize the tag and use the info
+//    void readLevel(QString path);   //Function to load the level from file
+//    bool parseString(QString string);   //Split a line of the file in the two component the tag and the real information
+//    bool parseInfo(QString tag,QString info); //Recognize the tag and use the info
 
-    void createBalls(); //To initialize the dynamic goos
     void createThorns(); //To initialize thorns
 
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
@@ -107,6 +106,16 @@ signals:
     void closing(); //When level is to close for some error reason
 public slots:
 private slots:
+    //LEVEL LOADER SLOTS:
+    void setGoal(int goal);
+    void setName(QString name);
+    void setLimit(QRect limit);
+    void setGround(QPoint gCenter,QList<QPoint> gList);
+    void setTarget(QPoint target);
+    void setStartArea(int n,QRect area);
+    void setJoint(QPoint a, QPoint b);
+
+    //LEVEL SLOTS:
     void destroyJoint(Joint * joint);   //Destroy a joint
     void destroyGOO();                  //Destroy a GOO!
     void gooCatched(Goo * goo);         //Target catch a goo

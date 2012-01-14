@@ -1,9 +1,9 @@
 #Level one
+#Start area and start joint are the only 2 tag that have the possibility to be duplicate in the level file
 Name:Level ONE
 Goal:10
-nBalls:35
-Start area:-480 0,100 30
-Start force:0 200
+#START AREA:NUMBER OF BALLS|AREA(RECTANGLE)|STATUS=ACTIVE[OPTIONAL]
+Start area:35|-480 0,100 30
 Start joint:-410 129,-480 133
 Target:400 -300
 Limit:-250 400,250 400

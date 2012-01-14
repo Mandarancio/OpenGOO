@@ -11,6 +11,10 @@
 
 #include "collisionlistener.h"
 
+#include "levelloader.h"
+
+#define RADIUS 15
+
 Level::Level(QRect geometry, QString level, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::DoubleBuffer|QGL::SampleBuffers),parent)
 {
@@ -23,15 +27,24 @@ Level::Level(QRect geometry, QString level, QWidget *parent) :
     center=geometry.center();
     translation=QPoint(0,0);
 
-    world = new b2World(b2Vec2(0,5000));
+    world = new b2World(b2Vec2(0,2000));
 
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
 
-    pathLevel=level;
-    readLevel(pathLevel);
+    loader=new LevelLoader(level);
+    loader->setDisplay(width(),height());
+    connect(loader,SIGNAL(fileError()),this,SLOT(closeAll()));
+    connect(loader,SIGNAL(levelName(QString)),this,SLOT(setName(QString)));
+    connect(loader,SIGNAL(levelGoal(int)),this,SLOT(setGoal(int)));
+    connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
+    connect(loader,SIGNAL(levelLimit(QRect)),this,SLOT(setLimit(QRect)));
+    connect(loader,SIGNAL(levelTarget(QPoint)),this,SLOT(setTarget(QPoint)));
+    connect(loader,SIGNAL(levelJoint(QPoint,QPoint)),this,SLOT(setJoint(QPoint,QPoint)));
+    connect(loader,SIGNAL(levelStartArea(int,QRect)),this,SLOT(setStartArea(int,QRect)));
 
-    createBalls();
+    loader->load();
+
    // createThorns();
 
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
@@ -59,146 +72,6 @@ Level::~Level(){
     for (int i=0;i<objects.length();i++)
         world->DestroyBody(objects[i]->getBody());
     delete world;
-}
-
-void Level::readLevel(QString path){
-    QFile file(path);
-    if (file.open(QFile::ReadOnly)){
-        QTextStream input(&file);
-        QString tmp;
-        int flags=0;
-        while (!input.atEnd()){
-            tmp=input.readLine();
-            if (tmp[0]=='#') continue;
-            if (parseString(tmp)) flags++;
-
-        }
-        if (flags!=9) {
-            qWarning()<<"File malformed!";
-            emit closing();
-            return;
-        }
-        file.close();
-    }
-    else {
-        qWarning()<<"File not found!!";
-
-        emit this->closing();
-        this->close();
-    }
-}
-
-bool Level::parseString(QString string)
-{
-    QString tag=string.split(':').at(0);
-    QString info;
-    if (string.split(':').length()==2) info=string.split(':').at(1);
-    else{
-        qWarning()<<"File malformated";
-        emit this->closing();
-        return false;
-    }
-    if (parseInfo(tag,info)) return true;
-    else return false;
-}
-
-bool Level::parseInfo(QString tag, QString info){
-    int wC,hC;
-    wC=this->width();
-    hC=this->height();
-    if (!tag.compare("name",Qt::CaseInsensitive)){
-        name=info;
-        return true;
-    }
-    if (!tag.compare("goal",Qt::CaseInsensitive)){
-        bool ok;
-        goal=info.toInt(&ok);
-        return ok;
-    }
-    if (!tag.compare("nBalls",Qt::CaseInsensitive)){
-        bool ok;
-        nBalls=info.toInt(&ok);
-        return ok;
-    }
-    if (!tag.compare("start area",Qt::CaseInsensitive)){
-        if (info.split(',').length()==2){
-            bool ok=true;
-            startArea=pRect(info,ok,wC,hC);
-            return ok;
-        }
-        else return false;
-    }
-    if (!tag.compare("limit",Qt::CaseInsensitive)){
-        if (info.split(',').length()==2){
-            bool ok=true;
-            limit=QRect(pList(info,ok,wC,hC,2).at(0),pList(info,ok,wC,hC,2).at(1));
-            return ok;
-        }
-        else return false;
-    }
-    if (!tag.compare("start joint",Qt::CaseInsensitive)){
-        if (info.split(',').length()==2){
-            bool ok=true;
-            QPoint a,b;
-            a=pList(info,ok,wC,hC,2).at(0);
-            b=pList(info,ok,wC,hC,2).at(1);
-            if (!ok) return false;
-            a.setX(a.x()+15);
-            a.setY(a.y()-15);
-            b.setX(b.x()+15);
-            b.setY(b.y()-15);
-            FixedGoo* aG,*bG;
-            aG=new FixedGoo(world,a);
-            bG=new FixedGoo(world,b);
-            goos.push_back(aG);
-            goos.push_back(bG);
-
-            return makeJoint(aG,bG);
-
-        }
-        else return false;
-    }
-    if (!tag.compare("start force",Qt::CaseInsensitive)){
-        bool ok;
-        startForce=toVec(pPoint(info,ok));
-        return ok;
-    }
-    if (!tag.compare("target",Qt::CaseInsensitive)){
-        bool ok;
-        QPoint tPoint=pPoint(info,ok,wC,hC);
-        if (!ok) return false;
-        target=new Target(tPoint,hC,world,this);
-        return true;
-    }
-    if (!tag.compare("ground",Qt::CaseInsensitive)){
-        if (info.split('|').length()!=2) return false;
-        QString center,list;
-        center=info.split('|').at(0);
-        list=info.split('|').at(1);
-        bool ok=true;
-        QPoint gCenter=pPoint(center,ok,wC,hC);
-
-        if (!ok) return false;
-        QList <QPoint> gList=pList(list,ok,wC,hC,2);
-        if (!ok) return false;
-        ground= new Ground(world,gCenter,gList,this);
-        return true;
-    }
-    return false;
-}
-
-void Level::createBalls(){
-    int x,y;
-    for (int i=0;i<nBalls;i++){
-        x=startArea.x()+rand()%startArea.width();
-        y=startArea.y()+rand()%startArea.height();
-        DynamicGoo* dg=new DynamicGoo(world,QPoint(x,y));
-        dg->getBody()->ApplyForceToCenter(startForce);
-        goos.push_back(dg);
-        connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
-        connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
-        connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
-    }
 }
 
 void Level::createThorns(){
@@ -526,10 +399,10 @@ void Level::paintScore(QPainter &p){
     f.setBold(true);
     f.setPointSize(30);
     p.setFont(f);
-    p.drawText(10,35,QString::number(points));
+    p.drawText(10,height()-26,QString::number(points));
     f.setPointSize(15);
     p.setFont(f);
-    p.drawText(10,55,"of "+QString::number(goal));
+    p.drawText(10,height()-7,"of "+QString::number(goal));
 }
 
 void Level::paintWin(QPainter &p){
@@ -586,8 +459,7 @@ void Level::restart(){
     world = new b2World(b2Vec2(0,500));
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
-    readLevel(pathLevel);
-    createBalls();
+    loader->load();
     //createThorns();
     points=0;
     catched=false;
@@ -614,4 +486,51 @@ void Level::destroyJoint(Goo *a, Goo *b){
             jointsToDestroy.push_back(joints[i]);
         }
     }
+}
+
+//LOADER FUNCTION
+
+void Level::setName(QString name){
+    this->name=name;
+}
+
+void Level::setGoal(int goal){
+    this->goal=goal;
+}
+
+void Level::setLimit(QRect limit){
+    this->limit=limit;
+}
+
+void Level::setGround(QPoint gCenter, QList<QPoint> gList){
+    ground=new Ground(world,gCenter,gList,this);
+}
+
+void Level::setTarget(QPoint target){
+    this->target=new Target(target,height(),world,this);
+}
+
+void Level::setStartArea(int n, QRect area){
+    int x,y;
+    for (int i=0;i<n;i++){
+        x=area.x()+rand()%area.width();
+        y=area.y()+rand()%area.height();
+        DynamicGoo* dg=new DynamicGoo(world,QPoint(x,y),RADIUS);
+        goos.push_back(dg);
+        connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+        connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+        connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+    }
+}
+
+void Level::setJoint(QPoint a, QPoint b){
+    QPoint ga(a.x()+RADIUS,a.y()-RADIUS);
+    QPoint gb(b.x()+RADIUS,b.y()-RADIUS);
+    FixedGoo *gooA,*gooB;
+    gooA=new FixedGoo(world,ga,RADIUS,this);
+    gooB=new FixedGoo(world,gb,RADIUS,this);
+    goos.push_back(gooA);
+    goos.push_back(gooB);
+
+    makeJoint(gooA,gooB);
 }
