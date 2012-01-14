@@ -100,7 +100,7 @@ bool LevelLoader::parseInfo(QString tag, QString info){
             bool ok=true;
             int nb=n.toInt(&ok); //NUMBER OF BALLS
             QRect startArea=pRect(rect,ok,wC,hC); //RECT AREA
-            if (ok) emit levelStartArea(nb,startArea);
+            if (ok) emit    levelStartArea(nb,startArea);
             return ok;
         }
         else return false;
@@ -128,11 +128,6 @@ bool LevelLoader::parseInfo(QString tag, QString info){
         }
         else return false;
     }
-   /* if (!tag.compare("start force",Qt::CaseInsensitive)){ //OBSOLETE
-        bool ok;
-        startForce=toVec(pPoint(info,ok));
-        return ok;
-    }*/ //OBSOLETE
     if (!tag.compare("target",Qt::CaseInsensitive)&&!target){ //WHERE IS The target
         bool ok;
         QPoint tPoint=pPoint(info,ok,wC,hC);

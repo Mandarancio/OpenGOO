@@ -20,3 +20,9 @@ FixedGoo::FixedGoo(b2World *world, QPoint p, int radius, QObject *parent):
     onGround=true;
     groundPoint=p;
 }
+
+void FixedGoo::paint(QPainter &p){
+    p.setPen(Qt::black);
+    p.setBrush(Qt::black);
+    p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+}

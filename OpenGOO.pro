@@ -25,7 +25,8 @@ HEADERS += \
     collisionlistener.h \
     menu.h \
     object.h \
-    levelloader.h
+    levelloader.h \
+    stickyjoint.h
 
 SOURCES += \
     tools.cpp \
@@ -42,4 +43,11 @@ SOURCES += \
     collisionlistener.cpp \
     menu.cpp \
     object.cpp \
-    levelloader.cpp
+    levelloader.cpp \
+    stickyjoint.cpp
+
+
+
+
+
+

@@ -51,8 +51,8 @@ public:
 
     void jumpTo(QPoint p);
 
-    void catched();
-    void lost();
+    virtual void catched();
+    virtual void lost();
 
 
     b2Body* getBody();
@@ -64,7 +64,6 @@ public:
 private:
     QList <Goo*> links;
     int radius;
-    int speed;
     dragInfo info;
 protected:
     b2Body* body;
@@ -79,6 +78,7 @@ protected:
     int guestN;
 
     Goo* target,*prevTarget;
+
 
     void moveToTarget(); //Move the goos through the joints
     void stopFollow();
