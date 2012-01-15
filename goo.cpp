@@ -170,6 +170,7 @@ void Goo::destroyThis(){
 }
 
 void Goo::setTarget(Goo *goo){
+        if (isFalling()) falling=false;
         if (prevTarget!=NULL) prevTarget->removeGuest();
         body->SetGravityScale(0);
         onGround=false;
