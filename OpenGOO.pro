@@ -26,7 +26,7 @@ HEADERS += \
     menu.h \
     object.h \
     levelloader.h \
-    stickyjoint.h
+    stickylink.h
 
 SOURCES += \
     tools.cpp \
@@ -44,10 +44,4 @@ SOURCES += \
     menu.cpp \
     object.cpp \
     levelloader.cpp \
-    stickyjoint.cpp
-
-
-
-
-
-
+    stickylink.cpp

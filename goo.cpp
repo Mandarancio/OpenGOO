@@ -180,9 +180,6 @@ void Goo::setTarget(Goo *goo){
         following=true;
 }
 
-void Goo::paint(QPainter &p){
-
-}
 
 
 void Goo::drag(){

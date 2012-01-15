@@ -66,13 +66,15 @@ private:
     int radius;
     dragInfo info;
 protected:
-    b2Body* body;
-    bool dragable;
-    bool moovable;
-    bool falling;
-    bool following;
-    bool dragging;
-    bool onGround;
+    b2Body* body; //physical body
+    //FLAGS
+    bool dragable; // If the user can drag it
+    bool moovable; // If is moovable
+    bool falling; //If is falling down
+    bool following;//If is following another goo
+    bool dragging; //If the user is courrently dragging that
+    bool onGround; //If the goo is on the ground (and inactive)
+    //Propierties
     QPoint groundPoint;
     int minJoints,maxJoints;
     int guestN;
@@ -92,7 +94,7 @@ private slots:
     void checkForConnection(Goo* goo);
 
 public slots:
-    virtual void paint(QPainter &p);//Draw the goo
+    virtual void paint(QPainter &p)=0;//Draw the goo
 
 };
 

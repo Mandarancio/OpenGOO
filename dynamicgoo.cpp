@@ -4,25 +4,28 @@
 DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     Goo(radius,parent)
 {
-    b2BodyDef def;
-    def.awake=true;
-    def.type=b2_dynamicBody;
-    def.position=toVec(p);
-    body=world->CreateBody(&def);
-    b2CircleShape shape;
-    shape.m_p.SetZero();
-    shape.m_radius=radius;
-    b2FixtureDef fixDef;
-    fixDef.restitution=0.3;
-    fixDef.density=1.0;
-    fixDef.friction=0.8;
-    fixDef.shape=&shape;
-    fixDef.userData=this;
-    body->CreateFixture(&fixDef);
+    this->world=world; //get a copy of the world
+
+
+    b2BodyDef def; //body definition
+    def.awake=true; //is active
+    def.type=b2_dynamicBody; //is dynamci (react at force impulse and collision)
+    def.position=toVec(p); //set the position
+    body=world->CreateBody(&def); //create the physical body
+    b2CircleShape shape; //define the shape
+    shape.m_p.SetZero(); //position of the shape
+    shape.m_radius=radius; //radius
+    b2FixtureDef fixDef; //Definition of the phisical parameters
+    fixDef.restitution=0.3; //collision restitution
+    fixDef.density=1.0; //density
+    fixDef.friction=0.8; //friction
+    fixDef.shape=&shape; //assign the shape
+    fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
+    body->CreateFixture(&fixDef); //create the fixture
     body->SetLinearDamping(0.1);//Not sure about this parameter
-    moovable=true;
+    moovable=true; //flags
     dragable=true;
-    maxJoints=7;
+    maxJoints=7; //parameters
     speed=50;
 }
 
