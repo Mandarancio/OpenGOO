@@ -10,11 +10,11 @@ class CollisionListener : public QObject, public b2ContactListener
 {
     Q_OBJECT
 public:
-    explicit CollisionListener(QObject *parent = 0);
-    void PreSolve(b2Contact *contact, const b2Manifold *oldManifold);
+    explicit CollisionListener(QObject *parent = 0); //Constructor
+    void PreSolve(b2Contact *contact, const b2Manifold *oldManifold); //Pre solve of the collision
 
 signals:
-    void destroyGOO(Goo * goo);
+    void destroyGOO(Goo * goo); //signal to destroy a goo (Ex: a goo collide with a thorn)
 public slots:
 
 };
