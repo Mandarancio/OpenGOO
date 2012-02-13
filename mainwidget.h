@@ -9,7 +9,7 @@ class MainWidget : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWidget(QRect geometry,QWidget *parent = 0);
+    MainWidget(QRect geometry,bool debug =false,QWidget *parent = 0);
     ~MainWidget();
 private:
     Level *level;

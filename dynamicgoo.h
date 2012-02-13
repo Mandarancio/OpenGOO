@@ -3,19 +3,31 @@
 
 #include "goo.h"
 
-class DynamicGoo : public Goo
+#include <QObject>
+
+class DynamicGoo :public Goo
 {
+    Q_OBJECT
 public:
     DynamicGoo(b2World * world,QPoint p=QPoint(0,0),int radius=15,QObject *parent = 0);
     void catched(); //if the tower catch the target
     void lost(); //if is the tower lost the target
+    void contactGround();  //collision between goo and ground
+    void contactGround(QPoint p);//collision between goo and ground  in the point p(create a sticky joint!)
+    void unstick(); //To unstick the goo
 private:
     b2World * world;// copy of the world
     int speed; //Speed
+    bool sticked; //flag to know if is sticked to the ground
 protected:
     void moveToTarget(); //move to the target
+private slots:
+
 public slots:
     void paint(QPainter &p); //Draw the goo
+
+signals:
+    void createSticky(QPoint p);
 };
 
 #endif // DYNAMICGOO_H

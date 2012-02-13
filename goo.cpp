@@ -151,14 +151,7 @@ bool Goo::destroyLink(Goo *goo){
     else return false;
 }
 
-void Goo::contactGround(){
-    onGround=true;
-    groundPoint=this->getPPosition();
-    if (falling) {
-        falling=false;
-        emit nextTargetPlease(NULL);
-    }
-}
+
 
 void Goo::destroyThis(){
     for (int i=0;i<links.length();i++){
@@ -255,9 +248,11 @@ void Goo::checkForConnection(Goo *goo){
 void Goo::fallDown(){
     onGround=false;
     falling=true;
-    body->SetLinearVelocity(b2Vec2(0,0));
-    body->SetGravityScale(1.0);
+    body->SetGravityScale(21.0);
     body->SetAngularVelocity(0);
+    body->SetLinearVelocity(b2Vec2(0,0));
+    body->ApplyForce(b2Vec2(0,2000000),b2Vec2(0,0));
+
 }
 
 

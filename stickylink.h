@@ -8,18 +8,34 @@
 #include "goo.h"
 
 #include <QPoint>
+#include <QPainter>
 
 class StickyLink : public QObject
 {
     Q_OBJECT
 public:
-    explicit StickyLink(Goo* goo,Ground *ground, QPoint contactPoint,b2World *world, int strength=2000,QObject *parent = 0);
+
+    explicit StickyLink(Goo* goo,b2Body *ground, QPoint contactPoint,b2World *world, int strength=2000,QObject *parent = 0);
+    //Check the status of the joint
     void checkStatus();
+    //Return the joint
     b2Joint* getJoint();
+    //Set the joint [OBSOLETE]
+    void setJoint(b2Joint* j);
+    //RETURN THE GOO
+    Goo* getGoo();
+
+    //DEBUG PAINT
+    void paint(QPainter &p);
+
 private:
+    //Copy of the goo
+    Goo * goo;
+    //Physical joint
     b2DistanceJoint *joint;
     int strength;
 signals:
+    //SIGNAL TO ADVICE THE DESTRUCTION OF THE STICKY Joint!
     void destroySticky();
 public slots:
 

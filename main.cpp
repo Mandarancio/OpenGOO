@@ -20,12 +20,18 @@ This program is free software: you can redistribute it and/or modify
 #include <QRect>
 #include <QDesktopWidget>
 
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    MainWidget w(a.desktop()->screenGeometry()); //screenGeometry() return the geometry of the display
+    bool debug=false;
+    if (argc==2 && !QString::fromAscii(argv[1]).compare("-Debug")){
+        debug=true;
+        qWarning("DEBUG MODE ON");
+    }
+    else qWarning("STD MODE");
+    MainWidget w(a.desktop()->screenGeometry(),debug); //screenGeometry() return the geometry of the display
     w.show();
 
     return a.exec();

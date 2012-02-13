@@ -2,6 +2,10 @@
 #include "target.h"
 #include "thorn.h"
 
+#include "tools.h"
+
+#include <QDebug>
+
 CollisionListener::CollisionListener(QObject *parent) :
     QObject(parent)
 {
@@ -29,7 +33,11 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
             t=static_cast<Target*>(contact->GetFixtureB()->GetBody()->GetUserData()); //check if is the target
             th=static_cast<Thorn*>(contact->GetFixtureB()->GetBody()->GetUserData()); //check if is a thorn
             if (!t && !th&& a) { //if isn't any of the both and first body is a goo
-                if (a&&a->isFalling())a->contactGround(); //advice the goo that he/it touch the ground
+                if (a){//advice the goo that he/it touch the ground
+                    b2Vec2 p=contact->GetManifold()->localPoint;
+                    p.y=a->getVPosition().y-p.y;
+                    a->contactGround(toPoint(p));
+                }
             }
             if (th) a->destroyThis(); //if is thorn destroy the goo!
         }
@@ -38,7 +46,12 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
             th=static_cast<Thorn*>(contact->GetFixtureA()->GetBody()->GetUserData());
 
             if (!t&&!th&&b) {
-                if (b&&b->isFalling())b->contactGround();
+                if (b){
+                    b2Vec2 p=contact->GetManifold()->localPoint;
+                    p.y=b->getVPosition().y-p.y;
+                   //p.x=b->getVPosition().x+p.x;
+                    b->contactGround(toPoint(p));
+                }
             }
             if (th) b->destroyThis();
         }

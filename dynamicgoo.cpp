@@ -1,11 +1,12 @@
 #include "dynamicgoo.h"
 #include "tools.h"
 
+
 DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     Goo(radius,parent)
 {
     this->world=world; //get a copy of the world
-
+    sticked=false; //start not sticked at ground
 
     b2BodyDef def; //body definition
     def.awake=true; //is active
@@ -17,12 +18,17 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     shape.m_radius=radius; //radius
     b2FixtureDef fixDef; //Definition of the phisical parameters
     fixDef.restitution=0.3; //collision restitution
-    fixDef.density=1.0; //density
+    fixDef.density=0.0; //density
     fixDef.friction=0.8; //friction
     fixDef.shape=&shape; //assign the shape
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
     body->CreateFixture(&fixDef); //create the fixture
     body->SetLinearDamping(0.1);//Not sure about this parameter
+//    b2MassData* mass=new b2MassData();
+//    mass->center.SetZero();
+//    mass->I=0.;
+//    mass->mass=10.0 ;
+//    body->SetMassData(mass);
     moovable=true; //flags
     dragable=true;
     maxJoints=7; //parameters
@@ -49,7 +55,7 @@ void DynamicGoo::moveToTarget(){
 //            }
             QPoint mePrev=getPPosition()-prevTarget->getPPosition();
             QPoint targetPrev=target->getPPosition()-prevTarget->getPPosition();
-            if (abs(mePrev.x())>abs(targetPrev.x())+12 || abs(mePrev.y())>abs(targetPrev.y())+12){
+            if (abs(mePrev.x())>abs(targetPrev.x())+10 || abs(mePrev.y())>abs(targetPrev.y())+10){
                 stopFollow();
                 fallDown();
                 return;
@@ -80,4 +86,32 @@ void DynamicGoo::paint(QPainter &p){
     p.setPen(Qt::black);
     p.setBrush(Qt::black);
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+}
+
+void DynamicGoo::unstick(){
+    sticked=false;
+}
+
+void DynamicGoo::contactGround(){
+    onGround=true;
+    groundPoint=this->getPPosition();
+    if (falling) {
+        falling=false;
+        emit nextTargetPlease(NULL);
+    }
+}
+
+void DynamicGoo::contactGround(QPoint p){
+    onGround=true;
+    groundPoint=this->getPPosition();
+    if (falling) {
+        falling=false;
+        emit nextTargetPlease(NULL);
+    }
+    else if (hasJoint() && !sticked){ //if has joint and is not sticked on ground
+        //if (body->GetLinearVelocity().Length()<=90){
+        emit this->createSticky(p);
+        sticked=true; //flag to true
+        //}
+    }
 }

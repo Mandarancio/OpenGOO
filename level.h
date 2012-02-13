@@ -10,6 +10,8 @@
 #include <QKeyEvent>
 #include <Box2D/Box2D.h>
 
+#include <QPair>
+
 
 #include "goo.h"
 #include "ground.h"
@@ -20,6 +22,12 @@
 
 #include "levelloader.h"
 
+#include <stickylink.h>
+
+
+//Flag of the game
+enum RunFlag {STANDARD, DEBUG};
+
 //This is the Scene Widget
 //It initialize evrithing
 //The world (b2World) object is here
@@ -27,10 +35,12 @@ class Level : public QGLWidget //QWidget <--To use without openGL
 {
     Q_OBJECT
 public:
-    explicit Level(QRect geometry,QString level,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
+    explicit Level(QRect geometry,QString level,RunFlag flag = STANDARD,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level();
 
 private:
+    //Run type flag
+    RunFlag flag;
     //LOADER
     LevelLoader * loader;
     //PROPERTY
@@ -49,6 +59,13 @@ private:
     QList<Goo*> goosToDestroy;  //GOOs to be destroyed the next update!
     QList<Joint*> joints;   //All the joints!
     QList<Joint*> jointsToDestroy; //Joints to be destroyed the next update!
+
+    //STICKY VARIABLE
+    //LIST OF THE STICKY TO BE CREATED
+    QList< QPair<Goo*,QPoint> > stickyToCreate;
+    //DEBUG LIST
+    QList<StickyLink*> stickys;
+
     QList<Object*> objects;
     Target* target;         //The target object
     bool drag;              //If the player is dragging some goo
@@ -96,12 +113,19 @@ private:
     void clickButton(QPoint p);
 
 protected:
-    void timerEvent(QTimerEvent *); //Timer event function here the world is updated and after the scene is redr
-    void paintEvent(QPaintEvent *); //Function that draw evrithing in the scene
-    void keyReleaseEvent(QKeyEvent *);  //Key release function (esc: to exit, up/left/down/right to move the scene
-    void mouseMoveEvent(QMouseEvent *); //Mouse moove event
-    void mousePressEvent(QMouseEvent *);    //Press mouse event
-    void mouseReleaseEvent(QMouseEvent *);  //Release mouse event
+    //Timer event function here the world is updated and after the scene is redr
+    void timerEvent(QTimerEvent *);
+    //Function that draw evrithing in the scene
+    void paintEvent(QPaintEvent *);
+    //Key release function (esc: to exit, up/left/down/right to move the scene
+    void keyReleaseEvent(QKeyEvent *);
+    //Mouse moove event
+    void mouseMoveEvent(QMouseEvent *);
+    //Press mouse event
+    void mousePressEvent(QMouseEvent *);
+    //Release mouse event
+    void mouseReleaseEvent(QMouseEvent *);
+
 signals:
     void closing(); //When level is to close for some error reason
 public slots:
@@ -114,6 +138,9 @@ private slots:
     void setTarget(QPoint target);
     void setStartArea(int n,QRect area);
     void setJoint(QPoint a, QPoint b);
+
+    void createSticky(QPoint p);
+    void destroySticky();
 
     //LEVEL SLOTS:
     void destroyJoint(Joint * joint);   //Destroy a joint

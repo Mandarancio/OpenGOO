@@ -7,6 +7,7 @@
 
 #include <Box2D/Box2D.h>
 
+
 struct dragInfo{
     b2Vec2 speed;
     float aForce;
@@ -43,8 +44,9 @@ public:
     virtual bool createLink(Goo* goo);
     virtual bool destroyLink(Goo* goo);
 
-    virtual void contactGround();
-    virtual void destroyThis();
+    virtual void contactGround()=0; //contact with the ground
+    virtual void contactGround(QPoint p)=0; //contact with the ground in the point p
+    virtual void destroyThis(); //destroy this goo
     void setTarget(Goo* goo);
 
     void move(QPoint p);
@@ -92,6 +94,7 @@ signals:
     void destroyJoint(Goo* a,Goo*b);
 private slots:
     void checkForConnection(Goo* goo);
+    virtual void deleteSticky(){};
 
 public slots:
     virtual void paint(QPainter &p)=0;//Draw the goo

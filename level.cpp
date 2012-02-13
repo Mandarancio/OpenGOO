@@ -8,6 +8,7 @@
 #include "fixedgoo.h"
 #include "dynamicgoo.h"
 #include "thorn.h"
+#include "stickylink.h"
 
 #include "collisionlistener.h"
 
@@ -15,9 +16,13 @@
 
 #define RADIUS 15
 
-Level::Level(QRect geometry, QString level, QWidget *parent) :
+Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::DoubleBuffer|QGL::SampleBuffers),parent)
 {
+
+
+    this->flag=flag;
+
     this->setGeometry(geometry);
 
     this->grabKeyboard();
@@ -182,7 +187,12 @@ void Level::timerEvent(QTimerEvent *e){
     e->accept();
     world->Step(step,10,10);
     world->ClearForces();
-
+    for (int i=0;i<stickyToCreate.length();i++){
+        QPair<Goo*,QPoint> p= stickyToCreate.at(i);
+        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world);
+        if (flag==DEBUG) stickys.push_back(sl);
+        connect(sl,SIGNAL(destroySticky()),this,SLOT(destroySticky()));
+    }
     for (int i=0;i<jointsToDestroy.length();i++){
         if (!joints.contains(jointsToDestroy[i]))  continue;
         else {
@@ -203,6 +213,7 @@ void Level::timerEvent(QTimerEvent *e){
     target->checkTower(goos);
     target->applyForces(goos);
     repaint();
+    stickyToCreate.clear();
 }
 
 void Level::paintEvent(QPaintEvent *e){
@@ -233,6 +244,10 @@ void Level::paintEvent(QPaintEvent *e){
         if (joints[i]) joints[i]->paint(p);
     for (int i=0;i<goos.length();i++)
         if (goos[i]) goos[i]->paint(p);
+    if (flag==DEBUG) {
+        for (int i=0;i<stickys.length();i++)
+            stickys[i]->paint(p);
+    }
     p.restore();
     paintWin(p);
     paintScore(p);
@@ -520,6 +535,7 @@ void Level::setStartArea(int n, QRect area){
         connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
         connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
         connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+        connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
     }
 }
 
@@ -533,4 +549,26 @@ void Level::setJoint(QPoint a, QPoint b){
     goos.push_back(gooB);
 
     makeJoint(gooA,gooB);
+}
+
+void Level::createSticky(QPoint p){
+    Goo* goo=dynamic_cast<Goo*>(sender());
+    if (goo!=NULL){
+        QPair <Goo*,QPoint> ps;
+        ps.first=goo;
+        ps.second=p;
+        stickyToCreate.push_back(ps);
+    }
+}
+
+void Level::destroySticky(){
+    StickyLink * sl=dynamic_cast<StickyLink*>(sender());
+    if (sl!=NULL){
+        if (flag==DEBUG) qWarning()<<"Sticky destroied";
+        if (flag==DEBUG) stickys.removeOne(sl);
+        DynamicGoo*dg=dynamic_cast<DynamicGoo*>(sl->getGoo());
+        dg->unstick();
+        world->DestroyJoint(sl->getJoint());
+        delete sl;
+    }
 }
