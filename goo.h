@@ -32,7 +32,7 @@ public:
     void drop();
     void drop(b2Vec2 speed);
 
-    bool isDragable();
+    virtual bool isDragable();
     bool isMoovable();
     bool isFalling();
     bool isDragging();

@@ -35,7 +35,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
             if (!t && !th&& a) { //if isn't any of the both and first body is a goo
                 if (a){//advice the goo that he/it touch the ground
                     b2Vec2 p=contact->GetManifold()->localPoint;
-                    p.y=a->getVPosition().y-p.y;
+                    p=a->getBody()->GetWorldPoint(p);
                     a->contactGround(toPoint(p));
                 }
             }
@@ -47,9 +47,12 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
 
             if (!t&&!th&&b) {
                 if (b){
-                    b2Vec2 p=contact->GetManifold()->localPoint;
-                    p.y=b->getVPosition().y-p.y;
-                   //p.x=b->getVPosition().x+p.x;
+                    b2Vec2 p=oldManifold->localPoint;
+                   // p.y=b->getVPosition().y-p.y;
+                    b2Vec2 pa=contact->GetFixtureA()->GetBody()->GetPosition();
+                   // p.y=pa.y+p.y;
+                    p= contact->GetFixtureA()->GetBody()->GetWorldPoint(p);
+                    //p.x=b->getVPosition().x+p.x;
                     b->contactGround(toPoint(p));
                 }
             }

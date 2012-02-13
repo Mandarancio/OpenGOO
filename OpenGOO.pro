@@ -45,3 +45,12 @@ SOURCES += \
     object.cpp \
     levelloader.cpp \
     stickylink.cpp
+
+
+##FOR TOUCHPAD COMPILE
+#!win32: {
+#message(assume qws)
+## Set the runtime path to a relative directory w.r.t. the location of the executable
+#LIBS += -Wl,-rpath,"'\$$ORIGIN/qt'" -L/opt/PalmPDK/device/lib -lpdl -lSDL
+#INCLUDEPATH += /opt/PalmPDK/include/SDL
+#}

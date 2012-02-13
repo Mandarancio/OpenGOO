@@ -15,6 +15,8 @@ public:
     void contactGround();  //collision between goo and ground
     void contactGround(QPoint p);//collision between goo and ground  in the point p(create a sticky joint!)
     void unstick(); //To unstick the goo
+
+    bool isDragable();
 private:
     b2World * world;// copy of the world
     int speed; //Speed

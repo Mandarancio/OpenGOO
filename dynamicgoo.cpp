@@ -53,7 +53,15 @@ void DynamicGoo::moveToTarget(){
 //                drop();
 //                return;
 //            }
+            QPoint meTarget=target->getPPosition()-getPPosition();
+            if (toVec(meTarget).Length()>150) {
+                stopFollow();
+                fallDown();
+                return;
+            }
+
             QPoint mePrev=getPPosition()-prevTarget->getPPosition();
+
             QPoint targetPrev=target->getPPosition()-prevTarget->getPPosition();
             if (abs(mePrev.x())>abs(targetPrev.x())+10 || abs(mePrev.y())>abs(targetPrev.y())+10){
                 stopFollow();
@@ -115,4 +123,9 @@ void DynamicGoo::contactGround(QPoint p){
         sticked=true; //flag to true
         //}
     }
+}
+
+bool DynamicGoo::isDragable(){
+    if (!hasJoint()) return true;
+    else return false;
 }

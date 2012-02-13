@@ -190,7 +190,7 @@ void Level::timerEvent(QTimerEvent *e){
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
-        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,3);
+        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,5);
         stickys.push_back(sl);
         connect(sl,SIGNAL(destroySticky()),this,SLOT(destroySticky()));
     }
@@ -543,9 +543,11 @@ void Level::setStartArea(int n, QRect area){
 void Level::setJoint(QPoint a, QPoint b){
     QPoint ga(a.x()+RADIUS,a.y()-RADIUS);
     QPoint gb(b.x()+RADIUS,b.y()-RADIUS);
-    FixedGoo *gooA,*gooB;
-    gooA=new FixedGoo(world,ga,RADIUS,this);
-    gooB=new FixedGoo(world,gb,RADIUS,this);
+    DynamicGoo *gooA,*gooB;
+    gooA=new DynamicGoo(world,ga,RADIUS,this);
+    gooB=new DynamicGoo(world,gb,RADIUS,this);
+    connect(gooA,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+    connect(gooB,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
     goos.push_back(gooA);
     goos.push_back(gooB);
 
