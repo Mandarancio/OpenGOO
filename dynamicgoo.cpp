@@ -110,6 +110,7 @@ void DynamicGoo::contactGround(QPoint p){
     }
     else if (hasJoint() && !sticked){ //if has joint and is not sticked on ground
         //if (body->GetLinearVelocity().Length()<=90){
+
         emit this->createSticky(p);
         sticked=true; //flag to true
         //}

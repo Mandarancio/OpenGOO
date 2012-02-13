@@ -187,10 +187,11 @@ void Level::timerEvent(QTimerEvent *e){
     e->accept();
     world->Step(step,10,10);
     world->ClearForces();
+    for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
-        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world);
-        if (flag==DEBUG) stickys.push_back(sl);
+        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,3);
+        stickys.push_back(sl);
         connect(sl,SIGNAL(destroySticky()),this,SLOT(destroySticky()));
     }
     for (int i=0;i<jointsToDestroy.length();i++){
@@ -565,7 +566,7 @@ void Level::destroySticky(){
     StickyLink * sl=dynamic_cast<StickyLink*>(sender());
     if (sl!=NULL){
         if (flag==DEBUG) qWarning()<<"Sticky destroied";
-        if (flag==DEBUG) stickys.removeOne(sl);
+        stickys.removeOne(sl);
         DynamicGoo*dg=dynamic_cast<DynamicGoo*>(sl->getGoo());
         dg->unstick();
         world->DestroyJoint(sl->getJoint());

@@ -1,6 +1,7 @@
 #include "stickylink.h"
 #include "tools.h"
 
+#include <QDebug>
 StickyLink::StickyLink(Goo *goo, b2Body *ground, QPoint contactPoint, b2World *world, int strength, QObject *parent) :
     QObject(parent)
 {
@@ -16,7 +17,7 @@ StickyLink::StickyLink(Goo *goo, b2Body *ground, QPoint contactPoint, b2World *w
 }
 
 void StickyLink::checkStatus(){
-    if (!joint) return;
+   // qWarning()<<joint->GetReactionForce(1.0/60).Length();
     if (joint->GetReactionForce(1.0/60).Length()>strength) emit destroySticky(); //If the force > of the maximum force barke the link!
 }
 
