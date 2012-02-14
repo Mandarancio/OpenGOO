@@ -4,6 +4,7 @@
 
 #include "tools.h"
 
+#include <qmath.h>
 #include <QDebug>
 
 CollisionListener::CollisionListener(QObject *parent) :
@@ -36,6 +37,10 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                 if (a){//advice the goo that he/it touch the ground
                     b2Vec2 p=contact->GetManifold()->localPoint;
                     p=a->getBody()->GetWorldPoint(p);
+                    if ((p-a->getVPosition()).Length()>50) {
+                        p=a->getVPosition();
+                        p.y+=20;
+                    }
                     a->contactGround(toPoint(p));
                 }
             }
@@ -47,11 +52,39 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
 
             if (!t&&!th&&b) {
                 if (b){
+                    //RETRIVE COLLISION POINT
                     b2Vec2 p=oldManifold->localPoint;
-                   // p.y=b->getVPosition().y-p.y;
-                     // p.y=pa.y+p.y;
+                    //CHANGE CORDINATE SYSTEM
                     p= contact->GetFixtureA()->GetBody()->GetWorldPoint(p);
                     //p.x=b->getVPosition().x+p.x;
+                    //FOR UNKNOW REAZON SOMETIMES THE COLLISION POINT IS COMPLITLY WRONG
+                    //SO I MADE THIS WORK AROUND TO FIX IT
+                    //WORKAROUND
+                    //CHECK IF THE COLLISION POINT IS TOO DISTANT FROM MY BODY FOR BE A CORRECT POINT
+                    if ((p-b->getVPosition()).Length()>50) {
+                        //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT
+                        p=b->getVPosition();
+                        //RETRIVE THE NORMAL OF THE COLLISION
+                        b2Vec2 n=oldManifold->localNormal;
+                        //NORMALY THE NORMAL IS CORRECT
+                        //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
+                        //CHECK IF Y COMPONTENT OF THE NORMAL IS BIGGER OF THE X
+                        if (fabs(n.y)>=fabs(n.x)){
+                            //CHECK IF THE Y COMPONENT IS BIGGER THAN 0 SO ADD -20 TO P.Y
+                            if (n.y>0) p.y-=20;
+                            //ELSE ADD +20 TO P.Y
+                            else p.y+=20;
+                        }
+                        //ELSE
+                        else{
+                            //CHECK IF X COMPONENT IS BIGGER THE 0 SO ADD -20 TO P.X
+                            if (n.x>0) p.x-=20;
+                            //ELSE ADD +20 TO P.X
+                            else p.x+=20;
+                        }
+                    }
+                    //END WORKAROUND
+                    //CALL CONTACTGROUND WITH THE CALCULATED P
                     b->contactGround(toPoint(p));
                 }
             }

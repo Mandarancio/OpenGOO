@@ -583,13 +583,18 @@ void Level::createSticky(QPoint p){
 }
 
 void Level::destroySticky(){
+    //CAST THE SENDER
     StickyLink * sl=dynamic_cast<StickyLink*>(sender());
     if (sl!=NULL){
-        if (flag==DEBUG) qWarning()<<"Sticky destroied";
+        //REMOVE STICKY FORM THE LIST
         stickys.removeOne(sl);
+        //RETRIVE GOO LINKED AT THE JOINT
         DynamicGoo*dg=dynamic_cast<DynamicGoo*>(sl->getGoo());
+        //UNSTICK IT
         dg->unstick();
+        //PHISICAL DESTROY THE JOINT
         world->DestroyJoint(sl->getJoint());
+        //CLEAN THE MEMORY
         delete sl;
     }
 }
