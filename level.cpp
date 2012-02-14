@@ -241,10 +241,22 @@ void Level::paintEvent(QPaintEvent *e){
     }
     for (int i=0;i<objects.length();i++)
         objects[i]->paint(p);
-    for (int i=0;i<joints.length();i++)
-        if (joints[i]) joints[i]->paint(p);
-    for (int i=0;i<goos.length();i++)
-        if (goos[i]) goos[i]->paint(p);
+    for (int i=0;i<joints.length();i++) {
+        if (joints[i]) {
+            joints[i]->paint(p);
+            if (flag==DEBUG){
+                joints[i]->paintDebug(p);
+            }
+        }
+    }
+    for (int i=0;i<goos.length();i++){
+        if (goos[i]) {
+            goos[i]->paint(p);
+            if (flag==DEBUG){
+                goos[i]->paintDebug(p);
+            }
+        }
+    }
     if (flag==DEBUG) {
         for (int i=0;i<stickys.length();i++)
             stickys[i]->paint(p);
@@ -459,6 +471,12 @@ void Level::restart(){
         delete joints[i];
     }
     joints.clear();
+
+    for (int i=0;i<stickys.length();i++){
+        world->DestroyJoint(stickys[i]->getJoint());
+        delete stickys[i];
+    }
+    stickys.clear();
 
     for (int i=0;i<goos.length();i++){
         world->DestroyBody(goos[i]->getBody());

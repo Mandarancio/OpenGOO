@@ -37,4 +37,20 @@ Goo* StickyLink::getGoo(){
 void StickyLink::paint(QPainter &p){
     p.setPen(Qt::red);
     p.drawLine(goo->getPPosition(),toPoint(joint->GetAnchorB()));
+    QPoint m=(goo->getPPosition()+toPoint(joint->GetAnchorB()))/2;
+    int x,y;
+    if (goo->getPPosition().x()<joint->GetAnchorB().x){
+        x=joint->GetAnchorB().x-goo->getPPosition().x();
+        y=joint->GetAnchorB().y-goo->getPPosition().y();
+    }
+    else {
+        x=goo->getPPosition().x()-joint->GetAnchorB().x;
+        y=goo->getPPosition().y()-joint->GetAnchorB().y;
+    }
+    float r=atan2(y,x);
+    p.save();
+    p.translate(m);
+    p.rotate(r);
+    p.drawText(0,0,QString::number((joint->GetReactionForce(1.0/60).y<0? -1:+1)*joint->GetReactionForce(1.0/60).Length()));
+    p.restore();
 }

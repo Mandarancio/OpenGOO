@@ -98,6 +98,8 @@ private slots:
 
 public slots:
     virtual void paint(QPainter &p)=0;//Draw the goo
+    //PaintDebug data
+    virtual void paintDebug(QPainter &p)=0;
 
 };
 

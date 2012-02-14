@@ -11,6 +11,7 @@ public:
     void contactGround(QPoint p);
 public slots:
     void paint(QPainter &p);
+    void paintDebug(QPainter &p);
 };
 
 #endif // FIXEDGOO_H

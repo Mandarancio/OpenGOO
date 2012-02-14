@@ -27,6 +27,8 @@ private slots:
 
 public slots:
     void paint(QPainter &p); //Draw the goo
+    //Draw debug data
+    void paintDebug(QPainter &p);
 
 signals:
     void createSticky(QPoint p);

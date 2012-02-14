@@ -27,6 +27,14 @@ void FixedGoo::paint(QPainter &p){
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
 }
 
+void FixedGoo::paintDebug(QPainter &p){
+    p.setPen(Qt::white);
+    p.setBrush(Qt::transparent);
+
+    p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+
+}
+
 void FixedGoo::contactGround(){
  //TODO
 }

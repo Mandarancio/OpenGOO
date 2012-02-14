@@ -96,6 +96,33 @@ void DynamicGoo::paint(QPainter &p){
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
 }
 
+void DynamicGoo::paintDebug(QPainter &p){
+    p.setPen((hasJoint()? Qt::green : Qt::white));
+    p.setBrush(Qt::transparent);
+    p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+    if (hasJoint()){
+        p.drawText(QPoint(getPPosition().x()-5,getPPosition().y()+5),QString::number(this->nJoints()));
+    }
+    else if (target!=NULL){
+        p.save();
+        p.translate(getPPosition());
+        p.rotate(atan2(target->getPPosition().y()-getPPosition().y(),target->getPPosition().x()-getPPosition().x())*180.0/3.141628);
+        p.drawLine(0,0,40,0);
+        p.save();
+        p.translate(40,0);
+        p.rotate(45);
+        p.drawLine(0,0,-5,0);
+        p.restore();
+        p.save();
+        p.translate(40,0);
+        p.rotate(-45);
+        p.drawLine(0,0,-5,0);
+        p.restore();
+
+        p.restore();
+    }
+}
+
 void DynamicGoo::unstick(){
     sticked=false;
 }

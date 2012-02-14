@@ -49,8 +49,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                 if (b){
                     b2Vec2 p=oldManifold->localPoint;
                    // p.y=b->getVPosition().y-p.y;
-                    b2Vec2 pa=contact->GetFixtureA()->GetBody()->GetPosition();
-                   // p.y=pa.y+p.y;
+                     // p.y=pa.y+p.y;
                     p= contact->GetFixtureA()->GetBody()->GetWorldPoint(p);
                     //p.x=b->getVPosition().x+p.x;
                     b->contactGround(toPoint(p));

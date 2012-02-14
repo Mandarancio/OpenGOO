@@ -33,6 +33,14 @@ void Joint::paint(QPainter &p){
     p.drawLine(a.x()+2,a.y()+2,b.x()-2,b.y()-2);
 }
 
+void Joint::paintDebug(QPainter &p){
+    p.setPen(Qt::green  );
+    p.drawLine(toPoint(joint->GetBodyA()->GetPosition()),toPoint(joint->GetBodyB()->GetPosition()));
+    QPoint m=(toPoint(joint->GetBodyA()->GetPosition())+toPoint(joint->GetBodyB()->GetPosition()))/2;
+    p.drawText(m,QString::number(joint->GetReactionForce(1.0/60.0).Length()));
+}
+
+
 //This function check the status of the joint
 void Joint::status(){
     if (joint==NULL){ //If the b2Joint is NULL
@@ -43,7 +51,7 @@ void Joint::status(){
     float dy=(joint->GetBodyA()->GetPosition().y-joint->GetBodyB()->GetPosition().y); //Delta y
     float l=sqrt(dx*dx+dy*dy); //This is the lenght of the joint
     float force= joint->GetReactionForce(1.0/60.0).Length(); //Get the force applied at the joint
-    if (l<50 || l>200 || force>15000) { //If the joint is too short or too long or the force is too much broke the joint
+    if (l<50 || l>200 || force>5) { //If the joint is too short or too long or the force is too much broke the joint
         a->destroyLink(b);
         b->destroyLink(a);
         emit destroyJoint(this);

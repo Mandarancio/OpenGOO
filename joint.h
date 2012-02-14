@@ -13,6 +13,8 @@ class Joint : public QObject
 public:
     explicit Joint(Goo* a,Goo* b, b2World * world,QObject *parent = 0); //cunstractor: the two goo to link and the phisical world
     void paint(QPainter &p); //Paint function
+    //DEBUG PAINTER
+    void paintDebug(QPainter &p);
     b2Joint* getJoint(); //To have acces at the material b2joint
     bool has(Goo*a,Goo*b); //To check if this joint link this two GOO
 protected:
