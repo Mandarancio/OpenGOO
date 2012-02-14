@@ -40,6 +40,7 @@ public:
     bool canHaveJoint();
     bool isLinked(Goo* goo);
     bool isOnGround();
+    bool isSleeping();
 
     virtual bool createLink(Goo* goo);
     virtual bool destroyLink(Goo* goo);
@@ -76,6 +77,8 @@ protected:
     bool following;//If is following another goo
     bool dragging; //If the user is courrently dragging that
     bool onGround; //If the goo is on the ground (and inactive)
+    //If the goo is sleeping
+    bool sleeping;
     //Propierties
     QPoint groundPoint;
     int minJoints,maxJoints;

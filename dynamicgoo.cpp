@@ -98,6 +98,7 @@ void DynamicGoo::paint(QPainter &p){
 
 void DynamicGoo::paintDebug(QPainter &p){
     p.setPen((hasJoint()? Qt::green : Qt::white));
+    if (isDragging()) p.setPen(Qt::yellow);
     p.setBrush(Qt::transparent);
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
     if (hasJoint()){

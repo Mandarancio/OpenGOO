@@ -14,7 +14,8 @@ CollisionListener::CollisionListener(QObject *parent) :
 }
 
 void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold){
-    if (oldManifold->points==contact->GetManifold()->points) contact->SetEnabled(false); //To skip continuos contact
+    //if (oldManifold->points==contact->GetManifold()->points) contact->SetEnabled(false); //To skip continuos contact
+
     Goo*a,*b; //for get the goo involved in the contact
     a=static_cast<Goo*>(contact->GetFixtureA()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the first body involved
     b=static_cast<Goo*>(contact->GetFixtureB()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the second body involved

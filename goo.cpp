@@ -18,6 +18,7 @@ Goo::Goo( int radius, QObject *parent) :
     following=false;
     dragable=false;
     onGround=false;
+    sleeping=true;
     groundPoint=QPoint(0,0);
 
     info.aForce=0;
@@ -63,6 +64,11 @@ bool Goo::canHaveJoint(){
 
 bool Goo::isLinked(Goo *goo){
     return links.contains(goo);
+}
+
+//Return if the goo is sleeping
+bool Goo::isSleeping(){
+    return sleeping;
 }
 
 int Goo::nJoints(){
