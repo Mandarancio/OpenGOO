@@ -90,7 +90,10 @@ void DynamicGoo::moveToTarget(){
 
 
 void DynamicGoo::paint(QPainter &p){
-    moveToTarget();
+    if (!isSleeping())
+        moveToTarget();
+    else
+        emit this->checkForNeighbors(getPPosition());
     p.setPen(Qt::black);
     p.setBrush(Qt::black);
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
@@ -99,6 +102,7 @@ void DynamicGoo::paint(QPainter &p){
 void DynamicGoo::paintDebug(QPainter &p){
     p.setPen((hasJoint()? Qt::green : Qt::white));
     if (isDragging()) p.setPen(Qt::yellow);
+    if (isSleeping()) p.setPen(Qt::red);
     p.setBrush(Qt::transparent);
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
     if (hasJoint()){
@@ -124,11 +128,23 @@ void DynamicGoo::paintDebug(QPainter &p){
     }
 }
 
+//rutine for wake up goo!
+void DynamicGoo::neighborsFound(){
+    //set flag false
+    sleeping=false;
+    //call rutine for move to next goo
+    moveToTarget();
+}
+
 void DynamicGoo::unstick(){
     sticked=false;
 }
 
 void DynamicGoo::contactGround(){
+    if (sleeping) {
+        body->SetGravityScale(1.0);
+        return;
+    }
     onGround=true;
     groundPoint=this->getPPosition();
     if (falling) {
@@ -138,6 +154,10 @@ void DynamicGoo::contactGround(){
 }
 
 void DynamicGoo::contactGround(QPoint p){
+    if (sleeping) {
+        body->SetGravityScale(1.0);
+        return;
+    }
     onGround=true;
     groundPoint=this->getPPosition();
     if (falling) {
@@ -154,6 +174,6 @@ void DynamicGoo::contactGround(QPoint p){
 }
 
 bool DynamicGoo::isDragable(){
-    if (!hasJoint()) return true;
+    if (!hasJoint() && !isSleeping()) return true;
     else return false;
 }

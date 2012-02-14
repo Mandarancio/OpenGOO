@@ -20,25 +20,34 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::DoubleBuffer|QGL::SampleBuffers),parent)
 {
 
-
+    //Set enviroment flag
     this->flag=flag;
 
+    //set the display geometry
     this->setGeometry(geometry);
 
+    //grab keyboard, mouse and track it!
     this->grabKeyboard();
     this->grabMouse();
     this->setMouseTracking(true);
 
+    //compute the center of the display
     center=geometry.center();
+    //initialize translation values
     translation=QPoint(0,0);
 
-    world = new b2World(b2Vec2(0,2000));
+    //create world
+    //b2vec2(0,2000) is the gravity force
+    world = new b2World(b2Vec2(0,2000.0));
 
+    //setup our modified collisionlistener
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
 
+    //setup the leveloader with some enviroment parameters
     loader=new LevelLoader(level);
     loader->setDisplay(width(),height());
+    //connect the loader signals
     connect(loader,SIGNAL(fileError()),this,SLOT(closeAll()));
     connect(loader,SIGNAL(levelName(QString)),this,SLOT(setName(QString)));
     connect(loader,SIGNAL(levelGoal(int)),this,SLOT(setGoal(int)));
@@ -48,15 +57,18 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(loader,SIGNAL(levelJoint(QPoint,QPoint)),this,SLOT(setJoint(QPoint,QPoint)));
     connect(loader,SIGNAL(levelStartArea(int,QRect)),this,SLOT(setStartArea(int,QRect)));
 
+    //load the level
     loader->load();
 
-   // createThorns();
-
+    //connect target signals with level
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
 
+    //setup the step variable
+    //this one is the interval between step
     step=1.0/60.0;
+    //initialize variables for draggin goo
     drag = false;
     dragged=NULL;
 
@@ -555,6 +567,7 @@ void Level::setStartArea(int n, QRect area){
         connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
         connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
         connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+        connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
     }
 }
 
@@ -596,5 +609,32 @@ void Level::destroySticky(){
         world->DestroyJoint(sl->getJoint());
         //CLEAN THE MEMORY
         delete sl;
+    }
+}
+
+//Function to wakeup (maybe) the poor sleeping goos!
+void Level::checkForNeighbors(QPoint p){
+    //Cast the sender
+    Goo* goo=dynamic_cast<Goo*>(sender());
+    //check if is realy a goo that call this function
+    //we don't want liars!
+    if (goo){
+        //vector for the distance
+        b2Vec2 d;
+        //start to cycle all the goos
+        for (int i=0;i<goos.count();i++){
+            //check if the goo have link and is not himself
+            if (goos[i]!=goo && goos[i]->hasJoint()){
+                //compute the distance
+                d=toVec(p)-goos[i]->getVPosition();
+                //check if the distance is less then 2 radius than wakeup goo and return!
+                if (d.Length()<goos[i]->getRadius()*3.5) {
+                    goo->neighborsFound();
+                    return;
+                }
+            }
+        }
+
+
     }
 }

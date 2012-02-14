@@ -20,13 +20,22 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
     a=static_cast<Goo*>(contact->GetFixtureA()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the first body involved
     b=static_cast<Goo*>(contact->GetFixtureB()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the second body involved
     if (a&&b) { //If both bodies are goo
-        contact->SetEnabled(false); //if the contact is between two Goo is ignored
+        if (a->isSleeping() && b->isSleeping()) {
+            contact->SetEnabled(true);
+            return;
+        }
         if (a->isFalling() && b->hasJoint()){  //if the first goo is falling down and the other is jointed with other one stop the falling
             a->setTarget(b);
+            contact->SetEnabled(false);
         }
         else if (b->isFalling() && a->hasJoint()){ //if the second goo is falling down and the other is jointed with other one stop the falling
             b->setTarget(a);
+            contact->SetEnabled(false);
         }
+        else if (b->isFalling() && a->isFalling() ) contact->SetEnabled(true);
+        else contact->SetEnabled(false); //if the contact is between two Goo is ignored
+
+
     }
     else { //cas if the contact is not between two goo
         Target * t; //target

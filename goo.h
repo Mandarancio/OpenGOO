@@ -95,6 +95,7 @@ signals:
     void loseLink(Goo* goo);
     void destroyGoo();
     void destroyJoint(Goo* a,Goo*b);
+    void checkForNeighbors(QPoint p);
 private slots:
     void checkForConnection(Goo* goo);
     virtual void deleteSticky(){};
@@ -103,7 +104,7 @@ public slots:
     virtual void paint(QPainter &p)=0;//Draw the goo
     //PaintDebug data
     virtual void paintDebug(QPainter &p)=0;
-
+    virtual void neighborsFound();
 };
 
 #endif // GOO_H

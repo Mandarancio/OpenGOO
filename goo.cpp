@@ -140,6 +140,7 @@ QPoint Goo::getPPosition(){
 
 bool Goo::createLink(Goo *goo){
     if (!isLinked(goo) && nJoints()<maxJoints) {
+        if (sleeping) sleeping=false;
         links.push_back(goo);
         if (following) stopFollow();
         return true;
@@ -261,4 +262,7 @@ void Goo::fallDown(){
 
 }
 
+void Goo::neighborsFound(){
+    sleeping=false;
+}
 

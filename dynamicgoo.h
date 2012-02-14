@@ -29,6 +29,8 @@ public slots:
     void paint(QPainter &p); //Draw the goo
     //Draw debug data
     void paintDebug(QPainter &p);
+    //rutines called when previus status was spleep and a neighbor is found!
+    void neighborsFound();
 
 signals:
     void createSticky(QPoint p);

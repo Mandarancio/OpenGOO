@@ -138,11 +138,13 @@ private slots:
     void setTarget(QPoint target);
     void setStartArea(int n,QRect area);
     void setJoint(QPoint a, QPoint b);
-
+    //GAME SLOT
+    //Functions to create and destroy sticky joints
     void createSticky(QPoint p);
     void destroySticky();
+    //Functions for wakeup poor sleeping goos
+    void checkForNeighbors(QPoint p);
 
-    //LEVEL SLOTS:
     void destroyJoint(Joint * joint);   //Destroy a joint
     void destroyGOO();                  //Destroy a GOO!
     void gooCatched(Goo * goo);         //Target catch a goo
@@ -150,9 +152,11 @@ private slots:
     void destroyJoint(Goo*a,Goo*b);
     void towerCatched();                //Actions to do when the tower is near the target
     void towerLost();                   //Actions to do when the tower in no more near the target
+
+    //LEVEL SLOTS:
     void resume();                      //Close the menu
     void restart();                     //Restart the level
-    void closeAll();
+    void closeAll();                    //Close the game
 };
 
 #endif // LEVEL_H
