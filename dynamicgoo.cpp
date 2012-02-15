@@ -1,6 +1,8 @@
 #include "dynamicgoo.h"
 #include "tools.h"
 
+#include <QDebug>
+
 
 DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     Goo(radius,parent)
@@ -59,11 +61,30 @@ void DynamicGoo::moveToTarget(){
                 fallDown();
                 return;
             }
-
-            QPoint mePrev=getPPosition()-prevTarget->getPPosition();
-
-            QPoint targetPrev=target->getPPosition()-prevTarget->getPPosition();
-            if (abs(mePrev.x())>abs(targetPrev.x())+10 || abs(mePrev.y())>abs(targetPrev.y())+10){
+            //compute rect between the oldtarget and new target
+            //classic method y=m*x+q
+            //m=(y2-y1)/(x2-x1)  and  q=y1-m*x1
+            float m=(target->getVPosition().y-prevTarget->getVPosition().y)/(target->getVPosition().x-prevTarget->getVPosition().x);
+            float q=prevTarget->getVPosition().y-m*prevTarget->getVPosition().x;
+            //compute the tehorical y for my x position
+            float yt=m*getVPosition().x+q;
+            //if my y position is different at least of 12 falldown and return
+            if (fabs(getVPosition().y-yt)>12){
+                stopFollow();
+                fallDown();
+                return;
+            }
+        }
+        //this is a work around for the very ugly bug of the "FLYING GOOS"
+        //description of the bug if no prevTarget is setted but target is and the goo tower start to fall down the goo start to fly
+        //for reach his target!
+        //check if prevtarget is not setted and target is
+        if (!prevTarget && target){
+            //compute distance between target and me
+            float d=(target->getVPosition()-getVPosition()).Length();
+            //if that distance is more than 25 falldown and return
+            //PS: remember that 30 is a single point contact between two goos
+            if (d>25) {
                 stopFollow();
                 fallDown();
                 return;

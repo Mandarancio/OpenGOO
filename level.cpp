@@ -202,7 +202,7 @@ void Level::timerEvent(QTimerEvent *e){
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
-        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,5);
+        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,4);
         stickys.push_back(sl);
         connect(sl,SIGNAL(destroySticky()),this,SLOT(destroySticky()));
     }
