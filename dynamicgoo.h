@@ -5,6 +5,11 @@
 
 #include <QObject>
 
+/*
+  this is the most standard goo, if is free is moovable and dragable but
+  when is jointed to other ones is not more possible darg or moove it..
+  If the joint is broke for same razon is possible to reuse it again.
+  */
 class DynamicGoo :public Goo
 {
     Q_OBJECT
@@ -15,7 +20,7 @@ public:
     void contactGround();  //collision between goo and ground
     void contactGround(QPoint p);//collision between goo and ground  in the point p(create a sticky joint!)
     void unstick(); //To unstick the goo
-
+    //Function that return if the goo is now draggable (if is linked is not)
     bool isDragable();
 private:
     b2World * world;// copy of the world

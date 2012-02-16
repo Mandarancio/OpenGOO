@@ -28,7 +28,7 @@ void FixedGoo::paint(QPainter &p){
 }
 
 void FixedGoo::paintDebug(QPainter &p){
-    p.setPen(Qt::white);
+    p.setPen(Qt::darkGray);
     p.setBrush(Qt::transparent);
 
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());

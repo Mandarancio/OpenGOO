@@ -136,7 +136,7 @@ private slots:
     void setLimit(QRect limit);
     void setGround(QPoint gCenter,QList<QPoint> gList);
     void setTarget(QPoint target);
-    void setStartArea(int n,QRect area);
+    void setStartArea(int n,QRect area,int type=0);
     void setJoint(QPoint a, QPoint b);
     //GAME SLOT
     //Functions to create and destroy sticky joints

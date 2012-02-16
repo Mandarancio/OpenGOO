@@ -33,7 +33,8 @@ signals:
     //LEVEL SETTING SIGNAL
     void levelName(QString name);
     void levelGoal(int goal);
-    void levelStartArea(int numberOfBalls,QRect area);
+    //GOOS START AREA WITH TYPE
+    void levelStartArea(int numberOfBalls,QRect area,int type);
     void levelJoint(QPoint gooA,QPoint gooB);
     void levelLimit(QRect limit);
     void levelTarget(QPoint target);

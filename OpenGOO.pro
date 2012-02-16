@@ -26,7 +26,8 @@ HEADERS += \
     menu.h \
     object.h \
     levelloader.h \
-    stickylink.h
+    stickylink.h \
+    removablegoo.h
 
 SOURCES += \
     tools.cpp \
@@ -44,7 +45,8 @@ SOURCES += \
     menu.cpp \
     object.cpp \
     levelloader.cpp \
-    stickylink.cpp
+    stickylink.cpp \
+    removablegoo.cpp
 
 
 ##FOR TOUCHPAD COMPILE

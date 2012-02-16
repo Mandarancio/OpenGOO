@@ -93,15 +93,38 @@ bool LevelLoader::parseInfo(QString tag, QString info){
     }
     if (!tag.compare("start area",Qt::CaseInsensitive)){ //GOOS START AREA (it comprend a rectangular area and the number of goos inside
         if (info.split('|').length()>=2){
-            QString n,rect;
-            n=info.split('|').at(0); //Number
-            rect=info.split('|').at(1); //Area
-            if (rect.split(',').length()!=2) return false;
-            bool ok=true;
-            int nb=n.toInt(&ok); //NUMBER OF BALLS
-            QRect startArea=pRect(rect,ok,wC,hC); //RECT AREA
-            if (ok) emit    levelStartArea(nb,startArea);
-            return ok;
+            //Only number of balls and area are definied
+            if (info.split('|').length()==2){
+                QString n,rect;
+                n=info.split('|').at(0); //Number
+                rect=info.split('|').at(1); //Area
+                if (rect.split(',').length()!=2) return false;
+                bool ok=true;
+                int nb=n.toInt(&ok); //NUMBER OF BALLS
+                QRect startArea=pRect(rect,ok,wC,hC); //RECT AREA
+                if (ok) emit    levelStartArea(nb,startArea,0);
+                return ok;
+            }
+            //In this case also the type of goo are definied
+            else if (info.split('|').length()==3){
+                QString n,rect,type;
+                n=info.split('|').at(0); //Number of goos
+                rect=info.split('|').at(1); //Area where they will be created
+                type=info.split('|').at(2); //Type of goo
+                int nType=-1; //the codified type;
+                //Start to compare the choose type
+                if (!type.compare("STD")) nType=0; //STANDARD GOO
+                else if (!type.compare("RMV")) nType=1; //REMOVIBLE GOO
+                else if (!type.compare("FXD")) nType=2; //FIXED GOO
+
+                if (rect.split(',').length()!=2) return false;
+                bool ok=true;
+                int nb=n.toInt(&ok); //NUMBER OF BALLS
+                QRect startArea=pRect(rect,ok,wC,hC); //RECT AREA
+                if (ok) emit   levelStartArea(nb,startArea,nType);
+                return ok;
+            }
+            else return false;
         }
         else return false;
     }
