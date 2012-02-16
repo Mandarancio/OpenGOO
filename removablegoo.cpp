@@ -38,10 +38,9 @@ void RemovableGoo::paintDebug(QPainter &p){
         p.rotate(atan2(target->getPPosition().y()-getPPosition().y(),target->getPPosition().x()-getPPosition().x())*180.0/3.141628);
         //draw a line in this direction of 40 px
         p.drawLine(0,0,40,0);
-
         //translate the painter at the end of the line
         p.translate(40,0);
-        //rotatate of 45° degree
+        //rotate of 45° degree
         p.rotate(45);
         //draw a line of 5 (this is one side of the arrow)
         p.drawLine(0,0,-5,0);
@@ -50,7 +49,6 @@ void RemovableGoo::paintDebug(QPainter &p){
         //draw the other side of the arrow
         p.drawLine(0,0,-5,0);
         //restore the previous position
-
         p.restore();
     }
 }
