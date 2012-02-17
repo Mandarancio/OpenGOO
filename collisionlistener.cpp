@@ -38,67 +38,75 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
 
     }
     else { //cas if the contact is not between two goo
-        Target * t; //target
-        Thorn* th; //thorn
+        Target * t=NULL; //target
+        Thorn* th=NULL; //thorn
         if (!b){ //if the second object isn't a goo
             t=static_cast<Target*>(contact->GetFixtureB()->GetBody()->GetUserData()); //check if is the target
-            th=static_cast<Thorn*>(contact->GetFixtureB()->GetBody()->GetUserData()); //check if is a thorn
-            if (!t && !th&& a) { //if isn't any of the both and first body is a goo
-                if (a){//advice the goo that he/it touch the ground
-                    b2Vec2 p=contact->GetManifold()->localPoint;
-                    p=a->getBody()->GetWorldPoint(p);
-                    if ((p-a->getVPosition()).Length()>50) {
-                        p=a->getVPosition();
-                        p.y+=20;
+            if (t==NULL){
+                th=static_cast<Thorn*>(contact->GetFixtureB()->GetBody()->GetUserData());
+                if (th!=NULL) a->destroyThis();
+                else if (!t && !th&& a) { //if isn't any of the both and first body is a goo
+                    if (a){//advice the goo that he/it touch the ground
+                        b2Vec2 p=contact->GetManifold()->localPoint;
+                        p=a->getBody()->GetWorldPoint(p);
+                        if ((p-a->getVPosition()).Length()>50) {
+                            p=a->getVPosition();
+                            p.y+=20;
+                        }
+                        a->contactGround(toPoint(p));
                     }
-                    a->contactGround(toPoint(p));
                 }
             }
-            //if (th) a->destroyThis(); //if is thorn destroy the goo!
+            // else qWarning()<<"TARGET";
+
         }
         else if (!a){ //if the first isn't a goo is the same of before!
-            t=static_cast<Target*>(contact->GetFixtureA()->GetBody()->GetUserData());
-            th=static_cast<Thorn*>(contact->GetFixtureA()->GetBody()->GetUserData());
-
-            if (!t&&!th&&b) {
-                if (b){
-                    //RETRIVE COLLISION POINT
-                    b2Vec2 p=oldManifold->localPoint;
-                    //CHANGE CORDINATE SYSTEM
-                    p= contact->GetFixtureA()->GetBody()->GetWorldPoint(p);
-                    //p.x=b->getVPosition().x+p.x;
-                    //FOR UNKNOW REAZON SOMETIMES THE COLLISION POINT IS COMPLITLY WRONG
-                    //SO I MADE THIS WORK AROUND TO FIX IT
-                    //WORKAROUND
-                    //CHECK IF THE COLLISION POINT IS TOO DISTANT FROM MY BODY FOR BE A CORRECT POINT
-                    if ((p-b->getVPosition()).Length()>50) {
-                        //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT
-                        p=b->getVPosition();
-                        //RETRIVE THE NORMAL OF THE COLLISION
-                        b2Vec2 n=oldManifold->localNormal;
-                        //NORMALY THE NORMAL IS CORRECT
-                        //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
-                        //CHECK IF Y COMPONTENT OF THE NORMAL IS BIGGER OF THE X
-                        if (fabs(n.y)>=fabs(n.x)){
-                            //CHECK IF THE Y COMPONENT IS BIGGER THAN 0 SO ADD -20 TO P.Y
-                            if (n.y>0) p.y-=20;
-                            //ELSE ADD +20 TO P.Y
-                            else p.y+=20;
+            t=static_cast<Target*>(contact->GetFixtureA()->GetBody()->GetUserData()); //Check if is target
+            //check if is a thorn
+            if (t==NULL)  {
+                th=static_cast<Thorn*>(contact->GetFixtureA()->GetBody()->GetUserData());
+                if (th!=NULL ) b->destroyThis();
+                else if (!t&&!th&&b) { //ELSE IS GROUND
+                    if (b){
+                        //RETRIVE COLLISION POINT
+                        b2Vec2 p=oldManifold->localPoint;
+                        //CHANGE CORDINATE SYSTEM
+                        p= contact->GetFixtureA()->GetBody()->GetWorldPoint(p);
+                        //p.x=b->getVPosition().x+p.x;
+                        //FOR UNKNOW REAZON SOMETIMES THE COLLISION POINT IS COMPLITLY WRONG
+                        //SO I MADE THIS WORK AROUND TO FIX IT
+                        //WORKAROUND
+                        //CHECK IF THE COLLISION POINT IS TOO DISTANT FROM MY BODY FOR BE A CORRECT POINT
+                        if ((p-b->getVPosition()).Length()>50) {
+                            //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT
+                            p=b->getVPosition();
+                            //RETRIVE THE NORMAL OF THE COLLISION
+                            b2Vec2 n=oldManifold->localNormal;
+                            //NORMALY THE NORMAL IS CORRECT
+                            //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
+                            //CHECK IF Y COMPONTENT OF THE NORMAL IS BIGGER OF THE X
+                            if (fabs(n.y)>=fabs(n.x)){
+                                //CHECK IF THE Y COMPONENT IS BIGGER THAN 0 SO ADD -20 TO P.Y
+                                if (n.y>0) p.y-=20;
+                                //ELSE ADD +20 TO P.Y
+                                else p.y+=20;
+                            }
+                            //ELSE
+                            else{
+                                //CHECK IF X COMPONENT IS BIGGER THE 0 SO ADD -20 TO P.X
+                                if (n.x>0) p.x-=20;
+                                //ELSE ADD +20 TO P.X
+                                else p.x+=20;
+                            }
                         }
-                        //ELSE
-                        else{
-                            //CHECK IF X COMPONENT IS BIGGER THE 0 SO ADD -20 TO P.X
-                            if (n.x>0) p.x-=20;
-                            //ELSE ADD +20 TO P.X
-                            else p.x+=20;
-                        }
+                        //END WORKAROUND
+                        //CALL CONTACTGROUND WITH THE CALCULATED P
+                        b->contactGround(toPoint(p));
                     }
-                    //END WORKAROUND
-                    //CALL CONTACTGROUND WITH THE CALCULATED P
-                    b->contactGround(toPoint(p));
                 }
             }
-           // if (th) b->destroyThis();
+            //else qWarning("TARGET");//TARGET)
+
         }
         contact->SetEnabled(true); //contact is enabled here
     }
