@@ -79,7 +79,7 @@ void DynamicGoo::moveToTarget(){
         //description of the bug if no prevTarget is setted but target is and the goo tower start to fall down the goo start to fly
         //for reach his target!
         //check if prevtarget is not setted and target is
-        if (!prevTarget && target){
+        if (!prevTarget && target && !target->isOnGround()){
             //compute distance between target and me
             float d=(target->getVPosition()-getVPosition()).Length();
             //if that distance is more than 25 falldown and return

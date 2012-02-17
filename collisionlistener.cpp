@@ -54,7 +54,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                     a->contactGround(toPoint(p));
                 }
             }
-            if (th) a->destroyThis(); //if is thorn destroy the goo!
+            //if (th) a->destroyThis(); //if is thorn destroy the goo!
         }
         else if (!a){ //if the first isn't a goo is the same of before!
             t=static_cast<Target*>(contact->GetFixtureA()->GetBody()->GetUserData());
@@ -98,7 +98,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                     b->contactGround(toPoint(p));
                 }
             }
-            if (th) b->destroyThis();
+           // if (th) b->destroyThis();
         }
         contact->SetEnabled(true); //contact is enabled here
     }

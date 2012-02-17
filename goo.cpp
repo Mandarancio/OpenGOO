@@ -30,9 +30,10 @@ Goo::Goo( int radius, QObject *parent) :
     prevTarget=NULL;
 }
 
+//Check if is on ground
 bool Goo::isOnGround(){
-    //if (hasJoint() && isMoovable()) qWarning()<<"Has joint and is "<<onGround;
-   // if (onGround && getPPosition()!=groundPoint) onGround=false;
+    if (getPPosition().x()-groundPoint.x()>5 || getPPosition().y()-groundPoint.y()>5) onGround=false;
+    else onGround=true;
     return onGround;
 }
 
@@ -129,12 +130,12 @@ b2Body* Goo::getBody(){
 }
 
 b2Vec2 Goo::getVPosition(){
-    if (body==NULL && !body->IsActive()) return b2Vec2(0,0);
+    if (body==NULL) return b2Vec2(0,0);
     return body->GetPosition();
 }
 
 QPoint Goo::getPPosition(){
-    if (body==NULL || !body->IsActive()) return QPoint(0,0);
+    if (body==NULL) return QPoint(0,0);
     return toPoint(body->GetPosition());
 }
 
