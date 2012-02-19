@@ -46,7 +46,11 @@ void DynamicGoo::lost(){
 }
 
 void DynamicGoo::moveToTarget(){
-    if (dragging) return;
+    //Stop to follow if the goo is dragged for the user
+    if (isDragging()) {
+        stopFollow();
+        return;
+    }
     if (hasJoint()) return;
     if (!hasJoint() &&!falling&&!following) emit this->nextTargetPlease(NULL);
     if (following && !falling){

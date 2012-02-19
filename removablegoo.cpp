@@ -15,7 +15,7 @@ bool RemovableGoo::isDragable(){
 //Change the color of the paint debug for recognize it from Dynamic goo
 void RemovableGoo::paintDebug(QPainter &p){
     //set the pen green if is jointed or white if is free and not sleeping
-    p.setPen((hasJoint()? Qt::blue : Qt::lightGray));
+    p.setPen((hasJoint()? QColor(100,100,255) : QColor(200,200,255)));
     //set pen yellow if the goo is dragged from the user
     if (isDragging()) p.setPen(Qt::yellow);
     //set pen red if is sleeping
@@ -27,6 +27,26 @@ void RemovableGoo::paintDebug(QPainter &p){
     //if has joint draw the number of joint of it inside him.
     if (hasJoint()){
         p.drawText(QPoint(getPPosition().x()-5,getPPosition().y()+5),QString::number(this->nJoints()));
+        //save the position
+        p.save();
+        //translate the painter at the center of the goo
+        p.translate(getPPosition());
+        //rotate the painter of the angle between the goo and his target
+        p.rotate(body->GetMass()*180.0/3.141628);
+        //draw a line in this direction of 40 px
+        p.drawLine(0,0,40,0);
+        //translate the painter at the end of the line
+        p.translate(40,0);
+        //rotate of 45° degree
+        p.rotate(45);
+        //draw a line of 5 (this is one side of the arrow)
+        p.drawLine(0,0,-5,0);
+        //rotate to -45° degree
+        p.rotate(270);
+        //draw the other side of the arrow
+        p.drawLine(0,0,-5,0);
+        //restore the previous position
+        p.restore();
     }
     //if not and is free and is mooving to reach a target draw the direction
     else if (target!=NULL){
