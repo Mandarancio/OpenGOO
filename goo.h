@@ -91,11 +91,19 @@ protected:
     void stopFollow();
     void fallDown();
 signals:
+    //Signal to retrive a new target.
     void nextTargetPlease(Goo* previous);
+    //Signal to advice the the link between a goo is broken (used for the following goo)
     void loseLink(Goo* goo);
+    //Signal to destroy this goo
     void destroyGoo();
+    //signal to advice to destroy de joint between goo a end goo b
     void destroyJoint(Goo* a,Goo*b);
+    //Signal for start to search a neighbor (for sleeping goo)
     void checkForNeighbors(QPoint p);
+    //Signal to advice to stop dragging current goo
+    void stopDragging();
+
 private slots:
     void checkForConnection(Goo* goo);
     virtual void deleteSticky(){};

@@ -192,6 +192,15 @@ void DynamicGoo::contactGround(){
 }
 
 void DynamicGoo::contactGround(QPoint p){
+    //Away to trapass body
+    if (isDragging()) {
+        //Change flag and reset normal status
+        dragging=false;
+        fallDown();
+        //Emit a signal for the level class
+        emit stopDragging();
+        return;
+    }
     if (sleeping) {
         body->SetGravityScale(1.0);
         return;

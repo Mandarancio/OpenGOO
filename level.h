@@ -144,6 +144,9 @@ private slots:
     void destroySticky();
     //Functions for wakeup poor sleeping goos
     void checkForNeighbors(QPoint p);
+    //Slot to stop dragging a goo (is used when the user try to drag a goo in some not permitted position)
+    void stopDragging();
+
 
     void destroyJoint(Joint * joint);   //Destroy a joint
     void destroyGOO();                  //Destroy a GOO!
