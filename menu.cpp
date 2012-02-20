@@ -33,19 +33,23 @@ void Menu::loadMenuFile(){
     if (file.open(QFile::ReadOnly)){
         QTextStream in(&file);
         QString tmp;
-        int y;
         int i=0;
         while(!in.atEnd()){
             tmp=in.readLine();
             if (tmp.at(0)=='#') continue;//comment!
             else if (tmp.at(0)=='-') {
                 tmp.remove(0,1);
-                y=(height+30)*i+30;
-                buttons.push_back(QRect(geometry.width()/4,y,geometry.width()/2,height));
                 index.push_back(tmp);
                 i++;
             }
         }
+        int yOffset=(geometry.height()-index.size()*(height+30))/2;
+        for(int j=0;j<index.size();j++)
+        {
+            int y=yOffset+(height+30)*j;
+            buttons.push_back(QRect(geometry.width()/4,y,geometry.width()/2,height));
+        }
+
 
         file.close();
     }
