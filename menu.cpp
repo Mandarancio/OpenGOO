@@ -41,7 +41,7 @@ void Menu::loadMenuFile(){
             else if (tmp.at(0)=='-') {
                 tmp.remove(0,1);
                 y=(height+30)*i+30;
-                buttons.push_back(QRect(geometry.width()/2-30,y,geometry.width()/2,height));
+                buttons.push_back(QRect(geometry.width()/4,y,geometry.width()/2,height));
                 index.push_back(tmp);
                 i++;
             }
