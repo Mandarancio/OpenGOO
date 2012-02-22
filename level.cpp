@@ -26,11 +26,13 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 
     //set the display geometry
     this->setGeometry(geometry);
+    if (flag==DEBUG) qWarning()<<"Geometry setted.";
 
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
     this->grabMouse();
     this->setMouseTracking(true);
+    if (flag==DEBUG) qWarning()<<"Mouse and keyboard grabbed";
 
     //compute the center of the display
     center=geometry.center();
@@ -39,11 +41,13 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 
     //create world
     //b2vec2(0,2000) is the gravity force
-    world = new b2World(b2Vec2(0,2000.0));
+    world = new b2World(b2Vec2(0,400.0));
+    if (flag==DEBUG) qWarning()<<"World object created!";
 
     //setup our modified collisionlistener
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
+    if (flag==DEBUG) qWarning()<<"Collision listener created and set up!";
 
     //setup the leveloader with some enviroment parameters
     loader=new LevelLoader(level);
@@ -57,14 +61,17 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(loader,SIGNAL(levelTarget(QPoint)),this,SLOT(setTarget(QPoint)));
     connect(loader,SIGNAL(levelJoint(QPoint,QPoint)),this,SLOT(setJoint(QPoint,QPoint)));
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
+    if (flag==DEBUG) qWarning()<<"Level loader created, set up and connected!";
 
     //load the level
     loader->load();
+    if (flag==DEBUG) qWarning()<<"Level loaded!";
 
     //connect target signals with level
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
+    if (flag==DEBUG) qWarning()<<"Target connected!";
 
     //setup the step variable
     //this one is the interval between step
@@ -75,6 +82,8 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 
     points=0;
     catched=false;
+    if (flag==DEBUG) qWarning()<<"Game variable initialized!";
+
 
     menu=new Menu(geometry,this);
     onMenu=false;
@@ -82,8 +91,10 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
     connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
     connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
+    if (flag==DEBUG) qWarning()<<"Menu set up!";
 
     startTimer(step*1000);
+    if (flag==DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
 }
 
 Level::~Level(){
@@ -542,18 +553,22 @@ void Level::setName(QString name){
 }
 
 void Level::setGoal(int goal){
+    if (flag==DEBUG) qWarning()<<"Goal:"<<goal;
     this->goal=goal;
 }
 
 void Level::setLimit(QRect limit){
+    if (flag==DEBUG) qWarning()<<"Level limit:"<<limit;
     this->limit=limit;
 }
 
 void Level::setGround(QPoint gCenter, QList<QPoint> gList){
     ground=new Ground(world,gCenter,gList,this);
+    if (flag==DEBUG) qWarning()<<"Ground created.";
 }
 
 void Level::setTarget(QPoint target){
+    if (flag==DEBUG) qWarning()<<"Target at:"<<target;
     this->target=new Target(target,height(),world,this);
 }
 
@@ -591,6 +606,7 @@ void Level::setStartArea(int n, QRect area,int type){
         }
         else return;
     }
+    if (flag==DEBUG) qWarning()<<"A start area is created.";
 }
 
 void Level::setJoint(QPoint a, QPoint b){
@@ -608,6 +624,8 @@ void Level::setJoint(QPoint a, QPoint b){
     goos.push_back(gooB);
 
     makeJoint(gooA,gooB);
+
+    if (flag==DEBUG) qWarning()<<"First joint created, at:"<<a;
 
     //    connect(gooA,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
     //    connect(gooA,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));

@@ -210,12 +210,12 @@ void Goo::drop(){
 }
 
 void Goo::drop(b2Vec2 speed){
-    stopFollow();
-    body->SetLinearVelocity(b2Vec2(0,0));
+    //stopFollow();
+    //body->SetLinearVelocity(b2Vec2(0,0));
 
     body->SetGravityScale(1.0);
-    body->SetAngularVelocity(info.aForce);
-    body->ApplyLinearImpulse(speed,body->GetPosition());
+    //body->SetAngularVelocity(info.aForce);
+    body->ApplyLinearImpulse(speed,b2Vec2(0,0));
     falling=true;
     dragging=false;
 }
