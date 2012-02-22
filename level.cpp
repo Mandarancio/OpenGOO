@@ -79,6 +79,8 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     //initialize variables for draggin goo
     drag = false;
     dragged=NULL;
+    //For mouse joint implementation.
+    //mouseJoint=NULL;
 
     points=0;
     catched=false;
@@ -330,6 +332,9 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mousePos=toVec(e->pos());
         dragged->move(e->pos()-(center+translation));
         possibility=possibleJoints(dragged->getPPosition());
+        //For mouse joint implementation
+//        if (mouseJoint!=NULL)
+//            mouseJoint->SetTarget(toVec(e->pos()-(center+translation)));
     }
     else if (mooving) {
         QPoint d=e->pos()-toPoint(mousePos);
@@ -348,6 +353,16 @@ void Level::mousePressEvent(QMouseEvent *e){
            drag=true;
            dragged->drag();
 
+           //Mouse joint implementation
+//           b2MouseJointDef def;
+//           def.bodyA=ground->getBody();
+//           def.bodyB=dragged->getBody();
+//           def.target=toVec(e->pos()-(center+translation));
+//           def.maxForce=1000000;
+//           def.frequencyHz=1/step;
+//           def.dampingRatio=1000;
+//           mouseJoint=(b2MouseJoint*)world->CreateJoint(&def);
+
        }
        else mooving=true;
    }
@@ -360,6 +375,12 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     else if (drag){
         if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
+        //For mousejoint implementation
+//        if (mouseJoint!=NULL){
+//            world->DestroyJoint(mouseJoint);
+//            mouseJoint=NULL;
+//        }
+
     }
     dragged=NULL;
     drag=false;
