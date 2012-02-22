@@ -79,7 +79,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     //initialize variables for draggin goo
     drag = false;
     dragged=NULL;
-    //For mouse joint implementation.
+    //
     //mouseJoint=NULL;
 
     points=0;
