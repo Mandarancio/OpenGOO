@@ -18,7 +18,7 @@
 #define RADIUS 15
 
 Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::DoubleBuffer|QGL::SampleBuffers),parent)
+    QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
 {
 
     //Set enviroment flag
@@ -26,7 +26,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 
     //set the display geometry
     this->setGeometry(geometry);
-    if (flag==DEBUG) qWarning()<<"Geometry setted.";
+    if (flag==DEBUG) qWarning()<<"Geometry setted:"<<geometry;
 
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
