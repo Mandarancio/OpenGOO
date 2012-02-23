@@ -3,6 +3,7 @@
 
 #include <QtGui/QMainWindow>
 #include "level.h"
+#include "levelselector.h"
 
 class MainWidget : public QMainWindow
 {
@@ -13,6 +14,13 @@ public:
     ~MainWidget();
 private:
     Level *level;
+    levelSelector *levelS;
+
+    QRect geometry;
+
+    bool debug;
+private slots:
+    void levelSelected();
 };
 
 #endif // MAINWIDGET_H
