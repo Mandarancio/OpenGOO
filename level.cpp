@@ -25,7 +25,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     this->flag=flag;
 
     //set the display geometry
-    this->setGeometry(geometry);
+    this->setGeometry(0,0,geometry.width(),geometry.height());
     if (flag==DEBUG) qWarning()<<"Geometry setted:"<<geometry;
 
     //grab keyboard, mouse and track it!
@@ -35,7 +35,8 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     if (flag==DEBUG) qWarning()<<"Mouse and keyboard grabbed";
 
     //compute the center of the display
-    center=geometry.center();
+    //Fix for multi screen
+    center=(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());
     //initialize translation values
     translation=QPoint(0,0);
 

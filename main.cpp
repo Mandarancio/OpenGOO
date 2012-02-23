@@ -31,7 +31,9 @@ int main(int argc, char *argv[])
         qWarning("DEBUG MODE ON");
     }
     else qWarning("STD MODE");
-    MainWidget w(a.desktop()->screenGeometry(),debug); //screenGeometry() return the geometry of the display
+     //screenGeometry() return the geometry of the display
+    //seem have problem to run at the secon screen...
+    MainWidget w(a.desktop()->screenGeometry(),debug);
     w.show();
 
     return a.exec();
