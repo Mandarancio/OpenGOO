@@ -26,24 +26,43 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     bool debug=false;
-    if (argc==2 && !QString::fromAscii(argv[1]).compare("-Debug")){
-        debug=true;
-        qWarning("DEBUG MODE ON");
-    }
-    else qWarning("STD MODE");
-     //screenGeometry() return the geometry of the display
-    //Algorithm to select the bigger screen in a multi screen configuration
+    bool forceScreen=false;
     //Default is screen 0
     int screen=0;
+    QString arg;
+    //Check for the run parameters
+    for (int i=1;i<argc;i++){
+        arg=QString::fromAscii(argv[i]);
+        //Check for debug Option
+        if (!arg.compare("-Debug")){
+            debug=true;
+            qWarning("DEBUG MODE ON");
+        }
+        //Check for screen force option
+        else if (!arg.split('=').at(0).compare("-Screen")){
+            screen=arg.split('=').at(1).toInt(&forceScreen);
+            if (screen>a.desktop()->numScreens()-1){
+                qWarning()<<"Screen"<<screen<<"not found!";
+                screen=0;
+                forceScreen=false;
+            }
+        }
+    }
+    if (!debug) qWarning("STD MODE");
+     //screenGeometry() return the geometry of the display
+    //Algorithm to select the bigger screen in a multi screen configuration
     //If is found a multi screen configuration
-    if (a.desktop()->numScreens()>1){
-        //compute the first screen area
-        int area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
-        //check all the other screen and find the bigger one!
-        for (int i=1;i<a.desktop()->numScreens();i++){
-            if (a.desktop()->screenGeometry(i).size().width()*a.desktop()->screenGeometry(i).height() > area){
-                screen=i;
-                area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
+    if (!forceScreen){
+        screen=0;
+        if (a.desktop()->numScreens()>1){
+            //compute the first screen area
+            int area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
+            //check all the other screen and find the bigger one!
+            for (int i=1;i<a.desktop()->numScreens();i++){
+                if (a.desktop()->screenGeometry(i).size().width()*a.desktop()->screenGeometry(i).height() > area){
+                    screen=i;
+                    area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
+                }
             }
         }
     }
