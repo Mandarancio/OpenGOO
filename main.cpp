@@ -32,8 +32,23 @@ int main(int argc, char *argv[])
     }
     else qWarning("STD MODE");
      //screenGeometry() return the geometry of the display
-    //seem have problem to run at the secon screen...
-    MainWidget w(a.desktop()->screenGeometry(),debug);
+    //Algorithm to select the bigger screen in a multi screen configuration
+    //Default is screen 0
+    int screen=0;
+    //If is found a multi screen configuration
+    if (a.desktop()->numScreens()>1){
+        //compute the first screen area
+        int area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
+        //check all the other screen and find the bigger one!
+        for (int i=1;i<a.desktop()->numScreens();i++){
+            if (a.desktop()->screenGeometry(i).size().width()*a.desktop()->screenGeometry(i).height() > area){
+                screen=i;
+                area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
+            }
+        }
+    }
+    //Create the main widget in the bigger screen
+    MainWidget w(a.desktop()->screenGeometry(screen),debug);
     w.show();
 
     return a.exec();
