@@ -17,7 +17,7 @@ levelSelector::levelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat
 levelSelector::~levelSelector()
 {
 }
-void levelSelector::findLevels()//Find teh .level find in the current direcotory
+void levelSelector::findLevels()//Find .level file in the current direcotory
 {
     QDir *dir;
     dir=new QDir();
