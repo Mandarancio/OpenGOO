@@ -44,7 +44,9 @@ void Target::checkTower(QList<Goo *> ps){
 void Target::applyForces(QList<Goo *> ps){
     if (catched){
         for (int i=0;i<ps.length();i++){
-            if (ps[i]->hasJoint()) applyForce(ps[i]);
+            if (ps[i]->hasJoint()){
+                applyForce(ps[i]);
+            }
             else applyImpulse(ps[i]);
         }
     }
@@ -61,6 +63,7 @@ void Target::applyForce(Goo *goo){
     if (catched && goo->hasJoint()){
         b2Vec2 d;
         d=toVec(position)-goo->getVPosition();
+        if (d.Length()>100) return;
         d.x/=d.Length();
         d.y/=d.Length();
         d*=600/d.Length();
