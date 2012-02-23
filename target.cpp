@@ -21,6 +21,8 @@ bool Target::isCatched(){
     return catched;
 }
 
+//Function to know if the goo tower is in proximity of the target
+//the function check all the jointed goo, if someone is at least at 80px from the target, the tower is catched!
 void Target::checkTower(QList<Goo *> ps){
     b2Vec2 d;
     bool check=false;
@@ -41,15 +43,20 @@ void Target::checkTower(QList<Goo *> ps){
     }
 }
 
+//function to apply forces and impulses at all the goos
 void Target::applyForces(QList<Goo *> ps){
     if (catched){
         for (int i=0;i<ps.length();i++){
-            if (ps[i]->hasJoint()) applyForce(ps[i]);
+            if (ps[i]->hasJoint()){
+                applyForce(ps[i]);
+            }
             else applyImpulse(ps[i]);
         }
     }
 }
 
+//Function to paint the target
+//In future should be better!
 void Target::paint(QPainter &p){
     p.setBrush(Qt::black);
     p.setPen(Qt::black);
@@ -57,10 +64,12 @@ void Target::paint(QPainter &p){
     p.drawRect(position.x()-22,position.y()+5,22*2,-15);
 }
 
+//Function to apply force at the goo tower.
 void Target::applyForce(Goo *goo){
     if (catched && goo->hasJoint()){
         b2Vec2 d;
         d=toVec(position)-goo->getVPosition();
+        if (d.Length()>100) return;
         d.x/=d.Length();
         d.y/=d.Length();
         d*=600/d.Length();
@@ -68,12 +77,16 @@ void Target::applyForce(Goo *goo){
     }
 }
 
+//Apply impulse to jump at free goo near at the target
 void Target::applyImpulse(Goo *goo){
-    if (!goo->hasJoint() && !goo->isDragging() && catched){
+    //check if the goo is not jointed and not dragged and if the target has catched the goo tower.
+    if (!goo->hasJoint() && !goo->isDragging() && !goo->isSleeping() && catched){
         b2Vec2 d=toVec(position)-goo->getVPosition();
+        //if the goo is at least at 15px from the target is catched
         if (d.Length()<15){
             emit gooCatched(goo);
         }
+        //else if at least at 80px jump!
         else if (d.Length()<80){
             goo->jumpTo(position);
         }

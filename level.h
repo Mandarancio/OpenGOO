@@ -54,7 +54,7 @@ private:
     b2World *world;         //world object of the box2d lib
     float step;             //it say how much long is a step
     //MouseJoint
-    //b2MouseJoint *mouseJoint;
+    b2MouseJoint *mouseJoint;
     //Game
     Ground *ground;         //Ground object
     QList<Goo*> goos;       //All the goos!

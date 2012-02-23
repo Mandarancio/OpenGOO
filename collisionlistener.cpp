@@ -58,7 +58,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                 }
             }
             //check for avoid to drag a goo inside the target
-            else if (a->isDragging()) a->contactGround(a->getPPosition());
+           // else if (a->isDragging()) a->contactGround(a->getPPosition());
 
         }
         else if (!a){ //if the first isn't a goo is the same of before!
@@ -107,7 +107,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                 }
             }
             //check for avoid to drag a goo inside the target
-            else if (b->isDragging()) b->contactGround(b->getPPosition());
+            //else if (b->isDragging()) b->contactGround(b->getPPosition());
 
         }
         contact->SetEnabled(true); //contact is enabled here

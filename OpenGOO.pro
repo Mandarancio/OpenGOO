@@ -28,7 +28,9 @@ HEADERS += \
     levelloader.h \
     stickylink.h \
     removablegoo.h \
+    balloongoo.h\
     levelselector.h
+
 
 SOURCES += \
     tools.cpp \
@@ -48,6 +50,7 @@ SOURCES += \
     levelloader.cpp \
     stickylink.cpp \
     removablegoo.cpp \
+    balloongoo.cpp\
     levelselector.cpp
 
 
