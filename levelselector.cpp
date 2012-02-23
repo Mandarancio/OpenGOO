@@ -6,7 +6,7 @@ levelSelector::levelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat
     this->grabMouse();
     this->setMouseTracking(true);
 
-    this->setGeometry(geometry);
+    this->setGeometry(0,0,geometry.width(),geometry.height());
     this->geometry=geometry;
     QPainter p(this);
 
