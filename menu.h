@@ -12,7 +12,7 @@ class Menu : public QObject
 {
     Q_OBJECT
 public:
-    explicit Menu(QRect geometry,QObject *parent = 0);
+    explicit Menu(QRect geometry,QObject *parent = 0,bool debug=false);
     void mouseRelease(QMouseEvent *e);
 private:
     QStringList index;
@@ -20,6 +20,7 @@ private:
     QRect geometry;
     int selected;
     int height;
+    bool debug;
 
     void loadMenuFile();
     void computeHeight();

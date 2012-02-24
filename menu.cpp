@@ -6,10 +6,11 @@
 #include <QFontMetrics>
 #include <QDebug>
 
-Menu::Menu(QRect geometry, QObject *parent) :
+Menu::Menu(QRect geometry, QObject *parent,bool debug) :
     QObject(parent)
 {
     this->geometry=geometry;
+    this->debug=debug;
     computeHeight();
 
     loadMenuFile();
@@ -26,6 +27,7 @@ void Menu::paint(QPainter &p){
     p.setBrush(Qt::white);
     for (int i=0;i<index.length();i++)
         paintButton(i,p);
+    if(debug) p.drawRect(geometry.width()/2-1,geometry.height()/2-1,2,2);//Draw center of the screen
 }
 
 void Menu::loadMenuFile(){
@@ -43,7 +45,7 @@ void Menu::loadMenuFile(){
                 i++;
             }
         }
-        int yOffset=(geometry.height()-index.size()*(height+30))/2;
+        int yOffset=(geometry.height()-index.size()*(height+30)+30)/2;
         for(int j=0;j<index.size();j++)
         {
             int y=yOffset+(height+30)*j;

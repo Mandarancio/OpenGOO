@@ -88,7 +88,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     if (flag==DEBUG) qWarning()<<"Game variable initialized!";
 
 
-    menu=new Menu(geometry,this);
+    menu=new Menu(geometry,this,flag==DEBUG);
     onMenu=false;
     mooving=false;
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
