@@ -101,8 +101,34 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 }
 
 Level::~Level(){
-    for (int i=0;i<objects.length();i++)
+    //clear object bodies
+    for (int i=0;i<objects.length();i++){
         world->DestroyBody(objects[i]->getBody());
+        delete objects[i];
+    }
+    objects.clear();
+    //clear joints
+    for (int i=0;i<joints.length();i++){
+        world->DestroyJoint(joints[i]->getJoint());
+        delete joints[i];
+    }
+    joints.clear();
+    //clear stickies;
+    for (int i=0;i<stickys.length();i++){
+        world->DestroyJoint(stickys[i]->getJoint());
+        delete stickys[i];
+    }
+    stickys.clear();
+    //clear goo body
+    for (int i=0;i<goos.length();i++){
+        world->DestroyBody(goos[i]->getBody());
+        delete goos[i];
+    }
+    goos.clear();
+    //clear ground.
+    world->DestroyBody(ground->getBody());
+    delete ground;
+    //clear world.
     delete world;
 }
 
@@ -322,10 +348,10 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (onMenu){
         return;
     }
-    if (e->x()<=5) moveLeft();
-    if (e->y()<=5) moveUp();
-    if (e->x()>=width()-5) moveRight();
-    if (e->y()>=height()-5) moveDown();
+    if (drag && e->x()<=5) moveLeft();
+    if (drag && e->y()<=5) moveUp();
+    if (drag && e->x()>=width()-5) moveRight();
+    if (drag && e->y()>=height()-5) moveDown();
     if (drag){
         mouseSpeed=(toVec(e->pos())-mousePos);
         mouseSpeed.x*=10000;

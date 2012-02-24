@@ -17,6 +17,7 @@ levelSelector::levelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat
 levelSelector::~levelSelector()
 {
 }
+
 void levelSelector::findLevels()//Find .level file in the current direcotory
 {
     QDir *dir;
@@ -32,7 +33,7 @@ void levelSelector::findLevels()//Find .level file in the current direcotory
         int y=yOffset+(height+30)*j;
         buttons.push_back(QRect(geometry.width()/4,y,geometry.width()/2,height));
     }
-
+    delete dir;
 }
 
 void levelSelector::paintButton(int ind, QPainter &p){
@@ -96,7 +97,7 @@ QString levelSelector::getLevelSelected()
     if(selected!=levels.size())
         return levels.at(selected);
     else
-        return "";
+        return "Exit";
 }
 
 
