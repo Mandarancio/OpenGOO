@@ -3,8 +3,9 @@
 levelSelector::levelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
 {
 
-    this->grabMouse();
+    this->grabMouse();    
     this->setMouseTracking(true);
+    this->grabKeyboard();
 
     this->setGeometry(0,0,geometry.width(),geometry.height());
     this->geometry=geometry;
@@ -100,5 +101,8 @@ QString levelSelector::getLevelSelected()
         return "Exit";
 }
 
-
+void levelSelector::keyReleaseEvent(QKeyEvent *e){
+    if(e->key()==Qt::Key_Escape)
+        emit this->closing();
+}
 

@@ -5,6 +5,8 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDir>
+#include <QKeyEvent>
+
 
 class levelSelector : public QGLWidget
 {
@@ -15,6 +17,7 @@ public:
     QString getLevelSelected();
 protected:
     void mouseReleaseEvent(QMouseEvent *e);
+    void keyReleaseEvent(QKeyEvent *e);
 signals:
     void closing();
     void eventLevelSelected();
