@@ -42,7 +42,17 @@ void MainWidget::levelSelected()//Create the level selected
             }
         level->show();//Show the Level
         connect(level,SIGNAL(closing()),this,SLOT(close()));//Connect the closing of the level with the closing of the game
+        connect(level,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
         if (debug) qWarning()<<"level showed an signal connected.";
     }
 }
 
+void MainWidget::backToMainMenu()
+{
+    levelS=new levelSelector(geometry,this);//Create the level selector
+    levelS->show();//Show the level selector
+    delete level;
+    connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
+    connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level
+
+}

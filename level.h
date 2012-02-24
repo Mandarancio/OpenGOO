@@ -129,7 +129,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
 
 signals:
-    void closing(); //When level is to close for some error reason
+    void closing();                     //When level is to close for some error reason
+    void eventBackToMainMenu();
 public slots:
 private slots:
     //LEVEL LOADER SLOTS:
@@ -162,6 +163,7 @@ private slots:
     void resume();                      //Close the menu
     void restart();                     //Restart the level
     void closeAll();                    //Close the game
+    void backToMainMenu();              //Return to Main Menu
 };
 
 #endif // LEVEL_H

@@ -28,6 +28,7 @@ signals:
     void eventClose();
     void eventResume();
     void eventRestart();
+    void eventBackToMainMenu();
 public slots:
     void paint(QPainter &p);
 };

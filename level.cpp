@@ -94,6 +94,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
     connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
     connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
+    connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
     if (flag==DEBUG) qWarning()<<"Menu set up!";
 
     startTimer(step*1000);
@@ -748,4 +749,10 @@ void Level::stopDragging(){
     drag=false;
     possibility.clear();
     mooving=false;
+}
+
+void Level::backToMainMenu()
+{
+    this->close();//Close the current level
+    emit this->eventBackToMainMenu();
 }

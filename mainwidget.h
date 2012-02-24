@@ -21,6 +21,7 @@ private:
     bool debug;
 private slots:
     void levelSelected();
+    void backToMainMenu();
 };
 
 #endif // MAINWIDGET_H
