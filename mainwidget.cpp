@@ -52,6 +52,7 @@ void MainWidget::backToMainMenu()
     levelS=new levelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
     delete level;
+    level=NULL;
     connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
     connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level
 
