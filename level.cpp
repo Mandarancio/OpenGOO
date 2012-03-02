@@ -317,7 +317,20 @@ void Level::paintEvent(QPaintEvent *e){
         for (int i=0;i<stickys.length();i++)
             stickys[i]->paint(p);
     }
+
+
     p.restore();
+
+    p.save();
+    p.translate(center);
+
+    if (flag==DEBUG){
+        p.setPen(Qt::white);
+        p.drawLine(0,5,0,-5);
+        p.drawLine(5,0,-5,0);
+    }
+    p.restore();
+
     paintTargetArrow(p);
     paintWin(p);
     paintScore(p);
@@ -534,18 +547,27 @@ void Level::paintTargetArrow(QPainter &p){
     if (!darea.contains(center-tp)){
         //Target is not displayed.
         tp=translation+tp;
+        //Translate at the center of the area and rotate in the direction of the target
         p.save();
-        p.setPen(Qt::black);
         p.setBrush(Qt::black);
         p.translate(center);
-        p.rotate(atan2(-tp.y(),-tp.x())*180.0/3.141628-180);
-        p.translate(550,0);
+        if (flag==DEBUG){ //Debug line
+            p.setPen(QPen(Qt::green,1.0,Qt::DashLine));
+            p.drawLine(0,0,tp.x(),tp.y());
+        }
+        p.setPen(Qt::black);
+        //Calculate the angle of the vector between center and target
+        float angle=atan2(-tp.y(),-tp.x())*180.0/3.141628-180;
+        p.rotate(angle);
+        p.translate((width()<height()? width()*3/5-40 : height()*3/5-40),0);
+        //create the arrow polygon
         QPolygon arrow(3);
         arrow.insert(0,QPoint(0,15));
         arrow.insert(1,QPoint(30,0));
         arrow.insert(2,QPoint(0,-15));
+        //Draw it
         p.drawPolygon(arrow);
-
+        //Restor evrything
         p.restore();
     }
 
