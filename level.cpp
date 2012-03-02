@@ -551,15 +551,16 @@ void Level::paintTargetArrow(QPainter &p){
         p.save();
         p.setBrush(Qt::black);
         p.translate(center);
-        if (flag==DEBUG){ //Debug line
-            p.setPen(QPen(Qt::green,1.0,Qt::DashLine));
-            p.drawLine(0,0,tp.x(),tp.y());
-        }
         p.setPen(Qt::black);
-        //Calculate the angle of the vector between center and target
+        //Compute the angle of the vector between center and target
         float angle=atan2(-tp.y(),-tp.x())*180.0/3.141628-180;
+        //Compute the distance to borders:
+        float m1,m2;
+        m1=abs(width()/(2*cos(angle*3.141628/180.0)));
+        m2=abs(height()/(2*sin(angle*3.141628/180.0)));
+        int d=(m1<m2? m1 : m2)-60;
         p.rotate(angle);
-        p.translate((width()<height()? width()*3/5-40 : height()*3/5-40),0);
+        p.translate(d,0);
         //create the arrow polygon
         QPolygon arrow(3);
         arrow.insert(0,QPoint(0,15));
