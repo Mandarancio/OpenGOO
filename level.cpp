@@ -492,11 +492,11 @@ void Level::giveTarget(Goo *previous){
                 int choise=rand()%previous->getLinks().length();
                 goo->setTarget(previous->getLinks().at(choise));
             }
-            else if (previous->getLinks().length()) {
+            else if (previous->getLinks().length()) { //Searche the nearest next goo at the target
                 Goo * target=previous->getLinks().at(0);
                 b2Vec2 d=this->target->getVPosition()-target->getVPosition();
                 for (int i=1;i<previous->getLinks().length();i++){
-                    if ((goo->getPrevious()!=target->getLinks().at(i)) && (this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
+                    if ((goo->getPrevious()!=previous->getLinks().at(i)) && (this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
                         target=previous->getLinks().at(i);
                         d=this->target->getVPosition()-previous->getLinks().at(i)->getVPosition();
                     }
