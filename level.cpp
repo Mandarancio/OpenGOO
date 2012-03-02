@@ -83,8 +83,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     //initialize variables for draggin goo
     drag = false;
     dragged=NULL;
-    //
-    //mouseJoint=NULL;
+    selected=NULL;
 
     points=0;
     catched=false;
@@ -307,7 +306,7 @@ void Level::paintEvent(QPaintEvent *e){
         }
     }
     for (int i=0;i<goos.length();i++){
-        if (goos[i]) {
+        if (goos[i] && !goos[i]->isDragging() && !goos[i]->isSelected()) {
             goos[i]->paint(p);
             if (flag==DEBUG){
                 goos[i]->paintDebug(p);
@@ -324,6 +323,20 @@ void Level::paintEvent(QPaintEvent *e){
         p.setPen(Qt::white);
         p.drawLine(0,5,0,-5);
         p.drawLine(5,0,-5,0);
+    }
+
+    //Draw selected and dragged goo
+    if (dragged!=NULL) {
+        dragged->paint(p);
+        if (flag==DEBUG){
+            dragged->paintDebug(p);
+        }
+    }
+    if (selected!=NULL){
+        selected->paint(p);
+        if (flag==DEBUG){
+            selected->paintDebug(p);
+        }
     }
 
     p.restore();
@@ -379,21 +392,38 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (drag && e->x()>=width()-5) moveRight();
     if (drag && e->y()>=height()-5) moveDown();
     if (drag){
+        //compute the mouse speed (so when the goo is released it get the mouse spped)
         mouseSpeed=(toVec(e->pos())-mousePos);
         mouseSpeed.x*=10000;
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
+        //Check if mouse is on the ground
         if (ground->contains(e->pos()-(center+translation))) dragged->move(stopPosition);
         else dragged->move(e->pos()-(center+translation));
+        //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
-        //For mouse joint implementation
-//        if (mouseJoint!=NULL)
-//            mouseJoint->SetTarget(toVec(e->pos()-(center+translation)));
     }
+    //Rutine for translate the scene
     else if (mooving) {
         QPoint d=e->pos()-toPoint(mousePos);
         mousePos=toVec(e->pos());
         moveOf(d);
+    }
+    //Rutine to show the possible draggable go under the mouse
+    else {
+        if (selected!=getGooAt(e->pos()-(center+translation))){
+            if (selected!=NULL) {
+                //Unselect old and select new.
+                selected->select(false);
+                selected=getGooAt(e->pos()-(center+translation));
+                if (selected!=NULL) selected->select();
+            }
+            else {
+                //select new
+                selected=getGooAt(e->pos()-(center+translation));
+                if (selected!=NULL) selected->select();
+            }
+        }
     }
 }
 void Level::mousePressEvent(QMouseEvent *e){
@@ -406,17 +436,11 @@ void Level::mousePressEvent(QMouseEvent *e){
            possibility.clear();
            drag=true;
            dragged->drag();
-
-           //Mouse joint implementation
-//           b2MouseJointDef def;
-//           def.bodyA=ground->getBody();
-//           def.bodyB=dragged->getBody();
-//           def.target=toVec(e->pos()-(center+translation));
-//           def.maxForce=1000000;
-//           def.frequencyHz=1/step;
-//           def.dampingRatio=1000;
-//           mouseJoint=(b2MouseJoint*)world->CreateJoint(&def);
-
+           //Unselect
+           if (selected!=NULL){
+               selected->select(false);
+               selected=NULL;
+           }
        }
        else mooving=true;
    }
@@ -429,12 +453,6 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     else if (drag){
         if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
-        //For mousejoint implementation
-//        if (mouseJoint!=NULL){
-//            world->DestroyJoint(mouseJoint);
-//            mouseJoint=NULL;
-//        }
-
     }
     dragged=NULL;
     drag=false;
@@ -452,7 +470,7 @@ void Level::destroyJoint(Joint *joint){
     jointsToDestroy.push_back(joint);
 }
 
-void Level::giveTarget(Goo *previous){ //SISTEMARE STO CAZZO DI ALGORITMO!!! Non capisco dove minchia è il problema!
+void Level::giveTarget(Goo *previous){
     Goo *goo=dynamic_cast<Goo*>(sender());
     if (goo!=NULL){
         if (!previous){

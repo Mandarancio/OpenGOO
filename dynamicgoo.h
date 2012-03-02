@@ -28,6 +28,8 @@ private:
     bool sticked; //flag to know if is sticked to the ground
 protected:
     void moveToTarget(); //move to the target
+    QColor color; //Color for recognize type of dynamic goo
+
 private slots:
 
 public slots:

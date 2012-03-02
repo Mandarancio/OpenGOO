@@ -53,8 +53,6 @@ private:
     //Physic
     b2World *world;         //world object of the box2d lib
     float step;             //it say how much long is a step
-    //MouseJoint
-    b2MouseJoint *mouseJoint;
     //Game
     Ground *ground;         //Ground object
     QList<Goo*> goos;       //All the goos!
@@ -72,6 +70,7 @@ private:
     Target* target;         //The target object
     bool drag;              //If the player is dragging some goo
     Goo* dragged;           //The goo that is under the mouse
+    Goo* selected;          //The selected Goo
     QPoint stopPosition;    //If mouse is in the ground
     //Mouse
     b2Vec2 mousePos;        //Mouse current position (is needed to calculate the speed of the mouse

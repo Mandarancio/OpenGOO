@@ -6,12 +6,14 @@
 Goo::Goo( int radius, QObject *parent) :
     QObject(parent)
 {
+    //Initialize variable
     this->radius=radius;
     this->maxJoints=0;
     this->minJoints=0;
 
     guestN=0;
 
+    selected=false;
     moovable=false;
     falling=true;
     dragging=false;
@@ -35,6 +37,15 @@ bool Goo::isOnGround(){
     if (getPPosition().x()-groundPoint.x()>5 || getPPosition().y()-groundPoint.y()>5) onGround=false;
     else onGround=true;
     return onGround;
+}
+
+//Function to select unselect
+void Goo::select(bool s){
+    selected=s;
+}
+
+bool Goo::isSelected(){
+    return selected;
 }
 
 bool Goo::isDragable(){
@@ -191,12 +202,12 @@ void Goo::drag(){
         info.speed=body->GetLinearVelocity();
         info.aForce=body->GetAngularVelocity();
     }
-
-    dragging=true;
-
     body->SetLinearVelocity(b2Vec2(0,0));
     body->SetGravityScale(0);
     body->SetAngularVelocity(0.0);
+    dragging=true;
+
+
 
 }
 

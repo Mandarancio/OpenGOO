@@ -25,13 +25,19 @@ public:
     int getRadius();
     int getGuestNumber();
 
+    //obsolete
     bool newGuest();
     bool removeGuest();
 
+    //Function to drag and drop goo
     void drag();
     void drop();
     void drop(b2Vec2 speed);
+    //select unselect goo
+    void select(bool s=true);
+    bool isSelected();
 
+    //Return function
     virtual bool isDragable();
     bool isMoovable();
     bool isFalling();
@@ -77,12 +83,14 @@ protected:
     bool following;//If is following another goo
     bool dragging; //If the user is courrently dragging that
     bool onGround; //If the goo is on the ground (and inactive)
+    bool selected; //know if the goo is selected
     //If the goo is sleeping
     bool sleeping;
     //Propierties
     QPoint groundPoint;
     int minJoints,maxJoints;
     int guestN;
+
 
     Goo* target,*prevTarget;
 

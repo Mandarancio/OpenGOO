@@ -9,6 +9,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
 {
     this->world=world; //get a copy of the world
     sticked=false; //start not sticked at ground
+    color=Qt::white; //the recognize color of normal dynamic goo is white;
 
     b2BodyDef def; //body definition
     def.awake=true; //is active
@@ -115,13 +116,30 @@ void DynamicGoo::moveToTarget(){
 
 
 void DynamicGoo::paint(QPainter &p){
+    //Check rutine
     if (!isSleeping())
         moveToTarget();
     else
         emit this->checkForNeighbors(getPPosition());
+    //Real paint stuff
+    //check if is dragged
+    if (isDragging()){
+        p.setBrush(Qt::transparent);
+        p.setPen(QPen(color,3));
+        p.drawEllipse(toPoint(body->GetPosition()), getRadius()+10,getRadius()+10);
+    }
+    //check if is selected and draggable
+    else if (selected && isDragable()){
+        p.setPen(QPen(color,3,Qt::DashLine));
+        p.setBrush(Qt::transparent);
+        p.drawEllipse(toPoint(body->GetPosition()), getRadius()+10,getRadius()+10);
+
+    }
+    //paint goo
     p.setPen(Qt::black);
     p.setBrush(Qt::black);
-    p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+    p.drawEllipse(getPPosition(),getRadius(),getRadius());
+
 }
 
 void DynamicGoo::paintDebug(QPainter &p){
