@@ -15,6 +15,8 @@
 
 #include "levelloader.h"
 
+#include <QPolygon>
+
 #define RADIUS 15
 
 Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
@@ -316,6 +318,7 @@ void Level::paintEvent(QPaintEvent *e){
             stickys[i]->paint(p);
     }
     p.restore();
+    paintTargetArrow(p);
     paintWin(p);
     paintScore(p);
     if (onMenu) menu->paint(p);
@@ -506,6 +509,7 @@ void Level::paintScore(QPainter &p){
     p.drawText(10,height()-7,"of "+QString::number(goal));
 }
 
+//Function to paint the win screen
 void Level::paintWin(QPainter &p){
     if (points>=goal){
         QColor bg(0,0,0,200);
@@ -522,6 +526,32 @@ void Level::paintWin(QPainter &p){
     }
 }
 
+//Function to paint the target arrow
+void Level::paintTargetArrow(QPainter &p){
+    //Check if the target is displayed:
+    QPoint tp= toPoint(target->getVPosition());
+    QRect darea(translation,this->geometry().size());
+    if (!darea.contains(center-tp)){
+        //Target is not displayed.
+        tp=translation+tp;
+        p.save();
+        p.setPen(Qt::black);
+        p.setBrush(Qt::black);
+        p.translate(center);
+        p.rotate(atan2(-tp.y(),-tp.x())*180.0/3.141628-180);
+        p.translate(550,0);
+        QPolygon arrow(3);
+        arrow.insert(0,QPoint(0,15));
+        arrow.insert(1,QPoint(30,0));
+        arrow.insert(2,QPoint(0,-15));
+        p.drawPolygon(arrow);
+
+        p.restore();
+    }
+
+}
+
+//Function to paint the menu button (for touchscreen device)
 void Level::paintButton(QPainter &p){
     p.setPen(Qt::darkGray);
     p.setBrush(QColor(255,255,255,60));
@@ -529,11 +559,13 @@ void Level::paintButton(QPainter &p){
     p.drawEllipse(QPoint(this->width()-20,this->height()-20),7,7);
 }
 
+//Detect if the button menu is clicked
 void Level::clickButton(QPoint p){
     QPoint d=p-QPoint(width(),height());
     if (d.x()*d.x()+d.y()*d.y()<60*60) onMenu=!onMenu;
 }
 
+//Resume at game from the menu
 void Level::resume(){
     onMenu=false;
 }

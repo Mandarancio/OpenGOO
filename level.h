@@ -110,6 +110,9 @@ private:
     void paintScore(QPainter &p);
     void paintWin(QPainter &p);
 
+    //paint an arrow for the target
+    void paintTargetArrow(QPainter &p);
+
     //MENU BUTTON FOR TOUCHSCREEN
     void paintButton(QPainter &p);
     void clickButton(QPoint p);
