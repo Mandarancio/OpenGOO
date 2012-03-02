@@ -27,6 +27,11 @@ b2Body* Ground::getBody(){
     return body;
 }
 
+//Function to know if a point is conteined in the ground
+bool Ground::contains(QPoint p){
+    return polShape.containsPoint(p,Qt::OddEvenFill);
+}
+
 //Function to paint the ground
 void Ground::paint(QPainter &p){
     p.setBrush(Qt::black);

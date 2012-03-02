@@ -72,6 +72,7 @@ private:
     Target* target;         //The target object
     bool drag;              //If the player is dragging some goo
     Goo* dragged;           //The goo that is under the mouse
+    QPoint stopPosition;    //If mouse is in the ground
     //Mouse
     b2Vec2 mousePos;        //Mouse current position (is needed to calculate the speed of the mouse
     b2Vec2 mouseSpeed;      //Mouse speed (so when release the dragged goo, he take the mouse speed)
@@ -152,7 +153,8 @@ private slots:
     void checkForNeighbors(QPoint p);
     //Slot to stop dragging a goo (is used when the user try to drag a goo in some not permitted position)
     void stopDragging();
-
+    //Slot to stop a dragged goo in a Point
+    void stopGoo(QPoint p);
 
     void destroyJoint(Joint * joint);   //Destroy a joint
     void destroyGOO();                  //Destroy a GOO!

@@ -78,7 +78,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                         //SO I MADE THIS WORK AROUND TO FIX IT
                         //WORKAROUND
                         //CHECK IF THE COLLISION POINT IS TOO DISTANT FROM MY BODY FOR BE A CORRECT POINT
-                        if ((p-b->getVPosition()).Length()>50) {
+                        if ((p-b->getVPosition()).Length()>50 && b->hasJoint()) {
                             //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT
                             p=b->getVPosition();
                             //RETRIVE THE NORMAL OF THE COLLISION
@@ -102,7 +102,8 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                         }
                         //END WORKAROUND
                         //CALL CONTACTGROUND WITH THE CALCULATED P
-                        b->contactGround(toPoint(p));
+                        if (b->hasJoint()) b->contactGround(toPoint(p));
+                        else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
                     }
                 }
             }

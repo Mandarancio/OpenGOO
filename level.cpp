@@ -50,6 +50,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     //setup our modified collisionlistener
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
+    connect(cl,SIGNAL(stopGOO(QPoint)),this,SLOT(stopGoo(QPoint)));
     if (flag==DEBUG) qWarning()<<"Collision listener created and set up!";
 
     //setup the leveloader with some enviroment parameters
@@ -318,19 +319,27 @@ void Level::paintEvent(QPaintEvent *e){
             stickys[i]->paint(p);
     }
 
-
-    p.restore();
-
-    p.save();
-    p.translate(center);
-
+    //Draw the center of the map
     if (flag==DEBUG){
         p.setPen(Qt::white);
         p.drawLine(0,5,0,-5);
         p.drawLine(5,0,-5,0);
     }
+
     p.restore();
 
+    //Draw the center of the display
+    p.save();
+    p.translate(center);
+
+    if (flag==DEBUG){
+        p.setPen(Qt::yellow);
+        p.drawLine(0,5,0,-5);
+        p.drawLine(5,0,-5,0);
+    }
+    p.restore();
+
+    //Paint the targetarrow the win screen menu and etc...
     paintTargetArrow(p);
     paintWin(p);
     paintScore(p);
@@ -374,7 +383,8 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mouseSpeed.x*=10000;
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
-        dragged->move(e->pos()-(center+translation));
+        if (ground->contains(e->pos()-(center+translation))) dragged->move(stopPosition);
+        else dragged->move(e->pos()-(center+translation));
         possibility=possibleJoints(dragged->getPPosition());
         //For mouse joint implementation
 //        if (mouseJoint!=NULL)
@@ -806,8 +816,18 @@ void Level::stopDragging(){
     mooving=false;
 }
 
+//function to go at main menu
 void Level::backToMainMenu()
 {
     this->close();//Close the current level
     emit this->eventBackToMainMenu();
+}
+
+//function to stop a goo
+void Level::stopGoo(QPoint p){
+    if (ground->contains(p)){
+        if (flag==DEBUG) qWarning()<<"P is in the Ground, stop dragging ";
+        stopDragging();
+    }
+    else stopPosition = p;
 }

@@ -15,6 +15,7 @@ public:
 
 signals:
     void destroyGOO(Goo * goo); //signal to destroy a goo (Ex: a goo collide with a thorn)
+    void stopGOO(QPoint p);
 public slots:
 
 };
