@@ -354,9 +354,9 @@ void Level::paintEvent(QPaintEvent *e){
 
     //Paint the targetarrow the win screen menu and etc...
     paintTargetArrow(p);
+    if (onMenu) menu->paint(p);
     paintWin(p);
     paintScore(p);
-    if (onMenu) menu->paint(p);
     paintButton(p);
     if (p.end()) e->accept();
     else e->ignore();
@@ -549,21 +549,25 @@ void Level::paintScore(QPainter &p){
     p.setFont(f);
     p.drawText(10,height()-7,"of "+QString::number(goal));
 }
-
+\
 //Function to paint the win screen
 void Level::paintWin(QPainter &p){
     if (points>=goal){
-        QColor bg(0,0,0,200);
-        p.setBrush(bg);
-        p.setPen(bg);
-        p.drawRect(0,0,width(),height());
+        //if the menu is hidden draw the semi-black background
+        if (!onMenu){
+            QColor bg(0,0,0,200);
+            p.setBrush(bg);
+            p.setPen(bg);
+            p.drawRect(0,0,width(),height());
+        }
+        //Setup fonts and write win on the screen
         QFont f;
         f.setFamily("Times");
         f.setBold(true);
         f.setPointSize(30);
         p.setFont(f);
         p.setPen(Qt::white);
-        p.drawText(this->geometry(),Qt::AlignCenter,"Win!!");
+        p.drawText(QPoint(50,50),"Win!!");
     }
 }
 
