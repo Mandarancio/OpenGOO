@@ -14,7 +14,7 @@ public:
     ~MainWidget();
 private:
     Level *level;
-    levelSelector *levelS;
+    LevelSelector *levelS;
 
     QRect geometry;
 

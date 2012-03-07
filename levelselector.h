@@ -6,18 +6,20 @@
 #include <QMouseEvent>
 #include <QDir>
 #include <QKeyEvent>
+#include <QPaintEvent>
 
 
-class levelSelector : public QGLWidget
+class LevelSelector : public QGLWidget
 {
     Q_OBJECT
 public:
-    explicit levelSelector(QRect geometry,QWidget *parent = 0);
-    ~levelSelector();
+    explicit LevelSelector(QRect geometry,QWidget *parent = 0);
+    ~LevelSelector();
     QString getLevelSelected();
 protected:
     void mouseReleaseEvent(QMouseEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
+    void paintEvent(QPaintEvent *e);
 signals:
     void closing();
     void eventLevelSelected();

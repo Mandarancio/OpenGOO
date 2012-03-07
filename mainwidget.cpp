@@ -10,7 +10,7 @@ MainWidget::MainWidget(QRect geometry,bool debug,QWidget *parent)
     this->setGeometry(geometry);
     this->geometry=geometry;
     this->debug=debug;
-    levelS=new levelSelector(geometry,this);//Create the level selector
+    levelS=new LevelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
     level=NULL;
     connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
@@ -49,7 +49,7 @@ void MainWidget::levelSelected()//Create the level selected
 
 void MainWidget::backToMainMenu()
 {
-    levelS=new levelSelector(geometry,this);//Create the level selector
+    levelS=new LevelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
     delete level;
     level=NULL;

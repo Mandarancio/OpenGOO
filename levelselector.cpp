@@ -1,6 +1,6 @@
 #include "levelselector.h"
 
-levelSelector::levelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
+LevelSelector::LevelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
 {
 
     this->grabMouse();    
@@ -9,17 +9,15 @@ levelSelector::levelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat
 
     this->setGeometry(0,0,geometry.width(),geometry.height());
     this->geometry=geometry;
-    QPainter p(this);
 
     this->computeHeight();
     this->findLevels();
-    this->paint(p);    
 }
-levelSelector::~levelSelector()
+LevelSelector::~LevelSelector()
 {
 }
 
-void levelSelector::findLevels()//Find .level file in the current direcotory
+void LevelSelector::findLevels()//Find .level file in the current direcotory
 {
     QDir *dir;
     dir=new QDir();
@@ -37,7 +35,7 @@ void levelSelector::findLevels()//Find .level file in the current direcotory
     delete dir;
 }
 
-void levelSelector::paintButton(int ind, QPainter &p){
+void LevelSelector::paintButton(int ind, QPainter &p){
 
     QFont f;
     f.setFamily("Times");
@@ -53,14 +51,14 @@ void levelSelector::paintButton(int ind, QPainter &p){
 
 }
 
-void levelSelector::computeHeight(){
+void LevelSelector::computeHeight(){
     QFont f;
     f.setFamily("Times");
     f.setPointSize(32);
     height=QFontMetrics(f).height()+30;
 }
 
-void levelSelector::mouseReleaseEvent(QMouseEvent *e){
+void LevelSelector::mouseReleaseEvent(QMouseEvent *e){
     if (e->button()==Qt::LeftButton){        
         selected=-1;
         for (int i=0;i<buttons.length();i++){
@@ -77,7 +75,17 @@ void levelSelector::mouseReleaseEvent(QMouseEvent *e){
 
 }
 
-void levelSelector::paint(QPainter &p){
+void LevelSelector::paintEvent(QPaintEvent *e){
+    //Initialize painter
+    QPainter p(this);
+    //call the pain function
+    paint(p);
+    //close the painter
+    if (p.end()) e->accept();
+    else e->ignore();
+}
+
+void LevelSelector::paint(QPainter &p){
     QColor bg(0,0,0,200);
     p.setPen(Qt::transparent);
     p.setBrush(bg);
@@ -88,12 +96,12 @@ void levelSelector::paint(QPainter &p){
         paintButton(i,p);
 }
 
-void levelSelector::closeAll()
+void LevelSelector::closeAll()
 {
     emit this->closing();
 }
 
-QString levelSelector::getLevelSelected()
+QString LevelSelector::getLevelSelected()
 {
     if(selected!=levels.size())
         return levels.at(selected);
@@ -101,7 +109,7 @@ QString levelSelector::getLevelSelected()
         return "Exit";
 }
 
-void levelSelector::keyReleaseEvent(QKeyEvent *e){
+void LevelSelector::keyReleaseEvent(QKeyEvent *e){
     if(e->key()==Qt::Key_Escape)
         emit this->closing();
 }
