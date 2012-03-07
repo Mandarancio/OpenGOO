@@ -1,4 +1,4 @@
-QT       += core gui opengl
+QT       += core gui opengl xml
 
 TARGET = OpenGOO
 TEMPLATE = app
@@ -29,7 +29,8 @@ HEADERS += \
     stickylink.h \
     removablegoo.h \
     balloongoo.h\
-    levelselector.h
+    levelselector.h \
+    svglevelloader.h
 
 
 SOURCES += \
@@ -51,7 +52,8 @@ SOURCES += \
     stickylink.cpp \
     removablegoo.cpp \
     balloongoo.cpp\
-    levelselector.cpp
+    levelselector.cpp \
+    svglevelloader.cpp
 
 
 ##FOR TOUCHPAD COMPILE
