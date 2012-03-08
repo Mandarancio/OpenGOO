@@ -10,8 +10,8 @@ LevelLoader::LevelLoader(QString path,QObject *parent) :
 {
     initFlags();
     this->path=path;//Path of the level;
-    wC=0;
-    hC=0;
+    wC=1000;
+    hC=1000;
 }
 
 void LevelLoader::load(){ //trigger to start to load the level!

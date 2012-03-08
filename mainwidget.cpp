@@ -2,6 +2,7 @@
 #include <QDebug>
 
 
+#include "svglevelloader.h"
 
 MainWidget::MainWidget(QRect geometry,bool debug,QWidget *parent)
     : QMainWindow(parent)
@@ -35,15 +36,16 @@ void MainWidget::levelSelected()//Create the level selected
     {
         level=new Level(geometry,levelS->getLevelSelected(),STANDARD,this);//Create the level
         if (!debug)
-                level=new Level(geometry,levelS->getLevelSelected(),STANDARD,this); //Create the level
-            else{
-                level=new Level(geometry,levelS->getLevelSelected(),DEBUG,this); //Create the level
-                qWarning()<<"Level object created";
-            }
+            level=new Level(geometry,levelS->getLevelSelected(),STANDARD,this); //Create the level
+        else{
+            level=new Level(geometry,levelS->getLevelSelected(),DEBUG,this); //Create the level
+            qWarning()<<"Level object created";
+        }
         level->show();//Show the Level
         connect(level,SIGNAL(closing()),this,SLOT(close()));//Connect the closing of the level with the closing of the game
         connect(level,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
         if (debug) qWarning()<<"level showed an signal connected.";
+
     }
 }
 

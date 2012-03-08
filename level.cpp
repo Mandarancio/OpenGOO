@@ -13,7 +13,6 @@
 
 #include "collisionlistener.h"
 
-#include "levelloader.h"
 
 #include <QPolygon>
 
@@ -54,8 +53,8 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     if (flag==DEBUG) qWarning()<<"Collision listener created and set up!";
 
     //setup the leveloader with some enviroment parameters
-    loader=new LevelLoader(level);
-    loader->setDisplay(width(),height());
+    loader=new SvgLevelLoader(level,geometry.size());
+
     //connect the loader signals
     connect(loader,SIGNAL(fileError()),this,SLOT(closeAll()));
     connect(loader,SIGNAL(levelName(QString)),this,SLOT(setName(QString)));
@@ -63,12 +62,12 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
     connect(loader,SIGNAL(levelLimit(QRect)),this,SLOT(setLimit(QRect)));
     connect(loader,SIGNAL(levelTarget(QPoint)),this,SLOT(setTarget(QPoint)));
-    connect(loader,SIGNAL(levelJoint(QPoint,QPoint)),this,SLOT(setJoint(QPoint,QPoint)));
+    //connect(loader,SIGNAL(levelJoint(QPoint,QPoint)),this,SLOT(setJoint(QPoint,QPoint)));
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     if (flag==DEBUG) qWarning()<<"Level loader created, set up and connected!";
 
     //load the level
-    loader->load();
+    loader->parse();
     if (flag==DEBUG) qWarning()<<"Level loaded!";
 
     //connect target signals with level
@@ -184,10 +183,16 @@ void Level::moveOf(QPoint dP){
     int xf,yf;
     xf=translation.x()+dP.x()/2;
     yf=translation.y()+dP.y()/2;
-    if (xf>= -limit.x()) xf=-limit.x();
-    else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
-    if (yf>=limit.y()) yf=limit.y();
-    else if (yf<=limit.height()) yf=limit.height();
+    if (flag==DEBUG) qWarning()<<"Move at"<<xf<<","<<yf;
+    int wf,hf;
+    wf=xf-width()/2;
+    hf=hf+height()/2;
+    if (wf<limit.x()) xf=limit.x();
+//    if (xf>= -limit.x()) xf=-limit.x();
+//    else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
+//    if (yf>=limit.y()) yf=limit.y();
+//    else if (yf<=limit.height()) yf=limit.height();
+//    translation=QPoint(xf,yf);
     translation=QPoint(xf,yf);
 }
 
@@ -653,7 +658,7 @@ void Level::restart(){
     world = new b2World(b2Vec2(0,500));
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
-    loader->load();
+    loader->parse();
     //createThorns();
     points=0;
     catched=false;

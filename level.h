@@ -20,7 +20,7 @@
 #include "menu.h"
 #include "object.h"
 
-#include "levelloader.h"
+#include "svglevelloader.h"
 
 #include <stickylink.h>
 
@@ -42,7 +42,7 @@ private:
     //Run type flag
     RunFlag flag;
     //LOADER
-    LevelLoader * loader;
+    SvgLevelLoader * loader;
     //PROPERTY
     //Graphic
     QPoint center;          //Center of the display, is used to have a more human coordinate system
