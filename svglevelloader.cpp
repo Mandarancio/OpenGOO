@@ -31,6 +31,8 @@ void SvgLevelLoader::setDisplay(QSize size){
 }
 
 void SvgLevelLoader::parse(){
+    links.clear();
+    goos.clear();
     //Setup and open the file
     QFile file(path);
     if (file.open(QFile::ReadOnly)){
@@ -98,7 +100,7 @@ void SvgLevelLoader::parse(){
                 else if (!label.compare("#limit") || !id.compare("limit")){
                     QRect rect=parseRect(object);
                     //rect.setTopLeft(-rect.topLeft()+QPoint(displaySize.width(),displaySize.height()));
-                   // rect.setTopLeft(coordPoint(rect.topLeft()));
+                   // rect.setTopLeft(qrand()Point(rect.topLeft()));
                     qWarning()<<"limit"<<rect;
 
                     emit levelLimit(rect);
@@ -117,19 +119,25 @@ void SvgLevelLoader::parse(){
                 }
                 else if (!label.compare("#joint")){
                     qWarning()<<"Joint"<<id;
-                    QPoint a,b;
-                    //parse the points
-                    if (parsePointList(object).length()>=2){
-                        a=parsePointList(object).at(0);
-                        b=a+parsePointList(object).at(1);
-
-                    }
-                    else emit fileError();
-
-                    qWarning()<<a<<b;
 
                     QString goos=object.firstChild().toElement().text();
                     qWarning()<<goos;
+                    int a,b;
+                    //check flag
+                    bool ok=true;
+                    //parse goo id to connect
+                    if (goos.split('-').length()!=2) {
+                        emit fileError();
+                        continue;
+                    }
+                    a=goos.split('-').at(0).toInt(&ok);
+                    b=goos.split('-').at(1).toInt(&ok);
+                    if (ok){
+                        QPair <int,int> link;
+                        link.first=a;
+                        link.second=b;
+                        links.push_back(link);
+                    }
                 }
                 else if (!label.compare("#goo")){
                     qWarning()<<object.attribute("id","");
@@ -147,12 +155,38 @@ void SvgLevelLoader::parse(){
                     }
                     else {
                         QPoint p=parsePoint(object);
-                        qWarning()<<p<<n;
+                        int nType;
+                        if (!type.compare("STD")) nType=0; //STANDARD GOO
+                        else if (!type.compare("RMV")) nType=1; //REMOVIBLE GOO
+                        else if (!type.compare("FXD")) nType=2; //FIXED GOO
+                        emit levelGOO(p,n,nType);
                     }
                 }
             }
+            //emit link / joint signal
+            int a,b;
+            for (int i=0;i<links.length();i++){
+                a=getIndex(links[i].first);
+                b=getIndex(links[i].second);
+                if (a>=0 && b>=0) emit levelJoint(goos[a].second,goos[b].second);
+            }
         }
     }
+}
+
+//Function to add a created goo
+void SvgLevelLoader::addGoo(int id, Goo *goo){
+    QPair <int , Goo*> pair;
+    pair.first=id;
+    pair.second=goo;
+    goos.push_back(pair);
+}
+
+int SvgLevelLoader::getIndex(int id){
+    for (int i=0;i<goos.length();i++){
+        if (goos[i].first==id) return i;
+    }
+    return -1;
 }
 
 QPoint SvgLevelLoader::parseTransform(QDomElement el){
@@ -180,7 +214,6 @@ QRect SvgLevelLoader::parseRect(QDomElement el){
     p.setY(qRound(el.attribute("y").toFloat(&ok)));
     p=scalePoint(p+parseTransform(el));
 
-    p=coordPoint(p);
 
     //size
     d.setX(qRound(el.attribute("width").toFloat(&ok)));
@@ -201,7 +234,6 @@ QPoint SvgLevelLoader::parsePoint(QDomElement el){
     if (ok) {
         p=QPoint(x,y)+parseTransform(el);
         p=scalePoint(p);
-        p=coordPoint(p);
     }
     return p;
 }
@@ -238,6 +270,7 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     //Start to parse the list;
     QPoint p;
     for (int i=1;i<nPoint+1;i++){
+        if (str.split(' ').at(i)[0]=='l') continue;
         p=strToPoint(str.split(' ').at(i));
         if (i==1){
             p=scalePoint(p+transform);
@@ -265,17 +298,5 @@ QPoint SvgLevelLoader::scalePoint(QPoint p){
     //rescale the point
     cP.setX(qRound(scaleX*float(p.x())));
     cP.setY(qRound(scaleY*float(p.y())));
-    return cP;
-}
-
-//change coordinate of the point
-QPoint SvgLevelLoader::coordPoint(QPoint p){
-    QPoint cP=p;
-//    //change the coordinate (from top-left system to a center-down system)
-//    QPoint center(displaySize.width()/2,displaySize.height()/2);
-//    qWarning()<<cP<<center<<"coord";
-//    qWarning()<<cP.x()-center.x();
-//    cP.setX(cP.x()-center.x());
-//    cP.setY(center.y()-cP.y());
     return cP;
 }

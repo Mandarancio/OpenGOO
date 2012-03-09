@@ -22,7 +22,7 @@ TO RUN
 ----
 
 Move in the folder contains the build and
-Make sure that in this folder also l01.level and menu.index are present (else copy here).
+Make sure that in this folder also level-svg.level and menu.index are present (else copy here).
 ./OpenGOO
 
 If you want more debug output
@@ -30,8 +30,8 @@ If you want more debug output
 
 
 ATTENZIONE/ATTECTION
-Il file di livello (l01.level) e di menu (menu.index) deve essere nella cartella dell eseguibile.
-he level file (l01.level) and menu file (menu.index) must be in the executable folder.
+Il file di livello (level-svg.level) e di menu (menu.index) deve essere nella cartella dell eseguibile.
+he level file (level-svg.level) and menu file (menu.index) must be in the executable folder.
 
 TO DO
 ----

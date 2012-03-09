@@ -62,7 +62,9 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
     connect(loader,SIGNAL(levelLimit(QRect)),this,SLOT(setLimit(QRect)));
     connect(loader,SIGNAL(levelTarget(QPoint)),this,SLOT(setTarget(QPoint)));
-    //connect(loader,SIGNAL(levelJoint(QPoint,QPoint)),this,SLOT(setJoint(QPoint,QPoint)));
+    connect(loader,SIGNAL(levelJoint(Goo*,Goo*)),this,SLOT(setJoint(Goo*,Goo*)));
+    connect(loader,SIGNAL(levelGOO(QPoint,int,int)),this,SLOT(setGoo(QPoint,int,int)));
+
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     if (flag==DEBUG) qWarning()<<"Level loader created, set up and connected!";
 
@@ -753,34 +755,49 @@ void Level::setStartArea(int n, QRect area,int type){
     if (flag==DEBUG) qWarning()<<"A start area is created.";
 }
 
-void Level::setJoint(QPoint a, QPoint b){
-    QPoint ga(a.x()+RADIUS,a.y()-RADIUS-2);
-    QPoint gb(b.x()+RADIUS,b.y()-RADIUS-2);
-    DynamicGoo *gooA,*gooB;
-    gooA=new DynamicGoo(world,ga,RADIUS,this);
-    gooB=new DynamicGoo(world,gb,RADIUS,this);
-    //Connect slots
-    connect(gooB,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
-    connect(gooA,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+void Level::setJoint(Goo*a,Goo*b){
 
 
-    goos.push_back(gooA);
-    goos.push_back(gooB);
+    makeJoint(a,b);
 
-    makeJoint(gooA,gooB);
+    if (flag==DEBUG) qWarning()<<"First joint created!";
+}
 
-    if (flag==DEBUG) qWarning()<<"First joint created, at:"<<a;
-
-    //    connect(gooA,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
-    //    connect(gooA,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
-    //    connect(gooA,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
-    //    connect(gooA,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-    //    connect(gooA,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
-    //    connect(gooB,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
-    //    connect(gooB,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
-    //    connect(gooB,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
-    //    connect(gooB,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-    //    connect(gooB,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
+void Level::setGoo(QPoint center,int id, int type){
+    Goo* goo=NULL;
+    if (type==0) { //Create a standard gooo
+            DynamicGoo* dg=new DynamicGoo(world,center,RADIUS);
+            goo=dg;
+            goos.push_back(dg);
+            connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+            connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+            connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+            connect(dg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
+    }
+    else if (type==1){ //Create a removable goo
+            RemovableGoo* rg=new RemovableGoo(world,center,RADIUS);
+            goos.push_back(rg);
+            goo=rg;
+            connect(rg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+            connect(rg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(rg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(rg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+            connect(rg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+            connect(rg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
+    }
+    else if (type==2){ //Create a fixed goo
+            FixedGoo* fg=new FixedGoo(world,center,RADIUS);
+            goos.push_back(fg);
+            goo=fg;
+            connect(fg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(fg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(fg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+    }
+    if (goo!=NULL){
+        loader->addGoo(id,goo);
+    }
 }
 
 void Level::createSticky(QPoint p){
