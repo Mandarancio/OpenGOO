@@ -53,7 +53,7 @@ void DynamicGoo::moveToTarget(){
         return;
     }
     if (hasJoint()) return;
-    if (!hasJoint() &&!falling&&!following) emit this->nextTargetPlease(NULL);
+    if (!hasJoint() &&!falling&&!following&&!isDragging()) emit this->nextTargetPlease(NULL);
     if (following && !falling){
         if (prevTarget){
 //            if (!target->isLinked(prevTarget)){
@@ -197,6 +197,7 @@ void DynamicGoo::unstick(){
 }
 
 void DynamicGoo::contactGround(){
+    if (hasJoint()) return;
     if (sleeping) {
         body->SetGravityScale(1.0);
         return;
@@ -211,6 +212,7 @@ void DynamicGoo::contactGround(){
 
 void DynamicGoo::contactGround(QPoint p){
     //Away to trapass body
+
     if (isDragging()) {
         //Change flag and reset normal status
         dragging=false;
@@ -219,6 +221,7 @@ void DynamicGoo::contactGround(QPoint p){
         emit stopDragging();
         return;
     }
+    if (hasJoint()) return;
     if (sleeping) {
         body->SetGravityScale(1.0);
         return;
