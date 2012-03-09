@@ -100,12 +100,14 @@ void SvgLevelLoader::parse(){
                     //rect.setTopLeft(-rect.topLeft()+QPoint(displaySize.width(),displaySize.height()));
                    // rect.setTopLeft(coordPoint(rect.topLeft()));
                     qWarning()<<"limit"<<rect;
+
                     emit levelLimit(rect);
                 }
                 else if (!label.compare("#ground") || !id.compare("ground")){
                     QList <QPoint> pol=parsePointList(object);
-                    QPoint center=pol.at(0);
+                    QPoint center=pol[0];
                     pol[0]=QPoint(0,0);
+                    qWarning()<<center<<pol;
                     emit levelGround(center,pol);
 
                 }
@@ -176,15 +178,9 @@ QRect SvgLevelLoader::parseRect(QDomElement el){
     //top left point
     p.setX(qRound(el.attribute("x").toFloat(&ok)));
     p.setY(qRound(el.attribute("y").toFloat(&ok)));
-    qWarning()<<p;
-    p=scalePoint(p);
-    qWarning()<<p;
+    p=scalePoint(p+parseTransform(el));
 
     p=coordPoint(p);
-    qWarning()<<p;
-
-    p=p+parseTransform(el);
-    qWarning()<<p;
 
     //size
     d.setX(qRound(el.attribute("width").toFloat(&ok)));
@@ -203,9 +199,9 @@ QPoint SvgLevelLoader::parsePoint(QDomElement el){
     x=qRound(el.attribute("sodipodi:cx").toFloat(&ok));
     y=qRound(el.attribute("sodipodi:cy").toFloat(&ok));
     if (ok) {
-        p=QPoint(x,y);
+        p=QPoint(x,y)+parseTransform(el);
         p=scalePoint(p);
-        p=coordPoint(p)+parseTransform(el);
+        p=coordPoint(p);
     }
     return p;
 }
@@ -242,17 +238,20 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     //Start to parse the list;
     QPoint p;
     for (int i=1;i<nPoint+1;i++){
-        p=scalePoint(strToPoint(str.split(' ').at(i)));
+        p=strToPoint(str.split(' ').at(i));
         if (i==1){
-            p=coordPoint(p);
-            p+=transform;
+            p=scalePoint(p+transform);
         }
         else if (!relative){
-            p=coordPoint(p);
-            p-=(list.at(0)-transform);
+            p=scalePoint(p+transform);
+            p-=(list.at(0));
+        }
+        else if (relative) {
+            p=scalePoint(p+transform)+(i>2 ? list.at(i-2):QPoint(0,0));
         }
         list.push_back(p);
     }
+    qWarning()<<list;
     return list;
 }
 
@@ -272,11 +271,11 @@ QPoint SvgLevelLoader::scalePoint(QPoint p){
 //change coordinate of the point
 QPoint SvgLevelLoader::coordPoint(QPoint p){
     QPoint cP=p;
-    //change the coordinate (from top-left system to a center-down system)
-    QPoint center(displaySize.width()/2,displaySize.height()/2);
-    qWarning()<<cP<<center<<"coord";
-    qWarning()<<cP.x()-center.x();
-    cP.setX(cP.x()-center.x());
-    cP.setY(center.y()-cP.y());
+//    //change the coordinate (from top-left system to a center-down system)
+//    QPoint center(displaySize.width()/2,displaySize.height()/2);
+//    qWarning()<<cP<<center<<"coord";
+//    qWarning()<<cP.x()-center.x();
+//    cP.setX(cP.x()-center.x());
+//    cP.setY(center.y()-cP.y());
     return cP;
 }

@@ -37,7 +37,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 
     //compute the center of the display
     //Fix for multi screen
-    center=(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());
+    center=QPoint(0,0);//(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());
     //initialize translation values
     translation=QPoint(0,0);
 
@@ -142,8 +142,8 @@ void Level::createThorns(){
     int r=10.0*(xe-xi)/100.0;
     int h,x;
     for (int i=0;i<r;i++){
-        h=50+rand()%50;
-        x=xi+rand()%(xe-xi);
+        h=50+qrand()%50;
+        x=xi+qrand()%(xe-xi);
         Thorn *t=new Thorn(QPoint(x,ym-h),h,world,this);
         objects.push_back(t);
     }
@@ -183,11 +183,10 @@ void Level::moveOf(QPoint dP){
     int xf,yf;
     xf=translation.x()+dP.x()/2;
     yf=translation.y()+dP.y()/2;
-    if (flag==DEBUG) qWarning()<<"Move at"<<xf<<","<<yf;
-    int wf,hf;
-    wf=xf-width()/2;
-    hf=hf+height()/2;
-    if (wf<limit.x()) xf=limit.x();
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+
+    //if (wf<limit.x()) xf=limit.x();
 //    if (xf>= -limit.x()) xf=-limit.x();
 //    else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
 //    if (yf>=limit.y()) yf=limit.y();
@@ -355,6 +354,8 @@ void Level::paintEvent(QPaintEvent *e){
         p.drawLine(0,5,0,-5);
         p.drawLine(5,0,-5,0);
     }
+
+    p.setBrush(Qt::darkGray);
     p.restore();
 
     //Paint the targetarrow the win screen menu and etc...
@@ -494,7 +495,7 @@ void Level::giveTarget(Goo *previous){
         }
         else {
             if (!catched && previous!=NULL && previous->getLinks().length()){
-                int choise=rand()%previous->getLinks().length();
+                int choise=qrand()%previous->getLinks().length();
                 goo->setTarget(previous->getLinks().at(choise));
             }
             else if (previous->getLinks().length()) { //Searche the nearest next goo at the target
@@ -539,7 +540,7 @@ void Level::paintBg(QPainter &p){
     g.setColorAt(1,c2);
     p.setPen(Qt::transparent);
     p.setBrush(g);
-    p.drawRect(-width()/2+limit.x()-5,-height()/2-limit.y()-5,width()+limit.width()*2+5,(height()-limit.height())*2);
+    p.drawRect(limit.x(),+limit.y(),limit.width(),limit.height());
 }
 
 void Level::paintScore(QPainter &p){
@@ -580,10 +581,12 @@ void Level::paintWin(QPainter &p){
 void Level::paintTargetArrow(QPainter &p){
     //Check if the target is displayed:
     QPoint tp= toPoint(target->getVPosition());
-    QRect darea(translation,this->geometry().size());
-    if (!darea.contains(center-tp)){
+
+    QRect darea(-translation,this->geometry().size());
+    QPoint center=geometry().center()-geometry().topLeft();
+    if (!darea.contains(tp)){
         //Target is not displayed.
-        tp=translation+tp;
+        tp=translation+tp-center;
         //Translate at the center of the area and rotate in the direction of the target
         p.save();
         p.setBrush(Qt::black);
@@ -716,8 +719,8 @@ void Level::setTarget(QPoint target){
 void Level::setStartArea(int n, QRect area,int type){
     int x,y;
     for (int i=0;i<n;i++){
-        x=area.x()+rand()%area.width();
-        y=area.y()+rand()%area.height();
+        x=area.x()+qrand()%area.width();
+        y=area.y()+qrand()%area.height();
         if (type==0) { //Create a standard gooo
                 DynamicGoo* dg=new DynamicGoo(world,QPoint(x,y),RADIUS);
                 goos.push_back(dg);
