@@ -155,6 +155,8 @@ void DynamicGoo::paintDebug(QPainter &p){
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
     //if has joint draw the number of joint of it inside him.
     if (hasJoint()){
+        target=NULL;
+        prevTarget=NULL;
         p.drawText(QPoint(getPPosition().x()-5,getPPosition().y()+5),QString::number(this->nJoints()));
     }
     //if not and is free and is mooving to reach a target draw the direction
@@ -221,23 +223,26 @@ void DynamicGoo::contactGround(QPoint p){
         emit stopDragging();
         return;
     }
-    if (hasJoint()) return;
+     //if has joint and is not sticked on ground
+    if (hasJoint() && !sticked){
+        onGround=true;
+        groundPoint=this->getPPosition();
+
+        emit this->createSticky(p);
+        sticked=true; //flag to true
+        return;
+    }
+
     if (sleeping) {
         body->SetGravityScale(1.0);
         return;
     }
+
     onGround=true;
     groundPoint=this->getPPosition();
     if (falling) {
         falling=false;
         emit nextTargetPlease(NULL);
-    }
-    else if (hasJoint() && !sticked){ //if has joint and is not sticked on ground
-        //if (body->GetLinearVelocity().Length()<=90){
-
-        emit this->createSticky(p);
-        sticked=true; //flag to true
-        //}
     }
 }
 
