@@ -406,8 +406,14 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
         //Check if mouse is on the ground
-        if (ground->contains(e->pos()-(center+translation))) dragged->move(stopPosition);
-        else dragged->move(e->pos()-(center+translation));
+        if (ground->contains(e->pos()-(center+translation))) {
+            if (flag==DEBUG) qWarning()<<"CURSOR INSIDE THE GROUND!";
+            dragged->move(stopPosition);
+        }
+        else {
+            if (flag==DEBUG) qWarning()<<"DRAGGING GOO";
+            dragged->move(e->pos()-(center+translation));
+        }
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
     }
@@ -734,7 +740,6 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
                 connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
                 connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-                connect(dg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
         }
         else if (type==1){ //Create a removable goo
                 RemovableGoo* rg=new RemovableGoo(world,QPoint(x,y),RADIUS);
@@ -744,7 +749,6 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(rg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
                 connect(rg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
                 connect(rg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-                connect(rg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
         }
         else if (type==2){ //Create a fixed goo
                 FixedGoo* fg=new FixedGoo(world,QPoint(x,y),RADIUS);
@@ -788,7 +792,6 @@ void Level::setGoo(QPoint center,int id, int type){
             connect(rg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
             connect(rg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
             connect(rg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-            connect(rg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
     }
     else if (type==2){ //Create a fixed goo
             FixedGoo* fg=new FixedGoo(world,center,RADIUS);
