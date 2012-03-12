@@ -721,7 +721,6 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
                 connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
                 connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-                connect(dg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
         }
         else if (type==1){ //Create a removable goo
                 RemovableGoo* rg=new RemovableGoo(world,QPoint(x,y),RADIUS);
@@ -731,7 +730,6 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(rg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
                 connect(rg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
                 connect(rg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-                connect(rg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
         }
         else if (type==2){ //Create a fixed goo
                 FixedGoo* fg=new FixedGoo(world,QPoint(x,y),RADIUS);
