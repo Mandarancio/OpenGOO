@@ -7,7 +7,7 @@ TEMPLATE = app
 unix|win32: LIBS=-lBox2D
 
 OTHER_FILES += \
-    l01.level \
+    level-svg.level \
     README \
     menu.index
 

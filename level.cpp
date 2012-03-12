@@ -441,14 +441,17 @@ void Level::mousePressEvent(QMouseEvent *e){
         mouseSpeed.SetZero();
        dragged=getGooAt(e->pos()-(center+translation));
        if (dragged) {
+           if (flag==DEBUG) qWarning()<<"DRAGGED at"<<dragged->getPPosition();
            possibility.clear();
            drag=true;
-           dragged->drag();
            //Unselect
            if (selected!=NULL){
                selected->select(false);
                selected=NULL;
            }
+
+           dragged->drag();
+
        }
        else mooving=true;
    }

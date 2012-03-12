@@ -46,9 +46,9 @@ void SvgLevelLoader::parse(){
                 emit fileError();
                 return;
             }
-            int h,w;
-            h=root.attribute("height","").toFloat();
-            w=root.attribute("width","").toFloat();
+//            int h,w;
+//            h=root.attribute("height","").toFloat();
+//            w=root.attribute("width","").toFloat();
             QDomNode node;
 
             for (int i=0;i<root.childNodes().count();i++){
@@ -90,7 +90,7 @@ void SvgLevelLoader::parse(){
                         continue;
                     }
                     //compute the type of goo;
-                    int nType;
+                    int nType=0;
                     if (!type.compare("STD")) nType=0; //STANDARD GOO
                     else if (!type.compare("RMV")) nType=1; //REMOVIBLE GOO
                     else if (!type.compare("FXD")) nType=2; //FIXED GOO
@@ -155,7 +155,7 @@ void SvgLevelLoader::parse(){
                     }
                     else {
                         QPoint p=parsePoint(object);
-                        int nType;
+                        int nType=0;
                         if (!type.compare("STD")) nType=0; //STANDARD GOO
                         else if (!type.compare("RMV")) nType=1; //REMOVIBLE GOO
                         else if (!type.compare("FXD")) nType=2; //FIXED GOO

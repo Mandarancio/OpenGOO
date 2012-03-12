@@ -140,15 +140,11 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                         }
                         //END WORKAROUND
                         //CALL CONTACTGROUND WITH THE CALCULATED P
-                        if (abs(p.Length()-b->getVPosition().Length())>50) {
-                            p=b->getVPosition();
-                            qWarning()<<"CAZZO QUI";
-                        }
+
 
                         //TEST FINAL WORKAROUND!
                         //WHAT THE FUCK IS HAPPENING HERE!!!!!!
                         //FUCK THE CONTACT POINT!!
-                        p=b->getVPosition();
                         if (b->hasJoint()) b->contactGround(toPoint(p));
                         else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
                     }
