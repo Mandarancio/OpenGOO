@@ -8,6 +8,7 @@
 #include <QList>
 #include <QPoint>
 #include <QRect>
+#include <QPair>
 
 
 #include "goo.h"
@@ -21,7 +22,11 @@ public:
     void setDisplay(QSize size);
     //function that parse the svg
     void parse();
+    //function to add a created goo
+    void addGoo(int id, Goo* goo);
 private:
+    //function that return the list index of a goo from id (-1 not found)
+    int getIndex(int id);
 
     //function to parse a translation from a domelement
     QPoint parseTransform(QDomElement el);
@@ -34,13 +39,18 @@ private:
     //function to parse a list of points from a domelement (the first point is absolute the other are relative at the first)
     QList<QPoint> parsePointList(QDomElement el);
 
-    //point transformation (rescale and change coordinate system)
+    //point rescalation
     QPoint scalePoint(QPoint p);
-    QPoint coordPoint(QPoint p);
+
     //path of the file to open
     QString path;
     //display size
     QSize displaySize;
+
+    //List to store links to be created
+    QList<QPair<int,int> > links;
+    //List to store created goo
+    QList<QPair<int,Goo*> > goos;
 
 
 signals:
@@ -52,10 +62,11 @@ signals:
     void levelGoal(int goal);
     //GOOS START AREA WITH TYPE
     void levelStartArea(int numberOfBalls,QRect area,int type);
-    //void levelJoint(QPoint gooA,QPoint gooB);
     void levelLimit(QRect limit);
     void levelTarget(QPoint target);
     void levelGround(QPoint center,QList<QPoint> groundPoints);
+    void levelGOO(QPoint center,int id,int type);
+    void levelJoint(Goo* a,Goo *b);
 public slots:
 
 };

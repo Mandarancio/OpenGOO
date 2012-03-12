@@ -37,7 +37,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 
     //compute the center of the display
     //Fix for multi screen
-    center=(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());
+    center=QPoint(0,0);//(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());
     //initialize translation values
     translation=QPoint(0,0);
 
@@ -62,7 +62,9 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
     connect(loader,SIGNAL(levelLimit(QRect)),this,SLOT(setLimit(QRect)));
     connect(loader,SIGNAL(levelTarget(QPoint)),this,SLOT(setTarget(QPoint)));
-    //connect(loader,SIGNAL(levelJoint(QPoint,QPoint)),this,SLOT(setJoint(QPoint,QPoint)));
+    connect(loader,SIGNAL(levelJoint(Goo*,Goo*)),this,SLOT(setJoint(Goo*,Goo*)));
+    connect(loader,SIGNAL(levelGOO(QPoint,int,int)),this,SLOT(setGoo(QPoint,int,int)));
+
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     if (flag==DEBUG) qWarning()<<"Level loader created, set up and connected!";
 
@@ -142,8 +144,8 @@ void Level::createThorns(){
     int r=10.0*(xe-xi)/100.0;
     int h,x;
     for (int i=0;i<r;i++){
-        h=50+rand()%50;
-        x=xi+rand()%(xe-xi);
+        h=50+qrand()%50;
+        x=xi+qrand()%(xe-xi);
         Thorn *t=new Thorn(QPoint(x,ym-h),h,world,this);
         objects.push_back(t);
     }
@@ -183,11 +185,10 @@ void Level::moveOf(QPoint dP){
     int xf,yf;
     xf=translation.x()+dP.x()/2;
     yf=translation.y()+dP.y()/2;
-    if (flag==DEBUG) qWarning()<<"Move at"<<xf<<","<<yf;
-    int wf,hf;
-    wf=xf-width()/2;
-    hf=hf+height()/2;
-    if (wf<limit.x()) xf=limit.x();
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+
+    //if (wf<limit.x()) xf=limit.x();
 //    if (xf>= -limit.x()) xf=-limit.x();
 //    else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
 //    if (yf>=limit.y()) yf=limit.y();
@@ -355,6 +356,8 @@ void Level::paintEvent(QPaintEvent *e){
         p.drawLine(0,5,0,-5);
         p.drawLine(5,0,-5,0);
     }
+
+    p.setBrush(Qt::darkGray);
     p.restore();
 
     //Paint the targetarrow the win screen menu and etc...
@@ -403,8 +406,14 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
         //Check if mouse is on the ground
-        if (ground->contains(e->pos()-(center+translation))) dragged->move(stopPosition);
-        else dragged->move(e->pos()-(center+translation));
+        if (ground->contains(e->pos()-(center+translation))) {
+            if (flag==DEBUG) qWarning()<<"CURSOR INSIDE THE GROUND!";
+            dragged->move(stopPosition);
+        }
+        else {
+            if (flag==DEBUG) qWarning()<<"DRAGGING GOO";
+            dragged->move(e->pos()-(center+translation));
+        }
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
     }
@@ -438,14 +447,17 @@ void Level::mousePressEvent(QMouseEvent *e){
         mouseSpeed.SetZero();
        dragged=getGooAt(e->pos()-(center+translation));
        if (dragged) {
+           if (flag==DEBUG) qWarning()<<"DRAGGED at"<<dragged->getPPosition();
            possibility.clear();
            drag=true;
-           dragged->drag();
            //Unselect
            if (selected!=NULL){
                selected->select(false);
                selected=NULL;
            }
+
+           dragged->drag();
+
        }
        else mooving=true;
    }
@@ -494,7 +506,7 @@ void Level::giveTarget(Goo *previous){
         }
         else {
             if (!catched && previous!=NULL && previous->getLinks().length()){
-                int choise=rand()%previous->getLinks().length();
+                int choise=qrand()%previous->getLinks().length();
                 goo->setTarget(previous->getLinks().at(choise));
             }
             else if (previous->getLinks().length()) { //Searche the nearest next goo at the target
@@ -539,7 +551,7 @@ void Level::paintBg(QPainter &p){
     g.setColorAt(1,c2);
     p.setPen(Qt::transparent);
     p.setBrush(g);
-    p.drawRect(-width()/2+limit.x()-5,-height()/2-limit.y()-5,width()+limit.width()*2+5,(height()-limit.height())*2);
+    p.drawRect(limit.x(),+limit.y(),limit.width(),limit.height());
 }
 
 void Level::paintScore(QPainter &p){
@@ -580,10 +592,12 @@ void Level::paintWin(QPainter &p){
 void Level::paintTargetArrow(QPainter &p){
     //Check if the target is displayed:
     QPoint tp= toPoint(target->getVPosition());
-    QRect darea(translation,this->geometry().size());
-    if (!darea.contains(center-tp)){
+
+    QRect darea(-translation,this->geometry().size());
+    QPoint center=geometry().center()-geometry().topLeft();
+    if (!darea.contains(tp)){
         //Target is not displayed.
-        tp=translation+tp;
+        tp=translation+tp-center;
         //Translate at the center of the area and rotate in the direction of the target
         p.save();
         p.setBrush(Qt::black);
@@ -716,8 +730,8 @@ void Level::setTarget(QPoint target){
 void Level::setStartArea(int n, QRect area,int type){
     int x,y;
     for (int i=0;i<n;i++){
-        x=area.x()+rand()%area.width();
-        y=area.y()+rand()%area.height();
+        x=area.x()+qrand()%area.width();
+        y=area.y()+qrand()%area.height();
         if (type==0) { //Create a standard gooo
                 DynamicGoo* dg=new DynamicGoo(world,QPoint(x,y),RADIUS);
                 goos.push_back(dg);
@@ -748,34 +762,48 @@ void Level::setStartArea(int n, QRect area,int type){
     if (flag==DEBUG) qWarning()<<"A start area is created.";
 }
 
-void Level::setJoint(QPoint a, QPoint b){
-    QPoint ga(a.x()+RADIUS,a.y()-RADIUS-2);
-    QPoint gb(b.x()+RADIUS,b.y()-RADIUS-2);
-    DynamicGoo *gooA,*gooB;
-    gooA=new DynamicGoo(world,ga,RADIUS,this);
-    gooB=new DynamicGoo(world,gb,RADIUS,this);
-    //Connect slots
-    connect(gooB,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
-    connect(gooA,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+void Level::setJoint(Goo*a,Goo*b){
 
 
-    goos.push_back(gooA);
-    goos.push_back(gooB);
+    makeJoint(a,b);
 
-    makeJoint(gooA,gooB);
+    if (flag==DEBUG) qWarning()<<"First joint created!";
+}
 
-    if (flag==DEBUG) qWarning()<<"First joint created, at:"<<a;
-
-    //    connect(gooA,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
-    //    connect(gooA,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
-    //    connect(gooA,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
-    //    connect(gooA,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-    //    connect(gooA,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
-    //    connect(gooB,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
-    //    connect(gooB,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
-    //    connect(gooB,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
-    //    connect(gooB,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
-    //    connect(gooB,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
+void Level::setGoo(QPoint center,int id, int type){
+    Goo* goo=NULL;
+    if (type==0) { //Create a standard gooo
+            DynamicGoo* dg=new DynamicGoo(world,center,RADIUS);
+            goo=dg;
+            goos.push_back(dg);
+            connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+            connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+            connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+            connect(dg,SIGNAL(stopDragging()),this,SLOT(stopDragging()));
+    }
+    else if (type==1){ //Create a removable goo
+            RemovableGoo* rg=new RemovableGoo(world,center,RADIUS);
+            goos.push_back(rg);
+            goo=rg;
+            connect(rg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+            connect(rg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(rg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(rg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+            connect(rg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+    }
+    else if (type==2){ //Create a fixed goo
+            FixedGoo* fg=new FixedGoo(world,center,RADIUS);
+            goos.push_back(fg);
+            goo=fg;
+            connect(fg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(fg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(fg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+    }
+    if (goo!=NULL){
+        loader->addGoo(id,goo);
+    }
 }
 
 void Level::createSticky(QPoint p){

@@ -164,7 +164,6 @@ bool Goo::destroyLink(Goo *goo){
     if (isLinked(goo)){
         links.removeAt(links.indexOf(goo));
         emit this->loseLink(goo);
-
         return true;
     }
     else return false;
@@ -202,6 +201,7 @@ void Goo::drag(){
         info.speed=body->GetLinearVelocity();
         info.aForce=body->GetAngularVelocity();
     }
+    body->Dump();
     body->SetLinearVelocity(b2Vec2(0,0));
     body->SetGravityScale(0);
     body->SetAngularVelocity(0.0);

@@ -22,9 +22,14 @@ This program is free software: you can redistribute it and/or modify
 
 #include <QDebug>
 
+#include <QTime>
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+     //intialize randseed
+    qsrand(QTime().currentTime().toString("hh:mm:ss.zzz").remove(':').toFloat());
+
     bool debug=false;
     bool forceScreen=false;
     //Default is screen 0

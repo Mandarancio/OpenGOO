@@ -47,13 +47,46 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                 if (th!=NULL) a->destroyThis();
                 else if (!t && !th&& a) { //if isn't any of the both and first body is a goo
                     if (a){//advice the goo that he/it touch the ground
-                        b2Vec2 p=contact->GetManifold()->localPoint;
-                        p=a->getBody()->GetWorldPoint(p);
-                        if ((p-a->getVPosition()).Length()>50) {
+                        b2Vec2 p=oldManifold->localPoint;
+                        //CHANGE CORDINATE SYSTEM
+                        p= contact->GetFixtureA()->GetBody()->GetWorldPoint(p);
+                        //p.x=b->getVPosition().x+p.x;
+                        //FOR UNKNOW REAZON SOMETIMES THE COLLISION POINT IS COMPLITLY WRONG
+                        //SO I MADE THIS WORK AROUND TO FIX IT
+                        //WORKAROUND
+                        //CHECK IF THE COLLISION POINT IS TOO DISTANT FROM MY BODY FOR BE A CORRECT POINT
+                        if ((p-a->getVPosition()).Length()>50 && a->hasJoint()) {
+                            //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT
                             p=a->getVPosition();
-                            p.y+=20;
+                            //RETRIVE THE NORMAL OF THE COLLISION
+                            b2Vec2 n=oldManifold->localNormal;
+                            //NORMALY THE NORMAL IS CORRECT
+                            //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
+                            //CHECK IF Y COMPONTENT OF THE NORMAL IS BIGGER OF THE X
+
+//                            if (fabs(n.y)>fabs(n.x)){
+//                                //CHECK IF THE Y COMPONENT IS BIGGER THAN 0 SO ADD -20 TO P.Y
+//                                if (n.y>0) p.y+=20;
+//                                //ELSE ADD +20 TO P.Y
+//                                else p.y+=20;
+//                            }
+//                            //ELSE
+//                            else{
+//                                //CHECK IF X COMPONENT IS BIGGER THE 0 SO ADD -20 TO P.X
+//                                if (n.x>0) p.x+=20;
+//                                //ELSE ADD +20 TO P.X
+//                                else p.x+=20;
+//                            }
+                             p.x-=20*((n.x)/(n.Length()>0.001 && n.Length()<10000 ? n.Length() : n.x ));
+                             p.y+=20*(n.y)/(n.Length()>0.001 && n.Length()<10000 ? n.Length() : n.y);
+                             if ((a->getVPosition()-p).Length()>50) p=b->getVPosition();
+                             if (abs((a->getVPosition()-p).Length()-20.0)>1.0) qWarning()<<(a->getVPosition()-p).Length();
                         }
-                        a->contactGround(toPoint(p));
+                        //END WORKAROUND
+                        //CALL CONTACTGROUND WITH THE CALCULATED P
+                        qWarning()<<"Incredibilmente qua!";
+//                        if (a->hasJoint()) a->contactGround(toPoint(p));
+//                        else if (a->isDragging()) emit stopGOO(a->getPPosition()); //Advice to stop the goo
                     }
                 }
             }
@@ -86,22 +119,32 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                             //NORMALY THE NORMAL IS CORRECT
                             //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
                             //CHECK IF Y COMPONTENT OF THE NORMAL IS BIGGER OF THE X
-                            if (fabs(n.y)>=fabs(n.x)){
-                                //CHECK IF THE Y COMPONENT IS BIGGER THAN 0 SO ADD -20 TO P.Y
-                                if (n.y>0) p.y-=20;
-                                //ELSE ADD +20 TO P.Y
-                                else p.y+=20;
-                            }
-                            //ELSE
-                            else{
-                                //CHECK IF X COMPONENT IS BIGGER THE 0 SO ADD -20 TO P.X
-                                if (n.x>0) p.x-=20;
-                                //ELSE ADD +20 TO P.X
-                                else p.x+=20;
-                            }
+
+//                            if (fabs(n.y)>fabs(n.x)){
+//                                //CHECK IF THE Y COMPONENT IS BIGGER THAN 0 SO ADD -20 TO P.Y
+//                                if (n.y>0) p.y+=20;
+//                                //ELSE ADD +20 TO P.Y
+//                                else p.y+=20;
+//                            }
+//                            //ELSE
+//                            else{
+//                                //CHECK IF X COMPONENT IS BIGGER THE 0 SO ADD -20 TO P.X
+//                                if (n.x>0) p.x+=20;
+//                                //ELSE ADD +20 TO P.X
+//                                else p.x+=20;
+//                            }
+                             p.x-=20*((n.x)/(n.Length()>0.001 && n.Length()<10000 ? n.Length() : n.x ));
+                             p.y+=20*(n.y)/(n.Length()>0.001 && n.Length()<10000 ? n.Length() : n.y);
+                             if ((b->getVPosition()-p).Length()>50) p=b->getVPosition();
+                             if (abs((b->getVPosition()-p).Length()-20.0)>1.0) qWarning()<<(b->getVPosition()-p).Length();
                         }
                         //END WORKAROUND
                         //CALL CONTACTGROUND WITH THE CALCULATED P
+
+
+                        //TEST FINAL WORKAROUND!
+                        //WHAT THE FUCK IS HAPPENING HERE!!!!!!
+                        //FUCK THE CONTACT POINT!!
                         if (b->hasJoint()) b->contactGround(toPoint(p));
                         else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
                     }
