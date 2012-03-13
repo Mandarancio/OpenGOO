@@ -164,7 +164,6 @@ bool Goo::destroyLink(Goo *goo){
     if (isLinked(goo)){
         links.removeAt(links.indexOf(goo));
         emit this->loseLink(goo);
-
         return true;
     }
     else return false;
