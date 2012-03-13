@@ -564,10 +564,11 @@ void Level::paintWin(QPainter &p){
         QFont f;
         f.setFamily("Times");
         f.setBold(true);
-        f.setPointSize(30);
+        f.setPointSize(32);
         p.setFont(f);
         p.setPen(Qt::white);
-        p.drawText(QPoint(50,50),"Win!!");
+        QRect r(0,0,width(),150);
+        p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,"Level "+name+" complited!");
     }
 }
 
