@@ -25,7 +25,6 @@ HEADERS += \
     collisionlistener.h \
     menu.h \
     object.h \
-    levelloader.h \
     stickylink.h \
     removablegoo.h \
     balloongoo.h\
@@ -48,7 +47,6 @@ SOURCES += \
     collisionlistener.cpp \
     menu.cpp \
     object.cpp \
-    levelloader.cpp \
     stickylink.cpp \
     removablegoo.cpp \
     balloongoo.cpp\
