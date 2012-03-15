@@ -21,7 +21,7 @@ public:
     void setFile(QString path);
     void setDisplay(QSize size);
     //function that parse the svg
-    void parse();
+    bool parse();
     //function to add a created goo
     void addGoo(int id, Goo* goo);
 private:
@@ -40,7 +40,7 @@ private:
     QList<QPoint> parsePointList(QDomElement el);
 
     //point rescalation
-    QPoint scalePoint(QPoint p);
+//    QPoint scalePoint(QPoint p);
 
     //path of the file to open
     QString path;

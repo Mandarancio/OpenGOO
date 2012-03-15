@@ -37,6 +37,8 @@ class Level : public QGLWidget //QWidget <--To use without openGL
 public:
     explicit Level(QRect geometry,QString level,RunFlag flag = STANDARD,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level();
+    //Function to start the level;
+    bool startLevel();
 
 private:
     //Run type flag

@@ -11,12 +11,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1000"
-   height="1000"
+   width="1920"
+   height="1080"
    id="svg3919"
    version="1.1"
    inkscape:version="0.48.1 r9760"
-   sodipodi:docname="level-3.svg">
+   sodipodi:docname="level-svg.level.svg">
   <title
      id="title3000">Level 3[10]</title>
   <defs
@@ -28,16 +28,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.72"
-     inkscape:cx="166.86684"
-     inkscape:cy="212.17539"
+     inkscape:zoom="0.1767767"
+     inkscape:cx="905.64735"
+     inkscape:cy="298.03306"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1053"
-     inkscape:window-x="1280"
-     inkscape:window-y="0"
+     inkscape:window-width="1280"
+     inkscape:window-height="971"
+     inkscape:window-x="0"
+     inkscape:window-y="26"
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true" />
@@ -63,14 +63,16 @@
      inkscape:label="Livello 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-52.362183)">
+     transform="translate(0,27.637817)">
     <rect
-       style="fill:#000000;fill-opacity:0.15272725;fill-rule:nonzero;stroke:#0066c8;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="limit"
-       width="1471.4286"
-       height="1328.5714"
-       x="-357.14285"
-       y="-182.85715" />
+       style="fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3000"
+       width="2754.8882"
+       height="1646.1445"
+       x="-732.56262"
+       y="-376.63998"
+       transform="translate(0,-27.637817)"
+       inkscape:label="#limit" />
     <rect
        style="fill:#000000;fill-opacity:0.15272725;fill-rule:nonzero;stroke:#0066c8;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="RMV-1-10"
@@ -82,7 +84,7 @@
        inkscape:label="#startarea" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M -842.19269,1481.196 1259.0035,1360.6645 1259.7341,838.6711 643.36033,772.95982 111.62791,691.9269 -530.29901,939.53489 z"
+       d="M -842.19269,1481.196 2107.0035,1464.6645 2039.7341,834.6711 643.36033,772.95982 111.62791,691.9269 -530.29901,939.53489 z"
        id="ground"
        inkscape:connector-curvature="0"
        transform="translate(0,52.362183)"
@@ -97,7 +99,7 @@
        sodipodi:rx="31.428572"
        sodipodi:ry="31.428572"
        d="m 1017.1429,125.71429 c 0,17.35752 -14.0711,31.42857 -31.42861,31.42857 -17.35752,0 -31.42857,-14.07105 -31.42857,-31.42857 0,-17.35752 14.07105,-31.428575 31.42857,-31.428575 17.35751,0 31.42861,14.071055 31.42861,31.428575 z"
-       transform="translate(-146.35466,50.717749)" />
+       transform="translate(837.64534,50.717749)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -121.38703,828.09308 72.55837,-34.02043"

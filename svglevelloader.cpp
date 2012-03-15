@@ -30,7 +30,7 @@ void SvgLevelLoader::setDisplay(QSize size){
     displaySize=size;
 }
 
-void SvgLevelLoader::parse(){
+bool SvgLevelLoader::parse(){
     links.clear();
     goos.clear();
     //Setup and open the file
@@ -44,7 +44,7 @@ void SvgLevelLoader::parse(){
             if (root.tagName().compare("svg")!=0){
                 qWarning()<<"Parse error, file is not a svg file!";
                 emit fileError();
-                return;
+                return false;
             }
 //            int h,w;
 //            h=root.attribute("height","").toFloat();
@@ -127,7 +127,6 @@ void SvgLevelLoader::parse(){
                     bool ok=true;
                     //parse goo id to connect
                     if (goos.split('-').length()!=2) {
-                        emit fileError();
                         continue;
                     }
                     a=goos.split('-').at(0).toInt(&ok);
@@ -170,7 +169,18 @@ void SvgLevelLoader::parse(){
                 b=getIndex(links[i].second);
                 if (a>=0 && b>=0) emit levelJoint(goos[a].second,goos[b].second);
             }
+            return true;
         }
+        else {
+            qWarning()<<"File is not an xml! Error!";
+            emit fileError();
+            return false;
+        }
+    }
+    else {
+        qWarning()<<"File not found! Error!";
+        emit fileError();
+        return false;
     }
 }
 
@@ -201,7 +211,7 @@ QPoint SvgLevelLoader::parseTransform(QDomElement el){
             t=strToPoint(trasf);
         }
     }
-    return scalePoint(t);
+    return t;
 }
 
 QRect SvgLevelLoader::parseRect(QDomElement el){
@@ -212,13 +222,13 @@ QRect SvgLevelLoader::parseRect(QDomElement el){
     //top left point
     p.setX(qRound(el.attribute("x").toFloat(&ok)));
     p.setY(qRound(el.attribute("y").toFloat(&ok)));
-    p=scalePoint(p+parseTransform(el));
+    p=p+parseTransform(el);
 
 
     //size
     d.setX(qRound(el.attribute("width").toFloat(&ok)));
     d.setY(qRound(el.attribute("height").toFloat(&ok)));
-    d=scalePoint(d);
+    d=d;
     //Check for a translation;
     if (ok) r=QRect(p,p+d);
     return r;
@@ -233,7 +243,6 @@ QPoint SvgLevelLoader::parsePoint(QDomElement el){
     y=qRound(el.attribute("sodipodi:cy").toFloat(&ok));
     if (ok) {
         p=QPoint(x,y)+parseTransform(el);
-        p=scalePoint(p);
     }
     return p;
 }
@@ -273,14 +282,14 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
         if (str.split(' ').at(i)[0]=='l') continue;
         p=strToPoint(str.split(' ').at(i));
         if (i==1){
-            p=scalePoint(p+transform);
+            p+=transform;
         }
         else if (!relative){
-            p=scalePoint(p+transform);
+            p+=transform;
             p-=(list.at(0));
         }
         else if (relative) {
-            p=scalePoint(p+transform)+(i>2 ? list.at(i-2):QPoint(0,0));
+            p+=transform+(i>2 ? list.at(i-2):QPoint(0,0));
         }
         list.push_back(p);
     }
@@ -289,14 +298,14 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
 }
 
 //rescale point
-QPoint SvgLevelLoader::scalePoint(QPoint p){
-    QPoint cP=p;
-    //Compute the rescalation factor
-    float scaleX=1.0,scaleY=1.0;
-    scaleX=float(displaySize.width())/1000.0;
-    scaleY=float(displaySize.height())/1000.0;
-    //rescale the point
-    cP.setX(qRound(scaleX*float(p.x())));
-    cP.setY(qRound(scaleY*float(p.y())));
-    return cP;
-}
+//QPoint SvgLevelLoader::scalePoint(QPoint p){
+//    QPoint cP=p;
+//    //Compute the rescalation factor
+//    float scaleX=1.0,scaleY=1.0;
+//    scaleX=float(displaySize.width())/1000.0;
+//    scaleY=float(displaySize.height())/1000.0;
+//    //rescale the point
+//    cP.setX(qRound(scaleX*float(p.x())));
+//    cP.setY(qRound(scaleY*float(p.y())));
+//    return cP;
+//}

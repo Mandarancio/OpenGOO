@@ -15,6 +15,9 @@ LevelSelector::LevelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat
 }
 LevelSelector::~LevelSelector()
 {
+    this->setMouseTracking(false);
+    this->releaseKeyboard();
+    this->releaseMouse();
 }
 
 void LevelSelector::findLevels()//Find .level file in the current direcotory
@@ -70,7 +73,7 @@ void LevelSelector::mouseReleaseEvent(QMouseEvent *e){
                 emit this->closing();
 
         emit this->eventLevelSelected();
-        this->close();
+        //this->close();
     }
 
 }

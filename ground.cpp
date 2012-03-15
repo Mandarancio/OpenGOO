@@ -37,7 +37,7 @@ void Ground::paint(QPainter &p){
     p.setBrush(Qt::black);
     p.setPen(Qt::black);
     //Draw the shape
-    p.drawPolygon(polShape);
+    if (polShape.count()) p.drawPolygon(polShape);
 }
 
 //Function to create the shape starting from the points read from the level files
