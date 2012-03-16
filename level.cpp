@@ -201,17 +201,13 @@ void Level::moveLeft(){
 
 void Level::moveOf(QPoint dP){
     int xf,yf;
+    //top left coordinate of the new view field
     xf=translation.x()+dP.x()/2;
     yf=translation.y()+dP.y()/2;
+    //view field rectange
     QRect view(-xf,-yf,width(),height());
+    //Check if is possible
     if (!limit.contains(view)) return;
-
-    //if (wf<limit.x()) xf=limit.x();
-//    if (xf>= -limit.x()) xf=-limit.x();
-//    else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
-//    if (yf>=limit.y()) yf=limit.y();
-//    else if (yf<=limit.height()) yf=limit.height();
-//    translation=QPoint(xf,yf);
     translation=QPoint(xf,yf);
 }
 
@@ -424,13 +420,12 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
         //Check if mouse is on the ground
-        if (ground->contains(e->pos()-(center+translation))) {
-            if (flag==DEBUG) qWarning()<<"CURSOR INSIDE THE GROUND!";
+        if (ground->contains(e->pos()-translation)) {
             dragged->move(stopPosition);
         }
         else {
-            if (flag==DEBUG) qWarning()<<"DRAGGING GOO";
-            dragged->move(e->pos()-(center+translation));
+            dragged->move(e->pos()-translation);
+            stopPosition=dragged->getPPosition();
         }
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
@@ -475,7 +470,7 @@ void Level::mousePressEvent(QMouseEvent *e){
            }
 
            dragged->drag();
-
+           dragged->getBody()->SetActive(false);
        }
        else mooving=true;
    }
@@ -486,6 +481,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
         clickButton(e->pos());
     }
     else if (drag){
+        dragged->getBody()->SetActive(true);
         if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
     }
@@ -502,6 +498,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 }
 
 void Level::destroyJoint(Joint *joint){
+
     jointsToDestroy.push_back(joint);
 }
 

@@ -28,7 +28,7 @@ void LevelSelector::findLevels()//Find .level file in the current direcotory
     filters <<"*.level";
     dir->setNameFilters(filters);
     levels=dir->entryList();
-    levels.append("Exit");
+    levels.append("Exit")   ;
     int yOffset=(geometry.height()-levels.size()*(height+30)+30)/2;
     for(int j=0;j<levels.size();j++)
     {
