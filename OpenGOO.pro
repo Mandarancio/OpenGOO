@@ -29,7 +29,8 @@ HEADERS += \
     removablegoo.h \
     balloongoo.h\
     levelselector.h \
-    svglevelloader.h
+    svglevelloader.h \
+    background.h
 
 
 SOURCES += \
@@ -51,7 +52,8 @@ SOURCES += \
     removablegoo.cpp \
     balloongoo.cpp\
     levelselector.cpp \
-    svglevelloader.cpp
+    svglevelloader.cpp \
+    background.cpp
 
 
 ##FOR TOUCHPAD COMPILE

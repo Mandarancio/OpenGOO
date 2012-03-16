@@ -305,7 +305,7 @@ void Level::paintEvent(QPaintEvent *e){
 
 
     p.save();
-    p.translate(center+translation);
+    p.translate(translation);
     paintBg(p);
 
     if (ground) ground->paint(p);
