@@ -118,33 +118,16 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                             b2Vec2 n=oldManifold->localNormal;
                             //NORMALY THE NORMAL IS CORRECT
                             //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
-                            //CHECK IF Y COMPONTENT OF THE NORMAL IS BIGGER OF THE X
+                            //Compute the angle
+                            float angle=atan2(n.y,n.x);
+                            //Compute x,y of the vector
+                            float px=20.0*cos(angle);
+                            float py=20.0*sin(angle);
+                            p.x+=px;
+                            p.y+=py;
 
-//                            if (fabs(n.y)>fabs(n.x)){
-//                                //CHECK IF THE Y COMPONENT IS BIGGER THAN 0 SO ADD -20 TO P.Y
-//                                if (n.y>0) p.y+=20;
-//                                //ELSE ADD +20 TO P.Y
-//                                else p.y+=20;
-//                            }
-//                            //ELSE
-//                            else{
-//                                //CHECK IF X COMPONENT IS BIGGER THE 0 SO ADD -20 TO P.X
-//                                if (n.x>0) p.x+=20;
-//                                //ELSE ADD +20 TO P.X
-//                                else p.x+=20;
-//                            }
-                             p.x-=20*((n.x)/(n.Length()>0.001 && n.Length()<10000 ? n.Length() : n.x ));
-                             p.y+=20*(n.y)/(n.Length()>0.001 && n.Length()<10000 ? n.Length() : n.y);
-                             if ((b->getVPosition()-p).Length()>50) p=b->getVPosition();
-                             if (abs((b->getVPosition()-p).Length()-20.0)>1.0) qWarning()<<(b->getVPosition()-p).Length();
-                        }
-                        //END WORKAROUND
-                        //CALL CONTACTGROUND WITH THE CALCULATED P
+                        }//END WORKAOROUND
 
-
-                        //TEST FINAL WORKAROUND!
-                        //WHAT THE FUCK IS HAPPENING HERE!!!!!!
-                        //FUCK THE CONTACT POINT!!
                         if (b->hasJoint()) b->contactGround(toPoint(p));
                         else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
                     }

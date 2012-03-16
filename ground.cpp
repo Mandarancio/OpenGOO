@@ -31,6 +31,39 @@ b2Body* Ground::getBody(){
 bool Ground::contains(QPoint p){
     return polShape.containsPoint(p,Qt::OddEvenFill);
 }
+//Function to know if a goo is conteined in the ground
+bool Ground::contains(Goo*goo){
+    QPoint p=goo->getPPosition();
+    int r=goo->getRadius();
+    float rx=r/sqrt(2.0);
+    if (contains(p)) return true;
+    if (contains(QPoint(p.x(),p.y()-r))) return true;
+    if (contains(QPoint(p.x(),p.y()+r))) return true;
+    if (contains(QPoint(p.x()-r,p.y()))) return true;
+    if (contains(QPoint(p.x()+r,p.y()))) return true;
+    if (contains(QPoint(p.x()+rx,p.y()+rx))) return true;
+    if (contains(QPoint(p.x()-rx,p.y()+rx))) return true;
+    if (contains(QPoint(p.x()-rx,p.y()-rx))) return true;
+    if (contains(QPoint(p.x()+rx,p.y()-rx))) return true;
+
+    return false;
+}
+
+bool Ground::contains(QPoint p, int r){
+    float rx=r/sqrt(2.0);
+
+    if (contains(p)) return true;
+    if (contains(QPoint(p.x(),p.y()-r))) return true;
+    if (contains(QPoint(p.x(),p.y()+r))) return true;
+    if (contains(QPoint(p.x()-r,p.y()))) return true;
+    if (contains(QPoint(p.x()+r,p.y()))) return true;
+    if (contains(QPoint(p.x()+rx,p.y()+rx))) return true;
+    if (contains(QPoint(p.x()-rx,p.y()+rx))) return true;
+    if (contains(QPoint(p.x()-rx,p.y()-rx))) return true;
+    if (contains(QPoint(p.x()+rx,p.y()-rx))) return true;
+    return false;
+}
+
 
 //Function to paint the ground
 void Ground::paint(QPainter &p){

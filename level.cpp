@@ -420,8 +420,9 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
         //Check if mouse is on the ground
-        if (ground->contains(e->pos()-translation)) {
+        if (ground->contains(dragged)) {
             dragged->move(stopPosition);
+            if (!ground->contains(e->pos()-translation,dragged->getRadius())) stopPosition=e->pos()-translation;
         }
         else {
             dragged->move(e->pos()-translation);
@@ -438,16 +439,16 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     }
     //Rutine to show the possible draggable go under the mouse
     else {
-        if (selected!=getGooAt(e->pos()-(center+translation))){
+        if (selected!=getGooAt(e->pos()-translation)){
             if (selected!=NULL) {
                 //Unselect old and select new.
                 selected->select(false);
-                selected=getGooAt(e->pos()-(center+translation));
+                selected=getGooAt(e->pos()-translation);
                 if (selected!=NULL) selected->select();
             }
             else {
                 //select new
-                selected=getGooAt(e->pos()-(center+translation));
+                selected=getGooAt(e->pos()-translation);
                 if (selected!=NULL) selected->select();
             }
         }
@@ -470,7 +471,6 @@ void Level::mousePressEvent(QMouseEvent *e){
            }
 
            dragged->drag();
-           dragged->getBody()->SetActive(false);
        }
        else mooving=true;
    }
@@ -481,7 +481,6 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
         clickButton(e->pos());
     }
     else if (drag){
-        dragged->getBody()->SetActive(true);
         if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
     }
