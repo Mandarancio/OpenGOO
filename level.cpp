@@ -66,6 +66,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(loader,SIGNAL(levelTarget(QPoint)),this,SLOT(setTarget(QPoint)));
     connect(loader,SIGNAL(levelJoint(Goo*,Goo*)),this,SLOT(setJoint(Goo*,Goo*)));
     connect(loader,SIGNAL(levelGOO(QPoint,int,int)),this,SLOT(setGoo(QPoint,int,int)));
+    connect(loader,SIGNAL(addBackGroundShape(int,QPolygon,QColor)),this,SLOT(addBGShape(int,QPolygon,QColor)));
 
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     if (flag==DEBUG) qWarning()<<"Level loader created, set up and connected!";
@@ -307,6 +308,10 @@ void Level::paintEvent(QPaintEvent *e){
     p.save();
     p.translate(translation);
     paintBg(p);
+    for (int i=0;i<background.length();i++){
+        background[i]->setTranslate(translation);
+        background[i]->paint(p);
+    }
 
     if (ground) ground->paint(p);
     if (target) target->paint(p);
@@ -904,4 +909,23 @@ void Level::stopGoo(QPoint p){
         stopDragging();
     }
     else stopPosition = p;
+}
+
+void Level::addBGShape(int id, QPolygon poly, QColor color){
+    int index=-1;
+    for (int i=0;i<background.length();i++){
+        if (background[i]->getID()==id) {
+            index=i;
+            break;
+        }
+    }
+    if (index>=0){
+        background[index]->addPolygon(poly,color);
+    }
+    else {
+        BackGround *bg=new BackGround(id,this);
+        bg->addPolygon(poly,color);
+        bg->setDelta(0.3*id);
+        background.push_back(bg);
+    }
 }

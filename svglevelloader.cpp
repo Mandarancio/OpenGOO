@@ -13,6 +13,9 @@
 #include <QPoint>
 #include <qmath.h>
 #include <QMap>
+#include <QRgb>
+
+#include "tools.h"
 
 SvgLevelLoader::SvgLevelLoader(QString path,QSize display,QObject *parent) :
     QObject(parent)
@@ -161,6 +164,9 @@ bool SvgLevelLoader::parse(){
                         emit levelGOO(p,n,nType);
                     }
                 }
+                else if(!label.split('-').at(0).compare("#background")){
+                    parseBackground(object);
+                }
             }
             //emit link / joint signal
             int a,b;
@@ -190,6 +196,22 @@ void SvgLevelLoader::addGoo(int id, Goo *goo){
     pair.first=id;
     pair.second=goo;
     goos.push_back(pair);
+}
+
+void SvgLevelLoader::parseBackground(QDomElement el){
+    bool ok=true;
+    int id=el.attribute("inkscape:label","").split('-').at(1).toInt(&ok);
+    if (!ok) return;
+    QList <QPoint> poly=parsePointList(el);
+    if (poly.length()){
+        QPoint center=poly[0];
+        poly[0]=QPoint(0,0);
+        QPolygon polygon=toPoly(poly,center);
+        QColor fill= parseFill(el);
+        emit addBackGroundShape(id,polygon,fill);
+        qWarning()<<"BG"<<fill<<polygon<<id;
+    }
+    else return;
 }
 
 int SvgLevelLoader::getIndex(int id){
@@ -295,6 +317,28 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     }
     qWarning()<<list;
     return list;
+}
+
+QColor SvgLevelLoader::parseFill(QDomElement el){
+    QString style=el.attribute("style");
+    QString tag;
+    QColor color(0,0,0);
+    for (int i=0;i<style.split(';').count();i++){
+        tag=style.split(';').at(i).split(':').at(0);
+        if (tag.compare("fill")==0){
+            QString value=style.split(';').at(i).split(':').at(1);
+            value.remove('#');
+            int r,g,b;
+            bool ok=true;
+            r=value.mid(0,2).toInt(&ok,16);
+            g=value.mid(2,2).toInt(&ok,16);
+            b=value.mid(3,2).toInt(&ok,16);
+
+
+            color=QColor(r,g,b);
+        }
+    }
+    return color;
 }
 
 //rescale point

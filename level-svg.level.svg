@@ -29,15 +29,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.1767767"
-     inkscape:cx="905.64735"
-     inkscape:cy="298.03306"
+     inkscape:cx="570.77404"
+     inkscape:cy="735.21841"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="971"
-     inkscape:window-x="0"
-     inkscape:window-y="26"
+     inkscape:window-width="1920"
+     inkscape:window-height="1053"
+     inkscape:window-x="1280"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true" />
@@ -73,6 +73,20 @@
        y="-376.63998"
        transform="translate(0,-27.637817)"
        inkscape:label="#limit" />
+    <path
+       style="fil	l:#999999;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M -1043.6896,944.2355 -42.426406,177.73177 1527.3506,1753.1656 l -2701.1478,0 z"
+       id="path3001"
+       inkscape:connector-curvature="0"
+       transform="translate(0,-27.637817)"
+       inkscape:label="#background-1" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M -287.79245,366.52928 -41.012192,178.43888 207.88939,429.46178 4.2426406,361.57953 -115.96551,530.57804 -193.74725,403.29883 z"
+       id="path3003"
+       inkscape:connector-curvature="0"
+       transform="translate(0,-27.637817)"
+       inkscape:label="#background-1" />
     <rect
        style="fill:#000000;fill-opacity:0.15272725;fill-rule:nonzero;stroke:#0066c8;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="RMV-1-10"
@@ -80,8 +94,8 @@
        height="357.14285"
        x="-297.14285"
        y="-42.857143"
-       transform="translate(0,52.362183)"
-       inkscape:label="#startarea" />
+       inkscape:label="#startarea"
+       transform="translate(0,52.362183)" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M -842.19269,1481.196 2107.0035,1464.6645 2039.7341,834.6711 643.36033,772.95982 111.62791,691.9269 -530.29901,939.53489 z"

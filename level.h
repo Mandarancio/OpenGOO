@@ -20,6 +20,8 @@
 #include "menu.h"
 #include "object.h"
 
+#include "background.h"
+
 #include "svglevelloader.h"
 
 #include <stickylink.h>
@@ -57,8 +59,11 @@ private:
     float step;             //it say how much long is a step
     //Game
     Ground *ground;         //Ground object
+    QList <BackGround*> background; //background objects
+
     QList<Goo*> goos;       //All the goos!
     QList<Goo*> goosToDestroy;  //GOOs to be destroyed the next update!
+
     QList<Joint*> joints;   //All the joints!
     QList<Joint*> jointsToDestroy; //Joints to be destroyed the next update!
 
@@ -157,6 +162,8 @@ private slots:
     void stopDragging();
     //Slot to stop a dragged goo in a Point
     void stopGoo(QPoint p);
+    //Slot add a shape to background.
+    void addBGShape(int id,QPolygon poly,QColor color);
 
     void destroyJoint(Joint * joint);   //Destroy a joint
     void destroyGOO();                  //Destroy a GOO!
