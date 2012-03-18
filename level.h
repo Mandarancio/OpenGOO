@@ -20,7 +20,9 @@
 #include "menu.h"
 #include "object.h"
 
-#include "levelloader.h"
+#include "background.h"
+
+#include "svglevelloader.h"
 
 #include <stickylink.h>
 
@@ -37,12 +39,14 @@ class Level : public QGLWidget //QWidget <--To use without openGL
 public:
     explicit Level(QRect geometry,QString level,RunFlag flag = STANDARD,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level();
+    //Function to start the level;
+    bool startLevel();
 
 private:
     //Run type flag
     RunFlag flag;
     //LOADER
-    LevelLoader * loader;
+    SvgLevelLoader * loader;
     //PROPERTY
     //Graphic
     QPoint center;          //Center of the display, is used to have a more human coordinate system
@@ -55,8 +59,11 @@ private:
     float step;             //it say how much long is a step
     //Game
     Ground *ground;         //Ground object
+    QList <BackGround*> background; //background objects
+
     QList<Goo*> goos;       //All the goos!
     QList<Goo*> goosToDestroy;  //GOOs to be destroyed the next update!
+
     QList<Joint*> joints;   //All the joints!
     QList<Joint*> jointsToDestroy; //Joints to be destroyed the next update!
 
@@ -143,7 +150,8 @@ private slots:
     void setGround(QPoint gCenter,QList<QPoint> gList);
     void setTarget(QPoint target);
     void setStartArea(int n,QRect area,int type=0);
-    void setJoint(QPoint a, QPoint b);
+    void setJoint(Goo *a, Goo *b);
+    void setGoo(QPoint center,int id, int type=0);
     //GAME SLOT
     //Functions to create and destroy sticky joints
     void createSticky(QPoint p);
@@ -154,6 +162,8 @@ private slots:
     void stopDragging();
     //Slot to stop a dragged goo in a Point
     void stopGoo(QPoint p);
+    //Slot add a shape to background.
+    void addBGShape(int id,QPolygon poly,QColor color);
 
     void destroyJoint(Joint * joint);   //Destroy a joint
     void destroyGOO();                  //Destroy a GOO!

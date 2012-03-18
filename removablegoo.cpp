@@ -28,6 +28,8 @@ void RemovableGoo::paintDebug(QPainter &p){
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
     //if has joint draw the number of joint of it inside him.
     if (hasJoint()){
+        target=NULL;
+        prevTarget=NULL;
         p.drawText(QPoint(getPPosition().x()-5,getPPosition().y()+5),QString::number(this->nJoints()));
         //save the position
         p.save();

@@ -6,6 +6,8 @@
 
 #include <Box2D/Box2D.h>
 
+#include "goo.h"
+
 class Ground : public QObject
 {
     Q_OBJECT
@@ -15,7 +17,8 @@ public:
     b2Body * getBody(); //Get physical body
     //Function to know if a point is conteined in the ground
     bool contains(QPoint p);
-
+    bool contains(Goo * goo);
+    bool contains(QPoint p,int r);
 private:
     b2Body *body; //The physic body of the ground object
     QPolygon polShape;  //The polygonal shape

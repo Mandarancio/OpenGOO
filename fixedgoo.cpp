@@ -39,5 +39,6 @@ void FixedGoo::contactGround(){
  //TODO
 }
 void FixedGoo::contactGround(QPoint p){
+    if (p.isNull()) return;
  //TODO
 }
