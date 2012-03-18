@@ -697,6 +697,7 @@ void Level::restart(){
     points=0;
     catched=false;
     onMenu=false;
+    translation=QPoint(0,0);
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));

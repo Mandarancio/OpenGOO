@@ -25,7 +25,7 @@ int BackGround::getID(){
 }
 //Set translate
 void BackGround::setTranslate(QPoint p){
-    translate=QPoint(p.x()*delta,p.y()*delta);
+    translate=QPoint(-p.x()*delta,-p.y()*delta);
 }
 
 //paint
