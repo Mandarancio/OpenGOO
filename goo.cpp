@@ -164,7 +164,23 @@ bool Goo::destroyLink(Goo *goo){
     if (isLinked(goo)){
         links.removeAt(links.indexOf(goo));
         emit this->loseLink(goo);
+//        if (dragging){
+//            qWarning("removed link!");
+//            b2Joint*j=body->GetWorld()->GetJointList()->GetNext();
+//            for (int i=1;i<body->GetWorld()->GetJointCount();i++){
+//                if (j==NULL) break;
+//                if (j->GetBodyA()==body || j->GetBodyB()==body) {
+//                    qWarning()<<"ERROR";
+//                    b2Joint *n=j->GetNext();
+//                    body->GetWorld()->DestroyJoint(j);
+//                    j=n;
+//                }
+//                else
+//                    j=j->GetNext();
+//            }
+//        }
         return true;
+
     }
     else return false;
 }
@@ -201,10 +217,10 @@ void Goo::drag(){
         info.speed=body->GetLinearVelocity();
         info.aForce=body->GetAngularVelocity();
     }
-    body->Dump();
-    body->SetLinearVelocity(b2Vec2(0,0));
-    body->SetGravityScale(0);
-    body->SetAngularVelocity(0.0);
+//    body->SetLinearVelocity(b2Vec2(0,0));
+//    body->SetGravityScale(0);
+//    body->SetAngularVelocity(0.0);
+    body->SetActive(false);
     dragging=true;
 
 
@@ -216,6 +232,8 @@ void Goo::drop(){
     body->SetLinearVelocity(info.speed);
     body->SetGravityScale(1.0);
     body->SetAngularVelocity(info.aForce);
+    body->SetActive(true);
+
     falling=true;
     dragging=false;
 }
@@ -223,6 +241,7 @@ void Goo::drop(){
 void Goo::drop(b2Vec2 speed){
     //stopFollow();
     //body->SetLinearVelocity(b2Vec2(0,0));
+    body->SetActive(true);
 
     body->SetGravityScale(1.0);
     //body->SetAngularVelocity(info.aForce);

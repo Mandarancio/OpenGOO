@@ -22,8 +22,10 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
 {
 
+    goal = 100;
     //Set enviroment flag
     this->flag=flag;
+
 
     //set the display geometry
     this->setGeometry(0,0,geometry.width(),geometry.height());
@@ -56,7 +58,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     loader=new SvgLevelLoader(level,geometry.size());
 
     //connect the loader signals
-    connect(loader,SIGNAL(fileError()),this,SLOT(closeAll()));
+    connect(loader,SIGNAL(fileError()),this,SLOT(backToMainMenu()));
     connect(loader,SIGNAL(levelName(QString)),this,SLOT(setName(QString)));
     connect(loader,SIGNAL(levelGoal(int)),this,SLOT(setGoal(int)));
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
@@ -64,19 +66,12 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(loader,SIGNAL(levelTarget(QPoint)),this,SLOT(setTarget(QPoint)));
     connect(loader,SIGNAL(levelJoint(Goo*,Goo*)),this,SLOT(setJoint(Goo*,Goo*)));
     connect(loader,SIGNAL(levelGOO(QPoint,int,int)),this,SLOT(setGoo(QPoint,int,int)));
+    connect(loader,SIGNAL(addBackGroundShape(int,QPolygon,QColor)),this,SLOT(addBGShape(int,QPolygon,QColor)));
 
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     if (flag==DEBUG) qWarning()<<"Level loader created, set up and connected!";
 
-    //load the level
-    loader->parse();
-    if (flag==DEBUG) qWarning()<<"Level loaded!";
 
-    //connect target signals with level
-    connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
-    connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
-    connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
-    if (flag==DEBUG) qWarning()<<"Target connected!";
 
     //setup the step variable
     //this one is the interval between step
@@ -85,6 +80,8 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     drag = false;
     dragged=NULL;
     selected=NULL;
+    ground=NULL;
+    target=NULL;
 
     points=0;
     catched=false;
@@ -100,8 +97,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
     if (flag==DEBUG) qWarning()<<"Menu set up!";
 
-    startTimer(step*1000);
-    if (flag==DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
+
 }
 
 Level::~Level(){
@@ -111,29 +107,52 @@ Level::~Level(){
         delete objects[i];
     }
     objects.clear();
+    if (flag==DEBUG) qWarning()<<"Objects deleated";
     //clear joints
     for (int i=0;i<joints.length();i++){
         world->DestroyJoint(joints[i]->getJoint());
         delete joints[i];
     }
     joints.clear();
+    if (flag==DEBUG) qWarning()<<"Joints deleated";
     //clear stickies;
     for (int i=0;i<stickys.length();i++){
         world->DestroyJoint(stickys[i]->getJoint());
         delete stickys[i];
     }
     stickys.clear();
+    if (flag==DEBUG) qWarning()<<"Stickys deleated";
     //clear goo body
     for (int i=0;i<goos.length();i++){
         world->DestroyBody(goos[i]->getBody());
         delete goos[i];
     }
     goos.clear();
+    if (flag==DEBUG) qWarning()<<"GOOs deleated";
     //clear ground.
-    world->DestroyBody(ground->getBody());
-    delete ground;
+    if (ground) {
+        world->DestroyBody(ground->getBody());
+        delete ground;
+    }
+    if (flag==DEBUG) qWarning()<<"Ground deleated";
     //clear world.
     delete world;
+    if (flag==DEBUG) qWarning()<<"World deleated";
+}
+
+//Function to start the level
+//parse level file
+//start timer
+bool Level::startLevel(){
+    //load the level
+    if (loader->parse()){
+        if (flag==DEBUG) qWarning()<<"Level parse finished!";
+        //start timer
+        startTimer(step*1000);
+        if (flag==DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
+        return true;
+    }
+    else return false;
 }
 
 void Level::createThorns(){
@@ -183,17 +202,13 @@ void Level::moveLeft(){
 
 void Level::moveOf(QPoint dP){
     int xf,yf;
+    //top left coordinate of the new view field
     xf=translation.x()+dP.x()/2;
     yf=translation.y()+dP.y()/2;
+    //view field rectange
     QRect view(-xf,-yf,width(),height());
+    //Check if is possible
     if (!limit.contains(view)) return;
-
-    //if (wf<limit.x()) xf=limit.x();
-//    if (xf>= -limit.x()) xf=-limit.x();
-//    else if (xf<=-(limit.width()-abs(limit.x()))) xf= -(limit.width()-abs(limit.x()));
-//    if (yf>=limit.y()) yf=limit.y();
-//    else if (yf<=limit.height()) yf=limit.height();
-//    translation=QPoint(xf,yf);
     translation=QPoint(xf,yf);
 }
 
@@ -273,8 +288,8 @@ void Level::timerEvent(QTimerEvent *e){
     }
     goosToDestroy.clear();
 
-    target->checkTower(goos);
-    target->applyForces(goos);
+    if (target) target->checkTower(goos);
+    if (target) target->applyForces(goos);
     repaint();
     stickyToCreate.clear();
 }
@@ -291,8 +306,12 @@ void Level::paintEvent(QPaintEvent *e){
 
 
     p.save();
-    p.translate(center+translation);
+    p.translate(translation);
     paintBg(p);
+    for (int i=0;i<background.length();i++){
+        background[i]->setTranslate(translation);
+        background[i]->paint(p);
+    }
 
     if (ground) ground->paint(p);
     if (target) target->paint(p);
@@ -406,13 +425,13 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
         //Check if mouse is on the ground
-        if (ground->contains(e->pos()-(center+translation))) {
-            if (flag==DEBUG) qWarning()<<"CURSOR INSIDE THE GROUND!";
+        if (ground->contains(dragged)) {
             dragged->move(stopPosition);
+            if (!ground->contains(e->pos()-translation,dragged->getRadius())) stopPosition=e->pos()-translation;
         }
         else {
-            if (flag==DEBUG) qWarning()<<"DRAGGING GOO";
-            dragged->move(e->pos()-(center+translation));
+            dragged->move(e->pos()-translation);
+            stopPosition=dragged->getPPosition();
         }
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
@@ -425,16 +444,16 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     }
     //Rutine to show the possible draggable go under the mouse
     else {
-        if (selected!=getGooAt(e->pos()-(center+translation))){
+        if (selected!=getGooAt(e->pos()-translation)){
             if (selected!=NULL) {
                 //Unselect old and select new.
                 selected->select(false);
-                selected=getGooAt(e->pos()-(center+translation));
+                selected=getGooAt(e->pos()-translation);
                 if (selected!=NULL) selected->select();
             }
             else {
                 //select new
-                selected=getGooAt(e->pos()-(center+translation));
+                selected=getGooAt(e->pos()-translation);
                 if (selected!=NULL) selected->select();
             }
         }
@@ -457,7 +476,6 @@ void Level::mousePressEvent(QMouseEvent *e){
            }
 
            dragged->drag();
-
        }
        else mooving=true;
    }
@@ -484,6 +502,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 }
 
 void Level::destroyJoint(Joint *joint){
+
     jointsToDestroy.push_back(joint);
 }
 
@@ -591,6 +610,7 @@ void Level::paintWin(QPainter &p){
 //Function to paint the target arrow
 void Level::paintTargetArrow(QPainter &p){
     //Check if the target is displayed:
+    if (!target) return;
     QPoint tp= toPoint(target->getVPosition());
 
     QRect darea(-translation,this->geometry().size());
@@ -677,6 +697,7 @@ void Level::restart(){
     points=0;
     catched=false;
     onMenu=false;
+    translation=QPoint(0,0);
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
@@ -725,6 +746,13 @@ void Level::setGround(QPoint gCenter, QList<QPoint> gList){
 void Level::setTarget(QPoint target){
     if (flag==DEBUG) qWarning()<<"Target at:"<<target;
     this->target=new Target(target,height(),world,this);
+    //connect target signals with level
+    connect(this->target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
+    connect(this->target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
+    connect(this->target,SIGNAL(towerLost()),this,SLOT(towerLost()));
+
+    if (flag==DEBUG) qWarning()<<"Target connected!";
+
 }
 
 void Level::setStartArea(int n, QRect area,int type){
@@ -872,7 +900,6 @@ void Level::stopDragging(){
 //function to go at main menu
 void Level::backToMainMenu()
 {
-    this->close();//Close the current level
     emit this->eventBackToMainMenu();
 }
 
@@ -883,4 +910,23 @@ void Level::stopGoo(QPoint p){
         stopDragging();
     }
     else stopPosition = p;
+}
+
+void Level::addBGShape(int id, QPolygon poly, QColor color){
+    int index=-1;
+    for (int i=0;i<background.length();i++){
+        if (background[i]->getID()==id) {
+            index=i;
+            break;
+        }
+    }
+    if (index>=0){
+        background[index]->addPolygon(poly,color);
+    }
+    else {
+        BackGround *bg=new BackGround(id,this);
+        bg->addPolygon(poly,color);
+        bg->setDelta(0.3*id);
+        background.push_back(bg);
+    }
 }

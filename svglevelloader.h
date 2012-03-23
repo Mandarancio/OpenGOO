@@ -21,12 +21,19 @@ public:
     void setFile(QString path);
     void setDisplay(QSize size);
     //function that parse the svg
-    void parse();
+    bool parse();
     //function to add a created goo
     void addGoo(int id, Goo* goo);
 private:
     //function that return the list index of a goo from id (-1 not found)
     int getIndex(int id);
+
+    //Parse background object
+    void parseBackground(QDomElement el);
+    //Parse ground object
+    //void parseGround(QDomElement el);
+
+
 
     //function to parse a translation from a domelement
     QPoint parseTransform(QDomElement el);
@@ -38,9 +45,12 @@ private:
     QPoint parsePoint(QDomElement el);
     //function to parse a list of points from a domelement (the first point is absolute the other are relative at the first)
     QList<QPoint> parsePointList(QDomElement el);
+    //Function to parse the fill color
+    QColor parseFill(QDomElement el);
+
 
     //point rescalation
-    QPoint scalePoint(QPoint p);
+//    QPoint scalePoint(QPoint p);
 
     //path of the file to open
     QString path;
@@ -67,6 +77,8 @@ signals:
     void levelGround(QPoint center,QList<QPoint> groundPoints);
     void levelGOO(QPoint center,int id,int type);
     void levelJoint(Goo* a,Goo *b);
+    //add a shape to a bg object
+    void addBackGroundShape(int id,QPolygon poly,QColor color);
 public slots:
 
 };

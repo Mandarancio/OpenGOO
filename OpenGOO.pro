@@ -25,12 +25,12 @@ HEADERS += \
     collisionlistener.h \
     menu.h \
     object.h \
-    levelloader.h \
     stickylink.h \
     removablegoo.h \
     balloongoo.h\
     levelselector.h \
-    svglevelloader.h
+    svglevelloader.h \
+    background.h
 
 
 SOURCES += \
@@ -48,12 +48,12 @@ SOURCES += \
     collisionlistener.cpp \
     menu.cpp \
     object.cpp \
-    levelloader.cpp \
     stickylink.cpp \
     removablegoo.cpp \
     balloongoo.cpp\
     levelselector.cpp \
-    svglevelloader.cpp
+    svglevelloader.cpp \
+    background.cpp
 
 
 ##FOR TOUCHPAD COMPILE
