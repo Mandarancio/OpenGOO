@@ -48,7 +48,7 @@ void StickyLink::paint(QPainter &p){
         x=goo->getPPosition().x()-joint->GetAnchorB().x;
         y=goo->getPPosition().y()-joint->GetAnchorB().y;
     }
-    float r=atan2(y,x);
+    float r=atan2(static_cast<float>(y),static_cast<float>(x));
     p.save();
     p.translate(m);
     p.rotate(r);

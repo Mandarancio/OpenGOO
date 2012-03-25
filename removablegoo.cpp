@@ -59,7 +59,7 @@ void RemovableGoo::paintDebug(QPainter &p){
         //translate the painter at the center of the goo
         p.translate(getPPosition());
         //rotate the painter of the angle between the goo and his target
-        p.rotate(atan2(target->getPPosition().y()-getPPosition().y(),target->getPPosition().x()-getPPosition().x())*180.0/3.141628);
+	p.rotate(atan2(static_cast<float>(target->getPPosition().y()-getPPosition().y()),static_cast<float>(target->getPPosition().x()-getPPosition().x()))*180.0/3.141628);
         //draw a line in this direction of 40 px
         p.drawLine(0,0,40,0);
         //translate the painter at the end of the line
