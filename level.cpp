@@ -549,13 +549,13 @@ void Level::gooCatched(Goo *goo){
     points++;
 }
 
-void Level::towerCatched(){    
+void Level::towerCatched(){
     catched=true;
     for (int i=0;i<goos.length();i++) goos[i]->catched();
 
 }
 
-void Level::towerLost(){    
+void Level::towerLost(){
     catched=false;
     for (int i=0;i<goos.length();i++) goos[i]->lost();
 
@@ -625,7 +625,7 @@ void Level::paintTargetArrow(QPainter &p){
         p.translate(center);
         p.setPen(Qt::black);
         //Compute the angle of the vector between center and target
-        float angle=atan2(-tp.y(),-tp.x())*180.0/3.141628-180;
+        float angle=atan2(static_cast<float>(-tp.y()),static_cast<float>(-tp.x()))*180.0/3.141628-180;
         //Compute the distance to borders:
         float m1,m2;
         m1=abs(width()/(2*cos(angle*3.141628/180.0)));
