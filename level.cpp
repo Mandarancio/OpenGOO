@@ -19,7 +19,7 @@
 #define RADIUS 15
 
 Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
+    QGLWidget(QGLFormat(QGL::SampleBuffers|QGL::StencilBuffer),parent)
 {
 
     goal = 100;
@@ -96,8 +96,6 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
     connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
     if (flag==DEBUG) qWarning()<<"Menu set up!";
-
-
 }
 
 Level::~Level(){
@@ -295,7 +293,6 @@ void Level::timerEvent(QTimerEvent *e){
 }
 
 void Level::paintEvent(QPaintEvent *e){
-
     QPainter p(this);
     //BG Color
     p.setPen(Qt::transparent);

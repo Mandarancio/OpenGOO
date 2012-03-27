@@ -4,13 +4,15 @@
 
 #include "svglevelloader.h"
 
-MainWidget::MainWidget(QRect geometry,bool debug,QWidget *parent)
-    : QMainWindow(parent)
+MainWidget::MainWidget(QRect geometry,bool debug,bool multiwindow,QWidget *parent)
+    : QGLWidget(QGLFormat(QGL::HasOverlay),parent)
 {
     this->showFullScreen();//To have the game full screen
     this->setGeometry(geometry);
     this->geometry=geometry;
+    this->multiwindow=multiwindow;
     this->debug=debug;
+    if (debug && multiwindow) qWarning()<<"Multi Window mode ON!";
     levelS=new LevelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
     level=NULL;
@@ -21,8 +23,20 @@ MainWidget::MainWidget(QRect geometry,bool debug,QWidget *parent)
 
 MainWidget::~MainWidget()
 {
-    delete levelS;
-    if (level!=NULL) delete level;
+    if (levelS!=NULL){
+        delete levelS;
+    }
+    if (level!=NULL){
+        delete level;
+    }
+}
+
+void MainWidget::closeEvent(QCloseEvent *e){
+    if (level!=NULL){
+        level->close();
+    }
+
+    e->accept();
 }
 
 void MainWidget::levelSelected()//Create the level selected
@@ -35,21 +49,31 @@ void MainWidget::levelSelected()//Create the level selected
     }
     else
     {
-
-        if (!debug)
-            level=new Level(geometry,levelS->getLevelSelected(),STANDARD,this); //Create the level
-        else{
-            level=new Level(geometry,levelS->getLevelSelected(),DEBUG,this); //Create the level
-            qWarning()<<"Level object created";
+        if (multiwindow){
+            if (!debug)
+                level=new Level(geometry,levelS->getLevelSelected(),STANDARD); //Create the level
+            else{
+                level=new Level(geometry,levelS->getLevelSelected(),DEBUG); //Create the level
+                qWarning()<<"Level object created";
+            }
+        }
+        else {
+            if (!debug)
+                level=new Level(geometry,levelS->getLevelSelected(),STANDARD,this); //Create the level
+            else{
+                level=new Level(geometry,levelS->getLevelSelected(),DEBUG,this); //Create the level
+                qWarning()<<"Level object created";
+            }
         }
         delete levelS;
+        levelS=NULL;
         connect(level,SIGNAL(closing()),this,SLOT(close()));//Connect the closing of the level with the closing of the game
         connect(level,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
-        if (level->startLevel())
+        if (level->startLevel()){
             level->show();//Show the Level
 
-        if (debug) qWarning()<<"level showed an signal connected.";
-
+            if (debug) qWarning()<<"level showed an signal connected.";
+        }
 
     }
 }

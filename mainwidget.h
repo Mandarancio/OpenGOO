@@ -1,16 +1,17 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <QtGui/QMainWindow>
+#include <QGLWidget>
 #include "level.h"
 #include "levelselector.h"
+#include <QCloseEvent>
 
-class MainWidget : public QMainWindow
+class MainWidget : public QGLWidget
 {
     Q_OBJECT
 
 public:
-    MainWidget(QRect geometry,bool debug =false,QWidget *parent = 0);
+    MainWidget(QRect geometry,bool debug =false,bool multiwindow=false,QWidget *parent = 0);
     ~MainWidget();
 private:
     Level *level;
@@ -19,9 +20,13 @@ private:
     QRect geometry;
 
     bool debug;
+    bool multiwindow;
+protected:
+    void closeEvent(QCloseEvent *);
 private slots:
     void levelSelected();
     void backToMainMenu();
+
 };
 
 #endif // MAINWIDGET_H

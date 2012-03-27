@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 
     bool debug=false;
     bool forceScreen=false;
+    bool multiwindow=false;
     //Default is screen 0
     int screen=0;
     QString arg;
@@ -51,6 +52,9 @@ int main(int argc, char *argv[])
                 screen=0;
                 forceScreen=false;
             }
+        }
+        else if (!arg.compare("-Multiwindow")){
+            multiwindow=true;
         }
     }
     if (!debug) qWarning("STD MODE");
@@ -72,7 +76,7 @@ int main(int argc, char *argv[])
         }
     }
     //Create the main widget in the bigger screen
-    MainWidget w(a.desktop()->screenGeometry(screen),debug);
+    MainWidget w(a.desktop()->screenGeometry(screen),debug,multiwindow);
     w.show();
 
     return a.exec();
