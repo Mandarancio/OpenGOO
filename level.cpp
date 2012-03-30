@@ -8,6 +8,7 @@
 #include "fixedgoo.h"
 #include "dynamicgoo.h"
 #include "removablegoo.h"
+#include "balloongoo.h"
 #include "thorn.h"
 #include "stickylink.h"
 
@@ -94,10 +95,8 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
     connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
     connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
-    connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
+    connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));    
     if (flag==DEBUG) qWarning()<<"Menu set up!";
-
-
 }
 
 Level::~Level(){
@@ -290,6 +289,12 @@ void Level::timerEvent(QTimerEvent *e){
 
     if (target) target->checkTower(goos);
     if (target) target->applyForces(goos);
+
+    int gravity=world->GetGravity().Length();
+    for(int i=0;i<ballGoos.length();i++)//Apply a force to the balloon to let it fly
+    {
+        ballGoos.at(i)->getBody()->ApplyForceToCenter(b2Vec2(0,-gravity*1.1));
+    }
     repaint();
     stickyToCreate.clear();
 }
@@ -785,6 +790,15 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(fg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
                 connect(fg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
         }
+        else if (type==3){ //Create a balloon goo
+                BalloonGoo*  bg=new BalloonGoo(world,center,RADIUS);
+                goos.push_back(bg);
+                //connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+                connect(bg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+                connect(bg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+                connect(bg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+                //connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+        }
         else return;
     }
     if (flag==DEBUG) qWarning()<<"A start area is created.";
@@ -828,6 +842,17 @@ void Level::setGoo(QPoint center,int id, int type){
             connect(fg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
             connect(fg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
             connect(fg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+    }
+    else if (type==3){ //Create a balloon goo
+            BalloonGoo*  bg=new BalloonGoo(world,center,RADIUS);
+            goos.push_back(bg);
+            ballGoos.append(bg);
+            goo=bg;
+            //connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+            connect(bg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(bg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(bg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+            //connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
     }
     if (goo!=NULL){
         loader->addGoo(id,goo);

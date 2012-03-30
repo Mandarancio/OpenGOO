@@ -161,6 +161,11 @@ bool SvgLevelLoader::parse(){
                         if (!type.compare("STD")) nType=0; //STANDARD GOO
                         else if (!type.compare("RMV")) nType=1; //REMOVIBLE GOO
                         else if (!type.compare("FXD")) nType=2; //FIXED GOO
+                        else if (!type.compare("BLN"))
+                        {
+                            nType=3; //BALLOON GOO
+                            qWarning("Balloon");
+                        }
                         emit levelGOO(p,n,nType);
                     }
                 }

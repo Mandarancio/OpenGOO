@@ -14,6 +14,7 @@
 
 
 #include "goo.h"
+#include "balloongoo.h"
 #include "ground.h"
 #include "joint.h"
 #include "target.h"
@@ -63,6 +64,7 @@ private:
 
     QList<Goo*> goos;       //All the goos!
     QList<Goo*> goosToDestroy;  //GOOs to be destroyed the next update!
+    QList<BalloonGoo*> ballGoos; //Balloon goos
 
     QList<Joint*> joints;   //All the joints!
     QList<Joint*> jointsToDestroy; //Joints to be destroyed the next update!
