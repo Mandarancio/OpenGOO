@@ -1,5 +1,5 @@
 Made by Martino Ferrari <manda.mgf@gmail.com>
-This software is under GPLv3
+This software is released under the GPLv3 license
 
 CREDITS
 ----
@@ -9,11 +9,20 @@ Torsello Marco
 and great thanks to Oleksiy Slyshyk for MSVC PATCH!
 
 
+
+------------------------------------------------
+WIKI https://github.com/Mandarancio/OpenGOO/wiki
+------------------------------------------------
+
+
+
+
+
 DEPENDENCIES
 ----
 
 -Box2d 2.2.1
--Qt4 and opengl module
+-Qt4 and QT4 opengl module
 -Gcc
 -QMake
 -Make
@@ -21,7 +30,8 @@ DEPENDENCIES
 TO COMPILE
 ----
 
-move in the folder contains the source [example OpenGOO]
+Move to the folder that contains the source [example OpenGOO]
+
 cd ~/OpenGOO
 qmake
 make
@@ -29,20 +39,15 @@ make
 TO RUN
 ----
 
-Move in the folder contains the build and
-Make sure that in this folder also level-svg.level and menu.index are present (else copy here).
+Move to the folder that contains the executable.
+Make sure that in this folder also level-svg.level and menu.index are present (if not copy them there).
 ./OpenGOO
 
 If you want more debug output
 ./OpenGOO -Debug
 
 
-ATTENZIONE/ATTECTION
-Il file di livello (level-svg.level) e di menu (menu.index) deve essere nella cartella dell eseguibile.
-he level file (level-svg.level) and menu file (menu.index) must be in the executable folder.
+ATTENZIONE/ATTENTION
+Il file di livello (level-svg.level) e di menu (menu.index) deve essere nella cartella dell'eseguibile.
+The level file (level-svg.level) and menu file (menu.index) must be in the executable folder.
 
-TO DO
-----
-
-+Why target force dosn't work.
-+Bug fix 
