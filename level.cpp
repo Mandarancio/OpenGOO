@@ -311,6 +311,7 @@ void Level::paintEvent(QPaintEvent *e){
 
 
     p.save();
+ //   p.scale(1.5,1.5);
     p.translate(translation);
     paintBg(p);
     for (int i=0;i<background.length();i++){

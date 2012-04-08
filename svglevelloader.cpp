@@ -62,11 +62,11 @@ bool SvgLevelLoader::parse(){
                     title=node.toElement().text().split('[').at(0);
                     emit levelName(title);
                     //check flag;
-                    bool ok=true;
-                    QString sGoal=node.toElement().text().split('[').at(1);
-                    sGoal=sGoal.remove(']');
-                    int goal=sGoal.toInt(&ok);
-                    emit levelGoal(goal);
+//                    bool ok=true;
+//                    QString sGoal=node.toElement().text().split('[').at(1);
+//                    sGoal=sGoal.remove(']');
+//                    int goal=sGoal.toInt(&ok);
+//                    emit levelGoal(goal);
                 }
                 if (node.toElement().tagName().compare("g")==0){
                     qWarning()<<"Gruppo principale";
@@ -116,8 +116,11 @@ bool SvgLevelLoader::parse(){
                     emit levelGround(center,pol);
 
                 }
-                else if (!label.compare("#target") || !id.compare("target")){
+                else if (!label.compare("#target") && id.split(':').length()==2 ){
                     QPoint target=parsePoint(object);
+                    bool ok=true;
+                    int goal=id.split(':').at(1).toInt(&ok);
+                    if (ok) emit levelGoal(goal);
                     emit levelTarget(target);
                 }
                 else if (!label.compare("#joint")){
@@ -235,7 +238,9 @@ QPoint SvgLevelLoader::parseTransform(QDomElement el){
         if (trasf.contains("translate")){
             trasf.remove("translate(");
             trasf.remove(')');
+            qWarning()<<trasf;
             t=strToPoint(trasf);
+
         }
     }
     return t;
@@ -306,7 +311,9 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     //Start to parse the list;
     QPoint p;
     for (int i=1;i<nPoint+1;i++){
-        if (str.split(' ').at(i)[0]=='l') continue;
+        if (str.split(' ').at(i)[0]=='l' ||  str.split(' ').at(i)[0]=='L') {
+            continue;
+        }
         p=strToPoint(str.split(' ').at(i));
         if (i==1){
             p+=transform;
@@ -315,8 +322,8 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
             p+=transform;
             p-=(list.at(0));
         }
-        else if (relative) {
-            p+=transform+(i>2 ? list.at(i-2):QPoint(0,0));
+        else if (relative && list.count()) {
+            p+=transform+(i>2? list.at(i-2):QPoint(0,0));
         }
         list.push_back(p);
     }
@@ -332,14 +339,16 @@ QColor SvgLevelLoader::parseFill(QDomElement el){
         tag=style.split(';').at(i).split(':').at(0);
         if (tag.compare("fill")==0){
             QString value=style.split(';').at(i).split(':').at(1);
+
             value.remove('#');
+            qWarning()<<value;
             int r,g,b;
             bool ok=true;
             r=value.mid(0,2).toInt(&ok,16);
             g=value.mid(2,2).toInt(&ok,16);
-            b=value.mid(3,2).toInt(&ok,16);
+            b=value.mid(4,2).toInt(&ok,16);
 
-
+            qWarning()<<r<<g<<b;
             color=QColor(r,g,b);
         }
     }
