@@ -145,7 +145,7 @@ bool SvgLevelLoader::parse(){
                     }
                 }
                 else if (!label.compare("#goo")){
-                    qWarning()<<object.attribute("id","");
+                    qWarning()<<"GOo"<<object.attribute("id","");
                     //checl flag
                     bool ok=true;
                     //id of the goo
@@ -178,9 +178,12 @@ bool SvgLevelLoader::parse(){
             }
             //emit link / joint signal
             int a,b;
+
             for (int i=0;i<links.length();i++){
+
                 a=getIndex(links[i].first);
                 b=getIndex(links[i].second);
+                qWarning()<<goos[a].second->getPPosition();
                 if (a>=0 && b>=0) emit levelJoint(goos[a].second,goos[b].second);
             }
             return true;

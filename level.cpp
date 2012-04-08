@@ -570,7 +570,7 @@ void Level::towerLost(){
 void Level::paintBg(QPainter &p){
     QColor c1,c2;
     c1.setRgb(95,141,211);
-    c2.setRgb(11,23,40);
+    c2.setRgb(21,33,50);
     QRadialGradient g(QPoint(0,height()/2),2*height());
     g.setColorAt(0,c1);
     g.setColorAt(1,c2);
@@ -952,7 +952,7 @@ void Level::addBGShape(int id, QPolygon poly, QColor color){
     else {
         BackGround *bg=new BackGround(id,this);
         bg->addPolygon(poly,color);
-        bg->setDelta(0.3*id);
+        bg->setDelta(0.3*(3-id));
         background.push_back(bg);
     }
 }
