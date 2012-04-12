@@ -19,7 +19,7 @@
 
 #define RADIUS 15
 
-Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
+Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
 {
 
@@ -29,7 +29,12 @@ Level::Level(QRect geometry, QString level,RunFlag flag, QWidget *parent) :
 
 
     //set the display geometry
-    this->setGeometry(0,0,geometry.width(),geometry.height());
+    if (!multiWindow)
+        this->setGeometry(0,0,geometry.width(),geometry.height());
+    else {
+        this->setGeometry(geometry);
+        this->showFullScreen();
+    }
     if (flag==DEBUG) qWarning()<<"Geometry setted:"<<geometry;
 
     //grab keyboard, mouse and track it!
