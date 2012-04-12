@@ -18,8 +18,8 @@ private:
     LevelSelector *levelS;
 
     QRect geometry;
-    bool multiwindow;
     bool debug;
+    bool multiwindow;
 protected:
     void closeEvent(QCloseEvent *);
 private slots:

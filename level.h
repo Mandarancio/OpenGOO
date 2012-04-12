@@ -14,6 +14,7 @@
 
 
 #include "goo.h"
+#include "balloongoo.h"
 #include "ground.h"
 #include "joint.h"
 #include "target.h"
@@ -37,7 +38,7 @@ class Level : public QGLWidget //QWidget <--To use without openGL
 {
     Q_OBJECT
 public:
-    explicit Level(QRect geometry,QString level,RunFlag flag = STANDARD,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
+    explicit Level(QRect geometry,QString level,RunFlag flag = STANDARD,bool multiWindow=false,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level();
     //Function to start the level;
     bool startLevel();
@@ -63,6 +64,7 @@ private:
 
     QList<Goo*> goos;       //All the goos!
     QList<Goo*> goosToDestroy;  //GOOs to be destroyed the next update!
+    QList<BalloonGoo*> ballGoos; //Balloon goos
 
     QList<Joint*> joints;   //All the joints!
     QList<Joint*> jointsToDestroy; //Joints to be destroyed the next update!

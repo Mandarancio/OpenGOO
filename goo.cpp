@@ -179,6 +179,7 @@ bool Goo::destroyLink(Goo *goo){
 //                    j=j->GetNext();
 //            }
 //        }
+        if (isDragging() && !hasJoint()) body->SetActive(false);
         return true;
 
     }
@@ -220,7 +221,7 @@ void Goo::drag(){
 //    body->SetLinearVelocity(b2Vec2(0,0));
 //    body->SetGravityScale(0);
 //    body->SetAngularVelocity(0.0);
-    body->SetActive(false);
+    if (!hasJoint())   body->SetActive(false);
     dragging=true;
 
 

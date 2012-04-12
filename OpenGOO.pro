@@ -4,7 +4,7 @@ TARGET = OpenGOO
 TEMPLATE = app
 #ATTENCTION
 #Lib Box2D must be in system folder and also the header files of it!
-unix|win32: LIBS=-lBox2D
+LIBS=-lBox2D
 
 OTHER_FILES += \
     level-svg.level \

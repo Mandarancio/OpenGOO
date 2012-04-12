@@ -1,6 +1,6 @@
 #include "levelselector.h"
 
-LevelSelector::LevelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
+LevelSelector::LevelSelector(QRect geometry,QWidget *parent):QWidget(parent)
 {
 
     this->grabMouse();    
@@ -13,6 +13,8 @@ LevelSelector::LevelSelector(QRect geometry,QWidget *parent):QGLWidget(QGLFormat
     this->computeHeight();
     this->findLevels();
 }
+
+
 LevelSelector::~LevelSelector()
 {
     this->setMouseTracking(false);
