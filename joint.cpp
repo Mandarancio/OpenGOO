@@ -1,17 +1,22 @@
 #include "joint.h"
 #include "tools.h"
 
-Joint::Joint(Goo *a, Goo *b, b2World *world, QObject *parent):
+Joint::Joint(Goo *a, Goo *b, b2World *world,bool child, QObject *parent):
     QObject(parent)
 {
+
+    this->a=a;
+    this->b=b;
+    if (!child) initialize(world);
+}
+
+void Joint::initialize(b2World * world){
     b2DistanceJointDef jDef;
     jDef.Initialize(a->getBody(),b->getBody(),a->getVPosition(),b->getVPosition());
     jDef.dampingRatio=1.0;
     jDef.frequencyHz=10;
     jDef.collideConnected=true;
     joint=(b2DistanceJoint*)world->CreateJoint(&jDef);
-    this->a=a;
-    this->b=b;
 }
 
 void Joint::paint(QPainter &p){
@@ -43,10 +48,12 @@ void Joint::paintDebug(QPainter &p){
 
 //This function check the status of the joint
 void Joint::status(){
+
     if (joint==NULL){ //If the b2Joint is NULL
         emit destroyJoint(this);
         return;
     }
+    b2DistanceJoint* joint=(b2DistanceJoint*)this->joint;
     float dx=(joint->GetBodyA()->GetPosition().x-joint->GetBodyB()->GetPosition().x); //Delta x
     float dy=(joint->GetBodyA()->GetPosition().y-joint->GetBodyB()->GetPosition().y); //Delta y
     float l=sqrt(dx*dx+dy*dy); //This is the lenght of the joint
@@ -68,3 +75,4 @@ bool Joint::has(Goo *a, Goo *b){ //Check if the joint link this two goo
     if (this->b==a && this->a==b) return true;
     return false;
 }
+

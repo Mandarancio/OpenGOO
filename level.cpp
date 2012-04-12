@@ -222,7 +222,7 @@ bool Level::makeJoint(Goo *a, Goo *b){
         a->destroyLink(b);
         return false;
     }
-    Joint* j=new Joint(a,b,world,this);
+    Joint* j=new Joint(a,b,world,false,this);
     joints.push_back(j);
     connect(j,SIGNAL(destroyJoint(Joint*)),this,SLOT(destroyJoint(Joint*)));
     return true;

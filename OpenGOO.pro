@@ -30,7 +30,8 @@ HEADERS += \
     balloongoo.h\
     levelselector.h \
     svglevelloader.h \
-    background.h
+    background.h \
+    ropejoint.h
 
 
 SOURCES += \
@@ -53,7 +54,8 @@ SOURCES += \
     balloongoo.cpp\
     levelselector.cpp \
     svglevelloader.cpp \
-    background.cpp
+    background.cpp \
+    ropejoint.cpp
 
 
 ##FOR TOUCHPAD COMPILE
@@ -63,3 +65,5 @@ SOURCES += \
 #LIBS += -Wl,-rpath,"'\$$ORIGIN/qt'" -L/opt/PalmPDK/device/lib -lpdl -lSDL
 #INCLUDEPATH += /opt/PalmPDK/include/SDL
 #}
+
+
