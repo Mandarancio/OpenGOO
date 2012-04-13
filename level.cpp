@@ -630,6 +630,10 @@ void Level::paintBg(QPainter &p){
 }
 
 void Level::paintScore(QPainter &p){
+    QColor bg(0,0,0,200);
+    p.setBrush(bg);
+    p.setPen(Qt::transparent);
+    p.drawRoundedRect(-10,height()-80,80,110,10,10);
     p.setPen(Qt::white);
     QFont f;
     f.setFamily("Times");
