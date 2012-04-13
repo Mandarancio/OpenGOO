@@ -25,6 +25,11 @@ public:
     //function to add a created goo
     void addGoo(int id, Goo* goo);
 private:
+    int h,w;
+    QPoint translation;
+
+
+
     //function that return the list index of a goo from id (-1 not found)
     int getIndex(int id);
 
@@ -38,7 +43,7 @@ private:
     //function to parse a translation from a domelement
     QPoint parseTransform(QDomElement el);
     //function to parse a rect from a domelement
-    QRect parseRect(QDomElement el);
+    QRect parseRect(QDomElement el,bool cal=false);
     //function to parse a point from a string
     QPoint strToPoint(QString string);
     //function to parse a point from a circle svg
@@ -56,6 +61,8 @@ private:
     QString path;
     //display size
     QSize displaySize;
+
+
 
     //List to store links to be created
     QList<QPair<int,int> > links;

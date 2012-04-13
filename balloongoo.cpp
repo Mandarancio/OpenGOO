@@ -31,7 +31,7 @@ void BalloonGoo::paint(QPainter &p){
 bool BalloonGoo::createLink(Goo *goo){
     if (!active && nJoints()<maxJoints){
         active=true;
-        body->SetGravityScale(-0.5);
+        body->SetGravityScale(-1);
         if (sleeping) sleeping=false;
         links.push_back(goo);
         if (following) stopFollow();

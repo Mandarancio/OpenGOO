@@ -49,9 +49,9 @@ bool SvgLevelLoader::parse(){
                 emit fileError();
                 return false;
             }
-//            int h,w;
-//            h=root.attribute("height","").toFloat();
-//            w=root.attribute("width","").toFloat();
+           h=root.attribute("height","").toFloat();
+           w=root.attribute("width","").toFloat();
+           qWarning()<<h<<w;
             QDomNode node;
 
             for (int i=0;i<root.childNodes().count();i++){
@@ -69,7 +69,8 @@ bool SvgLevelLoader::parse(){
 //                    emit levelGoal(goal);
                 }
                 if (node.toElement().tagName().compare("g")==0){
-                    qWarning()<<"Gruppo principale";
+                 //   qWarning()<<"Gruppo principale";
+                    translation=this->parseTransform(node.toElement());
                     break;
 
                 }
@@ -77,7 +78,6 @@ bool SvgLevelLoader::parse(){
             QDomElement object;
             for (int i=0;i<node.childNodes().count();i++){
                 object=node.childNodes().at(i).toElement();
-                qWarning()<<object.tagName();
                 QString label,id;
                 id=object.attribute("id","");
                 label=object.attribute("label","");
@@ -102,9 +102,6 @@ bool SvgLevelLoader::parse(){
                 }
                 else if (!label.compare("#limit") || !id.compare("limit")){
                     QRect rect=parseRect(object);
-                    //rect.setTopLeft(-rect.topLeft()+QPoint(displaySize.width(),displaySize.height()));
-                   // rect.setTopLeft(qrand()Point(rect.topLeft()));
-                    qWarning()<<"limit"<<rect;
 
                     emit levelLimit(rect);
                 }
@@ -112,7 +109,6 @@ bool SvgLevelLoader::parse(){
                     QList <QPoint> pol=parsePointList(object);
                     QPoint center=pol[0];
                     pol[0]=QPoint(0,0);
-                    qWarning()<<center<<pol;
                     emit levelGround(center,pol);
 
                 }
@@ -124,10 +120,8 @@ bool SvgLevelLoader::parse(){
                     emit levelTarget(target);
                 }
                 else if (!label.compare("#joint")){
-                    qWarning()<<"Joint"<<id;
 
                     QString goos=object.firstChild().toElement().text();
-                    qWarning()<<goos;
                     int a,b;
                     //check flag
                     bool ok=true;
@@ -145,7 +139,6 @@ bool SvgLevelLoader::parse(){
                     }
                 }
                 else if (!label.compare("#goo")){
-                    qWarning()<<"GOo"<<object.attribute("id","");
                     //checl flag
                     bool ok=true;
                     //id of the goo
@@ -167,7 +160,6 @@ bool SvgLevelLoader::parse(){
                         else if (!type.compare("BLN"))
                         {
                             nType=3; //BALLOON GOO
-                            qWarning("Balloon");
                         }
                         emit levelGOO(p,n,nType);
                     }
@@ -183,7 +175,6 @@ bool SvgLevelLoader::parse(){
 
                 a=getIndex(links[i].first);
                 b=getIndex(links[i].second);
-                qWarning()<<goos[a].second->getPPosition();
                 if (a>=0 && b>=0) emit levelJoint(goos[a].second,goos[b].second);
             }
             return true;
@@ -220,7 +211,6 @@ void SvgLevelLoader::parseBackground(QDomElement el){
         QPolygon polygon=toPoly(poly,center);
         QColor fill= parseFill(el);
         emit addBackGroundShape(id,polygon,fill);
-        qWarning()<<"BG"<<fill<<polygon<<id;
     }
     else return;
 }
@@ -241,7 +231,6 @@ QPoint SvgLevelLoader::parseTransform(QDomElement el){
         if (trasf.contains("translate")){
             trasf.remove("translate(");
             trasf.remove(')');
-            qWarning()<<trasf;
             t=strToPoint(trasf);
 
         }
@@ -249,15 +238,18 @@ QPoint SvgLevelLoader::parseTransform(QDomElement el){
     return t;
 }
 
-QRect SvgLevelLoader::parseRect(QDomElement el){
+QRect SvgLevelLoader::parseRect(QDomElement el,bool cal){
     QRect r(0,0,0,0);
     //flag for check that the conversion is right
     bool ok=true;
     QPoint p,d;
     //top left point
     p.setX(qRound(el.attribute("x").toFloat(&ok)));
-    p.setY(qRound(el.attribute("y").toFloat(&ok)));
-    p=p+parseTransform(el);
+    if (!cal) p.setY(qRound(el.attribute("y").toFloat(&ok)));
+    else p.setY(h-qRound(el.attribute("y").toFloat(&ok)));
+    qWarning()<<"RECT:"<<p;
+    p=p+parseTransform(el)+translation;
+    qWarning()<<"RECT+TRASF:"<<p;
 
 
     //size
@@ -277,7 +269,7 @@ QPoint SvgLevelLoader::parsePoint(QDomElement el){
     x=qRound(el.attribute("sodipodi:cx").toFloat(&ok));
     y=qRound(el.attribute("sodipodi:cy").toFloat(&ok));
     if (ok) {
-        p=QPoint(x,y)+parseTransform(el);
+        p=QPoint(x,y)+parseTransform(el)+translation;
     }
     return p;
 }
@@ -300,7 +292,7 @@ QPoint SvgLevelLoader::strToPoint(QString string){
 QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     QList<QPoint> list;
     //compute transformation
-    QPoint transform=parseTransform(el);
+    QPoint transform=parseTransform(el)+translation;
     //Get the string
     QString str=el.attribute("d","");
 
@@ -326,11 +318,11 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
             p-=(list.at(0));
         }
         else if (relative && list.count()) {
-            p+=transform+(i>2? list.at(i-2):QPoint(0,0));
+            p+=(i>2? list.at(i-2):QPoint(0,0));
         }
         list.push_back(p);
     }
-    qWarning()<<list;
+    //) qWarning()<<list;
     return list;
 }
 
@@ -344,14 +336,14 @@ QColor SvgLevelLoader::parseFill(QDomElement el){
             QString value=style.split(';').at(i).split(':').at(1);
 
             value.remove('#');
-            qWarning()<<value;
+            //qWarning()<<value;
             int r,g,b;
             bool ok=true;
             r=value.mid(0,2).toInt(&ok,16);
             g=value.mid(2,2).toInt(&ok,16);
             b=value.mid(4,2).toInt(&ok,16);
 
-            qWarning()<<r<<g<<b;
+            //qWarning()<<r<<g<<b;
             color=QColor(r,g,b);
         }
     }

@@ -34,104 +34,104 @@ void RopeJoint::initialize(b2World *world){
     jDef.localAnchorA=a->getVPosition();
     jDef.localAnchorB=b->getVPosition();
     jDef.maxLength=500;
-    float x,y,x0,y0;
-    x0=a->getVPosition().x;
-    y0=a->getVPosition().y;
-    float mx,my;
+    b->getBody()->SetGravityScale(-1.0f);
+//    float x,y,x0,y0;
+//    x0=a->getVPosition().x;
+//    y0=a->getVPosition().y;
+//    float mx,my;
 
 
-    mx=b->getVPosition().x-a->getVPosition().x;
-    my=b->getVPosition().y-a->getVPosition().y;
-    float d=qSqrt(mx*mx+my*my);
-    mx/=d;
-    my/=d;
-    int n,k;
-    n=30;
-    k=d/n;
+//    mx=b->getVPosition().x-a->getVPosition().x;
+//    my=b->getVPosition().y-a->getVPosition().y;
+//    float d=qSqrt(mx*mx+my*my);
+//    mx/=d;
+//    my/=d;
+//    int n,k;
+//    n=30;
+//    k=d/n;
 
-    b2PolygonShape shape;
-    shape.SetAsBox(k*mx/2,k*my/2);
+//    b2PolygonShape shape;
+//    shape.SetAsBox(k*mx/2,k*my/2);
 
-    b2FixtureDef fd;
-    fd.shape = &shape;
-    fd.density = 0.0;
-    fd.friction = 0.2f;
+//    b2FixtureDef fd;
+//    fd.shape = &shape;
+//    fd.density = 0.0;
+//    fd.friction = 0.2f;
 
-    fd.filter.categoryBits = 0x0001;
-    fd.filter.maskBits = 0xFFFF & ~0x0002;
+//    fd.filter.categoryBits = 0x0001;
+//    fd.filter.maskBits = 0xFFFF & ~0x0002;
 
-    b2RevoluteJointDef jd;
-    jd.collideConnected = false;
+//    b2RevoluteJointDef jd;
+//    jd.collideConnected = false;
 
-    float d2=500-d;
-    int n2=d2/k;
-    b2Body* prevBody = a->getBody();
+//    float d2=500-d;
+//    int n2=d2/k;
+//    b2Body* prevBody = a->getBody();
 
-    for (int i=0; i<n2/2;i++){
-        x=x0+i*k;
-        y=y0;
-        b2BodyDef bd;
-        bd.type = b2_dynamicBody;
-        bd.position.Set(x,y);
+//    for (int i=0; i<n2/2;i++){
+//        x=x0+i*k;
+//        y=y0;
+//        b2BodyDef bd;
+//        bd.type = b2_dynamicBody;
+//        bd.position.Set(x,y);
 
-        b2Body* body = world->CreateBody(&bd);
-        body->CreateFixture(&fd);
-        body->SetGravityScale(0);
-        b2Vec2 anchor(x, y);
-        jd.Initialize(prevBody, body, anchor);
+//        b2Body* body = world->CreateBody(&bd);
+//        body->CreateFixture(&fd);
+//        body->SetGravityScale(0);
+//        b2Vec2 anchor(x, y);
+//        jd.Initialize(prevBody, body, anchor);
 
-        joints.push_back(world->CreateJoint(&jd));
-        bodies.push_back(body);
+//        joints.push_back(world->CreateJoint(&jd));
+//        bodies.push_back(body);
 
-        prevBody = body;
-    }
+//        prevBody = body;
+//    }
 
-    for (int i=0;i<n2/2;i++){
-        x=x0+n2/2*k-i*k;
-        y=y0;
+//    for (int i=0;i<n2/2;i++){
+//        x=x0+n2/2*k-i*k;
+//        y=y0;
 
-        b2BodyDef bd;
-        bd.type = b2_dynamicBody;
-        bd.position.Set(x,y);
+//        b2BodyDef bd;
+//        bd.type = b2_dynamicBody;
+//        bd.position.Set(x,y);
 
-        b2Body* body = world->CreateBody(&bd);
-        body->CreateFixture(&fd);
-        body->SetGravityScale(0);
-        b2Vec2 anchor(x, y);
-        jd.Initialize(prevBody, body, anchor);
+//        b2Body* body = world->CreateBody(&bd);
+//        body->CreateFixture(&fd);
+//        body->SetGravityScale(0);
+//        b2Vec2 anchor(x, y);
+//        jd.Initialize(prevBody, body, anchor);
 
-        joints.push_back(world->CreateJoint(&jd));
-        bodies.push_back(body);
+//        joints.push_back(world->CreateJoint(&jd));
+//        bodies.push_back(body);
 
-        prevBody = body;
-    }
+//        prevBody = body;
+//    }
 
-    for (int i=0;i<n-1;i++){
-        x=x0+mx*(i*k);
-        y=y0+my*(i*k);
+//    for (int i=0;i<n-1;i++){
+//        x=x0+mx*(i*k);
+//        y=y0+my*(i*k);
 
-        b2BodyDef bd;
-        bd.type = b2_dynamicBody;
-        bd.position.Set(x,y);
+//        b2BodyDef bd;
+//        bd.type = b2_dynamicBody;
+//        bd.position.Set(x,y);
 
-        b2Body* body = world->CreateBody(&bd);
-        body->CreateFixture(&fd);
-        body->SetGravityScale(0.2);
-        b2Vec2 anchor(x, y);
-        jd.Initialize(prevBody, body, anchor);
+//        b2Body* body = world->CreateBody(&bd);
+//        body->CreateFixture(&fd);
+//        body->SetGravityScale(0.2);
+//        b2Vec2 anchor(x, y);
+//        jd.Initialize(prevBody, body, anchor);
 
-        joints.push_back(world->CreateJoint(&jd));
-        bodies.push_back(body);
+//        joints.push_back(world->CreateJoint(&jd));
+//        bodies.push_back(body);
 
-        prevBody = body;
-    }
+//        prevBody = body;
+//    }
 
 
-    jd.Initialize(prevBody, b->getBody(), b->getVPosition());
+//    jd.Initialize(prevBody, b->getBody(), b->getVPosition());
 
-    joints.push_back(world->CreateJoint(&jd));
+//    joints.push_back(world->CreateJoint(&jd));
     joint=(b2RopeJoint*)world->CreateJoint(&jDef);
-    b->move(QPoint(mx*500,my*500));
 
 }
 
