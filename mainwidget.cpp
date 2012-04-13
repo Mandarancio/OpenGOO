@@ -55,17 +55,17 @@ void MainWidget::levelSelected()//Create the level selected
 
         if (multiwindow){
             if (!debug)
-                level=new Level(geometry,levelS->getLevelSelected(),STANDARD); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),STANDARD,true); //Create the level
             else{
-                level=new Level(geometry,levelS->getLevelSelected(),DEBUG); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),DEBUG,true); //Create the level
                 qWarning()<<"Level object created";
             }
         }
         else {
             if (!debug)
-                level=new Level(geometry,levelS->getLevelSelected(),STANDARD,this); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),STANDARD,false,this); //Create the level
             else{
-                level=new Level(geometry,levelS->getLevelSelected(),DEBUG,this); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),DEBUG,false,this); //Create the level
                 qWarning()<<"Level object created";
             }
         }

@@ -6,7 +6,7 @@
 #include <QPainter>
 
 #include "goo.h"
-
+enum JointType {NORMAL, ROPE};
 class Joint : public QObject
 {
     Q_OBJECT
@@ -17,8 +17,9 @@ public:
     void paintDebug(QPainter &p);
     b2Joint* getJoint(); //To have acces at the material b2joint
     bool has(Goo*a,Goo*b); //To check if this joint link this two GOO
-
+    JointType getType();
 protected:
+    JointType type;
     virtual void initialize(b2World * world);
     b2Joint* joint; //The phisical joint
     Goo *a,*b; //the two linked goo

@@ -12,6 +12,9 @@
 #include "thorn.h"
 #include "stickylink.h"
 
+#include "balloongoo.h"
+#include "ropejoint.h"
+
 #include "collisionlistener.h"
 
 
@@ -217,14 +220,24 @@ void Level::moveOf(QPoint dP){
 }
 
 bool Level::makeJoint(Goo *a, Goo *b){
+    bool baloon=false;
+    if (a->getType()==BALOON ||b->getType()==BALOON) baloon=true;
     if (!a->createLink(b)) return false;
     if (!b->createLink(a)) {
         a->destroyLink(b);
         return false;
     }
-    Joint* j=new Joint(a,b,world,false,this);
-    joints.push_back(j);
-    connect(j,SIGNAL(destroyJoint(Joint*)),this,SLOT(destroyJoint(Joint*)));
+    if (!baloon){
+        Joint* j= new Joint(a,b,world,false,this);
+        joints.push_back(j);
+        connect(j,SIGNAL(destroyJoint(Joint*)),this,SLOT(destroyJoint(Joint*)));
+
+    }
+    else {
+        RopeJoint *rj=new RopeJoint(b,a,world,this);
+        joints.push_back(rj);
+        connect(rj,SIGNAL(destroyJoint(Joint*)),this,SLOT(destroyJoint(Joint*)));
+    }
     return true;
 }
 
@@ -235,7 +248,7 @@ QList<QPoint> Level::possibleJoints(QPoint p){
     for (int i=0;i<goos.length();i++){
         if (goos[i]->canHaveJoint()) {
             d=pv-goos[i]->getVPosition();
-            if (d.LengthSquared()>=50*50 && d.LengthSquared()<=150*150 )
+            if (d.LengthSquared()>=50*50 && d.LengthSquared()<=(dragged->getType()==BALOON ? 200*200 : 150*150 ))
                 l.push_back(goos[i]->getPPosition());
 
         }
@@ -244,24 +257,37 @@ QList<QPoint> Level::possibleJoints(QPoint p){
 }
 
 bool Level::createJoints(QPoint p){
+
     QList<Goo*> l;
     b2Vec2 pv=toVec(p);
     b2Vec2 d;
     for (int i=0;i<goos.length();i++){
-        if (goos[i]->canHaveJoint()) {
+        if (goos[i]->canHaveJoint() && goos[i]->hasJoint()) {
             d=pv-goos[i]->getVPosition();
-            if (d.LengthSquared()>=50*50 && d.LengthSquared()<=150*150 && !l.contains(goos[i]))
+            if (d.LengthSquared()>=50*50 && d.LengthSquared()<=(dragged->getType()==BALOON ? 200*200 : 150*150 ) && !l.contains(goos[i]))
                 l.push_back(goos[i]);
 
         }
     }
-    if (l.length()>1||dragged->hasJoint()){
-        for (int i=0;i<l.length();i++){
-            if (makeJoint(dragged,l[i])) continue;
+    if (dragged->getType()!=BALOON){
+        if (l.length()>1||dragged->hasJoint()){
+            for (int i=0;i<l.length();i++){
+                if (makeJoint(dragged,l[i])) continue;
+            }
+            return true;
         }
-        return true;
+        else return false;
     }
-    else return false;
+    else {
+        if (l.length() && !dragged->hasJoint()){
+            QList <QPoint> lp;
+            for (int i=0;i<l.length();i++)
+                lp.push_back(l[i]->getPPosition());
+            makeJoint(dragged,getGooAt(getNearest(dragged->getPPosition(),lp)));
+            return true;
+        }
+        else return false;
+    }
 }
 
 void Level::timerEvent(QTimerEvent *e){
@@ -295,13 +321,28 @@ void Level::timerEvent(QTimerEvent *e){
     if (target) target->checkTower(goos);
     if (target) target->applyForces(goos);
 
-    int gravity=world->GetGravity().Length();
-    for(int i=0;i<ballGoos.length();i++)//Apply a force to the balloon to let it fly
-    {
-        ballGoos.at(i)->getBody()->ApplyForceToCenter(b2Vec2(0,-gravity*1.1));
-    }
+//    int gravity=world->GetGravity().Length();
+//    for(int i=0;i<ballGoos.length();i++)//Apply a force to the balloon to let it fly
+//    {
+//        ballGoos.at(i)->getBody()->ApplyForceToCenter(b2Vec2(0,-gravity*1.1));
+//    }
     repaint();
     stickyToCreate.clear();
+}
+
+QPoint Level::getNearest(QPoint p,QList<QPoint> l){
+    QPoint p0=p;
+    QPoint dp;
+    float dt,d=10000;
+    for (int i=0;i<l.length();i++){
+        dp=p-l[i];
+        dt=dp.x()*dp.x()+dp.y()*dp.y();
+        if (dt<d) {
+            d=dt;
+            p0=l[i];
+        }
+    }
+    return p0;
 }
 
 void Level::paintEvent(QPaintEvent *e){
@@ -326,11 +367,15 @@ void Level::paintEvent(QPaintEvent *e){
 
     if (ground) ground->paint(p);
     if (target) target->paint(p);
-    if (drag && possibility.length()>1)
+    if (drag && (dragged->getType()!=BALOON &&possibility.length()>1))
     {
         for (int i=0;i<possibility.length();i++)
             p.drawLine(dragged->getPPosition(),possibility[i]);
     }
+    else if (drag && dragged->getType()==BALOON){
+        p.drawLine(dragged->getPPosition(),getNearest(dragged->getPPosition(),possibility));
+    }
+
     for (int i=0;i<objects.length();i++)
         objects[i]->paint(p);
     for (int i=0;i<joints.length();i++) {
@@ -526,7 +571,7 @@ void Level::giveTarget(Goo *previous){
             bool ok=false;
             float distance=300;
             for (int i=0;i<goos.length();i++){
-                if (goos[i]!=goo&&goos[i]->hasJoint()&&goos[i]->isOnGround()&&abs(goos[i]->getPPosition().y()-pos.y())<15&&(goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
+                if (goos[i]!=goo&&goos[i]->hasJoint()&&goos[i]->getType()!=BALOON &&goos[i]->isOnGround()&&abs(goos[i]->getPPosition().y()-pos.y())<15&&(goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
                     next=goos[i];
                     distance=(toVec(pos)-goos[i]->getVPosition()).Length();
                     ok=true;
@@ -543,7 +588,7 @@ void Level::giveTarget(Goo *previous){
                 Goo * target=previous->getLinks().at(0);
                 b2Vec2 d=this->target->getVPosition()-target->getVPosition();
                 for (int i=1;i<previous->getLinks().length();i++){
-                    if ((goo->getPrevious()!=previous->getLinks().at(i)) && (this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
+                    if ((goo->getPrevious()!=previous->getLinks().at(i))&& previous->getLinks().at(i)->getType()!=BALOON  && (this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
                         target=previous->getLinks().at(i);
                         d=this->target->getVPosition()-previous->getLinks().at(i)->getVPosition();
                     }
@@ -769,6 +814,15 @@ void Level::setTarget(QPoint target){
 
 void Level::setStartArea(int n, QRect area,int type){
     int x,y;
+    x=area.x();
+    y=area.y();
+//    BalloonGoo* dg=new BalloonGoo(world,QPoint(x,y),RADIUS);
+//    goos.push_back(dg);
+//    connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+//    connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+//    connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+//    connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+//    connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
     for (int i=0;i<n;i++){
         x=area.x()+qrand()%area.width();
         y=area.y()+qrand()%area.height();
@@ -853,7 +907,7 @@ void Level::setGoo(QPoint center,int id, int type){
     else if (type==3){ //Create a balloon goo
             BalloonGoo*  bg=new BalloonGoo(world,center,RADIUS);
             goos.push_back(bg);
-            ballGoos.append(bg);
+//            ballGoos.append(bg);
             goo=bg;
             //connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
             connect(bg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));

@@ -1,15 +1,17 @@
 #ifndef BALLOONGOO_H
 #define BALLOONGOO_H
-#include "goo.h"
+#include "dynamicgoo.h"
 
 #include <Box2D/Box2D.h>
 
-class BalloonGoo : public Goo
+class BalloonGoo : public DynamicGoo
 {
 public:
     BalloonGoo(b2World* world, QPoint p=QPoint(0,0),int radius=15,QObject *parent = 0);
-    void contactGround();
-    void contactGround(QPoint p);
+    void drag();
+    bool createLink(Goo *goo);
+    bool destroyLink(Goo *goo);
+    bool isDragable();
 private:
     bool active;
 public slots:

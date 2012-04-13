@@ -1,41 +1,76 @@
 #include "balloongoo.h"
+#include "goo.h"
 #include "tools.h"
 
 BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
-    Goo(radius,parent)
+    DynamicGoo(world,p,radius,parent)
 {
 
-    b2BodyDef def; //body definition
-    def.awake=true; //is active
-    def.type=b2_dynamicBody; //is dynamci (react at force impulse and collision)
-    def.position=toVec(p); //set the position
-    body=world->CreateBody(&def); //create the physical body
-    b2CircleShape shape; //define the shape
-    shape.m_p.SetZero(); //position of the shape
-    shape.m_radius=radius; //radius
-    b2FixtureDef fixDef; //Definition of the phisical parameters
-    fixDef.restitution=0.3; //collision restitution
-    fixDef.density=0.0; //density
-    fixDef.friction=0.8; //friction
-    fixDef.shape=&shape; //assign the shape
-    fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
-    body->CreateFixture(&fixDef); //create the fixture
-    body->SetLinearDamping(0.1);//Not sure about this parameter
-//    b2MassData* mass=new b2MassData();
-//    mass->center.SetZero();
-//    mass->I=0.;
-//    mass->mass=10.0 ;
-//    body->SetMassData(mass);
-    moovable=true; //flags
-    dragable=true;
-    active=false;
-    maxJoints=7; //parameters
+    color=Qt::yellow;
+
+    maxJoints=1; //parameters
+    type=BALOON;
 }
 
 void BalloonGoo::paint(QPainter &p){
+    if (isSleeping()) emit checkForNeighbors(getPPosition());
+
+    this->moveToTarget();
+
     p.setPen(Qt::darkGray);
-    p.setBrush(Qt::yellow);
-    p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+
+    p.setBrush((isSleeping() ? Qt::darkGray :  Qt::yellow));
+    if (!active){
+        p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+    }
+    else{
+        p.drawEllipse(toPoint(body->GetPosition()),2*getRadius(),2*getRadius());
+    }
+}
+
+bool BalloonGoo::createLink(Goo *goo){
+    if (!active && nJoints()<maxJoints){
+        active=true;
+        body->SetGravityScale(-0.5);
+        if (sleeping) sleeping=false;
+        links.push_back(goo);
+        if (following) stopFollow();
+        return true;
+    }
+    else return false;
+}
+
+bool BalloonGoo::destroyLink(Goo *goo){
+    if (isLinked(goo)){
+        links.removeAt(links.indexOf(goo));
+        emit this->destroyJoint(this,goo);
+        active=false;
+        body->SetGravityScale(1);
+        if (!isDragging() && !hasJoint()) body->SetActive(false);
+        return true;
+    }
+    else return false;
+}
+
+void BalloonGoo::drag(){
+    onGround=false;
+    stopFollow();
+    if (!dragging){
+        info.gScale=body->GetGravityScale();
+        info.speed=body->GetLinearVelocity();
+        info.aForce=body->GetAngularVelocity();
+    }
+    body->SetActive(false);
+    if (hasJoint()) {
+        for (int i=0;i<links.count();i++) destroyLink(links.at(i));
+    }
+    dragging=true;
+
+}
+
+bool BalloonGoo::isDragable(){
+    if (!isSleeping()) return true;
+    else return false;
 }
 
 void BalloonGoo::paintDebug(QPainter &p){
@@ -43,13 +78,4 @@ void BalloonGoo::paintDebug(QPainter &p){
     p.setBrush(Qt::transparent);
 
     p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
-
-}
-
-void BalloonGoo::contactGround(){
- //TODO
-}
-void BalloonGoo::contactGround(QPoint p){
-    if (p.isNull()) return;
- //TODO
 }

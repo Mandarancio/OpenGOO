@@ -64,7 +64,7 @@ private:
 
     QList<Goo*> goos;       //All the goos!
     QList<Goo*> goosToDestroy;  //GOOs to be destroyed the next update!
-    QList<BalloonGoo*> ballGoos; //Balloon goos
+//    QList<BalloonGoo*> ballGoos; //Balloon goos
 
     QList<Joint*> joints;   //All the joints!
     QList<Joint*> jointsToDestroy; //Joints to be destroyed the next update!
@@ -101,6 +101,8 @@ private:
     void createThorns(); //To initialize thorns
 
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
+
+    QPoint getNearest(QPoint p,QList<QPoint> l);
 
     //Function to translate the gui
     void moveUp();

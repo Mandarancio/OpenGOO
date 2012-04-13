@@ -30,6 +30,11 @@ Goo::Goo( int radius, QObject *parent) :
 
     target=NULL;
     prevTarget=NULL;
+    type=NONE;
+}
+
+GooType Goo::getType(){
+    return type;
 }
 
 //Check if is on ground
@@ -179,7 +184,7 @@ bool Goo::destroyLink(Goo *goo){
 //                    j=j->GetNext();
 //            }
 //        }
-        if (isDragging() && !hasJoint()) body->SetActive(false);
+        if (!isDragging() && !hasJoint()) body->SetActive(false);
         return true;
 
     }
@@ -218,9 +223,6 @@ void Goo::drag(){
         info.speed=body->GetLinearVelocity();
         info.aForce=body->GetAngularVelocity();
     }
-//    body->SetLinearVelocity(b2Vec2(0,0));
-//    body->SetGravityScale(0);
-//    body->SetAngularVelocity(0.0);
     if (!hasJoint())   body->SetActive(false);
     dragging=true;
 

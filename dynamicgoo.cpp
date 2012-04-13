@@ -36,6 +36,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     dragable=true;
     maxJoints=7; //parameters
     speed=50;
+    type=DYNAMIC;
 }
 
 void DynamicGoo::catched(){

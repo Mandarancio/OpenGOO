@@ -7,6 +7,7 @@
 
 #include <Box2D/Box2D.h>
 
+enum GooType {NONE,FIXED,DYNAMIC,REMOVIBLE,BALOON,STICKY};
 
 struct dragInfo{
     b2Vec2 speed;
@@ -19,6 +20,8 @@ class Goo : public QObject
     Q_OBJECT
 public:
     explicit Goo(int radius=15,QObject *parent = 0);
+    //GET TYPE
+    GooType getType();
 
     int nJoints();
     int getMaxJoints();
@@ -30,7 +33,7 @@ public:
     bool removeGuest();
 
     //Function to drag and drop goo
-    void drag();
+    virtual void drag();
     void drop();
     void drop(b2Vec2 speed);
     //select unselect goo
@@ -70,11 +73,11 @@ public:
 
     QList <Goo*> getLinks();
     Goo* getPrevious();
-private:
+protected:
+    GooType type;
     QList <Goo*> links;
     int radius;
     dragInfo info;
-protected:
     b2Body* body; //physical body
     //FLAGS
     bool dragable; // If the user can drag it

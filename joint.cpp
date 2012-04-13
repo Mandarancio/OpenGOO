@@ -7,6 +7,7 @@ Joint::Joint(Goo *a, Goo *b, b2World *world,bool child, QObject *parent):
 
     this->a=a;
     this->b=b;
+    type=NORMAL;
     if (!child) initialize(world);
 }
 
@@ -74,5 +75,9 @@ bool Joint::has(Goo *a, Goo *b){ //Check if the joint link this two goo
     if (this->a==a && this->b==b) return true;
     if (this->b==a && this->a==b) return true;
     return false;
+}
+
+JointType Joint::getType(){
+    return type;
 }
 
