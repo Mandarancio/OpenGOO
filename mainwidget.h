@@ -1,12 +1,12 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <QtGui/QMainWindow>
+#include <QGLWidget>
 #include <QCloseEvent>
 #include "level.h"
 #include "levelselector.h"
 
-class MainWidget : public QMainWindow
+class MainWidget : public QGLWidget
 {
     Q_OBJECT
 

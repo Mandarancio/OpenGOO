@@ -5,7 +5,7 @@
 #include "svglevelloader.h"
 
 MainWidget::MainWidget(QRect geometry,bool debug,bool multiwindow,QWidget *parent)
-    : QMainWindow(parent)
+    : QGLWidget(QGLFormat(QGL::HasOverlay),parent)
 {
     if (!multiwindow) this->showFullScreen();//To have the game full screen
     this->setGeometry(geometry);

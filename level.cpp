@@ -23,7 +23,7 @@
 #define RADIUS 15
 
 Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
+    QGLWidget(QGLFormat(QGL::SampleBuffers|QGL::StencilBuffer),parent)
 {
 
     goal = 100;

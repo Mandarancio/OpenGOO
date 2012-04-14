@@ -1,7 +1,7 @@
 #ifndef LEVELSELECTOR_H
 #define LEVELSELECTOR_H
 
-#include <QWidget>
+#include <QGLWidget>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDir>
@@ -9,7 +9,7 @@
 #include <QPaintEvent>
 
 
-class LevelSelector : public QWidget
+class LevelSelector : public QGLWidget
 {
     Q_OBJECT
 public:
