@@ -44,6 +44,7 @@ public:
     bool startLevel();
 
 private:
+    float scale;
     //Run type flag
     RunFlag flag;
     //LOADER
@@ -156,6 +157,9 @@ private slots:
     void setStartArea(int n,QRect area,int type=0);
     void setJoint(Goo *a, Goo *b);
     void setGoo(QPoint center,int id, int type=0);
+    //To scale at the right dimension
+    void setLevelGeometry(QSize size);
+
     //GAME SLOT
     //Functions to create and destroy sticky joints
     void createSticky(QPoint p);

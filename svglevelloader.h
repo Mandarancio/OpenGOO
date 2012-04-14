@@ -84,6 +84,7 @@ signals:
     void levelGround(QPoint center,QList<QPoint> groundPoints);
     void levelGOO(QPoint center,int id,int type);
     void levelJoint(Goo* a,Goo *b);
+    void levelGeometry(QSize size);
     //add a shape to a bg object
     void addBackGroundShape(int id,QPolygon poly,QColor color);
 public slots:

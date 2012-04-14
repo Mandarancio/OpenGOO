@@ -8,6 +8,7 @@
 #include <QDomElement>
 
 #include <QDebug>
+#include <QSize>
 #include <QRect>
 #include <QPolygon>
 #include <QPoint>
@@ -49,9 +50,9 @@ bool SvgLevelLoader::parse(){
                 emit fileError();
                 return false;
             }
-           h=root.attribute("height","").toFloat();
-           w=root.attribute("width","").toFloat();
-           qWarning()<<h<<w;
+            h=root.attribute("height","").toFloat();
+            w=root.attribute("width","").toFloat();
+            emit levelGeometry(QSize(w,h));
             QDomNode node;
 
             for (int i=0;i<root.childNodes().count();i++){
@@ -306,21 +307,25 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     //Start to parse the list;
     QPoint p;
     for (int i=1;i<nPoint+1;i++){
-        if (str.split(' ').at(i)[0]=='l' ||  str.split(' ').at(i)[0]=='L') {
+        if (!((str.split(' ').at(i)[0]>='0' &&  str.split(' ').at(i)[0]<='9')|| str.split(' ').at(i)[0]=='-' )) {
+            if (i>2) list.push_back(list[i-2]);
+            qWarning()<<"ERROR"<<str.split(' ').at(i);
             continue;
         }
-        p=strToPoint(str.split(' ').at(i));
-        if (i==1){
-            p+=transform;
+        else {
+            p=strToPoint(str.split(' ').at(i));
+            if (i==1){
+                p+=transform;
+            }
+            else if (!relative){
+                p+=transform;
+                p-=(list.at(0));
+            }
+            else if (relative && list.count()) {
+                p+=(i>2? list.at(i-2):QPoint(0,0));
+            }
+            list.push_back(p);
         }
-        else if (!relative){
-            p+=transform;
-            p-=(list.at(0));
-        }
-        else if (relative && list.count()) {
-            p+=(i>2? list.at(i-2):QPoint(0,0));
-        }
-        list.push_back(p);
     }
     //) qWarning()<<list;
     return list;

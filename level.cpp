@@ -25,7 +25,7 @@
 Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers|QGL::StencilBuffer),parent)
 {
-
+    scale=1.0;
     goal = 100;
     //Set enviroment flag
     this->flag=flag;
@@ -69,6 +69,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     //connect the loader signals
     connect(loader,SIGNAL(fileError()),this,SLOT(backToMainMenu()));
     connect(loader,SIGNAL(levelName(QString)),this,SLOT(setName(QString)));
+    connect(loader,SIGNAL(levelGeometry(QSize)),this,SLOT(setLevelGeometry(QSize)));
     connect(loader,SIGNAL(levelGoal(int)),this,SLOT(setGoal(int)));
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
     connect(loader,SIGNAL(levelLimit(QRect)),this,SLOT(setLimit(QRect)));
@@ -184,7 +185,7 @@ Goo* Level::getGooAt(QPoint p){
     for (int i=0;i<goos.count();i++){
         if (goos[i]->isMoovable()&&goos[i]->isDragable()){
             d=toVec(p)-goos[i]->getVPosition();
-            if (d.Length()<goos[i]->getRadius()) return goos[i];
+            if (d.Length()<goos[i]->getRadius()*scale) return goos[i];
         }
     }
     return NULL;
@@ -357,7 +358,7 @@ void Level::paintEvent(QPaintEvent *e){
 
 
     p.save();
- //   p.scale(1.5,1.5);
+    p.scale(scale,scale);
     p.translate(translation);
     paintBg(p);
     for (int i=0;i<background.length();i++){
@@ -465,7 +466,7 @@ void Level::keyReleaseEvent(QKeyEvent *e){
     }
 }
 
-
+//~700,~900
 void Level::mouseMoveEvent(QMouseEvent *e){
     if (onMenu){
         return;
@@ -483,10 +484,10 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         //Check if mouse is on the ground
         if (ground->contains(dragged)) {
             dragged->move(stopPosition);
-            if (!ground->contains(e->pos()-translation,dragged->getRadius())) stopPosition=e->pos()-translation;
+            if (!ground->contains(e->pos()/scale-translation,dragged->getRadius())) stopPosition=e->pos()/scale-translation;
         }
         else {
-            dragged->move(e->pos()-translation);
+            dragged->move(e->pos()/scale-translation);
             stopPosition=dragged->getPPosition();
         }
         //Check for possibles joints
@@ -500,16 +501,20 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     }
     //Rutine to show the possible draggable go under the mouse
     else {
-        if (selected!=getGooAt(e->pos()-translation)){
+        qWarning()<<"HERE"<<e->pos()/scale-translation;
+
+        if (selected!=getGooAt(e->pos()/scale-translation)){
+
+
             if (selected!=NULL) {
                 //Unselect old and select new.
                 selected->select(false);
-                selected=getGooAt(e->pos()-translation);
+                selected=getGooAt(e->pos()/scale-translation);
                 if (selected!=NULL) selected->select();
             }
             else {
                 //select new
-                selected=getGooAt(e->pos()-translation);
+                selected=getGooAt(e->pos()/scale-translation);
                 if (selected!=NULL) selected->select();
             }
         }
@@ -520,9 +525,8 @@ void Level::mousePressEvent(QMouseEvent *e){
     if (e->button()==Qt::LeftButton ) {
         mousePos=toVec(e->pos());
         mouseSpeed.SetZero();
-       dragged=getGooAt(e->pos()-(center+translation));
+       dragged=getGooAt(e->pos()/scale-(center+translation));
        if (dragged) {
-           if (flag==DEBUG) qWarning()<<"DRAGGED at"<<dragged->getPPosition();
            possibility.clear();
            drag=true;
            //Unselect
@@ -588,7 +592,7 @@ void Level::giveTarget(Goo *previous){
                 Goo * target=previous->getLinks().at(0);
                 b2Vec2 d=this->target->getVPosition()-target->getVPosition();
                 for (int i=1;i<previous->getLinks().length();i++){
-                    if ((goo->getPrevious()!=previous->getLinks().at(i))&& previous->getLinks().at(i)->getType()!=BALOON  && (this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
+                    if ((goo->getPrevious()!=previous->getLinks().at(i))  && (this->target->getVPosition()-previous->getLinks().at(i)->getVPosition()).LengthSquared()<d.LengthSquared()){
                         target=previous->getLinks().at(i);
                         d=this->target->getVPosition()-previous->getLinks().at(i)->getVPosition();
                     }
@@ -797,6 +801,8 @@ void Level::setGoal(int goal){
 void Level::setLimit(QRect limit){
     if (flag==DEBUG) qWarning()<<"Level limit:"<<limit;
     this->limit=limit;
+    this->limit.setTopLeft(limit.topLeft()*scale);
+    this->limit.setSize(limit.size()*scale);
 }
 
 void Level::setGround(QPoint gCenter, QList<QPoint> gList){
@@ -922,6 +928,15 @@ void Level::setGoo(QPoint center,int id, int type){
     if (goo!=NULL){
         loader->addGoo(id,goo);
     }
+}
+
+void Level::setLevelGeometry(QSize size){
+    float sw,sh;
+    sw=float(width())/float(size.width());
+    sh=float(height())/float(size.height());
+    if (sw>sh && sw>1.0) scale=sw;
+    else if (sh>=sw && sh>1.0) scale=sh;
+
 }
 
 void Level::createSticky(QPoint p){
