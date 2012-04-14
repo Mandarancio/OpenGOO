@@ -32,7 +32,8 @@ HEADERS += \
     svglevelloader.h \
     background.h \
     ropejoint.h \
-    qb2draw.h
+    qb2draw.h \
+    mainmenu.h
 
 
 SOURCES += \
@@ -57,7 +58,8 @@ SOURCES += \
     svglevelloader.cpp \
     background.cpp \
     ropejoint.cpp \
-    qb2draw.cpp
+    qb2draw.cpp \
+    mainmenu.cpp
 
 
 ##FOR TOUCHPAD COMPILE
@@ -67,6 +69,8 @@ SOURCES += \
 #LIBS += -Wl,-rpath,"'\$$ORIGIN/qt'" -L/opt/PalmPDK/device/lib -lpdl -lSDL
 #INCLUDEPATH += /opt/PalmPDK/include/SDL
 #}
+
+
 
 
 
