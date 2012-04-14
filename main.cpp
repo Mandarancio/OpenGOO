@@ -17,12 +17,16 @@ This program is free software: you can redistribute it and/or modify
 #include <QtGui/QApplication>
 #include "mainwidget.h"
 
+#include <QDir>
+
 #include <QRect>
 #include <QDesktopWidget>
 
 #include <QDebug>
 
 #include <QTime>
+
+#define GAMEDIR "/.OpenGOO/"
 
 int main(int argc, char *argv[])
 {
@@ -75,6 +79,22 @@ int main(int argc, char *argv[])
             }
         }
     }
+
+    //CHECK FOR GAME DIR IN HOME DIRECTORY
+    QString homePath=QDir::homePath();
+    QString gameDir=GAMEDIR;
+    QDir dir;
+    dir.setPath(homePath+gameDir);
+    //If the game dir doesn't exist create it
+    if (!dir.exists()){
+        if (debug) qWarning()<<"Game dir doesn't exist!";
+        dir.mkdir(homePath+gameDir);
+        dir.cd(homePath+gameDir);
+        //create subdir for user levels and progressions.
+        dir.mkdir("userLevels/");
+        dir.mkdir("userProgression/");
+    }
+    else if (debug) qWarning()<<"Game dir exist!";
     //Create the main widget in the bigger screen
     MainWidget w(a.desktop()->screenGeometry(screen),debug,multiwindow);
     w.show();

@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <QRadialGradient>
 
+
 #include "tools.h"
 #include "fixedgoo.h"
 #include "dynamicgoo.h"
@@ -12,11 +13,10 @@
 #include "thorn.h"
 #include "stickylink.h"
 
+
 #include "balloongoo.h"
 #include "ropejoint.h"
-
 #include "collisionlistener.h"
-
 
 #include <QPolygon>
 
@@ -29,7 +29,6 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     goal = 100;
     //Set enviroment flag
     this->flag=flag;
-
 
     //set the display geometry
     if (!multiWindow)
@@ -110,6 +109,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
         debugPainter= new QB2Draw(this->geometry());
         world->SetDebugDraw(debugPainter);
     }
+
 
 }
 
@@ -294,6 +294,7 @@ bool Level::createJoints(QPoint p){
         }
         else return false;
     }
+
 }
 
 void Level::timerEvent(QTimerEvent *e){

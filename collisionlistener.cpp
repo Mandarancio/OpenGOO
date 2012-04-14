@@ -47,7 +47,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                 if (th!=NULL) a->destroyThis();
             }
             //check for avoid to drag a goo inside the target
-           // else if (a->isDragging()) a->contactGround(a->getPPosition());
+            // else if (a->isDragging()) a->contactGround(a->getPPosition());
 
         }
         else if (!a){ //if the first isn't a goo is the same of before!
@@ -77,31 +77,23 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
             th=static_cast<Thorn*>(contact->GetFixtureA()->GetBody()->GetUserData());
             if (!t&&!th&&b&&contact->GetFixtureA()->GetBody()->GetType()==b2_staticBody) { //ELSE IS GROUND
                 if (b){
-                    //RETRIVE COLLISION POINT
-                    b2Vec2 p=contact->GetManifold()->localPoint;
-                    //CHANGE CORDINATE SYSTEM
-                    p= contact->GetFixtureA()->GetBody()->GetWorldPoint(p);
-                    //p.x=b->getVPosition().x+p.x;
-                    //FOR UNKNOW REAZON SOMETIMES THE COLLISION POINT IS COMPLITLY WRONG
-                    //SO I MADE THIS WORK AROUND TO FIX IT
-                    //WORKAROUND
-                    //CHECK IF THE COLLISION POINT IS TOO DISTANT FROM MY BODY FOR BE A CORRECT POINT
-                    if ((p-b->getVPosition()).Length()>50 && b->hasJoint()) {
-                        //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT
-                        p=b->getVPosition();
-                        //RETRIVE THE NORMAL OF THE COLLISION
-                        b2Vec2 n=contact->GetManifold()->localNormal;
-                        //NORMALY THE NORMAL IS CORRECT
-                        //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
-                        //Compute the angle
-                        float angle=atan2(n.y,n.x);
-                        //Compute x,y of the vector
-                        float px=20.0*cos(angle);
-                        float py=20.0*sin(angle);
-                        p.x+=px;
-                        p.y+=py;
+                    b2Vec2 p;
 
-                    }//END WORKAOROUND
+                    //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT
+                    p=b->getVPosition();
+                    //RETRIVE THE NORMAL OF THE COLLISION
+                    b2Vec2 n=contact->GetManifold()->localNormal;
+                    //NORMALY THE NORMAL IS CORRECT
+                    //BUT I EXPERIMENTED SOME ERROR ALSO WITH THE NORMAL
+                    //Compute the angle
+                    float angle=atan2(n.y,n.x);
+                    //Compute x,y of the vector
+                    float px=20.0*cos(angle);
+                    float py=20.0*sin(angle);
+                    p.x-=px;
+                    p.y-=py;
+
+                    //END WORKAOROUND
 
                     if (b->hasJoint()) b->contactGround(toPoint(p));
                     else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
