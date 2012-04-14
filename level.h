@@ -25,6 +25,8 @@
 
 #include "svglevelloader.h"
 
+#include "qb2draw.h"
+
 #include <stickylink.h>
 
 
@@ -92,6 +94,10 @@ private:
     bool catched;           //If the tower of Goos is catched
     QRect limit;            //Translation limit
     QList<QPoint> possibility;  //To show the possible joints on the dragged goo
+
+    //DEBUGGER PAINTER!
+    QB2Draw * debugPainter;
+
     //METHOD
     //Level
 

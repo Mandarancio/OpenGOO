@@ -3,6 +3,7 @@
 
 #include <QDebug>
 
+#include <qmath.h>
 
 DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     Goo(radius,parent)
@@ -70,12 +71,22 @@ void DynamicGoo::moveToTarget(){
             //compute rect between the oldtarget and new target
             //classic method y=m*x+q
             //m=(y2-y1)/(x2-x1)  and  q=y1-m*x1
-            float m=(target->getVPosition().y-prevTarget->getVPosition().y)/(target->getVPosition().x-prevTarget->getVPosition().x);
-            float q=prevTarget->getVPosition().y-m*prevTarget->getVPosition().x;
+
             //compute the tehorical y for my x position
-            float yt=m*getVPosition().x+q;
+            float mx,my;
+            mx=(target->getVPosition().x-prevTarget->getVPosition().x);
+            my=(target->getVPosition().y-prevTarget->getVPosition().y);
+            float d=qSqrt(mx*mx+my*my);
+            mx/=d;
+            my/=d;
+            float tx,ty;
+            tx=(getVPosition().x-prevTarget->getVPosition().x)/mx;
+            ty=(getVPosition().y-prevTarget->getVPosition().y)/my;
+            float yt=my*tx+prevTarget->getVPosition().y;
+            float xt=mx*ty+prevTarget->getVPosition().x;
+
             //if my y position is different at least of 12 falldown and return
-            if (fabs(getVPosition().y-yt)>12){
+            if (qAbs(getVPosition().y-yt)>10 && qAbs(getVPosition().x-xt)>10){
                 stopFollow();
                 fallDown();
                 return;

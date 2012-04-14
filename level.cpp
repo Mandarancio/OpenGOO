@@ -105,7 +105,12 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     connect(menu,SIGNAL(eventResume()),this,SLOT(resume()));
     connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
     connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));    
-    if (flag==DEBUG) qWarning()<<"Menu set up!";
+    if (flag==DEBUG) {
+        qWarning()<<"Menu set up!";
+        debugPainter= new QB2Draw(this->geometry());
+        world->SetDebugDraw(debugPainter);
+    }
+
 }
 
 Level::~Level(){
@@ -421,6 +426,10 @@ void Level::paintEvent(QPaintEvent *e){
         }
     }
 
+    if (flag==DEBUG){
+        debugPainter->setPainter(&p);
+        world->DrawDebugData();
+    }
     p.restore();
 
     //Draw the center of the display
@@ -501,10 +510,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     }
     //Rutine to show the possible draggable go under the mouse
     else {
-        qWarning()<<"HERE"<<e->pos()/scale-translation;
-
         if (selected!=getGooAt(e->pos()/scale-translation)){
-
 
             if (selected!=NULL) {
                 //Unselect old and select new.
