@@ -807,8 +807,14 @@ void Level::setGoal(int goal){
 void Level::setLimit(QRect limit){
     if (flag==DEBUG) qWarning()<<"Level limit:"<<limit;
     this->limit=limit;
+    float sx=float(width())/float(limit.width());
+    float sy=float(height())/float(limit.height());
+    if (sx>sy && sx>1.0) scale=sx;
+    else if (sy>=sx && sy>1.0) scale=sy;
     this->limit.setTopLeft(limit.topLeft()*scale);
     this->limit.setSize(limit.size()*scale);
+    if (scale>1) this->translation=QPoint(-limit.topLeft().x(),limit.topLeft().y());
+    if (flag==DEBUG) qWarning()<<"SCALE"<<scale;
 }
 
 void Level::setGround(QPoint gCenter, QList<QPoint> gList){
@@ -937,11 +943,11 @@ void Level::setGoo(QPoint center,int id, int type){
 }
 
 void Level::setLevelGeometry(QSize size){
-    float sw,sh;
-    sw=float(width())/float(size.width());
-    sh=float(height())/float(size.height());
-    if (sw>sh && sw>1.0) scale=sw;
-    else if (sh>=sw && sh>1.0) scale=sh;
+//    float sw,sh;
+//    sw=float(width())/float(size.width());
+//    sh=float(height())/float(size.height());
+//    if (sw>sh && sw>1.0) scale=sw;
+//    else if (sh>=sw && sh>1.0) scale=sh;
 
 }
 

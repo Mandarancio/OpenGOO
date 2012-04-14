@@ -86,7 +86,7 @@ void DynamicGoo::moveToTarget(){
             float xt=mx*ty+prevTarget->getVPosition().x;
 
             //if my y position is different at least of 12 falldown and return
-            if (qAbs(getVPosition().y-yt)>10 && qAbs(getVPosition().x-xt)>10){
+            if (qAbs(getVPosition().y-yt)>12 && qAbs(getVPosition().x-xt)>12){
                 stopFollow();
                 fallDown();
                 return;
