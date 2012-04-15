@@ -55,7 +55,7 @@ void DynamicGoo::moveToTarget(){
         return;
     }
     if (hasJoint()) return;
-    if (!hasJoint() &&!falling&&!following&&!isDragging()) emit this->nextTargetPlease(NULL);
+    if (!hasJoint() && !isDragging() && isOnGround() && target==NULL ) emit this->nextTargetPlease(NULL);
     if (following && !falling){
         if (prevTarget){
 //            if (!target->isLinked(prevTarget)){
@@ -86,7 +86,7 @@ void DynamicGoo::moveToTarget(){
             float xt=mx*ty+prevTarget->getVPosition().x;
 
             //if my y position is different at least of 12 falldown and return
-            if (qAbs(getVPosition().y-yt)>12 && qAbs(getVPosition().x-xt)>12){
+            if (qAbs(getVPosition().y-yt)>=getRadius() && qAbs(getVPosition().x-xt)>=getRadius()){
                 stopFollow();
                 fallDown();
                 return;

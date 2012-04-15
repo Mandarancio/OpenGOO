@@ -28,6 +28,7 @@ Goo::Goo( int radius, QObject *parent) :
     info.speed.SetZero();
 
 
+
     target=NULL;
     prevTarget=NULL;
     type=NONE;
@@ -184,7 +185,7 @@ bool Goo::destroyLink(Goo *goo){
 //                    j=j->GetNext();
 //            }
 //        }
-        if (!isDragging() && !hasJoint()) body->SetActive(false);
+        if (isDragging() && !hasJoint()) body->SetActive(false);
         return true;
 
     }

@@ -577,15 +577,21 @@ void Level::giveTarget(Goo *previous){
     Goo *goo=dynamic_cast<Goo*>(sender());
     if (goo!=NULL){
         if (!previous){
-            QPoint pos=goo->getPPosition();
             Goo * next=NULL ;
             bool ok=false;
-            float distance=300;
+            float distance=600;
+            qWarning()<<"HERE";
+            if (!goo->isOnGround()) return;
             for (int i=0;i<goos.length();i++){
-                if (goos[i]!=goo&&goos[i]->hasJoint()&&goos[i]->getType()!=BALOON &&goos[i]->isOnGround()&&abs(goos[i]->getPPosition().y()-pos.y())<15&&(goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
-                    next=goos[i];
-                    distance=(toVec(pos)-goos[i]->getVPosition()).Length();
-                    ok=true;
+                if (goos[i]!=goo && goos[i]->hasJoint() && goos[i]->isOnGround() && (goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
+                    float my=(goos[i]->getVPosition().y-goo->getVPosition().y)/(goos[i]->getVPosition()-goo->getVPosition()).Length();
+                    qWarning()<<"GOO"<<goo->getPPosition()<<my;
+                    if (my<1) {
+
+                        next=goos[i];
+                        distance=(goo->getVPosition()-goos[i]->getVPosition()).Length();
+                        ok=true;
+                    }
                 }
             }
             if (ok) goo->setTarget(next);
@@ -994,8 +1000,8 @@ void Level::checkForNeighbors(QPoint p){
             if (goos[i]!=goo && goos[i]->hasJoint()){
                 //compute the distance
                 d=toVec(p)-goos[i]->getVPosition();
-                //check if the distance is less then 2 radius than wakeup goo and return!
-                if (d.Length()<goos[i]->getRadius()*3.5) {
+                //check if the distance is less then 10 radius than wakeup goo and return!
+                if (d.Length()<goos[i]->getRadius()*10) {
                     goo->neighborsFound();
                     return;
                 }
