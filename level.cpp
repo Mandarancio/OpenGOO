@@ -526,13 +526,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
             }
         }
     }
-    if (points>=goal){
-        if (selected) selected->select(false);
-        if (dragged) dragged->drop();
-        dragged=NULL;
-        selected=NULL;
 
-    }
 }
 void Level::mousePressEvent(QMouseEvent *e){
     if (onMenu || points>=goal) return;
