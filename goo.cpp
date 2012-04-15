@@ -207,8 +207,8 @@ void Goo::setTarget(Goo *goo){
         if (isFalling()) falling=false;
         if (prevTarget!=NULL) prevTarget->removeGuest();
         body->SetGravityScale(0);
-        onGround=false;
-        prevTarget=target;
+        //onGround=false;
+        if (target!=NULL) prevTarget=target;
         target=goo;
         connect(goo,SIGNAL(loseLink(Goo*)),this,SLOT(checkForConnection(Goo*)),Qt::QueuedConnection);
         following=true;
@@ -290,6 +290,10 @@ void Goo::checkForConnection(Goo *goo){
 void Goo::fallDown(){
     onGround=false;
     falling=true;
+    stopFollow();
+    following=false;
+    prevTarget=NULL;
+    target=NULL;
     body->SetGravityScale(21.0);
     body->SetAngularVelocity(0);
     body->SetLinearVelocity(b2Vec2(0,0));

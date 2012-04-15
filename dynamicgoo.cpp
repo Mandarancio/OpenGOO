@@ -54,8 +54,13 @@ void DynamicGoo::moveToTarget(){
         stopFollow();
         return;
     }
+    if (isFalling()) return;
     if (hasJoint()) return;
-    if (!hasJoint() && !isDragging() && isOnGround() && target==NULL ) emit this->nextTargetPlease(NULL);
+    if (!hasJoint() && !isDragging() && isOnGround() && target==NULL ){
+
+        emit this->nextTargetPlease(NULL);
+        qWarning()<<"NEXT TARGET PLEASE!!";
+    }
     if (following && !falling){
         if (prevTarget){
 //            if (!target->isLinked(prevTarget)){
@@ -120,9 +125,16 @@ void DynamicGoo::moveToTarget(){
             body->SetLinearVelocity(b2Vec2(0,0));
             return;
         }
-        dP.x=dP.x*speed/dP.Length();
-        dP.y=dP.y*speed/dP.Length();
-        body->SetLinearVelocity(dP);
+        if (!prevTarget && onGround){
+            dP.x=dP.x/qAbs(dP.x)*speed*5;
+            dP.y=body->GetWorld()->GetGravity().y;
+            body->ApplyForceToCenter(dP);
+        }
+        else {
+            dP.x=dP.x*speed/dP.Length();
+            dP.y=dP.y*speed/dP.Length() ;
+            body->SetLinearVelocity(dP);
+        }
     }
 }
 
@@ -211,22 +223,7 @@ void DynamicGoo::unstick(){
 }
 
 void DynamicGoo::contactGround(){
-    if (hasJoint()) return;
-    if (sleeping) {
-        body->SetGravityScale(1.0);
-        return;
-    }
-    onGround=true;
-    groundPoint=this->getPPosition();
-    if (falling) {
-        falling=false;
-        emit nextTargetPlease(NULL);
-    }
-}
-
-void DynamicGoo::contactGround(QPoint p){
     //Away to trapass body
-
     if (isDragging()) {
         //Change flag and reset normal status
         dragging=false;
@@ -235,26 +232,55 @@ void DynamicGoo::contactGround(QPoint p){
         emit stopDragging();
         return;
     }
-     //if has joint and is not sticked on ground
-    if (hasJoint() && !sticked){
+    else {
+        onGround=true;
+        groundPoint=this->getPPosition();
+        //if has joint return;
+        if (hasJoint()){
+
+            return;
+        }
+        if (sleeping) {
+            body->SetGravityScale(1.0);
+            return;
+        }
+        if(!hasJoint() && target==NULL){
+            emit this->nextTargetPlease(NULL);
+        }
+    }
+}
+
+void DynamicGoo::contactGround(QPoint p){
+    //Away to trapass body
+    if (isDragging()) {
+        //Change flag and reset normal status
+        dragging=false;
+        fallDown();
+        //Emit a signal for the level class
+        emit stopDragging();
+        return;
+    }
+    else {
         onGround=true;
         groundPoint=this->getPPosition();
 
-        emit this->createSticky(p);
-        sticked=true; //flag to true
-        return;
-    }
-
-    if (sleeping) {
-        body->SetGravityScale(1.0);
-        return;
-    }
-
-    onGround=true;
-    groundPoint=this->getPPosition();
-    if (falling) {
-        falling=false;
-        emit nextTargetPlease(NULL);
+        //if has joint and is not sticked on ground
+        if (hasJoint()){
+            if (!sticked){
+                onGround=true;
+                groundPoint=this->getPPosition();
+                emit this->createSticky(p);
+                sticked=true; //flag to true
+            }
+            return;
+        }
+        if (sleeping) {
+            body->SetGravityScale(1.0);
+            return;
+        }
+        if(!hasJoint() && target==NULL){
+            emit this->nextTargetPlease(NULL);
+        }
     }
 }
 

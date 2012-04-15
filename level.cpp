@@ -580,13 +580,11 @@ void Level::giveTarget(Goo *previous){
             Goo * next=NULL ;
             bool ok=false;
             float distance=600;
-            qWarning()<<"HERE";
             if (!goo->isOnGround()) return;
             for (int i=0;i<goos.length();i++){
                 if (goos[i]!=goo && goos[i]->hasJoint() && goos[i]->isOnGround() && (goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
                     float my=(goos[i]->getVPosition().y-goo->getVPosition().y)/(goos[i]->getVPosition()-goo->getVPosition()).Length();
-                    qWarning()<<"GOO"<<goo->getPPosition()<<my;
-                    if (my<1) {
+                    if (qAbs(my)<1) {
 
                         next=goos[i];
                         distance=(goo->getVPosition()-goos[i]->getVPosition()).Length();

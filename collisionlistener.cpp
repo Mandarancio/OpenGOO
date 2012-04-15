@@ -46,9 +46,6 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
                 th=static_cast<Thorn*>(contact->GetFixtureB()->GetBody()->GetUserData());
                 if (th!=NULL) a->destroyThis();
             }
-            //check for avoid to drag a goo inside the target
-            // else if (a->isDragging()) a->contactGround(a->getPPosition());
-
         }
         else if (!a){ //if the first isn't a goo is the same of before!
             t=static_cast<Target*>(contact->GetFixtureA()->GetBody()->GetUserData()); //Check if is target
@@ -96,6 +93,7 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
                     //END WORKAOROUND
 
                     if (b->hasJoint()) b->contactGround(toPoint(p));
+                    else if (!b->isDragging()) b->contactGround();
                     else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
                 }
             }
