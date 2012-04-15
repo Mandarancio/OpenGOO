@@ -203,6 +203,10 @@ void Goo::destroyThis(){
     emit this->destroyGoo();
 }
 
+Goo* Goo::getTarget(){
+    return target;
+}
+
 void Goo::setTarget(Goo *goo){
         if (isFalling()) falling=false;
         if (prevTarget!=NULL) prevTarget->removeGuest();

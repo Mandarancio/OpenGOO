@@ -248,11 +248,7 @@ QRect SvgLevelLoader::parseRect(QDomElement el,bool cal){
     p.setX(qRound(el.attribute("x").toFloat(&ok)));
     if (!cal) p.setY(qRound(el.attribute("y").toFloat(&ok)));
     else p.setY(h-qRound(el.attribute("y").toFloat(&ok)));
-    qWarning()<<"RECT:"<<p;
     p=p+parseTransform(el)+translation;
-    qWarning()<<"RECT+TRASF:"<<p;
-
-
     //size
     d.setX(qRound(el.attribute("width").toFloat(&ok)));
     d.setY(qRound(el.attribute("height").toFloat(&ok)));

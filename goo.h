@@ -32,6 +32,10 @@ public:
     bool newGuest();
     bool removeGuest();
 
+    //get target
+    Goo* getTarget();
+
+
     //Function to drag and drop goo
     virtual void drag();
     void drop();
@@ -117,7 +121,7 @@ signals:
 
 private slots:
     void checkForConnection(Goo* goo);
-    virtual void deleteSticky(){};
+   // virtual void deleteSticky()=0;
 
 public slots:
     virtual void paint(QPainter &p)=0;//Draw the goo

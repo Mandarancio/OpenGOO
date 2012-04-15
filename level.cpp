@@ -510,7 +510,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         moveOf(d);
     }
     //Rutine to show the possible draggable go under the mouse
-    else {
+    else if (points<goal){
         if (selected!=getGooAt(e->pos()/scale-translation)){
 
             if (selected!=NULL) {
@@ -525,6 +525,13 @@ void Level::mouseMoveEvent(QMouseEvent *e){
                 if (selected!=NULL) selected->select();
             }
         }
+    }
+    if (points>=goal){
+        if (selected) selected->select(false);
+        if (dragged) dragged->drop();
+        dragged=NULL;
+        selected=NULL;
+
     }
 }
 void Level::mousePressEvent(QMouseEvent *e){
@@ -584,7 +591,7 @@ void Level::giveTarget(Goo *previous){
             for (int i=0;i<goos.length();i++){
                 if (goos[i]!=goo && goos[i]->hasJoint() && goos[i]->isOnGround() && (goos[i]->getVPosition()-goo->getVPosition()).Length()<=distance){
                     float my=(goos[i]->getVPosition().y-goo->getVPosition().y)/(goos[i]->getVPosition()-goo->getVPosition()).Length();
-                    if (qAbs(my)<1) {
+                    if (my>-1 && my<0.5) {
 
                         next=goos[i];
                         distance=(goo->getVPosition()-goos[i]->getVPosition()).Length();
@@ -679,7 +686,7 @@ void Level::paintWin(QPainter &p){
         p.setFont(f);
         p.setPen(Qt::white);
         QRect r(0,0,width(),150);
-        p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,"Level "+name+" complited!");
+        p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,name+" complited!");
     }
 }
 
@@ -948,6 +955,7 @@ void Level::setGoo(QPoint center,int id, int type){
 }
 
 void Level::setLevelGeometry(QSize size){
+    if (flag==DEBUG) qWarning()<<"Level size"<<size;
 //    float sw,sh;
 //    sw=float(width())/float(size.width());
 //    sh=float(height())/float(size.height());
