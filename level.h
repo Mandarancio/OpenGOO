@@ -98,6 +98,9 @@ private:
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
 
+
+    int showJointTimer;
+
     //METHOD
     //Level
 

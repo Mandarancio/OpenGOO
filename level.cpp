@@ -92,6 +92,8 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     ground=NULL;
     target=NULL;
 
+    showJointTimer=0;
+
     points=0;
     catched=false;
     if (flag==DEBUG) qWarning()<<"Game variable initialized!";
@@ -299,6 +301,7 @@ bool Level::createJoints(QPoint p){
 
 void Level::timerEvent(QTimerEvent *e){
     e->accept();
+    if (drag) showJointTimer++;
     world->Step(step,10,10);
     world->ClearForces();
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
@@ -374,7 +377,7 @@ void Level::paintEvent(QPaintEvent *e){
 
     if (ground) ground->paint(p);
     if (target) target->paint(p);
-    if (drag && (dragged->getType()!=BALOON &&possibility.length()>1))
+    if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>20))
     {
         for (int i=0;i<possibility.length();i++)
             p.drawLine(dragged->getPPosition(),possibility[i]);
@@ -488,6 +491,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (drag){
         //compute the mouse speed (so when the goo is released it get the mouse spped)
         mouseSpeed=(toVec(e->pos())-mousePos);
+        float d=mouseSpeed.Length();
         mouseSpeed.x*=10000;
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
@@ -499,7 +503,10 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         else {
             dragged->move(e->pos()/scale-translation);
             stopPosition=dragged->getPPosition();
-        }
+        }/*
+        bool same=true;
+        if (possibility.length()!=possibleJoints()*/
+        if (possibility!=possibleJoints(dragged->getPPosition()) && d>2) showJointTimer=0;
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
     }
@@ -531,36 +538,71 @@ void Level::mouseMoveEvent(QMouseEvent *e){
 void Level::mousePressEvent(QMouseEvent *e){
     if (onMenu || points>=goal) return;
     if (e->button()==Qt::LeftButton ) {
+        //Compute mouse speed
         mousePos=toVec(e->pos());
         mouseSpeed.SetZero();
-       dragged=getGooAt(e->pos()/scale-(center+translation));
-       if (dragged) {
-           possibility.clear();
-           drag=true;
-           //Unselect
-           if (selected!=NULL){
-               selected->select(false);
-               selected=NULL;
-           }
 
-           dragged->drag();
-       }
-       else mooving=true;
-   }
+        //If no goo is selected
+        if (selected==NULL){
+            //Get the goo in this position
+            dragged=getGooAt(e->pos()/scale-(center+translation));
+            //Rutine to drag a goo.
+            if (dragged) {
+                possibility.clear();
+                drag=true;
+                dragged->drag();
+            }
+            else mooving=true;
+        }
+        else {
+            b2Vec2 d=toVec(e->pos()/scale-(center+translation))-selected->getVPosition();
+            //Check if selected is near the mouse
+            //if not deselect and get a new goo
+            if (d.Length()>16){
+                selected->select(false);
+                selected=NULL;
+                //Get the goo in this position
+                dragged=getGooAt(e->pos()/scale-(center+translation));
+                //Rutine to drag a goo.
+                if (dragged) {
+                    possibility.clear();
+                    drag=true;
+                    dragged->drag();
+                }
+                else mooving=true;
+            }
+            else {
+                dragged=selected;
+                possibility.clear();
+                drag=true;
+                dragged->drag();
+                selected->select(false);
+                selected=NULL;
+            }
+
+        }
+    }
 }
+
+
 void Level::mouseReleaseEvent(QMouseEvent *e){
     if (e->button()!=Qt::LeftButton) return;
     if (!drag){
         clickButton(e->pos());
     }
     else if (drag){
-        if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
+        if (showJointTimer<=25){
+            dragged->drop(mouseSpeed);
+        }
+        else if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
         else dragged->drop(mouseSpeed);
     }
     dragged=NULL;
     drag=false;
     possibility.clear();
     mooving=false;
+    showJointTimer=0;
+
 
 
     if (onMenu){

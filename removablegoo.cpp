@@ -6,7 +6,8 @@ RemovableGoo::RemovableGoo(b2World *world, QPoint point, int radius, QObject *pa
     DynamicGoo(world,point,radius,parent)
 {
     type=REMOVIBLE;
-    color=Qt::yellow; //the recognize color of normal dynamic goo is yellow;
+    color=QColor(205,222,135); //the recognize color of normal dynamic goo is yellow;
+    secondaryColor=QColor(255,221,85);
 }
 
 //The only difference with dynamic goo is that the joint status is ignored.

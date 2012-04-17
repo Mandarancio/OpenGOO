@@ -29,6 +29,7 @@ private:
 protected:
     void moveToTarget(); //move to the target
     QColor color; //Color for recognize type of dynamic goo
+    QColor secondaryColor; //For recognize secondary option
 
 private slots:
 

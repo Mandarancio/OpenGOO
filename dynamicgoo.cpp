@@ -11,7 +11,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     this->world=world; //get a copy of the world
     sticked=false; //start not sticked at ground
     color=Qt::white; //the recognize color of normal dynamic goo is white;
-
+    secondaryColor=color;
     b2BodyDef def; //body definition
     def.awake=true; //is active
     def.type=b2_dynamicBody; //is dynamci (react at force impulse and collision)
@@ -154,7 +154,10 @@ void DynamicGoo::paint(QPainter &p){
     }
     //check if is selected and draggable
     else if (selected && isDragable()){
-        p.setPen(QPen(color,3,Qt::DashLine));
+        if (!hasJoint())
+            p.setPen(QPen(color,3,Qt::DashLine));
+        else
+            p.setPen(QPen(secondaryColor,3,Qt::DotLine));
         p.setBrush(Qt::transparent);
         p.drawEllipse(toPoint(body->GetPosition()), getRadius()+10,getRadius()+10);
 
