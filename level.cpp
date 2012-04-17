@@ -92,6 +92,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     ground=NULL;
     target=NULL;
 
+
     showJointTimer=0;
 
     points=0;
@@ -108,7 +109,13 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));    
     if (flag==DEBUG) {
         qWarning()<<"Menu set up!";
+        uint32 flags = 0;//Set the flags
+        flags += 1* b2Draw::e_shapeBit;
+        flags += 1* b2Draw::e_jointBit;
+
+
         debugPainter= new QB2Draw(this->geometry());
+        debugPainter->SetFlags(flags);
         world->SetDebugDraw(debugPainter);
     }
 
@@ -304,6 +311,7 @@ void Level::timerEvent(QTimerEvent *e){
     if (drag) showJointTimer++;
     world->Step(step,10,10);
     world->ClearForces();
+
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
@@ -336,8 +344,9 @@ void Level::timerEvent(QTimerEvent *e){
 //    {
 //        ballGoos.at(i)->getBody()->ApplyForceToCenter(b2Vec2(0,-gravity*1.1));
 //    }
-    repaint();
     stickyToCreate.clear();
+    repaint();
+
 }
 
 QPoint Level::getNearest(QPoint p,QList<QPoint> l){
@@ -432,6 +441,7 @@ void Level::paintEvent(QPaintEvent *e){
 
     if (flag==DEBUG){
         debugPainter->setPainter(&p);
+
         world->DrawDebugData();
     }
     p.restore();

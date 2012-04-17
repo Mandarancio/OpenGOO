@@ -20,11 +20,13 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     b2CircleShape shape; //define the shape
     shape.m_p.SetZero(); //position of the shape
     shape.m_radius=radius; //radius
+
     b2FixtureDef fixDef; //Definition of the phisical parameters
     fixDef.restitution=0.3; //collision restitution
     fixDef.density=0.0; //density
     fixDef.friction=0.8; //friction
     fixDef.shape=&shape; //assign the shape
+
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
     body->CreateFixture(&fixDef); //create the fixture
     body->SetLinearDamping(0.1);//Not sure about this parameter
@@ -38,6 +40,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     maxJoints=7; //parameters
     speed=50;
     type=DYNAMIC;
+
 }
 
 void DynamicGoo::catched(){
