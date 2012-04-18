@@ -178,20 +178,6 @@ bool Level::startLevel(){
 }
 
 void Level::createThorns(){
-    int xi,xe,ym;
-    xi=-200.0*width()/1000.0;
-    xe=280.0*width()/1000.0;
-    ym=280.0*width()/1000.0;
-    int r=10.0*(xe-xi)/100.0;
-    int h,x;
-    for (int i=0;i<r;i++){
-        h=50+qrand()%50;
-        x=xi+qrand()%(xe-xi);
-        Thorn *t=new Thorn(QPoint(x,ym-h),h,world,this);
-        objects.push_back(t);
-    }
-
-
 }
 
 Goo* Level::getGooAt(QPoint p){
@@ -256,15 +242,15 @@ bool Level::makeJoint(Goo *a, Goo *b){
     return true;
 }
 
-QList<QPoint> Level::possibleJoints(QPoint p){
-    QList<QPoint> l;
+QList<Goo*> Level::possibleJoints(QPoint p){
+    QList<Goo*> l;
     b2Vec2 pv=toVec(p);
     b2Vec2 d;
     for (int i=0;i<goos.length();i++){
         if (goos[i]->canHaveJoint()) {
             d=pv-goos[i]->getVPosition();
             if (d.LengthSquared()>=50*50 && d.LengthSquared()<=(dragged->getType()==BALOON ? 200*200 : 150*150 ))
-                l.push_back(goos[i]->getPPosition());
+                l.push_back(goos[i]);
 
         }
     }
@@ -295,10 +281,8 @@ bool Level::createJoints(QPoint p){
     }
     else {
         if (l.length() && !dragged->hasJoint()){
-            QList <QPoint> lp;
-            for (int i=0;i<l.length();i++)
-                lp.push_back(l[i]->getPPosition());
-            makeJoint(dragged,getGooAt(getNearest(dragged->getPPosition(),lp)));
+
+            makeJoint(dragged,getGooAt(getNearest(dragged->getPPosition(),l)));
             return true;
         }
         else return false;
@@ -349,16 +333,16 @@ void Level::timerEvent(QTimerEvent *e){
 
 }
 
-QPoint Level::getNearest(QPoint p,QList<QPoint> l){
+QPoint Level::getNearest(QPoint p,QList<Goo*> l){
     QPoint p0=p;
     QPoint dp;
     float dt,d=10000;
     for (int i=0;i<l.length();i++){
-        dp=p-l[i];
+        dp=p-l[i]->getPPosition();
         dt=dp.x()*dp.x()+dp.y()*dp.y();
         if (dt<d) {
             d=dt;
-            p0=l[i];
+            p0=l[i]->getPPosition();
         }
     }
     return p0;
@@ -389,7 +373,7 @@ void Level::paintEvent(QPaintEvent *e){
     if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>20))
     {
         for (int i=0;i<possibility.length();i++)
-            p.drawLine(dragged->getPPosition(),possibility[i]);
+            p.drawLine(dragged->getPPosition(),possibility[i]->getPPosition());
     }
     else if (drag && dragged->getType()==BALOON){
         p.drawLine(dragged->getPPosition(),getNearest(dragged->getPPosition(),possibility));
@@ -501,7 +485,6 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (drag){
         //compute the mouse speed (so when the goo is released it get the mouse spped)
         mouseSpeed=(toVec(e->pos())-mousePos);
-        float d=mouseSpeed.Length();
         mouseSpeed.x*=10000;
         mouseSpeed.y*=10000;
         mousePos=toVec(e->pos());
@@ -516,7 +499,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         }/*
         bool same=true;
         if (possibility.length()!=possibleJoints()*/
-        if (possibility!=possibleJoints(dragged->getPPosition()) && d>2) showJointTimer=0;
+        if (possibleJoints(dragged->getPPosition()).length()==0) showJointTimer=0;
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
     }
@@ -652,7 +635,8 @@ void Level::giveTarget(Goo *previous){
                 int choise=qrand()%previous->getLinks().length();
                 goo->setTarget(previous->getLinks().at(choise));
             }
-            else if (previous->getLinks().length()) { //Searche the nearest next goo at the target
+            else if (previous->getLinks().length()) {
+                //Searche the nearest next goo at the target
                 Goo * target=previous->getLinks().at(0);
                 b2Vec2 d=this->target->getVPosition()-target->getVPosition();
                 for (int i=1;i<previous->getLinks().length();i++){
@@ -661,7 +645,14 @@ void Level::giveTarget(Goo *previous){
                         d=this->target->getVPosition()-previous->getLinks().at(i)->getVPosition();
                     }
                 }
+                if (target==previous){
+                    qWarning()<<"ERROR";
+
+                }
                 goo->setTarget(target);
+            }
+            else {
+                qWarning()<<"Here!!";
             }
         }
     }
@@ -746,7 +737,7 @@ void Level::paintTargetArrow(QPainter &p){
     QPoint center=geometry().center()-geometry().topLeft();
     if (!darea.contains(tp)){
         //Target is not displayed.
-        tp=translation+tp-center;
+        tp=translation+tp*scale-center;
         //Translate at the center of the area and rotate in the direction of the target
         p.save();
         p.setBrush(Qt::black);

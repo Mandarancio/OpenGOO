@@ -2,25 +2,32 @@
 #include "tools.h"
 #include <qmath.h>
 #define PI 3.141628
-Thorn::Thorn(QPoint p, int h, b2World *world, QObject *parent):
+Thorn::Thorn(QPoint center,QList<QPoint>shape, b2World *world, QObject *parent):
     Object(parent)
 {
+    //Body definition
     b2BodyDef def;
+    //b2_staticBody ignore all forces and interact only with dynamic body.
     def.type=b2_staticBody;
-    def.position=toVec(p);
-    b2PolygonShape shape;
-    b2Vec2 vecs[3];
-    vecs[2].Set(-7,h);
-    vecs[0].Set(0,0);
-    vecs[1].Set(7,h);
-    shape.Set(vecs,3);
-    body=world->CreateBody(&def);
-    body->CreateFixture(&shape,0.0);
-    body->SetUserData(this);
-    polygon=QPolygon(3);
-    polygon.setPoint(0,QPoint(p.x()-7,p.y()+h));
-    polygon.setPoint(1,QPoint(p.x(),p.y()));
-    polygon.setPoint(2,QPoint(p.x()+7,p.y()+h));
+    //center of the body
+    def.position=toVec(center);
+    //create the body;
+    body= world->CreateBody(&def);
+    //create the shape
+    makeShape(shape);
+    polygon=toPoly(shape,center);
+
+}
+
+void Thorn::makeShape(QList<QPoint> points){
+    //b2EdgeShape is a shape made of segments
+    b2EdgeShape* shape;
+    //make a segment for all the points
+    for (int i=0;i<points.length()-1;i++){
+        shape=new b2EdgeShape();
+        shape->Set(toVec(points[i]),toVec(points[i+1]));
+        body->CreateFixture(shape,1.0);
+    }
 }
 
 void Thorn::paint(QPainter &p){

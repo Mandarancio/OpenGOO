@@ -113,6 +113,12 @@ bool SvgLevelLoader::parse(){
                     emit levelGround(center,pol);
 
                 }
+                else if (!label.compare("#thorn") || !id.compare("thorn")){
+                    QList <QPoint> pol=parsePointList(object);
+                    QPoint center=pol[0];
+                    pol[0]=QPoint(0,0);
+                    emit addLevelThorn(center,pol);
+                }
                 else if (!label.compare("#target") && id.split(':').length()==2 ){
                     QPoint target=parsePoint(object);
                     bool ok=true;

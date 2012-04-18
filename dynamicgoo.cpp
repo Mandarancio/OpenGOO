@@ -123,7 +123,7 @@ void DynamicGoo::moveToTarget(){
             fallDown();
             return;
         }
-        if (dP.Length()<=4){
+        if (dP.Length()<=2){
             emit this->nextTargetPlease(target);
             body->SetLinearVelocity(b2Vec2(0,0));
             return;

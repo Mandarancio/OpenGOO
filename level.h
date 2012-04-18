@@ -93,7 +93,7 @@ private:
     int points;             //Number of goo collected
     bool catched;           //If the tower of Goos is catched
     QRect limit;            //Translation limit
-    QList<QPoint> possibility;  //To show the possible joints on the dragged goo
+    QList<Goo*> possibility;  //To show the possible joints on the dragged goo
 
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
@@ -112,7 +112,7 @@ private:
 
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
 
-    QPoint getNearest(QPoint p,QList<QPoint> l);
+    QPoint getNearest(QPoint p,QList<Goo*> l);
 
     //Function to translate the gui
     void moveUp();
@@ -122,7 +122,7 @@ private:
     void moveOf(QPoint dP);
 
     bool makeJoint(Goo*a,Goo*b);    //Function to create a single joint between two goos
-    QList<QPoint> possibleJoints(QPoint p); //Function to show all the possible joint from a point
+    QList<Goo*> possibleJoints(QPoint p); //Function to show all the possible joint from a point
     bool createJoints(QPoint p);    //Function to create
 
 

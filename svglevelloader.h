@@ -85,6 +85,8 @@ signals:
     void levelGOO(QPoint center,int id,int type);
     void levelJoint(Goo* a,Goo *b);
     void levelGeometry(QSize size);
+    //add a thorn
+    void addLevelThorn(QPoint center,QList<QPoint> thornPoints);
     //add a shape to a bg object
     void addBackGroundShape(int id,QPolygon poly,QColor color);
 public slots:
