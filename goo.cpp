@@ -27,6 +27,7 @@ Goo::Goo( int radius, QObject *parent) :
     info.gScale=1.0;
     info.speed.SetZero();
 
+    maxGuest=100;
 
 
     target=NULL;
@@ -106,7 +107,7 @@ int Goo::getGuestNumber(){
 }
 
 bool Goo::newGuest(){
-    if (guestN<5) {
+    if (guestN<=maxGuest) {
         guestN++;
         return true;
     }
@@ -118,6 +119,13 @@ bool Goo::removeGuest(){
         guestN--;
         return true;
     }
+    else return false;
+}
+
+bool Goo::canHaveGuest(){
+    if (maxGuest && guestN<maxGuest)
+        return true;
+
     else return false;
 }
 

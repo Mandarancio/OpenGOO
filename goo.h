@@ -31,6 +31,7 @@ public:
     //obsolete
     bool newGuest();
     bool removeGuest();
+    bool canHaveGuest();
 
     //get target
     Goo* getTarget();
@@ -97,6 +98,7 @@ protected:
     QPoint groundPoint;
     int minJoints,maxJoints;
     int guestN;
+    int maxGuest;
 
 
     Goo* target,*prevTarget;

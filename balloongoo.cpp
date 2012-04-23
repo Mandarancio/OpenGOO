@@ -9,6 +9,7 @@ BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
     color=Qt::yellow;
 
     maxJoints=1; //parameters
+    maxGuest=0;
     type=BALOON;
 }
 

@@ -13,7 +13,6 @@ public:
 signals:
 
 public slots:
-    void paintDebug(QPainter &p);
 
 };
 

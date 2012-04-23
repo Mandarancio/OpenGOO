@@ -24,11 +24,11 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
             contact->SetEnabled(true);
             return;
         }
-        if (!a->getPrevious() && b->hasJoint()){  //if the first goo is falling down and the other is jointed with other one stop the falling
+        if (!a->getPrevious() && b->hasJoint() && a->getTarget()!=b){  //if the first goo is falling down and the other is jointed with other one stop the falling
             a->setTarget(b);
             contact->SetEnabled(false);
         }
-        else if (!b->getPrevious() && a->hasJoint()){ //if the second goo is falling down and the other is jointed with other one stop the falling
+        else if (!b->getPrevious() && a->hasJoint() && b->getTarget()!=a){ //if the second goo is falling down and the other is jointed with other one stop the falling
             b->setTarget(a);
             contact->SetEnabled(false);
         }

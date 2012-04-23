@@ -76,6 +76,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     connect(loader,SIGNAL(levelJoint(Goo*,Goo*)),this,SLOT(setJoint(Goo*,Goo*)));
     connect(loader,SIGNAL(levelGOO(QPoint,int,int)),this,SLOT(setGoo(QPoint,int,int)));
     connect(loader,SIGNAL(addBackGroundShape(int,QPolygon,QColor)),this,SLOT(addBGShape(int,QPolygon,QColor)));
+    connect(loader,SIGNAL(addLevelThorn(QPoint,QList<QPoint>)),this,SLOT(setThorns(QPoint,QList<QPoint>)));
 
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     if (flag==DEBUG) qWarning()<<"Level loader created, set up and connected!";
@@ -177,8 +178,6 @@ bool Level::startLevel(){
     else return false;
 }
 
-void Level::createThorns(){
-}
 
 Goo* Level::getGooAt(QPoint p){
     b2Vec2 d;
@@ -993,12 +992,11 @@ void Level::setGoo(QPoint center,int id, int type){
 
 void Level::setLevelGeometry(QSize size){
     if (flag==DEBUG) qWarning()<<"Level size"<<size;
-//    float sw,sh;
-//    sw=float(width())/float(size.width());
-//    sh=float(height())/float(size.height());
-//    if (sw>sh && sw>1.0) scale=sw;
-//    else if (sh>=sw && sh>1.0) scale=sh;
+}
 
+void Level::setThorns(QPoint center, QList<QPoint> list){
+    Thorn *thorn=new Thorn(center,list,world,this);
+    objects.push_back(thorn);
 }
 
 void Level::createSticky(QPoint p){

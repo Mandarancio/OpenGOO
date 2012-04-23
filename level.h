@@ -108,7 +108,6 @@ private:
 //    bool parseString(QString string);   //Split a line of the file in the two component the tag and the real information
 //    bool parseInfo(QString tag,QString info); //Recognize the tag and use the info
 
-    void createThorns(); //To initialize thorns
 
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
 
@@ -168,6 +167,8 @@ private slots:
     void setGoo(QPoint center,int id, int type=0);
     //To scale at the right dimension
     void setLevelGeometry(QSize size);
+    //create thorn
+    void setThorns(QPoint center, QList<QPoint> list);
 
     //GAME SLOT
     //Functions to create and destroy sticky joints

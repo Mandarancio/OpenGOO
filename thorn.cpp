@@ -13,6 +13,7 @@ Thorn::Thorn(QPoint center,QList<QPoint>shape, b2World *world, QObject *parent):
     def.position=toVec(center);
     //create the body;
     body= world->CreateBody(&def);
+    body->SetUserData(this);
     //create the shape
     makeShape(shape);
     polygon=toPoly(shape,center);
@@ -22,12 +23,15 @@ Thorn::Thorn(QPoint center,QList<QPoint>shape, b2World *world, QObject *parent):
 void Thorn::makeShape(QList<QPoint> points){
     //b2EdgeShape is a shape made of segments
     b2EdgeShape* shape;
+    b2Fixture* fix;
     //make a segment for all the points
     for (int i=0;i<points.length()-1;i++){
         shape=new b2EdgeShape();
         shape->Set(toVec(points[i]),toVec(points[i+1]));
-        body->CreateFixture(shape,1.0);
+        fix= body->CreateFixture(shape,1.0);
+        fix->SetUserData(this);
     }
+
 }
 
 void Thorn::paint(QPainter &p){

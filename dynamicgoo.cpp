@@ -30,11 +30,6 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
     body->CreateFixture(&fixDef); //create the fixture
     body->SetLinearDamping(0.1);//Not sure about this parameter
-//    b2MassData* mass=new b2MassData();
-//    mass->center.SetZero();
-//    mass->I=0.;
-//    mass->mass=10.0 ;
-//    body->SetMassData(mass);
     moovable=true; //flags
     dragable=true;
     maxJoints=7; //parameters
@@ -66,21 +61,18 @@ void DynamicGoo::moveToTarget(){
     }
     if (following && !falling){
         if (prevTarget){
-//            if (!target->isLinked(prevTarget)){
-//                drop();
-//                return;
-//            }
+            if (!target->isLinked(prevTarget)){
+                drop();
+                return;
+            }
             QPoint meTarget=target->getPPosition()-getPPosition();
             if (toVec(meTarget).Length()>150) {
                 stopFollow();
                 fallDown();
                 return;
             }
-            //compute rect between the oldtarget and new target
-            //classic method y=m*x+q
-            //m=(y2-y1)/(x2-x1)  and  q=y1-m*x1
 
-            //compute the tehorical y for my x position
+            //Compute mx and my for the position
             float mx,my;
             mx=(target->getVPosition().x-prevTarget->getVPosition().x);
             my=(target->getVPosition().y-prevTarget->getVPosition().y);
@@ -88,6 +80,7 @@ void DynamicGoo::moveToTarget(){
             mx/=d;
             my/=d;
             float tx,ty;
+            //Compute tehorical x and y
             tx=(getVPosition().x-prevTarget->getVPosition().x)/mx;
             ty=(getVPosition().y-prevTarget->getVPosition().y)/my;
             float yt=my*tx+prevTarget->getVPosition().y;
@@ -174,15 +167,7 @@ void DynamicGoo::paint(QPainter &p){
 
 void DynamicGoo::paintDebug(QPainter &p){
     //set the pen green if is jointed or white if is free and not sleeping
-    p.setPen((hasJoint()? Qt::green : Qt::white));
-    //set pen yellow if the goo is dragged from the user
-    if (isDragging()) p.setPen(Qt::yellow);
-    //set pen red if is sleeping
-    if (isSleeping()) p.setPen(Qt::red);
-    //the brush is transparent
-    p.setBrush(Qt::transparent);
-    //draw the contourn
-    p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
+    p.setPen( Qt::white);
     //if has joint draw the number of joint of it inside him.
     if (hasJoint()){
         target=NULL;
