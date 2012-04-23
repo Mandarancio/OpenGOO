@@ -31,9 +31,10 @@ void RopeJoint::initialize(b2World *world){
     b2RopeJointDef jDef;
     jDef.bodyA=a->getBody();
     jDef.bodyB=b->getBody();
-    jDef.localAnchorA=a->getVPosition();
-    jDef.localAnchorB=b->getVPosition();
-    jDef.maxLength=100;
+    jDef.localAnchorA.SetZero();
+    jDef.localAnchorB.Set(0,15);
+    jDef.collideConnected=true;
+    jDef.maxLength=250;
     joint=(b2RopeJoint*)world->CreateJoint(&jDef);
 
 }
@@ -45,7 +46,7 @@ void RopeJoint::paint(QPainter &p){
     for (int i=0;i<bodies.length()-1;i++){
         p.drawLine(toPoint(bodies[i]->GetPosition()),toPoint(bodies[i+1]->GetPosition()));
     }
-    p.drawLine(a->getPPosition(),b->getPPosition());
+    p.drawLine(toPoint(joint->GetAnchorA()),toPoint(joint->GetAnchorB()));
 }
 
 

@@ -14,6 +14,7 @@ public:
     bool isDragable();
 private:
     bool active;
+    float rx,ry;
 public slots:
     void paint(QPainter &p);
     void paintDebug(QPainter &p);

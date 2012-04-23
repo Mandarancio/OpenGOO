@@ -41,7 +41,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
 
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
-    this->grabMouse();
+    this->grabMouse();starT
     this->setMouseTracking(true);
     if (flag==DEBUG) qWarning()<<"Mouse and keyboard grabbed";
 
@@ -281,7 +281,7 @@ bool Level::createJoints(QPoint p){
     else {
         if (l.length() && !dragged->hasJoint()){
 
-            makeJoint(dragged,getGooAt(getNearest(dragged->getPPosition(),l)));
+            makeJoint(dragged,getNearest(dragged->getPPosition(),l));
             return true;
         }
         else return false;
@@ -332,19 +332,22 @@ void Level::timerEvent(QTimerEvent *e){
 
 }
 
-QPoint Level::getNearest(QPoint p,QList<Goo*> l){
-    QPoint p0=p;
-    QPoint dp;
-    float dt,d=10000;
-    for (int i=0;i<l.length();i++){
-        dp=p-l[i]->getPPosition();
-        dt=dp.x()*dp.x()+dp.y()*dp.y();
-        if (dt<d) {
-            d=dt;
-            p0=l[i]->getPPosition();
+Goo *Level::getNearest(QPoint p,QList<Goo*> l){
+    if (l.length()){
+        Goo* p0=l.at(0);
+        QPoint dp=p-p0->getPPosition();
+        float dt,d=dp.x()*dp.x()+dp.y()*dp.y();
+        for (int i=0;i<l.length();i++){
+            dp=p-l[i]->getPPosition();
+            dt=dp.x()*dp.x()+dp.y()*dp.y();
+            if (dt<d) {
+                d=dt;
+                p0=l[i];
+            }
         }
+        return p0;
     }
-    return p0;
+    else return NULL;
 }
 
 void Level::paintEvent(QPaintEvent *e){
@@ -375,7 +378,9 @@ void Level::paintEvent(QPaintEvent *e){
             p.drawLine(dragged->getPPosition(),possibility[i]->getPPosition());
     }
     else if (drag && dragged->getType()==BALOON){
-        p.drawLine(dragged->getPPosition(),getNearest(dragged->getPPosition(),possibility));
+        if (getNearest(dragged->getPPosition(),possibility)!= NULL){
+            p.drawLine(dragged->getPPosition(),getNearest(dragged->getPPosition(),possibility)->getPPosition());
+        }
     }
 
     for (int i=0;i<objects.length();i++)

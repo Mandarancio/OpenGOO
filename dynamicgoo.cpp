@@ -122,7 +122,7 @@ void DynamicGoo::moveToTarget(){
             return;
         }
         if (!prevTarget && onGround){
-            dP.x=dP.x/qAbs(dP.x)*speed*5;
+            dP.x=(dP.x>0 ? speed*5 : -speed*5);
             dP.y=body->GetWorld()->GetGravity().y;
             body->ApplyForceToCenter(dP);
         }

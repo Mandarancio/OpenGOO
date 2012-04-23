@@ -10,6 +10,9 @@ BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
 
     maxJoints=1; //parameters
     maxGuest=0;
+    guestN=0;
+    rx=0;
+    ry=0;
     type=BALOON;
 }
 
@@ -25,17 +28,20 @@ void BalloonGoo::paint(QPainter &p){
         p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
     }
     else{
-        p.drawEllipse(toPoint(body->GetPosition()),2*getRadius(),2*getRadius());
+        body->ApplyForceToCenter(b2Vec2(0,-(5*body->GetWorld()->GetGravity().y)));
+        p.drawEllipse(QPoint(body->GetPosition().x,body->GetPosition().y-(getRadius()+ry)),2*getRadius()+rx,2*getRadius()+ry);
     }
 }
 
 bool BalloonGoo::createLink(Goo *goo){
     if (!active && nJoints()<maxJoints){
         active=true;
-        body->SetGravityScale(-1);
+        body->SetGravityScale(0);
         if (sleeping) sleeping=false;
         links.push_back(goo);
         if (following) stopFollow();
+        rx=rand()%6-4;
+        ry=rand()%6-3;
         return true;
     }
     else return false;
@@ -47,8 +53,11 @@ bool BalloonGoo::destroyLink(Goo *goo){
         emit this->destroyJoint(this,goo);
         active=false;
         body->SetGravityScale(1);
+         rx=0;
+         ry=0;
         if (!isDragging() && !hasJoint()) body->SetActive(false);
         return true;
+
     }
     else return false;
 }

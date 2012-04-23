@@ -111,7 +111,7 @@ private:
 
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
 
-    QPoint getNearest(QPoint p,QList<Goo*> l);
+    Goo* getNearest(QPoint p,QList<Goo*> l);
 
     //Function to translate the gui
     void moveUp();
