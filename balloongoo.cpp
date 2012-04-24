@@ -31,8 +31,8 @@ void BalloonGoo::paint(QPainter &p){
     //not active status
     if (!active){
         p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
-        if (selected){
-            p.setPen(QPen(Qt::yellow,3,Qt::DashLine));
+        if (selected || dragging ){
+            p.setPen(QPen(Qt::yellow,3,(dragging==true ? Qt::SolidLine : Qt::DashLine)));
             p.setBrush(Qt::transparent);
             p.drawEllipse(toPoint(body->GetPosition()), getRadius()+10,getRadius()+10);
         }

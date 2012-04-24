@@ -40,8 +40,7 @@ public slots:
     //rutines called when previus status was spleep and a neighbor is found!
     void neighborsFound();
 
-signals:
-    void createSticky(QPoint p);
+
 };
 
 #endif // DYNAMICGOO_H

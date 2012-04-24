@@ -130,6 +130,8 @@ signals:
     void checkForNeighbors(QPoint p);
     //Signal to advice to stop dragging current goo
     void stopDragging();
+    //Signal to create a sticky to the ground
+    void createSticky(QPoint p);
 
 private slots:
     void checkForConnection(Goo* goo);

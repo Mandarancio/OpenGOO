@@ -289,7 +289,7 @@ void Level::timerEvent(QTimerEvent *e){
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
-        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,4);
+        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,0.8);
         stickys.push_back(sl);
         connect(sl,SIGNAL(destroySticky()),this,SLOT(destroySticky()));
     }
@@ -313,11 +313,6 @@ void Level::timerEvent(QTimerEvent *e){
     if (target) target->checkTower(goos);
     if (target) target->applyForces(goos);
 
-//    int gravity=world->GetGravity().Length();
-//    for(int i=0;i<ballGoos.length();i++)//Apply a force to the balloon to let it fly
-//    {
-//        ballGoos.at(i)->getBody()->ApplyForceToCenter(b2Vec2(0,-gravity*1.1));
-//    }
     stickyToCreate.clear();
     repaint();
 
@@ -935,6 +930,7 @@ void Level::setJoint(Goo*a,Goo*b){
 
 void Level::setGoo(QPoint center,int id, int type){
     Goo* goo=NULL;
+
     if (type==0) { //Create a standard gooo
             DynamicGoo* dg=new DynamicGoo(world,center,RADIUS);
             goo=dg;

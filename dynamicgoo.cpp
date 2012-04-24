@@ -47,7 +47,8 @@ void DynamicGoo::lost(){
 }
 
 void DynamicGoo::moveToTarget(){
-    //Stop to follow if the goo is dragged for the user
+    //Stop to follow if the goo is dragged for the use
+
     if (isDragging()) {
         stopFollow();
         return;
@@ -80,6 +81,7 @@ void DynamicGoo::moveToTarget(){
             mx=(target->getVPosition().x-prevTarget->getVPosition().x);
             my=(target->getVPosition().y-prevTarget->getVPosition().y);
             float d=qSqrt(mx*mx+my*my);
+            float md=qSqrt(qPow((target->getVPosition().x-getVPosition().x),2)+qPow((target->getVPosition().y-getVPosition().y),2));
             mx/=d;
             my/=d;
             float tx,ty;
@@ -90,7 +92,7 @@ void DynamicGoo::moveToTarget(){
             float xt=mx*ty+prevTarget->getVPosition().x;
 
             //if my y position is different at least of 12 falldown and return
-            if (qAbs(getVPosition().y-yt)>=getRadius() && qAbs(getVPosition().x-xt)>=getRadius()){
+            if ((qAbs(getVPosition().y-yt)>=getRadius() && qAbs(getVPosition().x-xt)>=getRadius()) || (md>d+radius)){
                 stopFollow();
                 fallDown();
                 return;
@@ -124,10 +126,19 @@ void DynamicGoo::moveToTarget(){
             body->SetLinearVelocity(b2Vec2(0,0));
             return;
         }
-        if (!prevTarget && onGround){
-            dP.x=(dP.x>0 ? speed*5 : -speed*5);
-            dP.y=body->GetWorld()->GetGravity().y;
-            body->ApplyForceToCenter(dP);
+        if (!prevTarget){
+
+            b2Vec2 dvec=(target->getVPosition()-getVPosition());
+            float d=qSqrt(dvec.x*dvec.x+dvec.y*dvec.y);
+            if (onGround && target->isOnGround() && d<distanceToJoint){
+                dP.x=(dP.x>0 ? speed*5 : -speed*5);
+                dP.y=body->GetWorld()->GetGravity().y;
+                body->ApplyForceToCenter(dP);
+            }
+            else {
+                body->SetGravityScale(1);
+                stopFollow();
+            }
         }
         else {
             dP.x=dP.x*speed/dP.Length();
@@ -171,6 +182,7 @@ void DynamicGoo::paint(QPainter &p){
 }
 
 void DynamicGoo::paintDebug(QPainter &p){
+
     //set the pen green if is jointed or white if is free and not sleeping
     p.setPen( Qt::white);
     //if has joint draw the number of joint of it inside him.
@@ -181,6 +193,14 @@ void DynamicGoo::paintDebug(QPainter &p){
     }
     //if not and is free and is mooving to reach a target draw the direction
     else if (target!=NULL){
+        if (prevTarget==NULL){
+            p.setBrush(Qt::darkYellow);
+            p.drawEllipse(getPPosition(),radius,radius);
+        }
+        else {
+            p.setBrush(Qt::darkGreen);
+            p.drawEllipse(getPPosition(),radius,radius);
+        }
         //save the position
         p.save();
         //translate the painter at the center of the goo
