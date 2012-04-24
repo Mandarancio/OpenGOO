@@ -52,6 +52,9 @@ void DynamicGoo::moveToTarget(){
         stopFollow();
         return;
     }
+    if (onGround && groundPoint!=getPPosition()) {
+        onGround=false;
+    }
     if (isFalling()) return;
     if (hasJoint()) return;
     if (!hasJoint() && !isDragging() && isOnGround() && target==NULL ){
@@ -102,7 +105,7 @@ void DynamicGoo::moveToTarget(){
             float d=(target->getVPosition()-getVPosition()).Length();
             //if that distance is more than 25 falldown and return
             //PS: remember that 30 is a single point contact between two goos
-            if (d>25) {
+            if (d>radius*5/3) {
                 stopFollow();
                 fallDown();
                 return;
@@ -116,7 +119,7 @@ void DynamicGoo::moveToTarget(){
             fallDown();
             return;
         }
-        if (dP.Length()<=2){
+        if (dP.Length()<=radius/2){
             emit this->nextTargetPlease(target);
             body->SetLinearVelocity(b2Vec2(0,0));
             return;
@@ -137,8 +140,10 @@ void DynamicGoo::moveToTarget(){
 
 void DynamicGoo::paint(QPainter &p){
     //Check rutine
-    if (!isSleeping())
+    if (!isSleeping()){
+
         moveToTarget();
+    }
     else
         emit this->checkForNeighbors(getPPosition());
     //Real paint stuff

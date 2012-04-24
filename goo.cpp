@@ -28,7 +28,7 @@ Goo::Goo( int radius, QObject *parent) :
     info.speed.SetZero();
 
     maxGuest=100;
-
+    distanceToJoint=150;
 
     target=NULL;
     prevTarget=NULL;
@@ -104,6 +104,10 @@ int Goo::getMaxJoints(){
 
 int Goo::getGuestNumber(){
     return guestN;
+}
+
+int Goo::getDistanceToJoint(){
+    return distanceToJoint;
 }
 
 bool Goo::newGuest(){

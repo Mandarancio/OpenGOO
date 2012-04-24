@@ -28,6 +28,8 @@ public:
     int getRadius();
     int getGuestNumber();
 
+    int getDistanceToJoint();
+
     //obsolete
     bool newGuest();
     bool removeGuest();
@@ -79,11 +81,13 @@ public:
     QList <Goo*> getLinks();
     Goo* getPrevious();
 protected:
+
     GooType type;
     QList <Goo*> links;
     int radius;
     dragInfo info;
     b2Body* body; //physical body
+
     //FLAGS
     bool dragable; // If the user can drag it
     bool moovable; // If is moovable
@@ -95,10 +99,16 @@ protected:
     //If the goo is sleeping
     bool sleeping;
     //Propierties
+    //contact point
     QPoint groundPoint;
+    //limitation of the joints number
     int minJoints,maxJoints;
+    //number of guest
     int guestN;
+    //maximum number of goo guested on joint
     int maxGuest;
+    //max  distance to joint
+    int distanceToJoint;
 
 
     Goo* target,*prevTarget;

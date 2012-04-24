@@ -41,7 +41,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
 
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
-    this->grabMouse();starT
+    this->grabMouse();
     this->setMouseTracking(true);
     if (flag==DEBUG) qWarning()<<"Mouse and keyboard grabbed";
 
@@ -181,7 +181,7 @@ bool Level::startLevel(){
 
 Goo* Level::getGooAt(QPoint p){
     b2Vec2 d;
-    for (int i=0;i<goos.count();i++){
+    for (int i=goos.count()-1;i>=0;i--){
         if (goos[i]->isMoovable()&&goos[i]->isDragable()){
             d=toVec(p)-goos[i]->getVPosition();
             if (d.Length()<goos[i]->getRadius()*scale) return goos[i];
@@ -248,7 +248,7 @@ QList<Goo*> Level::possibleJoints(QPoint p){
     for (int i=0;i<goos.length();i++){
         if (goos[i]->canHaveJoint()) {
             d=pv-goos[i]->getVPosition();
-            if (d.LengthSquared()>=50*50 && d.LengthSquared()<=(dragged->getType()==BALOON ? 200*200 : 150*150 ))
+            if (d.LengthSquared()>=50*50 && d.LengthSquared()<=dragged->getDistanceToJoint()*dragged->getDistanceToJoint())
                 l.push_back(goos[i]);
 
         }
@@ -259,16 +259,7 @@ QList<Goo*> Level::possibleJoints(QPoint p){
 bool Level::createJoints(QPoint p){
 
     QList<Goo*> l;
-    b2Vec2 pv=toVec(p);
-    b2Vec2 d;
-    for (int i=0;i<goos.length();i++){
-        if (goos[i]->canHaveJoint() && goos[i]->hasJoint()) {
-            d=pv-goos[i]->getVPosition();
-            if (d.LengthSquared()>=50*50 && d.LengthSquared()<=(dragged->getType()==BALOON ? 200*200 : 150*150 ) && !l.contains(goos[i]))
-                l.push_back(goos[i]);
-
-        }
-    }
+    l=possibleJoints(p);
     if (dragged->getType()!=BALOON){
         if (l.length()>1||dragged->hasJoint()){
             for (int i=0;i<l.length();i++){
@@ -891,13 +882,7 @@ void Level::setStartArea(int n, QRect area,int type){
     int x,y;
     x=area.x();
     y=area.y();
-//    BalloonGoo* dg=new BalloonGoo(world,QPoint(x,y),RADIUS);
-//    goos.push_back(dg);
-//    connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
-//    connect(dg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
-//    connect(dg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
-//    connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
-//    connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+
     for (int i=0;i<n;i++){
         x=area.x()+qrand()%area.width();
         y=area.y()+qrand()%area.height();
@@ -929,11 +914,11 @@ void Level::setStartArea(int n, QRect area,int type){
         else if (type==3){ //Create a balloon goo
                 BalloonGoo*  bg=new BalloonGoo(world,center,RADIUS);
                 goos.push_back(bg);
-                //connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+                connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
                 connect(bg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
                 connect(bg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
                 connect(bg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
-                //connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+                connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
         }
         else return;
     }
@@ -980,15 +965,15 @@ void Level::setGoo(QPoint center,int id, int type){
             connect(fg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
     }
     else if (type==3){ //Create a balloon goo
-            BalloonGoo*  bg=new BalloonGoo(world,center,RADIUS);
+            BalloonGoo*  bg=new BalloonGoo(world,center,18);
             goos.push_back(bg);
 //            ballGoos.append(bg);
             goo=bg;
-            //connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+            connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
             connect(bg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
             connect(bg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
             connect(bg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
-            //connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+            connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
     }
     if (goo!=NULL){
         loader->addGoo(id,goo);
