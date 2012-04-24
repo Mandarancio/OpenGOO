@@ -19,7 +19,7 @@ FixedGoo::FixedGoo(b2World *world, QPoint p, int radius, QObject *parent):
     maxJoints=5;
     onGround=true;
     groundPoint=p;
-    type=FIXED;
+    type=FIXED_GOO;
 }
 
 void FixedGoo::paint(QPainter &p){

@@ -7,7 +7,8 @@
 
 #include <Box2D/Box2D.h>
 
-enum GooType {NONE,FIXED,DYNAMIC,REMOVIBLE,BALOON,STICKY};
+/*Change FIXED to FIXED_GOO, because it conflict with win32 typedef. Slyshyk*/
+enum GooType {NONE,FIXED_GOO,DYNAMIC,REMOVIBLE,BALOON,STICKY};
 
 struct dragInfo{
     b2Vec2 speed;

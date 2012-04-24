@@ -45,7 +45,8 @@ void BalloonGoo::paint(QPainter &p){
         p.setBrush(Qt::black);
         p.setPen(Qt::black);
 
-        p.drawEllipse(QPoint(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry)),getRadius()+rx,getRadius()+ry);
+        p.drawEllipse(QPoint(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry)),
+                      getRadius()+qRound(rx),getRadius()+qRound(ry));
         p.save();
         p.translate(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry));
         QPolygon pol(3);
