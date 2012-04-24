@@ -39,10 +39,12 @@ void BalloonGoo::paint(QPainter &p){
     }
     //active status
     else{
+        //apply the force to fly)
+        body->ApplyForceToCenter(b2Vec2(0,-(10*body->GetWorld()->GetGravity().y)));
+
         p.setBrush(Qt::black);
         p.setPen(Qt::black);
-        //apply the force to fly)
-        body->ApplyForceToCenter(b2Vec2(0,-(5*body->GetWorld()->GetGravity().y)));
+
         p.drawEllipse(QPoint(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry)),getRadius()+rx,getRadius()+ry);
         p.save();
         p.translate(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry));
