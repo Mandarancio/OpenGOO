@@ -27,7 +27,7 @@ void Target::checkTower(QList<Goo *> ps){
     b2Vec2 d;
     bool check=false;
     for (int i=0;i<ps.length();i++){
-        if (ps[i]->hasJoint()){
+        if (ps[i]->hasJoint() && ps[i]->canHaveGuest()){
             d=toVec(position)-ps[i]->getVPosition();
             if (d.Length()<80 && !catched){
                 emit this->towerCatch();

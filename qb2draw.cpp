@@ -27,7 +27,6 @@ void QB2Draw::updateGeometry(QRect displayGeometry){
 void QB2Draw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color){
     if (painter==NULL) return; //Check the painter
 
-    QColor c=toQColor(color); //Convert the color
     QPen pen;//Configure the pen
     pen.setBrush(Qt::white); //Set the pen color
     pen.setWidth(1); //Set pen width
@@ -43,7 +42,6 @@ void QB2Draw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Col
 void QB2Draw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color){
     if (painter==NULL) return; //Check the painter
 
-    QColor c=toQColor(color); //Convert the color
     painter->setPen(Qt::white); //set the pen color
     painter->setBrush(Qt::transparent); //set the brush color
     QPolygon pol; //Calculate the polygon
@@ -77,7 +75,6 @@ void QB2Draw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &col
         return; //Check if painter is setted
     }
 
-    QColor c=toQColor(color); //set color
     //c.setAlpha(ALPHA); //set alpha
     QPen pen;//Configure the pen
     pen.setBrush(Qt::green); //Set the pen color

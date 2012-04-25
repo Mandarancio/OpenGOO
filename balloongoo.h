@@ -14,7 +14,7 @@ public:
     bool isDragable();
 private:
     bool active;
-    float rx,ry;
+    int rx,ry;
     int stdRadius;
 public slots:
     void paint(QPainter &p);

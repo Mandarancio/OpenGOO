@@ -13,6 +13,7 @@ Thorn::Thorn(QPoint center,QList<QPoint>shape, b2World *world, QObject *parent):
     def.position=toVec(center);
     //create the body;
     body= world->CreateBody(&def);
+
     body->SetUserData(this);
     //create the shape
     makeShape(shape);
@@ -29,7 +30,6 @@ void Thorn::makeShape(QList<QPoint> points){
         shape=new b2EdgeShape();
         shape->Set(toVec(points[i]),toVec(points[i+1]));
         fix= body->CreateFixture(shape,1.0);
-        fix->SetUserData(this);
     }
 
 }

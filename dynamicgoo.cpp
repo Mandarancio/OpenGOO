@@ -59,9 +59,7 @@ void DynamicGoo::moveToTarget(){
     if (isFalling()) return;
     if (hasJoint()) return;
     if (!hasJoint() && !isDragging() && isOnGround() && target==NULL ){
-
         emit this->nextTargetPlease(NULL);
-        qWarning()<<"NEXT TARGET PLEASE!!";
     }
     if (following && !falling){
         if (prevTarget){
@@ -112,6 +110,7 @@ void DynamicGoo::moveToTarget(){
                 fallDown();
                 return;
             }
+
         }
         b2Vec2 dP;
         if (target!=NULL /*&& target->getBody()!=NULL*/)
@@ -135,7 +134,12 @@ void DynamicGoo::moveToTarget(){
                 dP.y=body->GetWorld()->GetGravity().y;
                 body->ApplyForceToCenter(dP);
             }
-            else {
+            else if (!onGround && d<distanceToJoint) {
+                dP.x=(dP.x>0 ? speed*5 : -speed*5);
+                dP.y=body->GetWorld()->GetGravity().y;
+                body->ApplyForceToCenter(dP);
+            }
+            else{
                 body->SetGravityScale(1);
                 stopFollow();
             }

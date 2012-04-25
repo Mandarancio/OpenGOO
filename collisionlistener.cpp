@@ -15,7 +15,7 @@ CollisionListener::CollisionListener(QObject *parent) :
 
 void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold){
     //if (oldManifold->points==contact->GetManifold()->points) contact->SetEnabled(false); //To skip continuos contact
-
+    Thorn *tha=static_cast<Thorn*>(contact->GetFixtureA()->GetUserData());
     Goo*a,*b; //for get the goo involved in the contact
     a=static_cast<Goo*>(contact->GetFixtureA()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the first body involved
     b=static_cast<Goo*>(contact->GetFixtureB()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the second body involved
@@ -34,7 +34,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
             contact->SetEnabled(false);
         }
         else if (!b->getPrevious()){ //if the second goo is falling down and the other is jointed with other one stop the falling
-            if (a->hasJoint() && b->getTarget()!=a){
+            if (a->hasJoint() && b->getTarget()!=a ){
                 b->setTarget(a);
             }
 //            else if (a->getTarget()!=NULL &&  a->getTarget()!=b->getTarget()){
@@ -62,16 +62,16 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
             //check if is a thorn
             if (t==NULL)  {
                 th=static_cast<Thorn*>(contact->GetFixtureA()->GetBody()->GetUserData());
-                if (th!=NULL ) b->destroyThis();
+                if (tha!=NULL ) qWarning()<<"HERE";
             }
 
         }
         contact->SetEnabled(true); //contact is enabled here
     }
+
 }
 
 void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *impulse){
-
     Goo*a,*b; //for get the goo involved in the contact
     a=static_cast<Goo*>(contact->GetFixtureA()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the first body involved
     b=static_cast<Goo*>(contact->GetFixtureB()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the second body involved
@@ -82,8 +82,9 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
         //check if is a thorn
         if (t==NULL)  {
             th=static_cast<Thorn*>(contact->GetFixtureA()->GetBody()->GetUserData());
-            if (!t&&!th&&b&&contact->GetFixtureA()->GetBody()->GetType()==b2_staticBody) { //ELSE IS GROUND
+            if (!th&&contact->GetFixtureA()->GetBody()->GetType()==b2_staticBody) { //ELSE IS GROUND
                 if (b){
+
                     b2Vec2 p;
 
                     //SOSTITUITION OF THE COLLISION POINT WITH MY BODY POINT

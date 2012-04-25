@@ -17,7 +17,6 @@ Ground::Ground(b2World *world, QPoint center, QList<QPoint> shape, QObject *pare
     body= world->CreateBody(&def);
     //create the shape
     makeShape(shape);
-
     //save the shape to a QPlygon for draw it.
     polShape=toPoly(shape,center);
 }
