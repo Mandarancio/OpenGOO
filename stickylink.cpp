@@ -2,7 +2,7 @@
 #include "tools.h"
 
 #include <QDebug>
-StickyLink::StickyLink(Goo *goo, b2Body *ground, QPoint contactPoint, b2World *world, int strength, QObject *parent) :
+StickyLink::StickyLink(Goo *goo, b2Body *ground, QPoint contactPoint, b2World *world, double strength, QObject *parent) :
     QObject(parent)
 {
     this->goo = goo;
@@ -19,7 +19,10 @@ StickyLink::StickyLink(Goo *goo, b2Body *ground, QPoint contactPoint, b2World *w
 void StickyLink::checkStatus(){
    // qWarning()<<joint->GetReactionForce(1.0/60).Length();
     if (goo->isDragging()) emit destroySticky();
-    else if (joint->GetReactionForce(1.0/60).Length()>strength) emit destroySticky(); //If the force > of the maximum force barke the link!
+    else if (joint->GetReactionForce(1.0/60).Length()>strength){
+        qWarning()<<this->strength<<joint->GetReactionForce(1.0/60.0).Length();
+        emit destroySticky(); //If the force > of the maximum force barke the link!
+    }
 }
 
 

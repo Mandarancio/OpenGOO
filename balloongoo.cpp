@@ -3,6 +3,9 @@
 #include "tools.h"
 
 #include <QPen>
+#include <qmath.h>
+
+#include <QDebug>
 
 BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
     DynamicGoo(world,p,radius,parent)
@@ -17,6 +20,10 @@ BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
     rx=0;
     ry=0;
     stdRadius=radius;
+    stickable=false;
+
+    body->SetFixedRotation(true);
+
     type=BALOON;
 }
 
@@ -40,8 +47,9 @@ void BalloonGoo::paint(QPainter &p){
     //active status
     else{
         //apply the force to fly)
-        body->ApplyForceToCenter(b2Vec2(0,-(10*body->GetWorld()->GetGravity().y)));
-
+        body->ApplyForceToCenter(force);
+        body->SetAngularVelocity(0.0);
+        body->SetTransform(body->GetPosition(),0.0);
         p.setBrush(Qt::black);
         p.setPen(Qt::black);
 
@@ -67,13 +75,23 @@ bool BalloonGoo::createLink(Goo *goo){
     if (!active && nJoints()<maxJoints){
         //create a joint and make it fly!!
         active=true;
-        body->SetGravityScale(0);
         if (sleeping) sleeping=false;
         links.push_back(goo);
+        body->SetGravityScale(0.0);
         if (following) stopFollow();
         rx=-2;
         ry=3;
         radius=30;
+
+        b2MassData mass;
+        mass.center.SetZero();
+        mass.I=0.1;
+        mass.mass=0.5;
+        body->SetMassData(&mass);
+
+
+        force=-b2Vec2(0,(10*body->GetWorld()->GetGravity().y));
+
         return true;
     }
     else return false;
@@ -84,11 +102,19 @@ bool BalloonGoo::destroyLink(Goo *goo){
         //return at normality!
         links.removeAt(links.indexOf(goo));
         emit this->destroyJoint(this,goo);
+        goo->destroyLink(this);
         active=false;
         body->SetGravityScale(1);
         rx=0;
         ry=0;
         radius=stdRadius;
+
+        b2MassData mass;
+        mass.center.SetZero();
+        mass.I=0.1;
+        mass.mass=1.0;
+        body->SetMassData(&mass);
+
         if (!isDragging() && !hasJoint()) body->SetActive(false);
         return true;
 
@@ -107,8 +133,12 @@ void BalloonGoo::drag(){
     }
     body->SetActive(false);
     if (hasJoint()) {
-        for (int i=0;i<links.count();i++) destroyLink(links.at(i));
+        for (int i=0;i<links.count();i++) {
+            destroyLink(links.at(i));
+        }
     }
+
+
     dragging=true;
 
 }
@@ -120,5 +150,26 @@ bool BalloonGoo::isDragable(){
 }
 
 void BalloonGoo::paintDebug(QPainter &p){
-    p.isActive();
+    float fx,fy;
+    float f;
+    fx=body->GetLinearVelocity().x;
+    fy=body->GetLinearVelocity().y;
+    f=qSqrt(fx*fx+fy*fy);
+    if (f<=0.0000001){
+        return;
+    }
+    fx/=100;
+    fy/=100;
+    p.save();
+    p.setPen(Qt::white);
+    p.translate(this->getPPosition());
+    p.drawLine(0,0,fx*40,fy*40);
+    p.rotate(90+qAtan2(-fx,fy)*180.0/3.141628);
+    p.translate(f*4/10,0);
+    p.rotate(135);
+    p.drawLine(0,0,8,0);
+    p.rotate(90);
+    p.drawLine(0,0,8,0);
+
+    p.restore();
 }

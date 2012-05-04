@@ -13,6 +13,7 @@ Goo::Goo( int radius, QObject *parent) :
 
     guestN=0;
 
+    counted=false;
     selected=false;
     moovable=false;
     falling=true;
@@ -110,6 +111,27 @@ int Goo::getDistanceToJoint(){
     return distanceToJoint;
 }
 
+int Goo::getNumberOf(GooType type){
+    if (counted) return 0;
+    int value=0;
+    counted=true;
+    if (this->type==type){
+        value++;
+    }
+    for (int i=0;i<links.length();i++){
+        value += links[i]->getNumberOf(type);
+    }
+    return value;
+}
+
+void Goo::countingEnd(){
+    if (!counted) return;
+    counted=false;
+    for (int i=0;i<links.length();i++){
+        links[i]->countingEnd();
+    }
+}
+
 bool Goo::newGuest(){
     if (guestN<=maxGuest) {
         guestN++;
@@ -173,6 +195,9 @@ bool Goo::createLink(Goo *goo){
         if (sleeping) sleeping=false;
         links.push_back(goo);
         if (following) stopFollow();
+        body->SetAngularVelocity(0.0);
+        body->SetFixedRotation(true);
+
         return true;
     }
     else return false;
@@ -197,6 +222,7 @@ bool Goo::destroyLink(Goo *goo){
 //                    j=j->GetNext();
 //            }
 //        }
+        body->SetFixedRotation(false);
         if (isDragging() && !hasJoint()) body->SetActive(false);
         return true;
 
@@ -310,11 +336,8 @@ void Goo::fallDown(){
     following=false;
     prevTarget=NULL;
     target=NULL;
-    body->SetGravityScale(21.0);
+    body->SetGravityScale(1.0);
     body->SetAngularVelocity(0);
-    body->SetLinearVelocity(b2Vec2(0,0));
-    body->ApplyForce(b2Vec2(0,2000000),b2Vec2(0,0));
-
 }
 
 void Goo::neighborsFound(){

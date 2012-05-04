@@ -3,6 +3,8 @@
 
 #include <QDebug>
 #include <QPen>
+#include <qmath.h>
+
 //LINE ALPHA
 #define ALPHA 100
 //LINE WIDTH
@@ -68,6 +70,19 @@ void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2
     painter->setPen(Qt::white); //set pen color
     painter->setBrush(Qt::transparent); //set brush color
     painter->drawEllipse(toQPoint(center),qRound(radius),qRound(radius)); //Draw circle
+
+    painter->save();
+    painter->translate(toQPoint(center));
+
+    double angle=qAtan2(axis.x,axis.y);
+    painter->rotate(angle*180.0/3.141628-90.0);
+    painter->drawLine(0,0,radius,0);
+    painter->rotate(-90);
+    painter->drawLine(0,0,radius,0);
+
+
+    painter->restore();
+
 }
 
 void QB2Draw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color){

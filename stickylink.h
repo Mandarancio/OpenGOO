@@ -15,7 +15,7 @@ class StickyLink : public QObject
     Q_OBJECT
 public:
 
-    explicit StickyLink(Goo* goo,b2Body *ground, QPoint contactPoint,b2World *world, int strength=4,QObject *parent = 0);
+    explicit StickyLink(Goo* goo,b2Body *ground, QPoint contactPoint,b2World *world, double strength=4,QObject *parent = 0);
     //Check the status of the joint
     void checkStatus();
     //Return the joint
@@ -33,7 +33,7 @@ private:
     Goo * goo;
     //Physical joint
     b2DistanceJoint *joint;
-    int strength;
+    double strength;
 signals:
     //SIGNAL TO ADVICE THE DESTRUCTION OF THE STICKY Joint!
     void destroySticky();

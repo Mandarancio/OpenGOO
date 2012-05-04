@@ -5,6 +5,9 @@
 #include "tools.h"
 
 #include <qmath.h>
+#include <QMetaObject>
+
+
 #include <QDebug>
 
 CollisionListener::CollisionListener(QObject *parent) :
@@ -15,11 +18,11 @@ CollisionListener::CollisionListener(QObject *parent) :
 
 void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold){
     //if (oldManifold->points==contact->GetManifold()->points) contact->SetEnabled(false); //To skip continuos contact
-    Thorn *tha=static_cast<Thorn*>(contact->GetFixtureA()->GetUserData());
     Goo*a,*b; //for get the goo involved in the contact
     a=static_cast<Goo*>(contact->GetFixtureA()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the first body involved
     b=static_cast<Goo*>(contact->GetFixtureB()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the second body involved
-    if (a&&b) { //If both bodies are goo
+    if (!a && !b) return;
+    else if (a&&b) { //If both bodies are goo
         if (a->isSleeping() && b->isSleeping()) {
             contact->SetEnabled(true);
             return;
@@ -48,21 +51,30 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
 
     }
     else { //cas if the contact is not between two goo
-        Target * t=NULL; //target
-        Thorn* th=NULL; //thorn
+
+        QObject * t=NULL; //target
+        QString type;
         if (!b){ //if the second object isn't a goo
-            t=static_cast<Target*>(contact->GetFixtureB()->GetBody()->GetUserData()); //check if is the target
-            if (t==NULL){
-                th=static_cast<Thorn*>(contact->GetFixtureB()->GetBody()->GetUserData());
-                if (th!=NULL) a->destroyThis();
+            if (contact->GetFixtureB()->GetUserData()==NULL) return;
+            t=static_cast<QObject*>(contact->GetFixtureB()->GetBody()->GetUserData()); //check if is the target
+            type=QString(t->metaObject()->className());
+            if (type.compare("Target")==0){
+                return;
             }
+            else if (type.compare("Thorn")==0){
+                a->destroyThis();
+            }
+
         }
         else if (!a){ //if the first isn't a goo is the same of before!
-            t=static_cast<Target*>(contact->GetFixtureA()->GetBody()->GetUserData()); //Check if is target
-            //check if is a thorn
-            if (t==NULL)  {
-                th=static_cast<Thorn*>(contact->GetFixtureA()->GetBody()->GetUserData());
-                if (tha!=NULL ) qWarning()<<"HERE";
+            if (contact->GetFixtureA()->GetBody()->GetUserData()==NULL) return;
+            t=static_cast<QObject*>(contact->GetFixtureA()->GetBody()->GetUserData()); //check if is the target
+            type=QString(t->metaObject()->className());
+            if (type.compare("Target")==0){
+                return;
+            }
+            else if (type.compare("Thorn")==0){
+                b->destroyThis();
             }
 
         }
@@ -75,7 +87,8 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
     Goo*a,*b; //for get the goo involved in the contact
     a=static_cast<Goo*>(contact->GetFixtureA()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the first body involved
     b=static_cast<Goo*>(contact->GetFixtureB()->GetUserData()); //Dynamic cast is for retrive (if any) the goo object of the second body involved
-    if (!a){
+    if (!a && !b) return;
+    else if (!a){
         Target * t=NULL; //target
         Thorn* th=NULL; //thorn
         t=static_cast<Target*>(contact->GetFixtureA()->GetBody()->GetUserData()); //Check if is target
@@ -108,6 +121,10 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
                     else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
                 }
             }
+            else if (th) qWarning()<<"THORN";
         }
+    }
+    else if (!b) {
+        qWarning()<<"HERE";
     }
 }

@@ -31,7 +31,11 @@ public:
 
     int getDistanceToJoint();
 
-    //obsolete
+    //TREE FUNCTION
+    int getNumberOf(GooType type);
+    void countingEnd();
+
+    //[not so] obsolete
     bool newGuest();
     bool removeGuest();
     bool canHaveGuest();
@@ -88,6 +92,10 @@ protected:
     int radius;
     dragInfo info;
     b2Body* body; //physical body
+
+    //TREE VARIABLES
+    bool counted;
+
 
     //FLAGS
     bool dragable; // If the user can drag it

@@ -14,21 +14,32 @@ Thorn::Thorn(QPoint center,QList<QPoint>shape, b2World *world, QObject *parent):
     //create the body;
     body= world->CreateBody(&def);
 
-    body->SetUserData(this);
     //create the shape
     makeShape(shape);
+    body->SetUserData(this);
     polygon=toPoly(shape,center);
+
 
 }
 
 void Thorn::makeShape(QList<QPoint> points){
     //b2EdgeShape is a shape made of segments
-    b2EdgeShape* shape;
+    b2PolygonShape* shape;
     b2Fixture* fix;
+    float angle,x,y,w,h,dx,dy;
+    h=1.0;
     //make a segment for all the points
     for (int i=0;i<points.length()-1;i++){
-        shape=new b2EdgeShape();
-        shape->Set(toVec(points[i]),toVec(points[i+1]));
+        shape=new b2PolygonShape();
+        dx=(points[i].x()-points[i+1].x());
+        dy=(points[i].y()-points[i+1].y());
+        w=qSqrt(dx*dx+dy*dy)/2.0;
+        x=(points[i].x()+points[i+1].x())/2;
+        y=(points[i].y()+points[i+1].y())/2;
+        angle=3.141628/2-qAtan2(dx,dy);
+        shape->SetAsBox(w,h,b2Vec2(x,y),angle);
+
+        //shape->Set(toVec(points[i]),toVec(points[i+1]));
         fix= body->CreateFixture(shape,1.0);
     }
 
@@ -36,6 +47,6 @@ void Thorn::makeShape(QList<QPoint> points){
 
 void Thorn::paint(QPainter &p){
     p.setBrush(Qt::black);
-    p.setPen(Qt::black);
+    p.setPen(Qt::transparent);
     p.drawPolygon(polygon);
 }

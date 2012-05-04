@@ -22,20 +22,29 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     shape.m_radius=radius; //radius
 
     b2FixtureDef fixDef; //Definition of the phisical parameters
-    fixDef.restitution=0.3; //collision restitution
+    fixDef.restitution=0.03; //collision restitution
     fixDef.density=0.0; //density
-    fixDef.friction=0.8; //friction
+    fixDef.friction=10.0; //friction
     fixDef.shape=&shape; //assign the shape
 
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
     body->CreateFixture(&fixDef); //create the fixture
     body->SetLinearDamping(0.1);//Not sure about this parameter
+    body->SetAngularDamping(0.1);
+    //set mass
+    b2MassData mass;
+    mass.center.SetZero();
+    mass.mass=25.0;
+    mass.I=0.1;
+
+    body->SetMassData(&mass);
+
     moovable=true; //flags
     dragable=true;
+    stickable=true;
     maxJoints=7; //parameters
     speed=50;
     type=DYNAMIC;
-
 }
 
 void DynamicGoo::catched(){
@@ -57,7 +66,12 @@ void DynamicGoo::moveToTarget(){
         onGround=false;
     }
     if (isFalling()) return;
-    if (hasJoint()) return;
+    if (hasJoint()){
+
+        return;
+
+
+    }
     if (!hasJoint() && !isDragging() && isOnGround() && target==NULL ){
         emit this->nextTargetPlease(NULL);
     }
@@ -90,7 +104,7 @@ void DynamicGoo::moveToTarget(){
             float xt=mx*ty+prevTarget->getVPosition().x;
 
             //if my y position is different at least of 12 falldown and return
-            if ((qAbs(getVPosition().y-yt)>=getRadius() && qAbs(getVPosition().x-xt)>=getRadius()) || (md>d+radius)){
+            if ((qAbs(getVPosition().y-yt)>getRadius() && qAbs(getVPosition().x-xt)>getRadius()) || (md>d+radius)){
                 stopFollow();
                 fallDown();
                 return;
@@ -105,7 +119,7 @@ void DynamicGoo::moveToTarget(){
             float d=(target->getVPosition()-getVPosition()).Length();
             //if that distance is more than 25 falldown and return
             //PS: remember that 30 is a single point contact between two goos
-            if (d>radius*5/3) {
+            if (d>radius*2) {
                 stopFollow();
                 fallDown();
                 return;
@@ -120,7 +134,7 @@ void DynamicGoo::moveToTarget(){
             fallDown();
             return;
         }
-        if (dP.Length()<=radius/2){
+        if (dP.Length()<=radius-radius/4){
             emit this->nextTargetPlease(target);
             body->SetLinearVelocity(b2Vec2(0,0));
             return;
@@ -130,12 +144,12 @@ void DynamicGoo::moveToTarget(){
             b2Vec2 dvec=(target->getVPosition()-getVPosition());
             float d=qSqrt(dvec.x*dvec.x+dvec.y*dvec.y);
             if (onGround && target->isOnGround() && d<distanceToJoint){
-                dP.x=(dP.x>0 ? speed*5 : -speed*5);
-                dP.y=body->GetWorld()->GetGravity().y;
-                body->ApplyForceToCenter(dP);
+               double omega =(dP.x>0 ? speed*200 : -speed*200);
+                body->SetAngularVelocity(omega);
+                body->ApplyForceToCenter(body->GetMass()*body->GetWorld()->GetGravity());
             }
-            else if (!onGround && d<distanceToJoint) {
-                dP.x=(dP.x>0 ? speed*5 : -speed*5);
+            else if (!onGround && d<radius*2) {
+                dP.x=(dP.x>0 ? speed*1/body->GetMass()*2 : -speed*1/body->GetMass()*2);
                 dP.y=body->GetWorld()->GetGravity().y;
                 body->ApplyForceToCenter(dP);
             }
@@ -155,8 +169,12 @@ void DynamicGoo::moveToTarget(){
 
 void DynamicGoo::paint(QPainter &p){
     //Check rutine
-    if (!isSleeping()){
 
+
+    if (!isSleeping()){
+        if (hasJoint()){
+            body->SetAngularVelocity(0.0);
+        }
         moveToTarget();
     }
     else
@@ -205,17 +223,20 @@ void DynamicGoo::paintDebug(QPainter &p){
             p.setBrush(Qt::darkGreen);
             p.drawEllipse(getPPosition(),radius,radius);
         }
+
+    }
+    if (body->GetLinearVelocity().Length()){
         //save the position
         p.save();
         //translate the painter at the center of the goo
         p.translate(getPPosition());
         //rotate the painter of the angle between the goo and his target
-	p.rotate(atan2(static_cast<float>(target->getPPosition().y()-getPPosition().y()),static_cast<float>(target->getPPosition().x()-getPPosition().x()))*180.0/3.141628);
+        p.rotate(atan2(body->GetLinearVelocity().y,body->GetLinearVelocity().x)*180.0/3.141628);
         //draw a line in this direction of 40 px
-        p.drawLine(0,0,40,0);
+        p.drawLine(0,0,body->GetLinearVelocity().Length(),0);
 
         //translate the painter at the end of the line
-        p.translate(40,0);
+        p.translate(body->GetLinearVelocity().Length(),0);
         //rotatate of 45° degree
         p.rotate(45);
         //draw a line of 5 (this is one side of the arrow)
@@ -286,7 +307,7 @@ void DynamicGoo::contactGround(QPoint p){
 
         //if has joint and is not sticked on ground
         if (hasJoint()){
-            if (!sticked){
+            if (!sticked && stickable){
                 onGround=true;
                 groundPoint=this->getPPosition();
                 emit this->createSticky(p);

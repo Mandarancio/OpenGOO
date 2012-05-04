@@ -13,9 +13,12 @@ public:
     bool destroyLink(Goo *goo);
     bool isDragable();
 private:
+    b2Vec2 force;
     bool active;
     int rx,ry;
     int stdRadius;
+
+
 public slots:
     void paint(QPainter &p);
     void paintDebug(QPainter &p);

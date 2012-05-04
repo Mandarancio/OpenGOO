@@ -56,3 +56,5 @@ void RopeJoint::paint(QPainter &p){
 
 
 
+
+

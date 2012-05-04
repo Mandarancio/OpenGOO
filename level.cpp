@@ -53,7 +53,10 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
 
     //create world
     //b2vec2(0,2000) is the gravity force
-    world = new b2World(b2Vec2(0,400.0));
+    world = new b2World(b2Vec2(0,100.0));
+    world->SetAutoClearForces(true);
+    world->SetContinuousPhysics(true);
+    world->SetAllowSleeping(true);
     if (flag==DEBUG) qWarning()<<"World object created!";
 
     //setup our modified collisionlistener
@@ -283,13 +286,13 @@ bool Level::createJoints(QPoint p){
 void Level::timerEvent(QTimerEvent *e){
     e->accept();
     if (drag) showJointTimer++;
-    world->Step(step,10,10);
-    world->ClearForces();
-
+    for (int i=0;i<3;i++){
+        world->Step(step/3.0,10,10);
+    }
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
-        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,2);
+        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,0.2);
         stickys.push_back(sl);
         connect(sl,SIGNAL(destroySticky()),this,SLOT(destroySticky()));
     }
@@ -475,8 +478,9 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (drag){
         //compute the mouse speed (so when the goo is released it get the mouse spped)
         mouseSpeed=(toVec(e->pos())-mousePos);
-        mouseSpeed.x*=10000;
-        mouseSpeed.y*=10000;
+        mouseSpeed.x*=10;
+        mouseSpeed.y*=10;
+
         mousePos=toVec(e->pos());
         //Check if mouse is on the ground
         if (ground->contains(dragged)) {
@@ -616,6 +620,7 @@ void Level::giveTarget(Goo *previous){
                         distance=(goo->getVPosition()-goos[i]->getVPosition()).Length();
                         ok=true;
                     }
+
                 }
             }
             if (ok) goo->setTarget(next);
