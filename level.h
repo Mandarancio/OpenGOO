@@ -62,7 +62,7 @@ private:
     b2World *world;         //world object of the box2d lib
     float step;             //it say how much long is a step
     //Game
-    Ground *ground;         //Ground object
+    QList <Ground *>ground;         //Ground object
     QList <BackGround*> background; //background objects
 
     QList<Goo*> goos;       //All the goos!
@@ -112,6 +112,9 @@ private:
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
 
     Goo* getNearest(QPoint p,QList<Goo*> l);
+
+    bool groundContains(Goo* goo);
+    bool groundContains(QPoint p, int radius);
 
     //Function to translate the gui
     void moveUp();

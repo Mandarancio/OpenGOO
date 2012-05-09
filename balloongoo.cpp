@@ -32,11 +32,11 @@ void BalloonGoo::paint(QPainter &p){
 
     this->moveToTarget();
 
-    p.setPen(Qt::black);
 
-    p.setBrush(Qt::black);
     //not active status
     if (!active){
+        p.setBrush(Qt::yellow);
+        p.setPen(Qt::yellow);
         p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
         if (selected || dragging ){
             p.setPen(QPen(Qt::yellow,3,(dragging==true ? Qt::SolidLine : Qt::DashLine)));
@@ -46,6 +46,9 @@ void BalloonGoo::paint(QPainter &p){
     }
     //active status
     else{
+        p.setPen(Qt::black);
+
+        p.setBrush(Qt::black);
         //apply the force to fly)
         body->ApplyForceToCenter(force);
         body->SetAngularVelocity(0.0);

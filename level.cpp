@@ -93,7 +93,6 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     drag = false;
     dragged=NULL;
     selected=NULL;
-    ground=NULL;
     target=NULL;
 
 
@@ -156,10 +155,11 @@ Level::~Level(){
     goos.clear();
     if (flag==DEBUG) qWarning()<<"GOOs deleated";
     //clear ground.
-    if (ground) {
-        world->DestroyBody(ground->getBody());
-        delete ground;
+    for (int i=0;i<ground.length();i++){
+        world->DestroyBody(ground[i]->getBody());
+        delete ground[i];
     }
+    ground.clear();
     if (flag==DEBUG) qWarning()<<"Ground deleated";
     //clear world.
     delete world;
@@ -292,7 +292,7 @@ void Level::timerEvent(QTimerEvent *e){
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
-        StickyLink*sl=new StickyLink(p.first,ground->getBody(),p.second,world,0.2);
+        StickyLink*sl=new StickyLink(p.first,ground[0]->getBody(),p.second,world,0.2);
         stickys.push_back(sl);
         connect(sl,SIGNAL(destroySticky()),this,SLOT(destroySticky()));
     }
@@ -339,6 +339,21 @@ Goo *Level::getNearest(QPoint p,QList<Goo*> l){
     else return NULL;
 }
 
+bool Level::groundContains(Goo *goo){
+    for (int i=0;i<ground.length();i++)
+        if (ground[i]->contains(goo)) return true;
+    return false;
+}
+
+bool Level::groundContains(QPoint p, int radius){
+    for (int i=0;i<ground.length();i++)
+        if (ground[i]->contains(p,radius)) return true;
+    return false;
+}
+
+
+
+
 void Level::paintEvent(QPaintEvent *e){
 
     QPainter p(this);
@@ -359,7 +374,7 @@ void Level::paintEvent(QPaintEvent *e){
         background[i]->paint(p);
     }
 
-    if (ground) ground->paint(p);
+    for (int i=0;i<ground.length();i++) ground[i]->paint(p);
     if (target) target->paint(p);
     if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>20))
     {
@@ -483,9 +498,9 @@ void Level::mouseMoveEvent(QMouseEvent *e){
 
         mousePos=toVec(e->pos());
         //Check if mouse is on the ground
-        if (ground->contains(dragged)) {
+        if (groundContains(dragged)) {
             dragged->move(stopPosition);
-            if (!ground->contains(e->pos()/scale-translation,dragged->getRadius())) stopPosition=e->pos()/scale-translation;
+            if (!groundContains(e->pos()/scale-translation,dragged->getRadius())) stopPosition=e->pos()/scale-translation;
         }
         else {
             dragged->move(e->pos()/scale-translation);
@@ -862,7 +877,7 @@ void Level::setLimit(QRect limit){
 }
 
 void Level::setGround(QPoint gCenter, QList<QPoint> gList){
-    ground=new Ground(world,gCenter,gList,this);
+    ground.push_back(new Ground(world,gCenter,gList,this));
     if (flag==DEBUG) qWarning()<<"Ground created.";
 }
 
@@ -1061,7 +1076,7 @@ void Level::backToMainMenu()
 
 //function to stop a goo
 void Level::stopGoo(QPoint p){
-    if (ground->contains(p)){
+    if (groundContains(p,dragged->getRadius())){
         if (flag==DEBUG) qWarning()<<"P is in the Ground, stop dragging ";
         stopDragging();
     }

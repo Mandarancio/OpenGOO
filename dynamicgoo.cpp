@@ -104,7 +104,7 @@ void DynamicGoo::moveToTarget(){
             float xt=mx*ty+prevTarget->getVPosition().x;
 
             //if my y position is different at least of 12 falldown and return
-            if ((qAbs(getVPosition().y-yt)>getRadius() && qAbs(getVPosition().x-xt)>getRadius()) || (md>d+radius)){
+            if ((qAbs(getVPosition().y-yt)>getRadius()*1.5 && qAbs(getVPosition().x-xt)>getRadius()*1.5) || (md>d+radius*1.5)){
                 stopFollow();
                 fallDown();
                 return;
@@ -144,12 +144,12 @@ void DynamicGoo::moveToTarget(){
             b2Vec2 dvec=(target->getVPosition()-getVPosition());
             float d=qSqrt(dvec.x*dvec.x+dvec.y*dvec.y);
             if (onGround && target->isOnGround() && d<distanceToJoint){
-               double omega =(dP.x>0 ? speed*200 : -speed*200);
+               double omega =(dP.x>0 ? speed*100*body->GetMass() : -speed*100*body->GetMass());
                 body->SetAngularVelocity(omega);
                 body->ApplyForceToCenter(body->GetMass()*body->GetWorld()->GetGravity());
             }
             else if (!onGround && d<radius*2) {
-                dP.x=(dP.x>0 ? speed*1/body->GetMass()*2 : -speed*1/body->GetMass()*2);
+                dP.x=(dP.x>0 ? speed*2 : -speed*2);
                 dP.y=body->GetWorld()->GetGravity().y;
                 body->ApplyForceToCenter(dP);
             }
