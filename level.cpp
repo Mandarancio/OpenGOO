@@ -21,6 +21,7 @@
 #include <QPolygon>
 
 #define RADIUS 15
+#define DELAY 30
 
 Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers|QGL::StencilBuffer),parent)
@@ -423,7 +424,7 @@ void Level::paintEvent(QPaintEvent *e){
 
     for (int i=0;i<ground.length();i++) ground[i]->paint(p);
     if (target) target->paint(p);
-    if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>20))
+    if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
     {
         for (int i=0;i<possibility.length();i++)
             p.drawLine(dragged->getPPosition(),possibility[i]->getPPosition());
@@ -555,7 +556,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         }/*
         bool same=true;
         if (possibility.length()!=possibleJoints()*/
-        if (possibleJoints(dragged->getPPosition()).length()==0) showJointTimer=0;
+        if (possibleJoints(dragged->getPPosition()).length()==0 || possibleJoints(dragged->getPPosition()).length()!=possibility.length()) showJointTimer=0;
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
     }
@@ -640,7 +641,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
         clickButton(e->pos());
     }
     else if (drag){
-        if (showJointTimer<=25){
+        if (showJointTimer<=DELAY){
             dragged->drop(mouseSpeed);
         }
         else if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
