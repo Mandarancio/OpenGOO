@@ -77,9 +77,16 @@ void Ground::makeShape(QList<QPoint> points){
     //b2EdgeShape is a shape made of segments
     b2EdgeShape* shape;
     //make a segment for all the points
-    for (int i=0;i<points.length()-1;i++){
-        shape=new b2EdgeShape();
-        shape->Set(toVec(points[i]),toVec(points[i+1]));
-        body->CreateFixture(shape,1.0);
+    for (int i=0;i<points.length();i++){
+        if (i==points.length()-1){
+            shape=new b2EdgeShape();
+            shape->Set(toVec(points[i]),toVec(points[0]));
+            body->CreateFixture(shape,1.0);
+        }
+        else {
+            shape=new b2EdgeShape();
+            shape->Set(toVec(points[i]),toVec(points[i+1]));
+            body->CreateFixture(shape,1.0);
+        }
     }
 }

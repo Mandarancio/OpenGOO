@@ -29,18 +29,33 @@ void Thorn::makeShape(QList<QPoint> points){
     float angle,x,y,w,h,dx,dy;
     h=1.0;
     //make a segment for all the points
-    for (int i=0;i<points.length()-1;i++){
-        shape=new b2PolygonShape();
-        dx=(points[i].x()-points[i+1].x());
-        dy=(points[i].y()-points[i+1].y());
-        w=qSqrt(dx*dx+dy*dy)/2.0;
-        x=(points[i].x()+points[i+1].x())/2;
-        y=(points[i].y()+points[i+1].y())/2;
-        angle=3.141628/2-qAtan2(dx,dy);
-        shape->SetAsBox(w,h,b2Vec2(x,y),angle);
+    for (int i=0;i<points.length();i++){
+        if (i==points.length()-1){
+            shape=new b2PolygonShape();
+            dx=(points[i].x()-points[0].x());
+            dy=(points[i].y()-points[0].y());
+            w=qSqrt(dx*dx+dy*dy)/2.0;
+            x=(points[i].x()+points[0].x())/2;
+            y=(points[i].y()+points[0].y())/2;
+            angle=3.141628/2-qAtan2(dx,dy);
+            shape->SetAsBox(w,h,b2Vec2(x,y),angle);
 
-        //shape->Set(toVec(points[i]),toVec(points[i+1]));
-        fix= body->CreateFixture(shape,1.0);
+            //shape->Set(toVec(points[i]),toVec(points[i+1]));
+            fix= body->CreateFixture(shape,1.0);
+        }
+        else {
+            shape=new b2PolygonShape();
+            dx=(points[i].x()-points[i+1].x());
+            dy=(points[i].y()-points[i+1].y());
+            w=qSqrt(dx*dx+dy*dy)/2.0;
+            x=(points[i].x()+points[i+1].x())/2;
+            y=(points[i].y()+points[i+1].y())/2;
+            angle=3.141628/2-qAtan2(dx,dy);
+            shape->SetAsBox(w,h,b2Vec2(x,y),angle);
+
+            //shape->Set(toVec(points[i]),toVec(points[i+1]));
+            fix= body->CreateFixture(shape,1.0);
+        }
     }
 
 }
