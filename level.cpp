@@ -39,31 +39,14 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
     }
     if (flag==DEBUG) qWarning()<<"Geometry setted:"<<geometry;
 
+
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
     this->grabMouse();
     this->setMouseTracking(true);
     if (flag==DEBUG) qWarning()<<"Mouse and keyboard grabbed";
 
-    //compute the center of the display
-    //Fix for multi screen
-    center=QPoint(0,0);//(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());
-    //initialize translation values
-    translation=QPoint(0,0);
-
-    //create world
-    //b2vec2(0,2000) is the gravity force
-    world = new b2World(b2Vec2(0,100.0));
-    world->SetAutoClearForces(true);
-    world->SetContinuousPhysics(true);
-    world->SetAllowSleeping(true);
-    if (flag==DEBUG) qWarning()<<"World object created!";
-
-    //setup our modified collisionlistener
-    CollisionListener *cl=new CollisionListener(this);
-    world->SetContactListener(cl);
-    connect(cl,SIGNAL(stopGOO(QPoint)),this,SLOT(stopGoo(QPoint)));
-    if (flag==DEBUG) qWarning()<<"Collision listener created and set up!";
+    initialize();
 
     //setup the leveloader with some enviroment parameters
     loader=new SvgLevelLoader(level,geometry.size());
@@ -126,6 +109,78 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
 }
 
 Level::~Level(){
+    clean();
+}
+
+//Function to start the level
+//parse level file
+//start timer
+bool Level::startLevel(){
+    //load the level
+    if (loader->parse()){
+        if (flag==DEBUG) qWarning()<<"Level parse finished!";
+        //start timer
+        startTimer(step*1000);
+        if (flag==DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
+        return true;
+    }
+    else return false;
+}
+
+
+//Initialize function
+void Level::initialize()
+{
+    //compute the center of the display
+    //Fix for multi screen
+    center=QPoint(0,0);//(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());
+    //initialize translation values
+    translation=QPoint(0,0);
+
+    //create world
+    //b2vec2(0,2000) is the gravity force
+    world = new b2World(b2Vec2(0,100.0));
+    world->SetAutoClearForces(true);
+    world->SetContinuousPhysics(true);
+    world->SetAllowSleeping(true);
+    if (flag==DEBUG) qWarning()<<"World object created!";
+
+    //setup our modified collisionlistener
+    CollisionListener *cl=new CollisionListener(this);
+    world->SetContactListener(cl);
+    connect(cl,SIGNAL(stopGOO(QPoint)),this,SLOT(stopGoo(QPoint)));
+    if (flag==DEBUG) qWarning()<<"Collision listener created and set up!";
+
+    //setup the step variable
+    //this one is the interval between step
+    step=1.0/60.0;
+    //initialize variables for draggin goo
+    drag = false;
+    dragged=NULL;
+    selected=NULL;
+    target=NULL;
+
+
+    showJointTimer=0;
+
+    points=0;
+    catched=false;
+    if (flag==DEBUG) qWarning()<<"Game variable initialized!";
+
+    if (flag==DEBUG) {
+        qWarning()<<"Menu set up!";
+        uint32 flags = 0;//Set the flags
+        flags += 1* b2Draw::e_shapeBit;
+        flags += 1* b2Draw::e_jointBit;
+
+
+        debugPainter= new QB2Draw(this->geometry());
+        debugPainter->SetFlags(flags);
+        world->SetDebugDraw(debugPainter);
+    }
+}
+//Clean function
+void Level::clean(){
     //clear object bodies
     for (int i=0;i<objects.length();i++){
         world->DestroyBody(objects[i]->getBody());
@@ -164,24 +219,13 @@ Level::~Level(){
     //clear world.
     delete world;
     if (flag==DEBUG) qWarning()<<"World deleated";
-}
-
-//Function to start the level
-//parse level file
-//start timer
-bool Level::startLevel(){
-    //load the level
-    if (loader->parse()){
-        if (flag==DEBUG) qWarning()<<"Level parse finished!";
-        //start timer
-        startTimer(step*1000);
-        if (flag==DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
-        return true;
+    if (flag==DEBUG){
+        delete debugPainter;
+        qWarning()<<"Debug painter deleted";
     }
-    else return false;
 }
 
-
+//retrive a goo in a point (if there is a goo)
 Goo* Level::getGooAt(QPoint p){
     b2Vec2 d;
     for (int i=goos.count()-1;i>=0;i--){
@@ -193,6 +237,8 @@ Goo* Level::getGooAt(QPoint p){
     return NULL;
 }
 
+
+//Function to translate the scene
 void Level::moveUp(){
     if (translation.y()<limit.y())
         translation.setY(translation.y()+5);
@@ -222,6 +268,7 @@ void Level::moveOf(QPoint dP){
     translation=QPoint(xf,yf);
 }
 
+//Create a joint
 bool Level::makeJoint(Goo *a, Goo *b){
     bool baloon=false;
     if (a->getType()==BALOON ||b->getType()==BALOON) baloon=true;
@@ -795,39 +842,10 @@ void Level::resume(){
 }
 
 void Level::restart(){
-    for (int i=0;i<joints.length();i++){
-        world->DestroyJoint(joints[i]->getJoint());
-        delete joints[i];
-    }
-    joints.clear();
-
-    for (int i=0;i<stickys.length();i++){
-        world->DestroyJoint(stickys[i]->getJoint());
-        delete stickys[i];
-    }
-    stickys.clear();
-
-    for (int i=0;i<goos.length();i++){
-        world->DestroyBody(goos[i]->getBody());
-        delete goos[i];
-    }
-    goos.clear();
-    for (int i=0;i<objects.length();i++){
-        world->DestroyBody(objects[i]->getBody());
-        delete objects[i];
-    }
-    objects.clear();
-    delete world;
-
-    world = new b2World(b2Vec2(0,500));
-    CollisionListener *cl=new CollisionListener(this);
-    world->SetContactListener(cl);
+    clean();
+    initialize();
     loader->parse();
-    //createThorns();
-    points=0;
-    catched=false;
-    onMenu=false;
-    translation=QPoint(0,0);
+    resume();
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));

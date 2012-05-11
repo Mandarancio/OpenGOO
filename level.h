@@ -109,6 +109,11 @@ private:
 //    bool parseInfo(QString tag,QString info); //Recognize the tag and use the info
 
 
+    //INITIALIZE FUNCTION
+    void initialize();
+    //CLEAN FUNCTION
+    void clean();
+
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
 
     Goo* getNearest(QPoint p,QList<Goo*> l);
