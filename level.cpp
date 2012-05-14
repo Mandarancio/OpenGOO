@@ -21,7 +21,7 @@
 #include <QPolygon>
 
 #define RADIUS 15
-#define DELAY 30
+#define DELAY 20
 
 Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers|QGL::StencilBuffer),parent)

@@ -119,6 +119,8 @@ protected:
     //max  distance to joint
     int distanceToJoint;
 
+    //value of stick resistance
+    double stickness;
 
     Goo* target,*prevTarget;
 

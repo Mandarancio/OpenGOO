@@ -8,6 +8,9 @@
 #include <QList>
 #include <QMouseEvent>
 
+#include <QGraphicsItem>
+#include <QGraphicsScene>
+
 class Menu : public QObject
 {
     Q_OBJECT
@@ -17,6 +20,7 @@ public:
 private:
     QStringList index;
     QList<QRect> buttons;
+    QGraphicsScene *scene;
     QRect geometry;
     int selected;
     int height;
