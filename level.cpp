@@ -10,6 +10,7 @@
 #include "dynamicgoo.h"
 #include "removablegoo.h"
 #include "balloongoo.h"
+#include "stickygoo.h"
 #include "thorn.h"
 #include "stickylink.h"
 
@@ -954,6 +955,15 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(bg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
                 connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
         }
+        else if (type==4){ //Create a sticky goo
+                StickyGoo*  sg=new StickyGoo(world,center,RADIUS);
+                goos.push_back(sg);
+                connect(sg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+                connect(sg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+                connect(sg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+                connect(sg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+                connect(sg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+        }
         else return;
     }
     if (flag==DEBUG) qWarning()<<"A start area is created.";
@@ -1009,6 +1019,15 @@ void Level::setGoo(QPoint center,int id, int type){
             connect(bg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
             connect(bg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
             connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
+    }
+    else if (type==4){ //Create a sticky goo
+            StickyGoo*  sg=new StickyGoo(world,center,RADIUS);
+            goos.push_back(sg);
+            connect(sg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
+            connect(sg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
+            connect(sg,SIGNAL(destroyJoint(Goo*,Goo*)),this,SLOT(destroyJoint(Goo*,Goo*)));
+            connect(sg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
+            connect(sg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
     }
     if (goo!=NULL){
         loader->addGoo(id,goo);

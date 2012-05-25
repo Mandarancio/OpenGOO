@@ -99,6 +99,7 @@ bool SvgLevelLoader::parse(){
                     else if (!type.compare("RMV")) nType=1; //REMOVIBLE GOO
                     else if (!type.compare("FXD")) nType=2; //FIXED GOO
                     else if (!type.compare("BLN")) nType=3; //BALLOON GOO
+                    else if (!type.compare("STK")) nType=4; //STICKY GOO
                     QRect rect=parseRect(object);
                     emit levelStartArea(numGOO,rect,nType);
                 }
@@ -166,6 +167,7 @@ bool SvgLevelLoader::parse(){
                         else if (!type.compare("RMV")) nType=1; //REMOVIBLE GOO
                         else if (!type.compare("FXD")) nType=2; //FIXED GOO
                         else if (!type.compare("BLN")) nType=3; //BALLOON GOO
+                        else if (!type.compare("STK")) nType=4; //STICKY GOO
 
                         emit levelGOO(p,n,nType);
                     }
