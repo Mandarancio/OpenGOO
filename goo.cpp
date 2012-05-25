@@ -31,6 +31,8 @@ Goo::Goo( int radius, QObject *parent) :
     maxGuest=100;
     distanceToJoint=150;
 
+    stickness=0.2;
+
     target=NULL;
     prevTarget=NULL;
     type=NONE;
@@ -109,6 +111,10 @@ int Goo::getGuestNumber(){
 
 int Goo::getDistanceToJoint(){
     return distanceToJoint;
+}
+
+double Goo::getStickness(){
+    return stickness;
 }
 
 int Goo::getNumberOf(GooType type){

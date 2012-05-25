@@ -31,6 +31,8 @@ public:
 
     int getDistanceToJoint();
 
+    double getStickness();
+
     //TREE FUNCTION
     int getNumberOf(GooType type);
     void countingEnd();

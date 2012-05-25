@@ -1,6 +1,10 @@
 #include "stickygoo.h"
 
-StickyGoo::StickyGoo(QObject *parent) :
-    Goo(15,parent)
+StickyGoo::StickyGoo(b2World*world,QPoint point,int radius,QObject *parent) :
+    RemovableGoo(world,point,radius,parent)
 {
+    color=Qt::blue;
+    secondaryColor=Qt::blue;
+    stickness=100;
+    type=STICKY;
 }
