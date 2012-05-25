@@ -22,6 +22,7 @@ public:
     void unstick(); //To unstick the goo
     //Function that return if the goo is now draggable (if is linked is not)
     bool isDragable();
+    QColor getColor();
 private:
     b2World * world;// copy of the world
     int speed; //Speed

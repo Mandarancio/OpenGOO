@@ -447,7 +447,15 @@ void Level::paintEvent(QPaintEvent *e){
         }
     }
     for (int i=0;i<goos.length();i++){
-        if (goos[i] && !goos[i]->isDragging() && !goos[i]->isSelected()) {
+        if (goos[i] && goos[i]->hasJoint() && !goos[i]->isDragging() && !goos[i]->isSelected()){
+            goos[i]->paint(p);
+            if (flag==DEBUG){
+                goos[i]->paintDebug(p);
+            }
+        }
+    }
+    for (int i=0;i<goos.length();i++){
+        if (goos[i] && !goos[i]->isDragging() && !goos[i]->isSelected() && !goos[i]->hasJoint()) {
             goos[i]->paint(p);
             if (flag==DEBUG){
                 goos[i]->paintDebug(p);
@@ -468,6 +476,18 @@ void Level::paintEvent(QPaintEvent *e){
 
     //Draw selected and dragged goo
     if (dragged!=NULL) {
+        p.setPen(Qt::yellow);
+        if ((dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
+        {
+            for (int i=0;i<possibility.length();i++)
+                p.drawLine(dragged->getPPosition(),possibility[i]->getPPosition());
+        }
+        else if (drag && dragged->getType()==BALOON){
+            if (getNearest(dragged->getPPosition(),possibility)!= NULL){
+                p.drawLine(dragged->getPPosition(),getNearest(dragged->getPPosition(),possibility)->getPPosition());
+            }
+        }
+        p.setPen(Qt::black);
         dragged->paint(p);
         if (flag==DEBUG){
             dragged->paintDebug(p);

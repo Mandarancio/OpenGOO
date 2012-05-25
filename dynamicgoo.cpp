@@ -329,3 +329,7 @@ bool DynamicGoo::isDragable(){
     if (!hasJoint() && !isSleeping()) return true;
     else return false;
 }
+
+QColor DynamicGoo::getColor(){
+    return this->secondaryColor;
+}

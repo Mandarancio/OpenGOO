@@ -1,6 +1,8 @@
 #include "joint.h"
 #include "tools.h"
 
+#include <QLinearGradient>
+
 Joint::Joint(Goo *a, Goo *b, b2World *world,bool child, QObject *parent):
     QObject(parent)
 {
@@ -22,8 +24,11 @@ void Joint::initialize(b2World * world){
 
 void Joint::paint(QPainter &p){
     status();
+    QLinearGradient lg(this->a->getPPosition(),this->b->getPPosition());
+    lg.setColorAt(0,this->a->getColor());
+    lg.setColorAt(1,this->b->getColor());
     QPen pen;
-    pen.setColor(Qt::black);
+    pen.setBrush(lg);
     pen.setWidth(4);
     p.setPen(pen);
     QPoint a=toPoint(joint->GetBodyA()->GetPosition());

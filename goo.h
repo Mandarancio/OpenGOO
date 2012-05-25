@@ -71,6 +71,8 @@ public:
     virtual void contactGround()=0; //contact with the ground
     virtual void contactGround(QPoint p)=0; //contact with the ground in the point p
     virtual void destroyThis(); //destroy this goo
+
+    virtual QColor getColor()=0;
     void setTarget(Goo* goo);
 
     void move(QPoint p);
