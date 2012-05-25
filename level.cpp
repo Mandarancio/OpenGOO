@@ -947,7 +947,7 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(fg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
         }
         else if (type==3){ //Create a balloon goo
-                BalloonGoo*  bg=new BalloonGoo(world,center,RADIUS);
+                BalloonGoo*  bg=new BalloonGoo(world,QPoint(x,y),RADIUS);
                 goos.push_back(bg);
                 connect(bg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
                 connect(bg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
@@ -956,7 +956,7 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(bg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
         }
         else if (type==4){ //Create a sticky goo
-                StickyGoo*  sg=new StickyGoo(world,center,RADIUS);
+                StickyGoo*  sg=new StickyGoo(world,QPoint(x,y),RADIUS);
                 goos.push_back(sg);
                 connect(sg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
                 connect(sg,SIGNAL(destroyGoo()),this,SLOT(destroyGOO()));
