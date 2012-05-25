@@ -12,6 +12,7 @@ BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
 {
 
     color=Qt::yellow;
+    secondaryColor=Qt::yellow;
     distanceToJoint=200;
 
     maxJoints=1; //parameters
@@ -35,8 +36,8 @@ void BalloonGoo::paint(QPainter &p){
 
     //not active status
     if (!active){
-        p.setBrush(Qt::yellow);
-        p.setPen(Qt::yellow);
+        p.setBrush(color);
+        p.setPen(color);
         p.drawEllipse(toPoint(body->GetPosition()),getRadius(),getRadius());
         if (selected || dragging ){
             p.setPen(QPen(Qt::yellow,3,(dragging==true ? Qt::SolidLine : Qt::DashLine)));
@@ -46,15 +47,14 @@ void BalloonGoo::paint(QPainter &p){
     }
     //active status
     else{
-        p.setPen(Qt::black);
+        p.setPen(color);
 
-        p.setBrush(Qt::black);
+        p.setBrush(color);
         //apply the force to fly)
         body->ApplyForceToCenter(force);
         body->SetAngularVelocity(0.0);
         body->SetTransform(body->GetPosition(),0.0);
-        p.setBrush(Qt::black);
-        p.setPen(Qt::black);
+
 
         p.drawEllipse(QPoint(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry)),
                       getRadius()+qRound(rx),getRadius()+qRound(ry));
