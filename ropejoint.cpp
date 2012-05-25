@@ -41,14 +41,17 @@ void RopeJoint::initialize(b2World *world){
 
 void RopeJoint::paint(QPainter &p){
     if (!a->isLinked(b) || !b->isLinked(a)) emit this->destroyJoint(this);
-
-    p.setPen(QPen(Qt::black,2));
+    QLinearGradient lg(a->getPPosition(),b->getPPosition());
+    lg.setColorAt(0.0,a->getColor());
+    lg.setColorAt(1.0,b->getColor());
+    QPen pen;
+    pen.setWidth(2);
+    pen.setBrush(lg);
+    p.setPen(pen);
     for (int i=0;i<bodies.length()-1;i++){
         p.drawLine(toPoint(bodies[i]->GetPosition()),toPoint(bodies[i+1]->GetPosition()));
     }
     p.drawLine(toPoint(joint->GetAnchorA()),toPoint(joint->GetAnchorB())-QPoint(0,-5));
-    p.setPen(QPen(Qt::black,2));
-
     p.drawLine(toPoint(joint->GetAnchorA())+QPoint(2,0),toPoint(joint->GetAnchorB())+QPoint(0,-2));
     p.drawLine(toPoint(joint->GetAnchorA())-QPoint(2,0),toPoint(joint->GetAnchorB())+QPoint(0,-2));
 
