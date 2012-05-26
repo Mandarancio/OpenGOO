@@ -11,6 +11,8 @@ Joint::Joint(Goo *a, Goo *b, b2World *world,bool child, QObject *parent):
     this->b=b;
     type=NORMAL;
     if (!child) initialize(world);
+    animationValue=0.0;
+    counter=1;
 }
 
 void Joint::initialize(b2World * world){
@@ -31,17 +33,44 @@ void Joint::paint(QPainter &p){
     pen.setBrush(lg);
     pen.setWidth(4);
     p.setPen(pen);
-    QPoint a=toPoint(joint->GetBodyA()->GetPosition());
-    QPoint b=toPoint(joint->GetBodyB()->GetPosition());
-    p.drawLine(a,b);
-    p.drawLine(a.x()-2,a.y()-2,b.x()+2,b.y()+2);
-    p.drawLine(a.x()-1,a.y()-1,b.x()+1,b.y()+1);
-    p.drawLine(a.x()-3,a.y()-3,b.x()+3,b.y()+3);
-    p.drawLine(a.x()-4,a.y()-4,b.x()+4,b.y()+4);
-    p.drawLine(a.x()+4,a.y()+4,b.x()-4,b.y()-4);
-    p.drawLine(a.x()+3,a.y()+3,b.x()-3,b.y()-3);
-    p.drawLine(a.x()+1,a.y()+1,b.x()-1,b.y()-1);
-    p.drawLine(a.x()+2,a.y()+2,b.x()-2,b.y()-2);
+    drawLines(p);
+
+    if (counter>0){
+        counter++;
+    }
+    else if (counter<0){
+        counter--;
+    }
+    if ((qAbs(counter)==1) || !qAbs((counter)%3)){
+        animationValue+=0.06*(counter/qAbs(counter));
+        if (animationValue>=1.0){
+            counter=-1;
+            animationValue=1;
+        }
+        else if (animationValue<=0.0){
+            animationValue=0;
+            counter=+1;
+        }
+    }
+
+    QColor anColor(255,255,255);
+    if (a->getColor().blackF()<0.5 && b->getColor().blackF()<0.5)
+        anColor.setAlpha(30);
+
+    else
+        anColor.setAlpha(8);
+
+    lg=QLinearGradient(a->getPPosition(),b->getPPosition());
+    lg.setColorAt(0,Qt::transparent);
+    lg.setColorAt(1,Qt::transparent);
+    lg.setColorAt(animationValue,anColor);
+
+
+    pen.setBrush(lg);
+    p.setPen(pen);
+    drawLines(p);
+
+
 }
 
 void Joint::paintDebug(QPainter &p){
@@ -70,6 +99,20 @@ void Joint::status(){
         b->destroyLink(a);
         emit destroyJoint(this);
     }
+}
+
+void Joint::drawLines(QPainter &p){
+    QPoint a=toPoint(joint->GetBodyA()->GetPosition());
+    QPoint b=toPoint(joint->GetBodyB()->GetPosition());
+    p.drawLine(a,b);
+    p.drawLine(a.x()-2,a.y()-2,b.x()+2,b.y()+2);
+    p.drawLine(a.x()-1,a.y()-1,b.x()+1,b.y()+1);
+    p.drawLine(a.x()-3,a.y()-3,b.x()+3,b.y()+3);
+    p.drawLine(a.x()-4,a.y()-4,b.x()+4,b.y()+4);
+    p.drawLine(a.x()+4,a.y()+4,b.x()-4,b.y()-4);
+    p.drawLine(a.x()+3,a.y()+3,b.x()-3,b.y()-3);
+    p.drawLine(a.x()+1,a.y()+1,b.x()-1,b.y()-1);
+    p.drawLine(a.x()+2,a.y()+2,b.x()-2,b.y()-2);
 }
 
 b2Joint* Joint::getJoint(){

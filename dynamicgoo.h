@@ -27,12 +27,14 @@ private:
     b2World * world;// copy of the world
     int speed; //Speed
     bool sticked; //flag to know if is sticked to the ground
+
 protected:
     void moveToTarget(); //move to the target
     QColor color; //Color for recognize type of dynamic goo
     QColor secondaryColor; //For recognize secondary option
     bool stickable; //Flag to know if is stickable
-
+    int counter; //ANIMATION COUNTER
+    int rx,ry; //ANIMATION COORDINATE
 
 private slots:
 

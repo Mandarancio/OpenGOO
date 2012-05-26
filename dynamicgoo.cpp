@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include <qmath.h>
+#include <QRadialGradient>
 
 DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     Goo(radius,parent)
@@ -44,6 +45,9 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     stickable=true;
     maxJoints=7; //parameters
     speed=50;
+    counter=10; //COUNTER FOR ANIMATION
+    rx=0; //Animation coordinate x
+    ry=0; //Animation coordinate y
     type=DYNAMIC;
 }
 
@@ -144,7 +148,7 @@ void DynamicGoo::moveToTarget(){
             b2Vec2 dvec=(target->getVPosition()-getVPosition());
             float d=qSqrt(dvec.x*dvec.x+dvec.y*dvec.y);
             if (onGround && target->isOnGround() && d<distanceToJoint){
-               double omega =(dP.x>0 ? speed*100*body->GetMass() : -speed*100*body->GetMass());
+                double omega =(dP.x>0 ? speed*100*body->GetMass() : -speed*100*body->GetMass());
                 body->SetAngularVelocity(omega);
                 body->ApplyForceToCenter(body->GetMass()*body->GetWorld()->GetGravity());
             }
@@ -198,7 +202,26 @@ void DynamicGoo::paint(QPainter &p){
     }
     //paint goo
     p.setPen(secondaryColor);
-    p.setBrush(secondaryColor);
+
+    if (counter >=2) {
+        rx+=(rand()%5-2);
+        ry+=(rand()%5-2);
+        if (qAbs(rx)>15) rx=15*(rx/qAbs(rx));
+        if (qAbs(ry)>15) ry=15*(ry/qAbs(ry));
+        counter =0;
+    }
+
+    counter++;
+
+    QColor center=secondaryColor;
+    center.setRgb((center.red()+50 > 255 ? 255 : center.red()+50),(center.green()+50 > 255 ? 255 : center.green()+50),(center.blue()+50 > 255 ? 255 : center.blue()+50));
+
+
+    QRadialGradient rg(getPPosition().x()+rx,getPPosition().y()+ry,getRadius()+5);
+    rg.setColorAt(0,center);
+    rg.setColorAt(1,secondaryColor);
+
+    p.setBrush(rg);
     p.drawEllipse(getPPosition(),getRadius(),getRadius());
 
 }

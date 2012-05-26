@@ -24,6 +24,12 @@ protected:
     b2Joint* joint; //The phisical joint
     Goo *a,*b; //the two linked goo
     virtual void status(); // function to check the status of the joint
+private:
+
+    //ANIMATION VARIABLE
+    float animationValue;
+    int counter;
+    void drawLines(QPainter & p);
 signals:
     void destroyJoint(Joint *j); //SIGNAL FOR DESTROY THIS JOINT
 public slots:
