@@ -77,9 +77,9 @@ void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2
 
     double angle=qAtan2(axis.x,axis.y);
     painter->rotate(angle*180.0/3.141628-90.0);
-    painter->drawLine(0,0,radius,0);
+    painter->drawLine(0,0,radius*scale,0);
     painter->rotate(-90);
-    painter->drawLine(0,0,radius,0);
+    painter->drawLine(0,0,radius*scale,0);
 
 
     painter->restore();

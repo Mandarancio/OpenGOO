@@ -25,7 +25,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     b2FixtureDef fixDef; //Definition of the phisical parameters
     fixDef.restitution=0.2; //collision restitution
     fixDef.density=1.0; //density
-    fixDef.friction=10.0; //friction
+    fixDef.friction=0.1; //friction
     fixDef.shape=&shape; //assign the shape
 
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
@@ -154,7 +154,7 @@ void DynamicGoo::moveToTarget(){
             b2Vec2 dvec=(target->getVPosition()-getVPosition());
             float d=qSqrt(dvec.x*dvec.x+dvec.y*dvec.y);
             if (onGround && target->isOnGround() && d<distanceToJoint){
-                double omega =(dP.x>0 ? speed*100*body->GetMass() : -speed*100*body->GetMass());
+                double omega =(dP.x>0 ? speed*body->GetMass() : -speed*body->GetMass());
                 body->SetAngularVelocity(omega);
                 body->ApplyForceToCenter(body->GetMass()*body->GetWorld()->GetGravity());
             }
