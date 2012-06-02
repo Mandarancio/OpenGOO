@@ -85,6 +85,7 @@ public:
 
     b2Body* getBody();
     b2Vec2 getVPosition();
+    b2Vec2 getVPositionScaled();
     QPoint getPPosition();
 
     QList <Goo*> getLinks();

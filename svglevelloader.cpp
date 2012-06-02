@@ -145,6 +145,7 @@ bool SvgLevelLoader::parse(){
                         link.first=a;
                         link.second=b;
                         links.push_back(link);
+
                     }
                 }
                 else if (!label.compare("#goo")){

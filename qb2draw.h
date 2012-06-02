@@ -20,6 +20,7 @@ public:
 private:
     QPainter * painter; //The painter
     QRect geometry; //The geometry
+    float scale;
 
     QPoint toQPoint(b2Vec2 vec); //To convert b2vec2 in QPoint (and also change the coordinate system)
     QColor toQColor(b2Color color); //To convert b2Color in QColor

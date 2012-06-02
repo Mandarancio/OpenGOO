@@ -15,6 +15,7 @@ QB2Draw::QB2Draw(QRect displayGeometry,QPainter *p)
 {
     this->geometry=displayGeometry; //Set the display geometry (for convert the coordinate system)
     this->painter=p; //For setting the painter
+    this->scale=10.0;
 }
 
 
@@ -59,7 +60,7 @@ void QB2Draw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &co
     QColor c=toQColor(color); //Convert the color
     painter->setPen(c); //Set pen color
     painter->setBrush(Qt::transparent); //set brush color
-    painter->drawEllipse(toQPoint(center),qRound(radius),qRound(radius)); //draw circonference
+    painter->drawEllipse(toQPoint(center),qRound(radius*scale),qRound(radius*scale)); //draw circonference
 }
 
 void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color){
@@ -69,7 +70,7 @@ void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2
     //QColor c=toQColor(Qt::white); //Convert the color
     painter->setPen(Qt::white); //set pen color
     painter->setBrush(Qt::transparent); //set brush color
-    painter->drawEllipse(toQPoint(center),qRound(radius),qRound(radius)); //Draw circle
+    painter->drawEllipse(toQPoint(center),qRound(radius)*scale,qRound(radius)*scale); //Draw circle
 
     painter->save();
     painter->translate(toQPoint(center));
@@ -109,6 +110,6 @@ QColor QB2Draw::toQColor(b2Color color){
 }
 
 QPoint QB2Draw::toQPoint(b2Vec2 vec){
-    QPoint p(vec.x,vec.y); //Convert in qpoint
+    QPoint p(vec.x*scale,vec.y*scale); //Convert in qpoint
     return p; //change the coordinate system
 }

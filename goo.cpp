@@ -12,6 +12,7 @@ Goo::Goo( int radius, QObject *parent) :
     this->minJoints=0;
 
     guestN=0;
+    links=QList<Goo*>();
 
     counted=false;
     selected=false;
@@ -31,7 +32,7 @@ Goo::Goo( int radius, QObject *parent) :
     maxGuest=100;
     distanceToJoint=150;
 
-    stickness=0.2;
+    stickness=0.25;
 
     target=NULL;
     prevTarget=NULL;
@@ -75,7 +76,7 @@ bool Goo::isDragging(){
 }
 
 bool Goo::hasJoint(){
-    if (links.length()>0) return true;
+    if (radius && !links.empty()) return true;
     else return false;
 }
 
@@ -176,8 +177,8 @@ void Goo::jumpTo(QPoint p){
     this->falling=true;
     body->SetGravityScale(0);
     b2Vec2 v=toVec(p)-body->GetPosition();
-    v.x*=250/v.Length();
-    v.y*=250/v.Length();
+    v.x*=25/v.Length();
+    v.y*=25/v.Length();
     body->SetAngularVelocity(0);
     body->SetLinearVelocity(v);
 }
@@ -189,6 +190,10 @@ b2Body* Goo::getBody(){
 b2Vec2 Goo::getVPosition(){
     if (body==NULL) return b2Vec2(0,0);
     return body->GetPosition();
+}
+b2Vec2 Goo::getVPositionScaled(){
+    if (body==NULL) return b2Vec2(0,0);
+    return 10.0*body->GetPosition();
 }
 
 QPoint Goo::getPPosition(){

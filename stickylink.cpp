@@ -18,9 +18,10 @@ StickyLink::StickyLink(Goo *goo, b2Body *ground, QPoint contactPoint, b2World *w
 
 void StickyLink::checkStatus(){
    // qWarning()<<joint->GetReactionForce(1.0/60).Length();
-    if (goo->isDragging()) emit destroySticky();
+    if (goo==NULL || joint==NULL) return;
+    if (goo->isDragging() || !goo->hasJoint()) emit destroySticky();
     else if (joint->GetReactionForce(1.0/60).Length()>strength){
-        qWarning()<<this->strength<<joint->GetReactionForce(1.0/60.0).Length();
+        //qWarning()<<this->strength<<joint->GetReactionForce(1.0/60.0).Length();
         emit destroySticky(); //If the force > of the maximum force barke the link!
     }
 }
@@ -40,6 +41,7 @@ Goo* StickyLink::getGoo(){
 
 void StickyLink::paint(QPainter &p){
     p.setPen(Qt::red);
+    if (!joint || !goo) return;
     p.drawLine(goo->getPPosition(),toPoint(joint->GetAnchorB()));
     QPoint m=(goo->getPPosition()+toPoint(joint->GetAnchorB()))/2;
     int x,y;

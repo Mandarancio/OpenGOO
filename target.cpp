@@ -29,12 +29,12 @@ void Target::checkTower(QList<Goo *> ps){
     for (int i=0;i<ps.length();i++){
         if (ps[i]->hasJoint() && ps[i]->canHaveGuest()){
             d=toVec(position)-ps[i]->getVPosition();
-            if (d.Length()<80 && !catched){
+            if (d.Length()<80/10 && !catched){
                 emit this->towerCatch();
                 check=true;
                 catched=true;
             }
-            else if (d.Length()<80) check=true;
+            else if (d.Length()<80/10) check=true;
         }
     }
     if (!check && catched) {
@@ -69,10 +69,10 @@ void Target::applyForce(Goo *goo){
     if (catched && goo->hasJoint()){
         b2Vec2 d;
         d=toVec(position)-goo->getVPosition();
-        if (d.Length()>100) return;
+        if (d.Length()>20) return;
         d.x/=d.Length();
         d.y/=d.Length();
-        d*=600/d.Length();
+        d*=60/d.Length();
         goo->getBody()->ApplyForceToCenter(d);
     }
 }
@@ -83,11 +83,11 @@ void Target::applyImpulse(Goo *goo){
     if (!goo->hasJoint() && !goo->isDragging() && !goo->isSleeping() && catched){
         b2Vec2 d=toVec(position)-goo->getVPosition();
         //if the goo is at least at 15px from the target is catched
-        if (d.Length()<15){
+        if (d.Length()<1.5){
             emit gooCatched(goo);
         }
         //else if at least at 80px jump!
-        else if (d.Length()<80){
+        else if (d.Length()<8){
             goo->jumpTo(position);
         }
 

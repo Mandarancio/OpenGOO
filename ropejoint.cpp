@@ -32,9 +32,10 @@ void RopeJoint::initialize(b2World *world){
     jDef.bodyA=a->getBody();
     jDef.bodyB=b->getBody();
     jDef.localAnchorA.SetZero();
-    jDef.localAnchorB.Set(0,20);
+    jDef.localAnchorB.Set(0,2);
     jDef.collideConnected=true;
-    jDef.maxLength=250;
+    jDef.maxLength=25;
+
     joint=(b2RopeJoint*)world->CreateJoint(&jDef);
 
 }

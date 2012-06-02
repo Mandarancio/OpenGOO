@@ -56,10 +56,10 @@ void BalloonGoo::paint(QPainter &p){
         body->SetTransform(body->GetPosition(),0.0);
 
 
-        p.drawEllipse(QPoint(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry)),
+        p.drawEllipse(QPoint(body->GetPosition().x*10,body->GetPosition().y*10-(getRadius()/2+ry)),
                       getRadius()+qRound(rx),getRadius()+qRound(ry));
         p.save();
-        p.translate(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry));
+        p.translate(body->GetPosition().x*10,body->GetPosition().y*10-(getRadius()/2+ry));
         QPolygon pol(3);
         pol<<QPoint(radius+rx-12,radius-qAbs(rx)-qAbs(ry*2/3))<<QPoint(0,radius+ry+10)<<QPoint(-radius-rx+11,radius-qAbs(rx)-qAbs(ry*2/3));
         p.drawPolygon(pol);
@@ -68,7 +68,7 @@ void BalloonGoo::paint(QPainter &p){
             p.setPen(QPen(Qt::yellow,3,Qt::DotLine));
             p.setBrush(Qt::transparent);
             int r=(rx>ry? getRadius()+rx : getRadius()+ry);
-            p.drawEllipse(QPoint(body->GetPosition().x,body->GetPosition().y-(getRadius()/2+ry)),r+10,r+10);
+            p.drawEllipse(QPoint(body->GetPosition().x*10,body->GetPosition().y*10-(getRadius()/2+ry)),r+10,r+10);
 
         }
     }
@@ -91,9 +91,11 @@ bool BalloonGoo::createLink(Goo *goo){
         mass.I=0.1;
         mass.mass=0.5;
         body->SetMassData(&mass);
+        body->SetLinearDamping(0.2);
+        body->SetAngularDamping(0.2);
 
 
-        force=-b2Vec2(0,(10*body->GetWorld()->GetGravity().y));
+        force=-b2Vec2(0,(8*body->GetWorld()->GetGravity().y));
 
         return true;
     }
@@ -115,7 +117,7 @@ bool BalloonGoo::destroyLink(Goo *goo){
         b2MassData mass;
         mass.center.SetZero();
         mass.I=0.1;
-        mass.mass=1.0;
+        mass.mass=0.5;
         body->SetMassData(&mass);
 
         if (!isDragging() && !hasJoint()) body->SetActive(false);

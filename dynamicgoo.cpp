@@ -20,17 +20,17 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     body=world->CreateBody(&def); //create the physical body
     b2CircleShape shape; //define the shape
     shape.m_p.SetZero(); //position of the shape
-    shape.m_radius=radius; //radius
+    shape.m_radius=radius/10.0; //radius
 
     b2FixtureDef fixDef; //Definition of the phisical parameters
-    fixDef.restitution=0.03; //collision restitution
-    fixDef.density=0.0; //density
+    fixDef.restitution=0.2; //collision restitution
+    fixDef.density=1.0; //density
     fixDef.friction=10.0; //friction
     fixDef.shape=&shape; //assign the shape
 
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
     body->CreateFixture(&fixDef); //create the fixture
-    body->SetLinearDamping(0.1);//Not sure about this parameter
+    body->SetLinearDamping(0.11);//Not sure about this parameter
     body->SetAngularDamping(0.1);
     //set mass
     b2MassData mass;
@@ -44,7 +44,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     dragable=true;
     stickable=true;
     maxJoints=7; //parameters
-    speed=50;
+    speed=10;
     counter=10; //COUNTER FOR ANIMATION
     rx=0; //Animation coordinate x
     ry=0; //Animation coordinate y
@@ -52,11 +52,11 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
 }
 
 void DynamicGoo::catched(){
-    speed*=2;
+    speed=15;
 }
 
 void DynamicGoo::lost(){
-    speed/=2;
+    speed=10;
 }
 
 void DynamicGoo::moveToTarget(){
@@ -86,7 +86,7 @@ void DynamicGoo::moveToTarget(){
                 return;
             }
             QPoint meTarget=target->getPPosition()-getPPosition();
-            if (toVec(meTarget).Length()>150) {
+            if (toVec(meTarget).Length()>15+radius/10) {
                 stopFollow();
                 fallDown();
                 return;
@@ -108,7 +108,7 @@ void DynamicGoo::moveToTarget(){
             float xt=mx*ty+prevTarget->getVPosition().x;
 
             //if my y position is different at least of 12 falldown and return
-            if ((qAbs(getVPosition().y-yt)>getRadius()*1.5 && qAbs(getVPosition().x-xt)>getRadius()*1.5) || (md>d+radius*1.5)){
+            if ((qAbs(getVPosition().y-yt)>getRadius() && qAbs(getVPosition().x-xt)>getRadius()) || (md>d+radius)){
                 stopFollow();
                 fallDown();
                 return;
@@ -123,10 +123,16 @@ void DynamicGoo::moveToTarget(){
             float d=(target->getVPosition()-getVPosition()).Length();
             //if that distance is more than 25 falldown and return
             //PS: remember that 30 is a single point contact between two goos
-            if (d>radius*2) {
+            if (d>=radius*0.2) {
                 stopFollow();
                 fallDown();
                 return;
+            }
+            else if (d<radius*0.2){
+                emit this->nextTargetPlease(target);
+                body->SetLinearVelocity(b2Vec2(0,0));
+                return;
+
             }
 
         }
@@ -138,7 +144,7 @@ void DynamicGoo::moveToTarget(){
             fallDown();
             return;
         }
-        if (dP.Length()<=radius-radius/4){
+        if (dP.Length()<=(radius-radius/4.0)/10.0){
             emit this->nextTargetPlease(target);
             body->SetLinearVelocity(b2Vec2(0,0));
             return;
@@ -153,8 +159,11 @@ void DynamicGoo::moveToTarget(){
                 body->ApplyForceToCenter(body->GetMass()*body->GetWorld()->GetGravity());
             }
             else if (!onGround && d<radius*2) {
+                emit this->nextTargetPlease(target);
+                body->SetLinearVelocity(b2Vec2(0,0));
+                return;
                 dP.x=(dP.x>0 ? speed*2 : -speed*2);
-                dP.y=body->GetWorld()->GetGravity().y;
+                dP.y=body->GetMass()*body->GetWorld()->GetGravity().y;
                 body->ApplyForceToCenter(dP);
             }
             else{
@@ -203,27 +212,35 @@ void DynamicGoo::paint(QPainter &p){
     //paint goo
     p.setPen(secondaryColor);
 
-    if (counter >=2) {
-        rx+=(rand()%5-2);
-        ry+=(rand()%5-2);
-        if (qAbs(rx)>15) rx=15*(rx/qAbs(rx));
-        if (qAbs(ry)>15) ry=15*(ry/qAbs(ry));
-        counter =0;
-    }
-
-    counter++;
-
     QColor center=secondaryColor;
     center.setRgb((center.red()+50 > 255 ? 255 : center.red()+50),(center.green()+50 > 255 ? 255 : center.green()+50),(center.blue()+50 > 255 ? 255 : center.blue()+50));
 
+    if (sleeping){
+        p.setBrush(center);
+        p.drawEllipse(getPPosition(),getRadius(),getRadius());
 
-    QRadialGradient rg(getPPosition().x()+rx,getPPosition().y()+ry,getRadius()+5);
-    rg.setColorAt(0,center);
-    rg.setColorAt(1,secondaryColor);
+    }
+    else {
+        p.setBrush(secondaryColor);
+        p.drawEllipse(getPPosition(),getRadius(),getRadius());
 
-    p.setBrush(rg);
-    p.drawEllipse(getPPosition(),getRadius(),getRadius());
+        if (counter >=2) {
+            rx+=(rand()%5-2);
+            ry+=(rand()%5-2);
+            if (qAbs(rx)>15) rx=15*(rx/qAbs(rx));
+            if (qAbs(ry)>15) ry=15*(ry/qAbs(ry));
+            counter =0;
+        }
 
+        counter++;
+
+        QRadialGradient rg(getPPosition().x()+rx,getPPosition().y()+ry,getRadius()+5);
+        rg.setColorAt(0,center);
+        rg.setColorAt(1,Qt::transparent);
+
+        p.setBrush(rg);
+        p.drawEllipse(getPPosition(),getRadius(),getRadius());
+    }
 }
 
 void DynamicGoo::paintDebug(QPainter &p){

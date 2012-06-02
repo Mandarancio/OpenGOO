@@ -5,11 +5,11 @@
 */
 
 b2Vec2 toVec(QPoint p){
-    return b2Vec2(p.x(),p.y());
+    return b2Vec2(p.x()/10.0,p.y()/10.0);
 }
 
 QPoint toPoint(b2Vec2 v){
-    return QPoint(v.x,v.y);
+    return QPoint(qRound(v.x*10.0),qRound(v.y*10.0));
 }
 
 b2Vec2* toVecs(QList<QPoint> ps){

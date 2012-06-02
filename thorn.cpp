@@ -27,16 +27,16 @@ void Thorn::makeShape(QList<QPoint> points){
     b2PolygonShape* shape;
     b2Fixture* fix;
     float angle,x,y,w,h,dx,dy;
-    h=1.0;
+    h=0.1;
     //make a segment for all the points
     for (int i=0;i<points.length();i++){
         if (i==points.length()-1){
             shape=new b2PolygonShape();
             dx=(points[i].x()-points[0].x());
             dy=(points[i].y()-points[0].y());
-            w=qSqrt(dx*dx+dy*dy)/2.0;
-            x=(points[i].x()+points[0].x())/2;
-            y=(points[i].y()+points[0].y())/2;
+            w=qSqrt(dx*dx+dy*dy)/20.0;
+            x=(points[i].x()+points[0].x())/20;
+            y=(points[i].y()+points[0].y())/20;
             angle=3.141628/2-qAtan2(dx,dy);
             shape->SetAsBox(w,h,b2Vec2(x,y),angle);
 
@@ -47,9 +47,9 @@ void Thorn::makeShape(QList<QPoint> points){
             shape=new b2PolygonShape();
             dx=(points[i].x()-points[i+1].x());
             dy=(points[i].y()-points[i+1].y());
-            w=qSqrt(dx*dx+dy*dy)/2.0;
-            x=(points[i].x()+points[i+1].x())/2;
-            y=(points[i].y()+points[i+1].y())/2;
+            w=qSqrt(dx*dx+dy*dy)/20.0;
+            x=(points[i].x()+points[i+1].x())/20;
+            y=(points[i].y()+points[i+1].y())/20;
             angle=3.141628/2-qAtan2(dx,dy);
             shape->SetAsBox(w,h,b2Vec2(x,y),angle);
 

@@ -40,6 +40,7 @@ void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifo
             if (a->hasJoint() && b->getTarget()!=a ){
                 b->setTarget(a);
             }
+
 //            else if (a->getTarget()!=NULL &&  a->getTarget()!=b->getTarget()){
 //                b->setTarget(a->getTarget());
 //            }
@@ -109,8 +110,8 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
                     //Compute the angle
                     float angle=atan2(n.y,n.x);
                     //Compute x,y of the vector
-                    float px=20.0*cos(angle);
-                    float py=20.0*sin(angle);
+                    float px=2.0*cos(angle);
+                    float py=2.0*sin(angle);
                     p.x-=px;
                     p.y-=py;
 
@@ -125,6 +126,5 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
         }
     }
     else if (!b) {
-        qWarning()<<"HERE";
     }
 }
