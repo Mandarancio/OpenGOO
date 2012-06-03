@@ -310,9 +310,16 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     if (str[str.length()-1]=='z') nPoint--;
     //Start to parse the list;
     QPoint p;
+    int skip=0;
     for (int i=1;i<nPoint+1;i++){
+        if (str.split(' ').at(i)[0]=='l') {
+            qWarning()<<"l";
+            relative=true;
+            skip++;
+            continue;
+        }
         if (!((str.split(' ').at(i)[0]>='0' &&  str.split(' ').at(i)[0]<='9')|| str.split(' ').at(i)[0]=='-' )) {
-            if (i>2) list.push_back(list[i-2]);
+            if (i>2) list.push_back(list[i-2-skip]);
             qWarning()<<"ERROR"<<str.split(' ').at(i);
             continue;
         }
@@ -326,7 +333,7 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
                 p-=(list.at(0));
             }
             else if (relative && list.count()) {
-                p+=(i>2? list.at(i-2):QPoint(0,0));
+                p+=(i>2? list.at(i-2-skip):QPoint(0,0));
             }
             list.push_back(p);
         }

@@ -72,7 +72,7 @@ void Target::applyForce(Goo *goo){
         if (d.Length()>20) return;
         d.x/=d.Length();
         d.y/=d.Length();
-        d*=60/d.Length();
+        d*=60/d.Length()*goo->getBody()->GetMass();
         goo->getBody()->ApplyForceToCenter(d);
     }
 }

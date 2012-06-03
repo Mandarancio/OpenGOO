@@ -948,7 +948,7 @@ void Level::setStartArea(int n, QRect area,int type){
         y=area.y()+qrand()%area.height();
         radius=RADIUS+(qrand()%(INTERVALL*2)-INTERVALL);
 
-        if (type==0) { //Create a standard gooo
+        if (type==1) { //Create a standard gooo
                 DynamicGoo* dg=new DynamicGoo(world,QPoint(x,y),radius);
                 goos.push_back(dg);
                 connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
@@ -957,7 +957,7 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
                 connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
         }
-        else if (type==1){ //Create a removable goo
+        else if (type==0){ //Create a removable goo
                 RemovableGoo* rg=new RemovableGoo(world,QPoint(x,y),radius);
                 goos.push_back(rg);
                 connect(rg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
