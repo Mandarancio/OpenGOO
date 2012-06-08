@@ -28,6 +28,8 @@ private:
     //Translate variable
     QPoint translate;
     //List of shape with color
+    QRect computeRect();
+
     QList < QPair<QPolygon, QColor> > polygons;
 
 signals:
@@ -37,6 +39,7 @@ public slots:
     void setTranslate(QPoint p);
     //Function to paint
     void paint(QPainter &p);
+
 };
 
 #endif // BACKGROUND_H

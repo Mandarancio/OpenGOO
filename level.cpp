@@ -26,7 +26,7 @@
 #define DELAY 20
 
 Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::SampleBuffers),parent)
+    QGLWidget(QGLFormat(QGL::AccumBuffer),parent)
 {
     scale=1.0;
     goal = 100;

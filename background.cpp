@@ -1,5 +1,9 @@
 #include "background.h"
 #include <QGraphicsBlurEffect>
+#include <QImage>
+#include <QGraphicsPolygonItem>
+#include <QStyleOptionGraphicsItem>
+#include "graphicseffect.h"
 
 BackGround::BackGround(int id,QObject *parent) :
     QObject(parent)
@@ -24,6 +28,15 @@ void BackGround::setDelta(float delta){
 int BackGround::getID(){
     return id;
 }
+
+QRect BackGround::computeRect(){
+    QRectF rect=polygons[0].first.boundingRect();
+    for (int i=1;i<polygons.length();i++){
+        rect.unite(polygons[i].first.boundingRect());
+    }
+    return rect.toRect();
+}
+
 //Set translate
 void BackGround::setTranslate(QPoint p){
     translate=QPoint(-p.x()*delta,-p.y()*delta);
@@ -32,15 +45,22 @@ void BackGround::setTranslate(QPoint p){
 //paint
 void BackGround::paint(QPainter &p){
 
-    QGraphicsBlurEffect *effect;
-    effect=new QGraphicsBlurEffect();
-    effect->setBlurRadius(1.5);
-    p.save();
-    p.translate(translate);
-    p.setPen(Qt::transparent);
-    for (int i=0;i<polygons.length();i++){
-       p.setBrush(polygons[i].second);
-       p.drawPolygon(polygons[i].first);
-    }
-    p.restore();
+        p.save();
+        p.translate(translate);
+        p.setPen(Qt::transparent);
+        QStyleOptionGraphicsItem * option=new QStyleOptionGraphicsItem();
+        for (int i=0;i<polygons.length();i++){
+//           p.setBrush(polygons[i].second);
+//           p.drawPolygon(polygons[i].first);
+            QGraphicsPolygonItem item(polygons[i].first);
+            item.setBrush(polygons[i].second);
+            item.setPen(QPen(Qt::transparent));
+            QGraphicsBlurEffect * effect=new QGraphicsBlurEffect();
+            effect->setBlurRadius(5);
+
+            item.setGraphicsEffect(effect);
+            item.paint(&p,option);
+        }
+        p.restore();
+
 }
