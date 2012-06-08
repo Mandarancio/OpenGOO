@@ -24,6 +24,7 @@ This program is free software: you can redistribute it and/or modify
 
 #include <QDebug>
 
+#include <QGraphicsBlurEffect>
 #include <QTime>
 
 #define GAMEDIR "/.OpenGOO/"
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
         //create subdir for user levels and progressions.
         dir.mkdir("userLevels/");
         dir.mkdir("userProgression/");
+        dir.mkdir("debug/");
     }
     else if (debug) qWarning()<<"Game dir exist!";
     //Create the main widget in the bigger screen

@@ -1,4 +1,5 @@
 #include "background.h"
+#include <QGraphicsBlurEffect>
 
 BackGround::BackGround(int id,QObject *parent) :
     QObject(parent)
@@ -30,6 +31,10 @@ void BackGround::setTranslate(QPoint p){
 
 //paint
 void BackGround::paint(QPainter &p){
+
+    QGraphicsBlurEffect *effect;
+    effect=new QGraphicsBlurEffect();
+    effect->setBlurRadius(1.5);
     p.save();
     p.translate(translate);
     p.setPen(Qt::transparent);

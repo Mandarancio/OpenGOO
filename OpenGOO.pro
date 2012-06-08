@@ -43,7 +43,8 @@ HEADERS += \
     ropejoint.h \
     qb2draw.h \
     mainmenu.h \
-    stickygoo.h
+    stickygoo.h \
+    graphicseffect.h
 
 
 SOURCES += \
@@ -70,7 +71,8 @@ SOURCES += \
     ropejoint.cpp \
     qb2draw.cpp \
     mainmenu.cpp \
-    stickygoo.cpp
+    stickygoo.cpp \
+    graphicseffect.cpp
 
 
 ##FOR TOUCHPAD COMPILE
@@ -80,6 +82,8 @@ SOURCES += \
 #LIBS += -Wl,-rpath,"'\$$ORIGIN/qt'" -L/opt/PalmPDK/device/lib -lpdl -lSDL
 #INCLUDEPATH += /opt/PalmPDK/include/SDL
 #}
+
+
 
 
 
