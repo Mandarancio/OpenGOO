@@ -221,8 +221,15 @@ void DynamicGoo::paint(QPainter &p){
 
     }
     else {
+        b2Vec2 speed=body->GetLinearVelocity();
+        float angle=qAtan2(speed.x,speed.y);
+        float module=(isFalling() ? speed.Length()/8 :0);
+        p.save();
+        p.translate(getPPosition());
+        p.rotate(angle*180.0/3.141628);
         p.setBrush(secondaryColor);
-        p.drawEllipse(getPPosition(),getRadius(),getRadius());
+
+        p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
 
         if (counter >=2) {
             rx+=(rand()%5-2);
@@ -234,12 +241,13 @@ void DynamicGoo::paint(QPainter &p){
 
         counter++;
 
-        QRadialGradient rg(getPPosition().x()+rx,getPPosition().y()+ry,getRadius()+5);
+        QRadialGradient rg(rx,ry,getRadius()+5);
         rg.setColorAt(0,center);
         rg.setColorAt(1,Qt::transparent);
 
         p.setBrush(rg);
-        p.drawEllipse(getPPosition(),getRadius(),getRadius());
+        p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
+        p.restore();
     }
 }
 
