@@ -7,7 +7,7 @@
 #include <QPolygon>
 #include <QColor>
 #include <QPainter>
-
+#include <QGraphicsScene>
 class BackGround : public QObject
 {
     Q_OBJECT
@@ -29,7 +29,7 @@ private:
     QPoint translate;
     //List of shape with color
     QRect computeRect();
-
+    QGraphicsScene *scene;
     QList < QPair<QPolygon, QColor> > polygons;
 
 signals:

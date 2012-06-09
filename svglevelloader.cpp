@@ -313,8 +313,12 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
     int skip=0;
     for (int i=1;i<nPoint+1;i++){
         if (str.split(' ').at(i)[0]=='l') {
-            qWarning()<<"l";
             relative=true;
+            skip++;
+            continue;
+        }
+        else if (str.split(' ').at(i)[0]=='L'){
+            relative=false;
             skip++;
             continue;
         }

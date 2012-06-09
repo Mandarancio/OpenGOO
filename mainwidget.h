@@ -6,7 +6,7 @@
 #include "level.h"
 #include "levelselector.h"
 
-class MainWidget : public QGLWidget
+class MainWidget : public QWidget
 {
     Q_OBJECT
 

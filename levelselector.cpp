@@ -1,7 +1,7 @@
 #include "levelselector.h"
 
 LevelSelector::LevelSelector(QRect geometry,QWidget *parent):
-    QGLWidget(QGLFormat(QGL::SampleBuffers|QGL::HasOverlay),parent)
+    QWidget(parent)
 {
 
     this->grabMouse();    

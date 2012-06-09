@@ -9,7 +9,7 @@
 #include <QPaintEvent>
 
 
-class LevelSelector : public QGLWidget
+class LevelSelector : public QWidget
 {
     Q_OBJECT
 public:

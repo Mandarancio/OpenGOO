@@ -26,7 +26,7 @@
 #define DELAY 20
 
 Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::AccumBuffer|QGL::SingleBuffer),parent)
+    QGLWidget(QGLFormat::defaultFormat(),parent)
 {
     scale=1.0;
     goal = 100;
@@ -412,6 +412,8 @@ void Level::paintEvent(QPaintEvent *e){
 
     QPainter p(this);
     //BG Color
+
+
     p.setPen(Qt::transparent);
     p.setBrush(Qt::darkGray);
 
@@ -531,7 +533,23 @@ void Level::paintEvent(QPaintEvent *e){
     paintWin(p);
     paintScore(p);
     paintButton(p);
+
+//    p.beginNativePainting();
+
+//    glEnable(GL_SCISSOR_TEST);
+//    glScissor(0, 0, 64, 64);
+
+//    glClearColor(1, 0, 0, 1);
+//    glClear(GL_COLOR_BUFFER_BIT);
+
+//    glDisable(GL_SCISSOR_TEST);
+
+//    glEnd();
+
+//    p.endNativePainting();
+
     if (p.end()) e->accept();
+
     else e->ignore();
 }
 
