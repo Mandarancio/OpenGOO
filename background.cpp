@@ -41,7 +41,7 @@ void BackGround::addPolygon(QPolygon polygon, QColor color){
     item->setActive(true);
 
     QGraphicsBlurEffect *effect=new QGraphicsBlurEffect();
-    effect->setBlurRadius(10*1/this->id);
+    effect->setBlurRadius(20*1/this->id);
     effect->setBlurHints(QGraphicsBlurEffect::QualityHint);
     item->setGraphicsEffect(effect);
 
@@ -79,7 +79,7 @@ void BackGround::paint(QPainter &p){
         p.translate(translate);
         p.setPen(Qt::transparent);
         if (img==NULL){
-            img=new QImage(scene->width()+70,scene->height()+70,QImage::Format_ARGB32_Premultiplied);
+            img=new QImage(scene->width()+100,scene->height()+100,QImage::Format_ARGB32_Premultiplied);
             QPainter * pimage=new QPainter(img);
 
             scene->render(pimage,QRect(0,0,scene->width(),scene->height()));

@@ -2,7 +2,6 @@
 #include "tools.h"
 #include <QDebug>
 #include <QImage>
-#include "graphicseffect.h"
 
 
 
