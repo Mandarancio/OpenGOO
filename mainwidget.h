@@ -1,10 +1,11 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <QGLWidget>
+#include <QWidget>
 #include <QCloseEvent>
 #include "level.h"
 #include "levelselector.h"
+#include "backgroundwidget.h"
 
 class MainWidget : public QWidget
 {
@@ -16,6 +17,7 @@ public:
 private:
     Level *level;
     LevelSelector *levelS;
+    BackGroundWidget * bgWidget;
 
     QRect geometry;
     bool debug;

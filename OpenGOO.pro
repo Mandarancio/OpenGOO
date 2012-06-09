@@ -1,4 +1,4 @@
-QT       += core gui opengl xml
+QT       += core gui xml
 
 TARGET = OpenGOO
 TEMPLATE = app
@@ -44,7 +44,7 @@ HEADERS += \
     qb2draw.h \
     mainmenu.h \
     stickygoo.h \
-    graphicseffect.h
+    backgroundwidget.h
 
 
 SOURCES += \
@@ -72,7 +72,7 @@ SOURCES += \
     qb2draw.cpp \
     mainmenu.cpp \
     stickygoo.cpp \
-    graphicseffect.cpp
+    backgroundwidget.cpp
 
 
 ##FOR TOUCHPAD COMPILE

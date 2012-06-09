@@ -1,7 +1,7 @@
 #ifndef LEVELSELECTOR_H
 #define LEVELSELECTOR_H
 
-#include <QGLWidget>
+#include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDir>

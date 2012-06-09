@@ -8,6 +8,7 @@
 #include <QColor>
 #include <QPainter>
 #include <QGraphicsScene>
+#include <QImage>
 class BackGround : public QObject
 {
     Q_OBJECT
@@ -30,6 +31,7 @@ private:
     //List of shape with color
     QRect computeRect();
     QGraphicsScene *scene;
+    QImage * img;
     QList < QPair<QPolygon, QColor> > polygons;
 
 signals:

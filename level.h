@@ -2,7 +2,7 @@
 #define LEVEL_H
 
 //#include <QWidget> <--To use without opengl
-#include <QGLWidget>
+#include <QWidget>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimerEvent>
@@ -27,6 +27,8 @@
 
 #include "qb2draw.h"
 
+#include "backgroundwidget.h"
+
 #include <stickylink.h>
 
 
@@ -36,14 +38,15 @@ enum RunFlag {STANDARD, DEBUG};
 //This is the Scene Widget
 //It initialize evrithing
 //The world (b2World) object is here
-class Level : public QGLWidget //QWidget <--To use without openGL
+class Level : public QWidget //QWidget <--To use without openGL
 {
     Q_OBJECT
 public:
-    explicit Level(QRect geometry,QString level,RunFlag flag = STANDARD,bool multiWindow=false,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
+    explicit Level(QRect geometry,QString level,BackGroundWidget *bg,RunFlag flag = STANDARD,bool multiWindow=false,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level();
     //Function to start the level;
     bool startLevel();
+
 
 private:
     float scale;
@@ -108,6 +111,7 @@ private:
 //    bool parseString(QString string);   //Split a line of the file in the two component the tag and the real information
 //    bool parseInfo(QString tag,QString info); //Recognize the tag and use the info
 
+    BackGroundWidget * backGroundWidget; //This is a widget to draw the semi-static ground and background.
 
     //INITIALIZE FUNCTION
     void initialize();
@@ -133,8 +137,8 @@ private:
     bool createJoints(QPoint p);    //Function to create
 
 
+
     //Funcion to draw background, score and win
-    void paintBg(QPainter &p);
     void paintScore(QPainter &p);
     void paintWin(QPainter &p);
 

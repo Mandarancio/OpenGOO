@@ -3,6 +3,10 @@
 #include <QGraphicsPolygonItem>
 #include <QStyle>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsEffect>
+#include <QGraphicsItem>
+
+#define Q_D(Class) Class##Private * const d = d_func()
 
 BackGround::BackGround(int id,QObject *parent) :
     QObject(parent)
@@ -11,14 +15,25 @@ BackGround::BackGround(int id,QObject *parent) :
     this->id=id;
     delta=0;
     translate=QPoint(0,0);
-    scene=new QGraphicsScene(-500,0,3000,2000);
-    scene->setBackgroundBrush(Qt::transparent);
-    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+    scene=NULL;
+    img=NULL;
 
 }
 
 //Add a shape!
 void BackGround::addPolygon(QPolygon polygon, QColor color){
+    if (!scene){
+        scene=new QGraphicsScene(polygon.boundingRect());
+        scene->setBackgroundBrush(Qt::transparent);
+        scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+        scene->setSortCacheEnabled(true);
+
+    }
+    else {
+        QRectF r=scene->sceneRect();
+        r=r.unite(polygon.boundingRect());
+        scene->setSceneRect(r);
+    }
     polygons.push_back(QPair<QPolygon,QColor>(polygon,color));
     QGraphicsPolygonItem * item=new QGraphicsPolygonItem(polygon);
     item->setBrush(color);
@@ -27,7 +42,7 @@ void BackGround::addPolygon(QPolygon polygon, QColor color){
 
     QGraphicsBlurEffect *effect=new QGraphicsBlurEffect();
     effect->setBlurRadius(10*1/this->id);
-    effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
+    effect->setBlurHints(QGraphicsBlurEffect::QualityHint);
     item->setGraphicsEffect(effect);
 
     item->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
@@ -60,24 +75,33 @@ void BackGround::setTranslate(QPoint p){
 
 //paint
 void BackGround::paint(QPainter &p){
-
         p.save();
         p.translate(translate);
         p.setPen(Qt::transparent);
+        if (img==NULL){
+            img=new QImage(scene->width()+70,scene->height()+70,QImage::Format_ARGB32_Premultiplied);
+            QPainter * pimage=new QPainter(img);
 
-        QGraphicsItem *item;
-        QStyleOptionGraphicsItem option;
-        option.state=QStyle::State_Enabled;
+            scene->render(pimage,QRect(0,0,scene->width(),scene->height()));
 
-        for (int i=0;i<scene->items().length();i++){
-            item=scene->items()[i];
-
-            p.save();
-            p.setMatrix(scene->items()[i]->sceneMatrix(),true);
-//            p.setWorldTransform(item->graphicsEffect()->);
-            scene->items()[i]->paint(&p,&option);
-            p.restore();
         }
+        p.drawImage(scene->sceneRect(),*img);
+//        QGraphicsItem *item;
+//        QStyleOptionGraphicsItem option;
+//        option.state=QStyle::State_Enabled;
+
+//        for (int i=0;i<scene->items().length();i++){
+//            Q_ASSERT(item);
+
+//            item=scene->items()[i];
+
+//            p.save();
+//            p.setMatrix(scene->items()[i]->sceneMatrix(),true);
+
+//            //            p.setWorldTransform(item->graphicsEffect()->);
+//            scene->items()[i]->paint(&p,&option);
+//            p.restore();
+//        }
         p.restore();
 
 }

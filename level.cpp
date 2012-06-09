@@ -23,10 +23,10 @@
 
 #define RADIUS 18
 #define INTERVALL 4
-#define DELAY 20
+#define DELAY 10
 
-Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidget *parent) :
-    QGLWidget(QGLFormat::defaultFormat(),parent)
+Level::Level(QRect geometry, QString level,BackGroundWidget *bg,RunFlag flag,bool multiWindow, QWidget *parent) :
+    QWidget(parent), backGroundWidget(bg)
 {
     scale=1.0;
     goal = 100;
@@ -74,7 +74,7 @@ Level::Level(QRect geometry, QString level,RunFlag flag,bool multiWindow, QWidge
 
     //setup the step variable
     //this one is the interval between step
-    step=1.0/60.0;
+    step=1.0/30.0;
     //initialize variables for draggin goo
     drag = false;
     dragged=NULL;
@@ -185,6 +185,7 @@ void Level::initialize()
 //Clean function
 void Level::clean(){
     //clear object bodies
+    backGroundWidget->clear();
     for (int i=0;i<objects.length();i++){
         world->DestroyBody(objects[i]->getBody());
         delete objects[i];
@@ -269,6 +270,8 @@ void Level::moveOf(QPoint dP){
     //Check if is possible
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
+    if (dP.x()/2 || dP.y()/2)
+        backGroundWidget->translated(translation);
 }
 
 //Create a joint
@@ -424,14 +427,9 @@ void Level::paintEvent(QPaintEvent *e){
     p.save();
     p.scale(scale,scale);
     p.translate(translation);
-    paintBg(p);
-    for (int i=0;i<background.length();i++){
-        background[i]->setTranslate(translation);
-        background[i]->paint(p);
-    }
 
-    for (int i=0;i<ground.length();i++) ground[i]->paint(p);
     if (target) target->paint(p);
+
     if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
     {
         for (int i=0;i<possibility.length();i++)
@@ -778,17 +776,6 @@ void Level::towerLost(){
 
 }
 
-void Level::paintBg(QPainter &p){
-    QColor c1,c2;
-    c1.setRgb(95,141,211);
-    c2.setRgb(21,33,50);
-    QRadialGradient g(QPoint(0,height()/2),2*height());
-    g.setColorAt(0,c1);
-    g.setColorAt(1,c2);
-    p.setPen(Qt::transparent);
-    p.setBrush(g);
-    p.drawRect(limit.x(),+limit.y(),limit.width(),limit.height());
-}
 
 void Level::paintScore(QPainter &p){
     QColor bg(0,0,0,200);
@@ -936,11 +923,16 @@ void Level::setLimit(QRect limit){
     this->limit.setTopLeft(limit.topLeft()*scale);
     this->limit.setSize(limit.size()*scale);
     if (scale>1) this->translation=QPoint(-limit.topLeft().x(),limit.topLeft().y());
+    backGroundWidget->setLimit(limit);
+    backGroundWidget->translated(translation);
+    backGroundWidget->setScale(scale);
     if (flag==DEBUG) qWarning()<<"SCALE"<<scale;
 }
 
 void Level::setGround(QPoint gCenter, QList<QPoint> gList){
-    ground.push_back(new Ground(world,gCenter,gList,this));
+    Ground * g=new Ground(world,gCenter,gList,this);
+    backGroundWidget->addGround(g);
+    ground.push_back(g);
     if (flag==DEBUG) qWarning()<<"Ground created.";
 }
 
@@ -966,7 +958,7 @@ void Level::setStartArea(int n, QRect area,int type){
         y=area.y()+qrand()%area.height();
         radius=RADIUS+(qrand()%(INTERVALL*2)-INTERVALL);
 
-        if (type==1) { //Create a standard gooo
+        if (type==0) { //Create a standard gooo
                 DynamicGoo* dg=new DynamicGoo(world,QPoint(x,y),radius);
                 goos.push_back(dg);
                 connect(dg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
@@ -975,7 +967,7 @@ void Level::setStartArea(int n, QRect area,int type){
                 connect(dg,SIGNAL(createSticky(QPoint)),this,SLOT(createSticky(QPoint)));
                 connect(dg,SIGNAL(checkForNeighbors(QPoint)),this,SLOT(checkForNeighbors(QPoint)));
         }
-        else if (type==0){ //Create a removable goo
+        else if (type==1){ //Create a removable goo
                 RemovableGoo* rg=new RemovableGoo(world,QPoint(x,y),radius);
                 goos.push_back(rg);
                 connect(rg,SIGNAL(nextTargetPlease(Goo*)),this,SLOT(giveTarget(Goo*)));
@@ -1181,6 +1173,7 @@ void Level::addBGShape(int id, QPolygon poly, QColor color){
     }
     else {
         BackGround *bg=new BackGround(id,this);
+        backGroundWidget->addBackGround(bg);
         bg->addPolygon(poly,color);
         bg->setDelta(0.3*(3-id));
         background.push_back(bg);

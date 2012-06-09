@@ -52,28 +52,29 @@ void MainWidget::levelSelected()//Create the level selected
     {
 
         if (multiwindow) this->hide();
+        bgWidget =new BackGroundWidget(this);
+        bgWidget->setGeometry(0,0,geometry.width(),geometry.height());
+        bgWidget->show();
 
         if (multiwindow){
             if (!debug)
-                level=new Level(geometry,levelS->getLevelSelected(),STANDARD,true); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,STANDARD,true,bgWidget); //Create the level
             else{
-                level=new Level(geometry,levelS->getLevelSelected(),DEBUG,true); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,DEBUG,true,bgWidget); //Create the level
                 qWarning()<<"Level object created";
             }
         }
         else {
             if (!debug)
-                level=new Level(geometry,levelS->getLevelSelected(),STANDARD,false,this); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,STANDARD,false,this); //Create the level
             else{
-                level=new Level(geometry,levelS->getLevelSelected(),DEBUG,false,this); //Create the level
+                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,DEBUG,false,this); //Create the level
                 qWarning()<<"Level object created";
             }
         }
 
         delete levelS;
         levelS=NULL;
-
-        this->repaint();
 
         connect(level,SIGNAL(closing()),this,SLOT(close()));//Connect the closing of the level with the closing of the game
         connect(level,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
@@ -91,6 +92,7 @@ void MainWidget::backToMainMenu()
     this->show();
     qWarning()<<"BackToMainMenu!";
     delete level;
+    delete bgWidget;
     levelS=new LevelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
     level=NULL;
