@@ -20,6 +20,11 @@ BackGround::BackGround(int id,QObject *parent) :
 
 }
 
+BackGround::~BackGround(){
+    if (scene) delete scene;
+    if (img) delete img;
+}
+
 //Add a shape!
 void BackGround::addPolygon(QPolygon polygon, QColor color){
     if (!scene){

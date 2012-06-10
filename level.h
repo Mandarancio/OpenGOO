@@ -36,9 +36,9 @@
 enum RunFlag {STANDARD, DEBUG};
 
 struct Direction {
-    bool key=false;
-    bool right=false,left=false;
-    bool up=false,down=false;
+    bool key;
+    bool right,left;
+    bool up,down;
 };
 
 //This is the Scene Widget

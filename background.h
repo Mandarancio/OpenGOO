@@ -14,6 +14,7 @@ class BackGround : public QObject
     Q_OBJECT
 public:
     explicit BackGround(int id=0,QObject *parent = 0);
+    ~BackGround();
     //Add a shape!
     void addPolygon(QPolygon polygon, QColor color);
     //set delta

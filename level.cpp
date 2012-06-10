@@ -135,6 +135,12 @@ bool Level::startLevel(){
 //Initialize function
 void Level::initialize()
 {
+
+    dir.left=false;
+    dir.right=false;
+    dir.key=false;
+    dir.up=false;
+    dir.down=false;
     //compute the center of the display
     //Fix for multi screen
     center=QPoint(0,0);//(geometry.x() == 0 ? geometry.center() : geometry.center()-geometry.topLeft());

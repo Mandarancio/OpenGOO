@@ -14,6 +14,7 @@ class BackGroundWidget : public QWidget
     Q_OBJECT
 public:
     explicit BackGroundWidget(QWidget *parent = 0);
+
 protected:
     void paintEvent(QPaintEvent *);
 private:
