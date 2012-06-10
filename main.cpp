@@ -27,10 +27,19 @@ This program is free software: you can redistribute it and/or modify
 #include <QGraphicsBlurEffect>
 #include <QTime>
 
+#include "backtracer.h"
+
 #define GAMEDIR "/.OpenGOO/"
+
+
+BackTracer segvTracer(SIGSEGV);
+BackTracer fpeTracer(SIGFPE);
+BackTracer stkTracer(SIGSTKFLT);
 
 int main(int argc, char *argv[])
 {
+
+
     QApplication a(argc, argv);
      //intialize randseed
     qsrand(QTime().currentTime().toString("hh:mm:ss.zzz").remove(':').toFloat());

@@ -44,7 +44,8 @@ HEADERS += \
     qb2draw.h \
     mainmenu.h \
     stickygoo.h \
-    backgroundwidget.h
+    backgroundwidget.h \
+    backtracer.h
 
 
 SOURCES += \
@@ -72,7 +73,8 @@ SOURCES += \
     qb2draw.cpp \
     mainmenu.cpp \
     stickygoo.cpp \
-    backgroundwidget.cpp
+    backgroundwidget.cpp \
+    backtracer.cpp
 
 
 ##FOR TOUCHPAD COMPILE
