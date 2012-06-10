@@ -32,6 +32,10 @@ void BackGround::addPolygon(QPolygon polygon, QColor color){
     else {
         QRectF r=scene->sceneRect();
         r=r.unite(polygon.boundingRect());
+        r.setWidth(r.width()+40);
+        r.setHeight(r.height()+40);
+        r.setLeft(r.left()-20);
+        r.setTop(r.top()-20);
         scene->setSceneRect(r);
     }
     polygons.push_back(QPair<QPolygon,QColor>(polygon,color));
@@ -48,6 +52,7 @@ void BackGround::addPolygon(QPolygon polygon, QColor color){
     item->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     scene->addItem(item);
+
 }
 
 ///Set delta
@@ -79,9 +84,8 @@ void BackGround::paint(QPainter &p){
         p.translate(translate);
         p.setPen(Qt::transparent);
         if (img==NULL){
-            img=new QImage(scene->width()+100,scene->height()+100,QImage::Format_ARGB32_Premultiplied);
+            img=new QImage(scene->width(),scene->height(),QImage::Format_ARGB32_Premultiplied);
             QPainter * pimage=new QPainter(img);
-
             scene->render(pimage,QRect(0,0,scene->width(),scene->height()));
 
         }

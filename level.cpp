@@ -245,26 +245,26 @@ Goo* Level::getGooAt(QPoint p){
 
 //Function to translate the scene
 void Level::moveUp(){
-    if (translation.y()+geometry().height()+20<limit.height()){
-        translation.setY(translation.y()+20);
+    if (translation.y()+geometry().height()*6/5+10<limit.height()){
+        translation.setY(translation.y()+10);
         backGroundWidget->translated(translation);
     }
 }
 void Level::moveDown(){
-    if (translation.y()-geometry().height()>limit.y()){
-        translation.setY(translation.y()-20);
+    if (translation.y()-geometry().height()*6/5-10>limit.y()){
+        translation.setY(translation.y()-10);
         backGroundWidget->translated(translation);
     }
 }
 void Level::moveRight(){
-    if (translation.x()-geometry().width()-20>-(limit.width()+limit.x())){
-        translation.setX(translation.x()-20);
+    if (translation.x()-geometry().width()-10>-(limit.width()+limit.x())){
+        translation.setX(translation.x()-10);
         backGroundWidget->translated(translation);
     }
 }
 void Level::moveLeft(){
     if (translation.x()+20<-limit.x()){
-        translation.setX(translation.x()+20);
+        translation.setX(translation.x()+10);
         backGroundWidget->translated(translation);
     }
 }
@@ -349,6 +349,30 @@ void Level::timerEvent(QTimerEvent *e){
     e->accept();
     if (drag) showJointTimer++;
     if (drag) dragged->drag();
+    if (dir.left) {
+        QPoint p=translation;
+        moveLeft();
+        p=p-translation;
+        if (drag) dragged->move(dragged->getPPosition()+p);
+    }
+    else if (dir.right) {
+        QPoint p=translation;
+        moveRight();
+        p=p-translation;
+        if (drag) dragged->move(dragged->getPPosition()+p);
+    }
+    if (dir.down) {
+        QPoint p=translation;
+        moveDown();
+        p=p-translation;
+        if (drag) dragged->move(dragged->getPPosition()+p);
+    }
+    else if (dir.up) {
+        QPoint p=translation;
+        moveUp();
+        p=p-translation;
+        if (drag) dragged->move(dragged->getPPosition()+p);
+    }
 
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
 
@@ -436,8 +460,6 @@ void Level::paintEvent(QPaintEvent *e){
     p.save();
     p.scale(scale,scale);
     p.translate(translation);
-
-    if (target) target->paint(p);
 
     if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
     {
@@ -566,16 +588,41 @@ void Level::keyReleaseEvent(QKeyEvent *e){
         onMenu=!onMenu;
         break;
     case (Qt::Key_Up):
-        moveUp();
+        dir.up=false;
+        dir.key=false;
         break;
     case (Qt::Key_Down):
-        moveDown();
+        dir.down=false;
+        dir.key=false;
         break;
     case (Qt::Key_Left):
-        moveLeft();
+        dir.left=false;
+        dir.key=false;
         break;
     case (Qt::Key_Right):
-        moveRight();
+        dir.right=false;
+        dir.key=false;
+        break;
+    }
+}
+
+void Level::keyPressEvent(QKeyEvent *e){
+    switch (e->key()){
+    case (Qt::Key_Up):
+        dir.up=true;
+        dir.key=true;
+        break;
+    case (Qt::Key_Down):
+        dir.down=true;
+        dir.key=true;
+        break;
+    case (Qt::Key_Left):
+        dir.left=true;
+        dir.key=true;
+        break;
+    case (Qt::Key_Right):
+        dir.right=true;
+        dir.key=true;
         break;
     }
 }
@@ -585,10 +632,23 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (onMenu){
         return;
     }
-    if (drag && e->x()<=5) moveLeft();
-    if (drag && e->y()<=5) moveUp();
-    if (drag && e->x()>=width()-5) moveRight();
-    if (drag && e->y()>=height()-5) moveDown();
+    if (e->x()<=20)
+        dir.left=true;
+    else if (dir.left && !dir.key)
+        dir.left=false;
+
+    if (e->y()<=20) dir.up=true;
+    else if (dir.up && !dir.key)
+        dir.up=false;
+
+    if (e->x()>=width()-20) dir.right=true;
+    else if (dir.right && !dir.key)
+        dir.right=false;
+
+    if (e->y()>=height()-5) dir.down=true;
+    else if (dir.down && !dir.key)
+        dir.down=false;
+
     if (drag){
         //compute the mouse speed (so when the goo is released it get the mouse spped)
         mouseSpeed=(10*toVec(e->pos())-mousePos);
@@ -952,7 +1012,7 @@ void Level::setTarget(QPoint target){
     connect(this->target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(this->target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(this->target,SIGNAL(towerLost()),this,SLOT(towerLost()));
-
+    backGroundWidget->setTarget(this->target);
     if (flag==DEBUG) qWarning()<<"Target connected!";
 
 }

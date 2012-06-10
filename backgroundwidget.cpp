@@ -15,6 +15,8 @@ BackGroundWidget::BackGroundWidget(QWidget *parent) :
     bgColor=QRadialGradient(QPoint(0,height()/2),2*height());
     bgColor.setColorAt(0,c1);
     bgColor.setColorAt(1,c2);
+
+    target=NULL;
 }
 
 void BackGroundWidget::paintEvent(QPaintEvent *e){
@@ -36,6 +38,7 @@ void BackGroundWidget::paintEvent(QPaintEvent *e){
     //DRAW GROUND IMAGE
     for (int i=0;i<ground.length();i++) ground[i]->paint(p);
 
+    if (target!=NULL) target->paint(p);
 
     p.restore();
     if (p.end()) e->accept();
@@ -53,8 +56,14 @@ void BackGroundWidget::addGround(Ground *ground){
 }
 
 void BackGroundWidget::translated(QPoint p){
-    translation=p;
-    update();
+    if (p!=translation){
+        translation=p;
+        update();
+    }
+}
+
+void BackGroundWidget::setTarget(Target *target){
+    this->target=target;
 }
 
 void BackGroundWidget::setScale(float scale){

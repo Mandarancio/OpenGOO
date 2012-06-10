@@ -7,7 +7,7 @@
 
 #include "background.h"
 #include "ground.h"
-
+#include "target.h"
 
 class BackGroundWidget : public QWidget
 {
@@ -18,8 +18,9 @@ protected:
     void paintEvent(QPaintEvent *);
 private:
     //Game
-    QList <Ground *>ground;         //Ground object
+    QList <Ground *>ground;         //Ground objects
     QList <BackGround*> background; //background objects
+    Target * target; //Target object
     QRadialGradient bgColor;
     QPoint translation;
     QRect limit;
@@ -28,6 +29,7 @@ signals:
     
 public slots:
     void translated(QPoint p);
+    void setTarget(Target* target);
     void addGround(Ground* ground);
     void addBackGround(BackGround* bg);
     void setScale(float scale);

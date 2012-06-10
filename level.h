@@ -35,6 +35,12 @@
 //Flag of the game
 enum RunFlag {STANDARD, DEBUG};
 
+struct Direction {
+    bool key=false;
+    bool right=false,left=false;
+    bool up=false,down=false;
+};
+
 //This is the Scene Widget
 //It initialize evrithing
 //The world (b2World) object is here
@@ -96,6 +102,7 @@ private:
     int points;             //Number of goo collected
     bool catched;           //If the tower of Goos is catched
     QRect limit;            //Translation limit
+    Direction dir;          //Translation direction
     QList<Goo*> possibility;  //To show the possible joints on the dragged goo
 
     //DEBUGGER PAINTER!
@@ -156,6 +163,8 @@ protected:
     void paintEvent(QPaintEvent *);
     //Key release function (esc: to exit, up/left/down/right to move the scene
     void keyReleaseEvent(QKeyEvent *);
+    //Key press function;
+    void keyPressEvent(QKeyEvent *);
     //Mouse moove event
     void mouseMoveEvent(QMouseEvent *);
     //Press mouse event
