@@ -74,7 +74,7 @@ Level::Level(QRect geometry, QString level,BackGroundWidget *bg,RunFlag flag,boo
 
     //setup the step variable
     //this one is the interval between step
-    step=1.0/30.0;
+    step=1.0/40.0;
     //initialize variables for draggin goo
     drag = false;
     dragged=NULL;
@@ -124,6 +124,7 @@ bool Level::startLevel(){
         if (flag==DEBUG) qWarning()<<"Level parse finished!";
         //start timer
         startTimer(step*1000);
+        step=1.0/30.0;
         if (flag==DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
         return true;
     }
@@ -244,20 +245,28 @@ Goo* Level::getGooAt(QPoint p){
 
 //Function to translate the scene
 void Level::moveUp(){
-    if (translation.y()<limit.y())
-        translation.setY(translation.y()+5);
+    if (translation.y()+geometry().height()+20<limit.height()){
+        translation.setY(translation.y()+20);
+        backGroundWidget->translated(translation);
+    }
 }
 void Level::moveDown(){
-    if (translation.y()>(limit.height()))
-        translation.setY(translation.y()-5);
+    if (translation.y()-geometry().height()>limit.y()){
+        translation.setY(translation.y()-20);
+        backGroundWidget->translated(translation);
+    }
 }
 void Level::moveRight(){
-    if (translation.x()>-(limit.width()-abs(limit.x())))
-        translation.setX(translation.x()-5);
+    if (translation.x()-geometry().width()-20>-(limit.width()+limit.x())){
+        translation.setX(translation.x()-20);
+        backGroundWidget->translated(translation);
+    }
 }
 void Level::moveLeft(){
-    if (translation.x()<-limit.x())
-        translation.setX(translation.x()+5);
+    if (translation.x()+20<-limit.x()){
+        translation.setX(translation.x()+20);
+        backGroundWidget->translated(translation);
+    }
 }
 
 void Level::moveOf(QPoint dP){

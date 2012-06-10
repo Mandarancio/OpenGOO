@@ -278,6 +278,8 @@ void Goo::drag(){
         info.aForce=body->GetAngularVelocity();
     }
     if (!hasJoint())   body->SetActive(false);
+    body->SetLinearVelocity(b2Vec2(0,0));
+    body->SetAngularVelocity(0);
     dragging=true;
 
 
@@ -286,9 +288,13 @@ void Goo::drag(){
 
 void Goo::drop(){
     stopFollow();
-    body->SetLinearVelocity(info.speed);
+    if (!hasJoint()){
+        body->SetLinearVelocity(info.speed);
+
+        body->SetAngularVelocity(info.aForce);
+
+    }
     body->SetGravityScale(1.0);
-    body->SetAngularVelocity(info.aForce);
     body->SetActive(true);
 
     falling=true;
@@ -296,13 +302,10 @@ void Goo::drop(){
 }
 
 void Goo::drop(b2Vec2 speed){
-    //stopFollow();
-    //body->SetLinearVelocity(b2Vec2(0,0));
     body->SetActive(true);
-
     body->SetGravityScale(1.0);
-    //body->SetAngularVelocity(info.aForce);
-    body->ApplyLinearImpulse(speed,b2Vec2(0,0));
+    if (!hasJoint())
+        body->ApplyLinearImpulse(speed,b2Vec2(0,0));
     falling=true;
     dragging=false;
 }

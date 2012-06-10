@@ -232,8 +232,8 @@ void DynamicGoo::paint(QPainter &p){
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
 
         if (counter >=6) {
-            rx+=(rand()%3-1);
-            ry+=(rand()%3-1);
+            rx+=(rand()%5-2);
+            ry+=(rand()%5-2);
             if (qAbs(rx)>15) rx=15*(rx/qAbs(rx));
             if (qAbs(ry)>15) ry=15*(ry/qAbs(ry));
             counter =0;
