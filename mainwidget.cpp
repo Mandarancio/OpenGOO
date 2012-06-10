@@ -4,15 +4,13 @@
 
 #include "svglevelloader.h"
 
-MainWidget::MainWidget(QRect geometry,bool debug,bool multiwindow,QWidget *parent)
+MainWidget::MainWidget(QRect geometry,bool debug,QWidget *parent)
     : QWidget(parent)
 {
-    if (!multiwindow) this->showFullScreen();//To have the game full screen
+    this->showFullScreen();//To have the game full screen
     this->setGeometry(geometry);
     this->geometry=geometry;
     this->debug=debug;
-    this->multiwindow=multiwindow;
-    if (debug&&multiwindow) qWarning()<<"Multi Window mode ON";
     levelS=new LevelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
     level=NULL;
@@ -51,27 +49,16 @@ void MainWidget::levelSelected()//Create the level selected
     else
     {
 
-        if (multiwindow) this->hide();
         bgWidget =new BackGroundWidget(this);
         bgWidget->setGeometry(0,0,geometry.width(),geometry.height());
         bgWidget->show();
+        if (!debug)
+            level=new Level(geometry,levelS->getLevelSelected(),bgWidget,STANDARD,false,this); //Create the level
+        else{
+            level=new Level(geometry,levelS->getLevelSelected(),bgWidget,DEBUG,false,this); //Create the level
+            qWarning()<<"Level object created";
+        }
 
-        if (multiwindow){
-            if (!debug)
-                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,STANDARD,true,bgWidget); //Create the level
-            else{
-                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,DEBUG,true,bgWidget); //Create the level
-                qWarning()<<"Level object created";
-            }
-        }
-        else {
-            if (!debug)
-                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,STANDARD,false,this); //Create the level
-            else{
-                level=new Level(geometry,levelS->getLevelSelected(),bgWidget,DEBUG,false,this); //Create the level
-                qWarning()<<"Level object created";
-            }
-        }
 
         delete levelS;
         levelS=NULL;

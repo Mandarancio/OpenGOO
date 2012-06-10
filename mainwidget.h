@@ -12,7 +12,7 @@ class MainWidget : public QWidget
     Q_OBJECT
 
 public:
-    MainWidget(QRect geometry,bool debug =false,bool multiwindow=false,QWidget *parent = 0);
+    MainWidget(QRect geometry,bool debug =false,QWidget *parent = 0);
     ~MainWidget();
 private:
     Level *level;
@@ -21,7 +21,6 @@ private:
 
     QRect geometry;
     bool debug;
-    bool multiwindow;
 protected:
     void closeEvent(QCloseEvent *);
 private slots:
