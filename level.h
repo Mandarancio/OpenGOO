@@ -26,14 +26,13 @@
 #include "svglevelloader.h"
 
 #include "qb2draw.h"
+#include "flags.h"
+
 
 #include "backgroundwidget.h"
 
-#include <stickylink.h>
+#include "stickylink.h"
 
-
-//Flag of the game
-enum RunFlag {STANDARD, DEBUG};
 
 struct Direction {
     bool key;
@@ -48,7 +47,7 @@ class Level : public QWidget //QWidget <--To use without openGL
 {
     Q_OBJECT
 public:
-    explicit Level(QRect geometry,QString level,BackGroundWidget *bg,RunFlag flag = STANDARD,bool multiWindow=false,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
+    explicit Level(QRect geometry,QString level,BackGroundWidget *bg,int flag = STANDARD,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level();
     //Function to start the level;
     bool startLevel();
@@ -57,7 +56,7 @@ public:
 private:
     float scale;
     //Run type flag
-    RunFlag flag;
+    int flag;
     //LOADER
     SvgLevelLoader * loader;
     //PROPERTY

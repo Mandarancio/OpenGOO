@@ -4,13 +4,15 @@
 
 #include "svglevelloader.h"
 
-MainWidget::MainWidget(QRect geometry,bool debug,QWidget *parent)
+MainWidget::MainWidget(QRect geometry,int flag,QWidget *parent)
     : QWidget(parent)
 {
     this->showFullScreen();//To have the game full screen
     this->setGeometry(geometry);
     this->geometry=geometry;
-    this->debug=debug;
+
+    this->flag=flag;
+
     levelS=new LevelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
     level=NULL;
@@ -41,7 +43,7 @@ void MainWidget::closeEvent(QCloseEvent *e){
 void MainWidget::levelSelected()//Create the level selected
 {
 
-    if(debug)qWarning()<<"Level Selected "<<levelS->getLevelSelected().toAscii();
+    if(flag & DEBUG)qWarning()<<"Level Selected "<<levelS->getLevelSelected().toAscii();
     if(!levelS->getLevelSelected().compare("Exit")){
         this->close();
         return;
@@ -52,12 +54,9 @@ void MainWidget::levelSelected()//Create the level selected
         bgWidget =new BackGroundWidget(this);
         bgWidget->setGeometry(0,0,geometry.width(),geometry.height());
         bgWidget->show();
-        if (!debug)
-            level=new Level(geometry,levelS->getLevelSelected(),bgWidget,STANDARD,false,this); //Create the level
-        else{
-            level=new Level(geometry,levelS->getLevelSelected(),bgWidget,DEBUG,false,this); //Create the level
-            qWarning()<<"Level object created";
-        }
+
+        level=new Level(geometry,levelS->getLevelSelected(),bgWidget,flag,this); //Create the level
+        if (flag & DEBUG) qWarning()<<"LEVEL OBJECT INITILIZED";
 
 
         delete levelS;
@@ -68,7 +67,7 @@ void MainWidget::levelSelected()//Create the level selected
         if (level->startLevel()){
             level->show();//Show the Level
 
-            if (debug) qWarning()<<"level showed an signal connected.";
+            if (flag & DEBUG) qWarning()<<"level showed an signal connected.";
         }
 
     }
@@ -77,7 +76,7 @@ void MainWidget::levelSelected()//Create the level selected
 void MainWidget::backToMainMenu()
 {
     this->show();
-    qWarning()<<"BackToMainMenu!";
+    if (flag & DEBUG) qWarning()<<"Back to Main Menu!";
     delete level;
     delete bgWidget;
     levelS=new LevelSelector(geometry,this);//Create the level selector
@@ -85,5 +84,4 @@ void MainWidget::backToMainMenu()
     level=NULL;
     connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
     connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level delete level;
-    qWarning()<<"HERE LEVEL SELECTOR!!";
 }

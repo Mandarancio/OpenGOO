@@ -21,6 +21,7 @@ public:
     void setDelta(float delta);
     //get id
     int getID();
+    void setOpenGL(bool flag);
 
 private:
     //ID Of the background, usefull for different background.
@@ -34,6 +35,7 @@ private:
     QGraphicsScene *scene;
     QImage * img;
     QList < QPair<QPolygon, QColor> > polygons;
+    bool openglFlag;
 
 signals:
 
