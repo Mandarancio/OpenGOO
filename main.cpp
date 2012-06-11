@@ -64,6 +64,9 @@ int main(int argc, char *argv[])
         else if (!arg.compare("-opengl",Qt::CaseInsensitive)){
             flag=flag|OPENGL;
         }
+        else if (!arg.compare("-text",Qt::CaseInsensitive)){
+            flag=flag|ONLYTEXT|DEBUG;
+        }
     }
     if (flag & STANDARD ) qWarning("STD MODE");
     if (flag & OPENGL){ qWarning("OPENGL ACTIVATED");

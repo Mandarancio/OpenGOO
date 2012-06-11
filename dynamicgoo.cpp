@@ -23,7 +23,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     shape.m_radius=radius/10.0; //radius
 
     b2FixtureDef fixDef; //Definition of the phisical parameters
-    fixDef.restitution=0.2; //collision restitution
+    fixDef.restitution=0.3; //collision restitution
     fixDef.density=1.0; //density
     fixDef.friction=0.1; //friction
     fixDef.shape=&shape; //assign the shape
@@ -48,6 +48,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     counter=10; //COUNTER FOR ANIMATION
     rx=0; //Animation coordinate x
     ry=0; //Animation coordinate y
+    eye=false;
     type=DYNAMIC;
 }
 
@@ -226,19 +227,18 @@ void DynamicGoo::paint(QPainter &p){
         float module=(isFalling() ? speed.Length()/8 :0);
         p.save();
         p.translate(getPPosition());
-        p.rotate(angle*180.0/3.141628);
+        p.rotate(-angle*180.0/3.141628);
         p.setBrush(secondaryColor);
 
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
 
-        if (counter >=6) {
-            rx+=(rand()%5-2);
-            ry+=(rand()%5-2);
-            if (qAbs(rx)>15) rx=15*(rx/qAbs(rx));
-            if (qAbs(ry)>15) ry=15*(ry/qAbs(ry));
-            counter =0;
-        }
-
+        //if (counter >=6) {
+            rx=3;//+=(rand()%5-2);
+            ry=-2;//+=(rand()%5-2);
+         //   if (qAbs(rx)>15) rx=15*(rx/qAbs(rx));
+         //   if (qAbs(ry)>15) ry=15*(ry/qAbs(ry));
+         //   counter =0;
+        //}
         counter++;
 
         QRadialGradient rg(rx,ry,getRadius()+5);
@@ -247,7 +247,31 @@ void DynamicGoo::paint(QPainter &p){
 
         p.setBrush(rg);
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
+
+        if (counter>=40 && !hasJoint()){
+            bool nE=!(rand()%5);
+            if (eye!=nE && nE){
+                eyeSizeL=qrand()%3+5;
+                eyeSizeR=eyeSizeL+qrand()%4-1;
+
+            }
+            eye=nE;
+            counter=0;
+        }
+
+        if (eye && !hasJoint()) {
+            p.setPen(secondaryColor);
+            p.setBrush(Qt::white);
+            p.drawEllipse(QPoint(-9,12),eyeSizeL,eyeSizeL);
+            p.drawEllipse(QPoint(9,12),eyeSizeR,eyeSizeR);
+            p.setBrush(Qt::black);
+            p.setPen(Qt::transparent);
+            p.drawEllipse(QPoint(-9,14),2,2);
+            p.drawEllipse(QPoint(9,13),2,2);
+        }
+
         p.restore();
+
     }
 }
 

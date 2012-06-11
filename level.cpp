@@ -479,7 +479,7 @@ void Level::paintEvent(QPaintEvent *e){
     for (int i=0;i<joints.length();i++) {
         if (joints[i]) {
             joints[i]->paint(p);
-            if (flag & DEBUG){
+            if ((flag & DEBUG) && !(flag & ONLYTEXT)){
                 joints[i]->paintDebug(p);
             }
         }
@@ -487,7 +487,7 @@ void Level::paintEvent(QPaintEvent *e){
     for (int i=0;i<goos.length();i++){
         if (goos[i] && goos[i]->hasJoint() && !goos[i]->isDragging() && !goos[i]->isSelected()){
             goos[i]->paint(p);
-            if (flag & DEBUG){
+            if ((flag & DEBUG) && !(flag & ONLYTEXT)){
                 goos[i]->paintDebug(p);
             }
         }
@@ -495,18 +495,18 @@ void Level::paintEvent(QPaintEvent *e){
     for (int i=0;i<goos.length();i++){
         if (goos[i] && !goos[i]->isDragging() && !goos[i]->isSelected() && !goos[i]->hasJoint()) {
             goos[i]->paint(p);
-            if (flag & DEBUG){
+            if ((flag & DEBUG) && !(flag & ONLYTEXT)){
                 goos[i]->paintDebug(p);
             }
         }
     }
-    if (flag & DEBUG) {
+    if ((flag & DEBUG) && !(flag & ONLYTEXT)) {
         for (int i=0;i<stickys.length();i++)
             stickys[i]->paint(p);
     }
 
     //Draw the center of the map
-    if (flag & DEBUG){
+    if ((flag & DEBUG) && !(flag & ONLYTEXT)){
         p.setPen(Qt::white);
         p.drawLine(0,5,0,-5);
         p.drawLine(5,0,-5,0);
@@ -527,18 +527,19 @@ void Level::paintEvent(QPaintEvent *e){
         }
         p.setPen(Qt::black);
         dragged->paint(p);
-        if (flag & DEBUG){
-            dragged->paintDebug(p);
+        if ((flag & DEBUG) && !(flag & ONLYTEXT)){
+                dragged->paintDebug(p);
         }
     }
     if (selected!=NULL){
         selected->paint(p);
-        if (flag & DEBUG){
-            selected->paintDebug(p);
+        if ((flag & DEBUG) && !(flag & ONLYTEXT)){
+                selected->paintDebug(p);
         }
     }
 
-    if (flag & DEBUG){
+    if ((flag & DEBUG) && !(flag & ONLYTEXT)){
+
         debugPainter->setPainter(&p);
 
         world->DrawDebugData();

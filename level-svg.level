@@ -16,7 +16,7 @@
    id="svg3919"
    version="1.1"
    inkscape:version="0.48.1 r9760"
-   sodipodi:docname="level-v2.svg">
+   sodipodi:docname="level-svg.svg">
   <title
      id="title3000">Level 3[10]</title>
   <defs
@@ -30,12 +30,12 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.16"
      inkscape:cx="-736.947"
-     inkscape:cy="772.24775"
+     inkscape:cy="1772.2477"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="966"
+     inkscape:window-width="1366"
+     inkscape:window-height="710"
      inkscape:window-x="0"
      inkscape:window-y="26"
      inkscape:window-maximized="1"
@@ -76,9 +76,9 @@
        style="fill:#aaccff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.39999998;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="limit"
        width="2904.8389"
-       height="2516.6084"
+       height="1910.3584"
        x="-172.25"
-       y="-1327.6378"
+       y="-721.38782"
        rx="2.8431633"
        ry="6.1175246" />
     <path
@@ -123,7 +123,7 @@
        sodipodi:cy="-534"
        sodipodi:rx="54"
        sodipodi:ry="54"
-       d="m 1912,-534 a 54,54 0 1 1 -108,0 54,54 0 1 1 108,0 z"
+       d="m 1912,-534 c 0,29.82338 -24.1766,54 -54,54 -29.8234,0 -54,-24.17662 -54,-54 0,-29.82338 24.1766,-54 54,-54 29.8234,0 54,24.17662 54,54 z"
        transform="translate(643.75,122.11218)"
        inkscape:label="#target" />
     <rect
@@ -144,7 +144,7 @@
        sodipodi:cy="396.44272"
        sodipodi:rx="18.50631"
        sodipodi:ry="18.50631"
-       d="m -142.24999,396.44272 a 18.50631,18.50631 0 1 1 -37.01262,0 18.50631,18.50631 0 1 1 37.01262,0 z"
+       d="m -142.24999,396.44272 c 0,10.22075 -8.28556,18.50631 -18.50631,18.50631 -10.22075,0 -18.50631,-8.28556 -18.50631,-18.50631 0,-10.22075 8.28556,-18.50631 18.50631,-18.50631 10.22075,0 18.50631,8.28556 18.50631,18.50631 z"
        inkscape:label="#goo"
        transform="translate(648.4375,126.5625)" />
     <path
@@ -155,7 +155,7 @@
        sodipodi:cy="396.44272"
        sodipodi:rx="18.50631"
        sodipodi:ry="18.50631"
-       d="m -142.24999,396.44272 a 18.50631,18.50631 0 1 1 -37.01262,0 18.50631,18.50631 0 1 1 37.01262,0 z"
+       d="m -142.24999,396.44272 c 0,10.22075 -8.28556,18.50631 -18.50631,18.50631 -10.22075,0 -18.50631,-8.28556 -18.50631,-18.50631 0,-10.22075 8.28556,-18.50631 18.50631,-18.50631 10.22075,0 18.50631,8.28556 18.50631,18.50631 z"
        inkscape:label="#goo"
        transform="translate(769.92188,110.9375)" />
     <path

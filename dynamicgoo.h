@@ -35,7 +35,8 @@ protected:
     bool stickable; //Flag to know if is stickable
     int counter; //ANIMATION COUNTER
     int rx,ry; //ANIMATION COORDINATE
-
+    bool eye;
+    int eyeSizeR,eyeSizeL;
 private slots:
 
 public slots:
