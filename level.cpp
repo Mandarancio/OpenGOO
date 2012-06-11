@@ -315,6 +315,10 @@ QList<Goo*> Level::possibleJoints(QPoint p){
     for (int i=0;i<goos.length();i++){
         if (goos[i]->canHaveJoint()) {
             d=pv-goos[i]->getVPosition();
+            if (goos[i]!=dragged && d.Length()<dragged->getRadius()/10.0) {
+                l.clear();
+                return l;
+            }
             if (d.LengthSquared()>=5*5 && d.LengthSquared()<=dragged->getDistanceToJoint()/10.0*dragged->getDistanceToJoint()/10.0)
                 l.push_back(goos[i]);
 
@@ -715,6 +719,8 @@ void Level::mousePressEvent(QMouseEvent *e){
                 possibility.clear();
                 drag=true;
                 dragged->drag();
+                dragged->move(e->pos()/scale-translation);
+
             }
             else mooving=true;
         }
@@ -727,11 +733,14 @@ void Level::mousePressEvent(QMouseEvent *e){
                 selected=NULL;
                 //Get the goo in this position
                 dragged=getGooAt(e->pos()/scale-(center+translation));
+
                 //Rutine to drag a goo.
                 if (dragged) {
                     possibility.clear();
                     drag=true;
                     dragged->drag();
+                    dragged->move(e->pos()/scale-translation);
+
                 }
                 else mooving=true;
             }
@@ -740,6 +749,7 @@ void Level::mousePressEvent(QMouseEvent *e){
                 possibility.clear();
                 drag=true;
                 dragged->drag();
+                dragged->move(e->pos()/scale-translation);
                 selected->select(false);
                 selected=NULL;
             }

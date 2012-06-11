@@ -31,12 +31,12 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
     body->CreateFixture(&fixDef); //create the fixture
     body->SetLinearDamping(0.11);//Not sure about this parameter
-    body->SetAngularDamping(0.1);
+    body->SetAngularDamping(0.05);
     //set mass
     b2MassData mass;
     mass.center.SetZero();
     mass.mass=25.0;
-    mass.I=0.1;
+    mass.I=0.05;
 
     body->SetMassData(&mass);
 
@@ -45,8 +45,9 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     stickable=true;
     maxJoints=7; //parameters
     speed=10;
-    counter=qrand()%10; //COUNTER FOR ANIMATION
     delay=10+qrand()%30;
+    counter=qrand()%delay; //COUNTER FOR ANIMATION
+
     rx=0; //Animation coordinate x
     ry=0; //Animation coordinate y
     eyeSizeL=qrand()%3+5;
@@ -227,10 +228,10 @@ void DynamicGoo::paint(QPainter &p){
     else {
         b2Vec2 speed=body->GetLinearVelocity();
         float angle=qAtan2(speed.x,speed.y);
-        float module=(isFalling() ? speed.Length()/8 :0);
+        float module=(isFalling() ? speed.Length()/7 : (!isDragging() || !hasJoint() ? speed.Length()/10 : 0));
         p.save();
         p.translate(getPPosition());
-        if (!isDragging()) p.rotate(-angle*180.0/3.141628);
+        if (!isDragging()) p.rotate((hasJoint() ? 0 :-angle*180.0/3.141628));
         else p.rotate(this->angle);
         p.setBrush(secondaryColor);
 
@@ -250,6 +251,7 @@ void DynamicGoo::paint(QPainter &p){
         if (counter>=delay && !hasJoint() || isDragging()){
             if (!isDragging()) {
                 bool nE=!(rand()%5);
+                if (eye) nE=rand()%3;
                 if (eye!=nE && nE){
                     eyeSizeL=qrand()%3+5;
                     eyeSizeR=eyeSizeL+qrand()%4-1;
