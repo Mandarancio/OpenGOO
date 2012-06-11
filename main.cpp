@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
 {
 
 
-    QApplication a(argc, argv);
      //intialize randseed
     qsrand(QTime().currentTime().toString("hh:mm:ss.zzz").remove(':').toFloat());
 
     bool debug=false;
     bool forceScreen=false;
+    bool forceOpenGL=false;
     //Default is screen 0
     int screen=0;
     QString arg;
@@ -53,22 +53,34 @@ int main(int argc, char *argv[])
     for (int i=1;i<argc;i++){
         arg=QString::fromAscii(argv[i]);
         //Check for debug Option
-        if (!arg.compare("-Debug")){
+        if (!arg.compare("-Debug",Qt::CaseInsensitive)){
             debug=true;
             qWarning("DEBUG MODE ON");
         }
         //Check for screen force option
-        else if (!arg.split('=').at(0).compare("-Screen")){
+        else if (!arg.split('=').at(0).compare("-Screen",Qt::CaseInsensitive)){
             screen=arg.split('=').at(1).toInt(&forceScreen);
-            if (screen>a.desktop()->numScreens()-1){
-                qWarning()<<"Screen"<<screen<<"not found!";
-                screen=0;
-                forceScreen=false;
-            }
+        }
+        else if (!arg.compare("-opengl",Qt::CaseInsensitive)){
+            forceOpenGL=true;
         }
     }
-    if (!debug) qWarning("STD MODE");
-     //screenGeometry() return the geometry of the display
+    if (!debug ) qWarning("STD MODE");
+    if (forceOpenGL){ qWarning("OPENGL ACTIVATED");
+        argc+=2;
+        argv[argc-2]="-graphicssystem";
+        argv[argc-1]="opengl";
+    }
+    QApplication a(argc, argv);
+
+    if (screen>a.desktop()->numScreens()-1){
+        qWarning()<<"Screen"<<screen<<"not found!";
+        screen=0;
+        forceScreen=false;
+    }
+
+
+    //screenGeometry() return the geometry of the display
     //Algorithm to select the bigger screen in a multi screen configuration
     //If is found a multi screen configuration
     if (!forceScreen){
