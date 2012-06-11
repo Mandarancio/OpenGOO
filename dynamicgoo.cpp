@@ -45,7 +45,8 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     stickable=true;
     maxJoints=7; //parameters
     speed=10;
-    counter=10; //COUNTER FOR ANIMATION
+    counter=qrand()%10; //COUNTER FOR ANIMATION
+    delay=10+qrand()%30;
     rx=0; //Animation coordinate x
     ry=0; //Animation coordinate y
     eye=false;
@@ -231,14 +232,9 @@ void DynamicGoo::paint(QPainter &p){
         p.setBrush(secondaryColor);
 
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
-
-        //if (counter >=6) {
             rx=3;//+=(rand()%5-2);
             ry=-2;//+=(rand()%5-2);
-         //   if (qAbs(rx)>15) rx=15*(rx/qAbs(rx));
-         //   if (qAbs(ry)>15) ry=15*(ry/qAbs(ry));
-         //   counter =0;
-        //}
+
         counter++;
 
         QRadialGradient rg(rx,ry,getRadius()+5);
@@ -248,7 +244,7 @@ void DynamicGoo::paint(QPainter &p){
         p.setBrush(rg);
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
 
-        if (counter>=40 && !hasJoint()){
+        if (counter>=delay && !hasJoint()){
             bool nE=!(rand()%5);
             if (eye!=nE && nE){
                 eyeSizeL=qrand()%3+5;
@@ -327,6 +323,7 @@ void DynamicGoo::paintDebug(QPainter &p){
 void DynamicGoo::neighborsFound(){
     //set flag false
     sleeping=false;
+    counter=qrand()%10;
     //call rutine for move to next goo
     moveToTarget();
 }

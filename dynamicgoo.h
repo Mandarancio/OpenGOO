@@ -37,6 +37,7 @@ protected:
     int rx,ry; //ANIMATION COORDINATE
     bool eye;
     int eyeSizeR,eyeSizeL;
+    int delay;
 private slots:
 
 public slots:
