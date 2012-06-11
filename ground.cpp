@@ -15,6 +15,8 @@ Ground::Ground(b2World *world, QPoint center, QList<QPoint> shape, QObject *pare
     def.type=b2_staticBody;
     //center of the body
     def.position=toVec(center);
+    def.angularDamping=0.0;
+    def.linearDamping=0.0;
     //create the body;
     body= world->CreateBody(&def);
     //create the shape
