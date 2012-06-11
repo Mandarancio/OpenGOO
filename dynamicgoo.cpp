@@ -227,7 +227,7 @@ void DynamicGoo::paint(QPainter &p){
     else {
         b2Vec2 speed=body->GetLinearVelocity();
         float angle=qAtan2(speed.x,speed.y);
-        float module=(isFalling() ? speed.Length()/8 :0);
+        float module=(isFalling() ? speed.Length()/8 : (!hasJoint() ? speed.Length()/15 : 0));
         p.save();
         p.translate(getPPosition());
         if (!isDragging()) p.rotate(-angle*180.0/3.141628);
