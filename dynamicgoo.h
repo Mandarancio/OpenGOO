@@ -38,6 +38,7 @@ protected:
     bool eye;
     int eyeSizeR,eyeSizeL;
     int delay;
+    int angle;
 private slots:
 
 public slots:

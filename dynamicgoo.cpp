@@ -49,6 +49,8 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     delay=10+qrand()%30;
     rx=0; //Animation coordinate x
     ry=0; //Animation coordinate y
+    eyeSizeL=qrand()%3+5;
+    eyeSizeR=eyeSizeL+qrand()%4-1;
     eye=false;
     type=DYNAMIC;
 }
@@ -228,7 +230,8 @@ void DynamicGoo::paint(QPainter &p){
         float module=(isFalling() ? speed.Length()/8 :0);
         p.save();
         p.translate(getPPosition());
-        p.rotate(-angle*180.0/3.141628);
+        if (!isDragging()) p.rotate(-angle*180.0/3.141628);
+        else p.rotate(this->angle);
         p.setBrush(secondaryColor);
 
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
@@ -244,22 +247,41 @@ void DynamicGoo::paint(QPainter &p){
         p.setBrush(rg);
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
 
-        if (counter>=delay && !hasJoint()){
-            bool nE=!(rand()%5);
-            if (eye!=nE && nE){
+        if (counter>=delay && !hasJoint() || isDragging()){
+            if (!isDragging()) {
+                bool nE=!(rand()%5);
+                if (eye!=nE && nE){
+                    eyeSizeL=qrand()%3+5;
+                    eyeSizeR=eyeSizeL+qrand()%4-1;
+                }
+                eye=nE;
+                counter=0;
+            }
+            else if (!eye) {
                 eyeSizeL=qrand()%3+5;
                 eyeSizeR=eyeSizeL+qrand()%4-1;
-
+                eye=true;
+                this->angle=qrand()%360;
             }
-            eye=nE;
-            counter=0;
         }
 
         if (eye && !hasJoint()) {
             p.setPen(secondaryColor);
-            p.setBrush(Qt::white);
+            QRadialGradient rG2(-9,13,eyeSizeL);
+            QRadialGradient rG3(9,13,eyeSizeR);
+
+            rG2.setColorAt(0,Qt::white);
+            rG2.setColorAt(1,Qt::lightGray);
+
+            p.setBrush(rG2);
             p.drawEllipse(QPoint(-9,12),eyeSizeL,eyeSizeL);
+
+            rG3.setColorAt(0,Qt::white);
+            rG3.setColorAt(1,Qt::lightGray);
+
+            p.setBrush(rG3);
             p.drawEllipse(QPoint(9,12),eyeSizeR,eyeSizeR);
+
             p.setBrush(Qt::black);
             p.setPen(Qt::transparent);
             p.drawEllipse(QPoint(-9,14),2,2);
