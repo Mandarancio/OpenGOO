@@ -105,7 +105,7 @@ bool SvgLevelLoader::parse(){
                 }
                 else if (!label.compare("#limit") || !id.compare("limit")){
                     QRect rect=parseRect(object);
-
+                    rect.setY(rect.y()-h);
                     emit levelLimit(rect);
                 }
                 else if (!label.compare("#ground") || !id.compare("ground")){

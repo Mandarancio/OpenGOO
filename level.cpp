@@ -20,6 +20,7 @@
 #include "collisionlistener.h"
 
 #include <QPolygon>
+#include <QTextFormat>
 
 #define RADIUS 18
 #define INTERVALL 4
@@ -120,6 +121,7 @@ bool Level::startLevel(){
         if (flag & DEBUG) qWarning()<<"Level parse finished!";
         //start timer
         startTimer(step*1000);
+        startTime= QTime::currentTime();
         step=1.0/30.0;
         if (flag & DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
         return true;
@@ -131,6 +133,8 @@ bool Level::startLevel(){
 //Initialize function
 void Level::initialize()
 {
+
+
 
     dir.left=false;
     dir.right=false;
@@ -247,25 +251,30 @@ Goo* Level::getGooAt(QPoint p){
 
 //Function to translate the scene
 void Level::moveUp(){
-    if (translation.y()+geometry().height()*6/5+10<limit.height()){
+    int hy=limit.height()+limit.y();
+    if (translation.y()+10<hy){
         translation.setY(translation.y()+10);
         backGroundWidget->translated(translation);
     }
 }
 void Level::moveDown(){
-    if (translation.y()-geometry().height()*6/5-10>limit.y()){
-        translation.setY(translation.y()-10);
+    int hy=limit.y();
+    qWarning()<<hy<<limit;
+    int sy=translation.y()-geometry().height();
+    if (sy>hy){
+        translation.setY(translation.y()-(sy-10>=hy ? 10 : qAbs(hy-sy)));
         backGroundWidget->translated(translation);
     }
 }
 void Level::moveRight(){
+    qWarning()<<limit;
     if (translation.x()-geometry().width()-10>-(limit.width()+limit.x())){
         translation.setX(translation.x()-10);
         backGroundWidget->translated(translation);
     }
 }
 void Level::moveLeft(){
-    if (translation.x()+20<-limit.x()){
+    if (translation.x()+10<-limit.x()){
         translation.setX(translation.x()+10);
         backGroundWidget->translated(translation);
     }
@@ -860,20 +869,30 @@ void Level::towerLost(){
 
 
 void Level::paintScore(QPainter &p){
-    QColor bg(0,0,0,200);
-    p.setBrush(bg);
-    p.setPen(Qt::transparent);
-    p.drawRoundedRect(-10,height()-80,80,110,10,10);
-    p.setPen(Qt::white);
+
     QFont f;
-    f.setFamily("Times");
+    f.setFamily("Helvetica [Cronyx]");
     f.setBold(true);
-    f.setPointSize(30);
-    p.setFont(f);
-    p.drawText(10,height()-26,QString::number(points));
-    f.setPointSize(15);
-    p.setFont(f);
-    p.drawText(10,height()-7,"of "+QString::number(goal));
+    f.setPixelSize(44);
+
+    QPainterPath path;
+
+
+    QTime delta(0,QTime::currentTime().minute()-startTime.minute(),QTime::currentTime().second()-startTime.second());
+    QFontMetrics fm(f);
+    path.addText(10,height()-26,f,QString::number(points));
+
+    f.setPixelSize(22);
+    path.addText(10+fm.width(QString::number(points)),height()-14,f,QString::number(goal));
+    f.setPixelSize(30);
+    path.addText(10,30,f,delta.toString("mm:ss"));
+
+
+
+    p.setPen(QPen(Qt::black,2));
+    p.setBrush(Qt::white);
+    p.drawPath(path);
+
 }
 \
 //Function to paint the win screen
@@ -897,7 +916,6 @@ void Level::paintWin(QPainter &p){
         p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,name+" complited!");
     }
 }
-
 //Function to paint the target arrow
 void Level::paintTargetArrow(QPainter &p){
     //Check if the target is displayed:
