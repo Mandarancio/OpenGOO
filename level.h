@@ -10,6 +10,8 @@
 #include <QKeyEvent>
 #include <Box2D/Box2D.h>
 
+#include <QTime>
+
 #include <QPair>
 
 
@@ -103,6 +105,8 @@ private:
     QRect limit;            //Translation limit
     Direction dir;          //Translation direction
     QList<Goo*> possibility;  //To show the possible joints on the dragged goo
+
+    QTime startTime;
 
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
