@@ -25,7 +25,6 @@ void Joint::initialize(b2World * world){
 }
 
 void Joint::paint(QPainter &p){
-    status();
     QLinearGradient lg(this->a->getPPosition(),this->b->getPPosition());
     lg.setColorAt(0,this->a->getColor());
     lg.setColorAt(1,this->b->getColor());
@@ -127,5 +126,11 @@ bool Joint::has(Goo *a, Goo *b){ //Check if the joint link this two goo
 
 JointType Joint::getType(){
     return type;
+}
+
+QRect Joint::boundingRect(){
+    QRect rect=a->boundingRect();
+    rect=rect.united(b->boundingRect());
+    return rect;
 }
 

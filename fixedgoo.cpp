@@ -36,6 +36,11 @@ void FixedGoo::paintDebug(QPainter &p){
 
 }
 
+
+void FixedGoo::update(){
+    //DO SOMETHING
+}
+
 void FixedGoo::contactGround(){
  //TODO
 }

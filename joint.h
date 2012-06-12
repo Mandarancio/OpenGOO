@@ -18,12 +18,14 @@ public:
     b2Joint* getJoint(); //To have acces at the material b2joint
     bool has(Goo*a,Goo*b); //To check if this joint link this two GOO
     JointType getType();
+    QRect boundingRect();
+    virtual void status(); // function to check the status of the joint
+
 protected:
     JointType type;
     virtual void initialize(b2World * world);
     b2Joint* joint; //The phisical joint
     Goo *a,*b; //the two linked goo
-    virtual void status(); // function to check the status of the joint
 private:
 
     //ANIMATION VARIABLE

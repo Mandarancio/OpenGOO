@@ -11,6 +11,7 @@ class Object : public QObject
 public:
     explicit Object(QObject *parent = 0);
     b2Body* getBody();
+    virtual QRect boundingRect()=0;
 protected:
     b2Body * body;
 signals:

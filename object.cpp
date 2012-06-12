@@ -8,4 +8,3 @@ Object::Object(QObject *parent) :
 b2Body* Object::getBody(){
     return body;
 }
-

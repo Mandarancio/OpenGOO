@@ -47,6 +47,8 @@ public slots:
     void paintDebug(QPainter &p);
     //rutines called when previus status was spleep and a neighbor is found!
     void neighborsFound();
+    //update rutine;
+    void update();
 
 
 };

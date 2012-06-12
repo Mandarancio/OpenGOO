@@ -471,45 +471,48 @@ void Level::paintEvent(QPaintEvent *e){
 
     p.setRenderHint(QPainter::Antialiasing);
 
+    QRect display(-translation,QSize(width(),height()));
 
     p.save();
     p.scale(scale,scale);
     p.translate(translation);
 
-    if (drag && (dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
-    {
-        for (int i=0;i<possibility.length();i++)
-            p.drawLine(dragged->getPPosition(),possibility[i]->getPPosition());
-    }
-    else if (drag && dragged->getType()==BALOON){
-        if (getNearest(dragged->getPPosition(),possibility)!= NULL){
-            p.drawLine(dragged->getPPosition(),getNearest(dragged->getPPosition(),possibility)->getPPosition());
-        }
-    }
 
-    for (int i=0;i<objects.length();i++)
-        objects[i]->paint(p);
+    for (int i=0;i<objects.length();i++){
+        if (display.intersects(objects[i]->boundingRect()) || (flag & OPENGL))
+            objects[i]->paint(p);
+
+    }
     for (int i=0;i<joints.length();i++) {
-        if (joints[i]) {
-            joints[i]->paint(p);
-            if ((flag & DEBUG) && !(flag & ONLYTEXT)){
-                joints[i]->paintDebug(p);
+        if (joints[i] ) {
+            joints[i]->status();
+            if ( display.intersects(joints[i]->boundingRect()) || (flag & OPENGL)){
+                joints[i]->paint(p);
+                if ((flag & DEBUG) && !(flag & ONLYTEXT)){
+                    joints[i]->paintDebug(p);
+                }
             }
         }
     }
     for (int i=0;i<goos.length();i++){
-        if (goos[i] && goos[i]->hasJoint() && !goos[i]->isDragging() && !goos[i]->isSelected()){
-            goos[i]->paint(p);
-            if ((flag & DEBUG) && !(flag & ONLYTEXT)){
-                goos[i]->paintDebug(p);
+        if (goos[i]  && goos[i]->hasJoint() && !goos[i]->isDragging() && !goos[i]->isSelected()){
+            goos[i]->update();
+            if ( display.intersects(goos[i]->boundingRect()) || (flag & OPENGL)){
+                goos[i]->paint(p);
+                if ((flag & DEBUG) && !(flag & ONLYTEXT)){
+                    goos[i]->paintDebug(p);
+                }
             }
         }
     }
     for (int i=0;i<goos.length();i++){
         if (goos[i] && !goos[i]->isDragging() && !goos[i]->isSelected() && !goos[i]->hasJoint()) {
-            goos[i]->paint(p);
-            if ((flag & DEBUG) && !(flag & ONLYTEXT)){
-                goos[i]->paintDebug(p);
+            goos[i]->update();
+            if (display.intersects(goos[i]->boundingRect()) || (flag & OPENGL)){
+                goos[i]->paint(p);
+                if ((flag & DEBUG) && !(flag & ONLYTEXT)){
+                    goos[i]->paintDebug(p);
+                }
             }
         }
     }

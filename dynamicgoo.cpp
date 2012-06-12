@@ -189,20 +189,14 @@ void DynamicGoo::paint(QPainter &p){
     //Check rutine
 
 
-    if (!isSleeping()){
-        if (hasJoint()){
-            body->SetAngularVelocity(0.0);
-        }
-        moveToTarget();
-    }
-    else
-        emit this->checkForNeighbors(getPPosition());
+
     //Real paint stuff
     //check if is dragged
     if (isDragging()){
         p.setBrush(Qt::transparent);
         p.setPen(QPen(color,3));
         p.drawEllipse(toPoint(body->GetPosition()), getRadius()+10,getRadius()+10);
+        //p.drawRect(boundingRect());
     }
     //check if is selected and draggable
     else if (selected && isDragable()){
@@ -351,6 +345,18 @@ void DynamicGoo::neighborsFound(){
     //call rutine for move to next goo
     moveToTarget();
 }
+
+void DynamicGoo::update(){
+    if (!isSleeping()){
+        if (hasJoint()){
+            body->SetAngularVelocity(0.0);
+        }
+        moveToTarget();
+    }
+    else
+        emit this->checkForNeighbors(getPPosition());
+}
+
 
 void DynamicGoo::unstick(){
     sticked=false;

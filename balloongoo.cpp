@@ -29,9 +29,6 @@ BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
 }
 
 void BalloonGoo::paint(QPainter &p){
-    if (isSleeping()) emit checkForNeighbors(getPPosition());
-
-    this->moveToTarget();
 
 
     //not active status
@@ -50,10 +47,7 @@ void BalloonGoo::paint(QPainter &p){
         p.setPen(color);
 
         p.setBrush(color);
-        //apply the force to fly)
-        body->ApplyForceToCenter(force);
-        body->SetAngularVelocity(0.0);
-        body->SetTransform(body->GetPosition(),0.0);
+
 
 
         p.drawEllipse(QPoint(body->GetPosition().x*10,body->GetPosition().y*10-(getRadius()/2+ry)),
@@ -177,4 +171,16 @@ void BalloonGoo::paintDebug(QPainter &p){
     p.drawLine(0,0,8,0);
 
     p.restore();
+}
+
+void BalloonGoo::update(){
+    if (isSleeping()) emit checkForNeighbors(getPPosition());
+    this->moveToTarget();
+    if (active){
+        //apply the force to fly
+        body->ApplyForceToCenter(force);
+        body->SetAngularVelocity(0.0);
+        body->SetTransform(body->GetPosition(),0.0);
+    }
+
 }

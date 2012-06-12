@@ -45,6 +45,7 @@ public:
     //get target
     Goo* getTarget();
 
+    QRect boundingRect();
 
     //Function to drag and drop goo
     virtual void drag();
@@ -158,6 +159,7 @@ public slots:
     //PaintDebug data
     virtual void paintDebug(QPainter &p)=0;
     virtual void neighborsFound();
+    virtual void update()=0;
 };
 
 #endif // GOO_H

@@ -22,6 +22,7 @@ private:
 public slots:
     void paint(QPainter &p);
     void paintDebug(QPainter &p);
+    void update();
 };
 
 #endif // BALLOONGOO_H

@@ -256,6 +256,11 @@ Goo* Goo::getTarget(){
     return target;
 }
 
+QRect Goo::boundingRect(){
+    QRect rect(getPPosition()-QPoint(radius,radius),QSize(radius*2,radius*2));
+    return rect;
+}
+
 void Goo::setTarget(Goo *goo){
         if (isFalling()) falling=false;
         if (prevTarget!=NULL) prevTarget->removeGuest();
