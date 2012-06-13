@@ -553,7 +553,8 @@ void Level::paintEvent(QPaintEvent *e){
         p.setPen(Qt::yellow);
 
         if ((flag & DEBUG) && overJoint(dragged)!=NULL) {
-            p.drawPolyline(overJoint(dragged)->boundingPoly());
+            p.setBrush(Qt::transparent);
+            p.drawRect(overJoint(dragged)->boundingRect());
         }
         if ((dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
         {
