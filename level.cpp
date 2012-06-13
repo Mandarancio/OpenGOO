@@ -236,7 +236,7 @@ void Level::clean(){
 //RETRIVE THE JOINT  (IF ONE) UNDER THE GOO
 
 Joint* Level::overJoint(Goo *goo){
-    int r=qRound(goo->getRadius()/3);
+    int r=qRound(goo->getRadius()/1.41);
     QRect rect(goo->getPPosition()-QPoint(r,r),QSize(r*2,r*2));
     for (int i=0;i<joints.length();i++){
         if (joints[i]->boundingRect().intersects(rect)) return joints[i];
@@ -267,7 +267,6 @@ void Level::moveUp(){
 }
 void Level::moveDown(){
     int hy=limit.y();
-    qWarning()<<hy<<limit;
     int sy=translation.y()-geometry().height();
     if (sy>hy){
         translation.setY(translation.y()-(sy-10>=hy ? 10 : qAbs(hy-sy)));
@@ -275,7 +274,6 @@ void Level::moveDown(){
     }
 }
 void Level::moveRight(){
-    qWarning()<<limit;
     if (translation.x()-geometry().width()-10>-(limit.width()+limit.x())){
         translation.setX(translation.x()-10);
         backGroundWidget->translated(translation);
@@ -542,6 +540,11 @@ void Level::paintEvent(QPaintEvent *e){
     //Draw selected and dragged goo
     if (dragged!=NULL) {
         p.setPen(Qt::yellow);
+
+        if ((flag & DEBUG) && overJoint(dragged)!=NULL) {
+            p.setBrush(Qt::transparent);
+            p.drawRect(overJoint(dragged)->boundingRect());
+        }
         if ((dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
         {
             for (int i=0;i<possibility.length();i++)
@@ -789,8 +792,14 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     }
     else if (drag){
         if (overJoint(dragged)!=NULL){
-            dragged->drop();
-            dragged->setTarget(overJoint(dragged)->goo(qrand()%2));
+            dragged->drop(b2Vec2(0,0));
+            Goo* target,*prev;
+            bool choise=qrand()%2;
+            prev=overJoint(dragged)->goo(!choise);
+            target=overJoint(dragged)->goo(choise);
+
+            dragged->setTarget(prev);
+            dragged->setTarget(target);
         }
         else if (showJointTimer<=DELAY){
             dragged->drop(mouseSpeed);
