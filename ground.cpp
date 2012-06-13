@@ -27,19 +27,7 @@ Ground::Ground(b2World *world, QPoint center, QList<QPoint> shape, QObject *pare
 
 //Function to know if a goo is conteined in the ground
 bool Ground::contains(Goo*goo){
-    QPoint p=goo->getPPosition();
-    int r=goo->getRadius();
-    float rx=r/sqrt(2.0);
-    if (contains(p)) return true;
-    if (contains(QPoint(p.x(),p.y()-r))) return true;
-    if (contains(QPoint(p.x(),p.y()+r))) return true;
-    if (contains(QPoint(p.x()-r,p.y()))) return true;
-    if (contains(QPoint(p.x()+r,p.y()))) return true;
-    if (contains(QPoint(p.x()+rx,p.y()+rx))) return true;
-    if (contains(QPoint(p.x()-rx,p.y()+rx))) return true;
-    if (contains(QPoint(p.x()-rx,p.y()-rx))) return true;
-    if (contains(QPoint(p.x()+rx,p.y()-rx))) return true;
-
+    if (polShape.intersected(rect2poly(goo->boundingRect())).count()) return true;
     return false;
 }
 

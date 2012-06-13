@@ -714,8 +714,11 @@ void Level::mouseMoveEvent(QMouseEvent *e){
             if (!groundContains(e->pos()/scale-translation,dragged->getRadius())) stopPosition=e->pos()/scale-translation;
         }
         else {
-            dragged->move(e->pos()/scale-translation);
-            stopPosition=dragged->getPPosition();
+            if (!groundContains(e->pos()/scale-translation,dragged->getRadius())){
+                dragged->move(e->pos()/scale-translation);
+                stopPosition=dragged->getPPosition();
+            }
+
         }/*
         bool same=true;
         if (possibility.length()!=possibleJoints()*/
