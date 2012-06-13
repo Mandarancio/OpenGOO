@@ -6,15 +6,6 @@
         THANKS TO Slyshyk Oleksly for fixes
 */
 
-b2Vec2 toVec(QPoint p){
-    return b2Vec2(p.x()/10.0,p.y()/10.0);
-}
-
-QPoint toPoint(b2Vec2 v){
-    return QPoint(qRound(v.x*10.0),qRound(v.y*10.0));
-}
-
-
 QPolygon toPoly(QList<QPoint> ps){
     QPolygon poly(ps.length());
     for (int i=0;i<ps.length();i++){

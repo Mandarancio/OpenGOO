@@ -10,12 +10,6 @@
 
 #include <QDebug>
 
-CollisionListener::CollisionListener(QObject *parent) :
-    QObject(parent)
-{
-    //Nothing to do here (for now)
-}
-
 void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold){
     //if (oldManifold->points==contact->GetManifold()->points) contact->SetEnabled(false); //To skip continuos contact
     Goo*a,*b; //for get the goo involved in the contact

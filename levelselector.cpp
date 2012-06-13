@@ -102,11 +102,6 @@ void LevelSelector::paint(QPainter &p){
         paintButton(i,p);
 }
 
-void LevelSelector::closeAll()
-{
-    emit this->closing();
-}
-
 QString LevelSelector::getLevelSelected()
 {
     if(selected!=levels.size())

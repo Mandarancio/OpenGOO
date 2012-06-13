@@ -7,6 +7,7 @@
 #include <Box2D/Box2D.h>
 
 #include "goo.h"
+#include "tools.h"
 
 class Target : public QObject
 {
@@ -15,8 +16,12 @@ public:
     explicit Target(QPoint position,int height,b2World * world,QObject *parent = 0);
     void checkTower(QList<Goo*> ps);
     void applyForces(QList<Goo*>ps);
-    bool isCatched();
-    b2Vec2 getVPosition();
+    bool isCatched(){
+        return catched;
+    }
+    b2Vec2 getVPosition(){
+        return toVec(position);
+    }
 private:
     QPoint position;
     int h;

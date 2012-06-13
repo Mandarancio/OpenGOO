@@ -63,7 +63,6 @@ SOURCES += \
     dynamicgoo.cpp \
     collisionlistener.cpp \
     menu.cpp \
-    object.cpp \
     stickylink.cpp \
     removablegoo.cpp \
     balloongoo.cpp\

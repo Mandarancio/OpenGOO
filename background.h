@@ -18,10 +18,17 @@ public:
     //Add a shape!
     void addPolygon(QPolygon polygon, QColor color);
     //set delta
-    void setDelta(float delta);
+    void setDelta(float delta){
+        this->delta=delta;
+    }
+
     //get id
-    int getID();
-    void setOpenGL(bool flag);
+    int getID(){
+        return id;
+    }
+    void setOpenGL(bool flag){
+        openglFlag=flag;
+    }
 
 private:
     //ID Of the background, usefull for different background.
@@ -41,7 +48,9 @@ signals:
 
 public slots:
     //Function to set translate
-    void setTranslate(QPoint p);
+    void setTranslate(QPoint p){
+        translate=QPoint(-p.x()*delta,-p.y()*delta);
+    }
     //Function to paint
     void paint(QPainter &p);
 

@@ -1,5 +1,4 @@
 #include "target.h"
-#include "tools.h"
 
 Target::Target(QPoint position, int height,b2World *world, QObject *parent) :
     QObject(parent)
@@ -15,10 +14,6 @@ Target::Target(QPoint position, int height,b2World *world, QObject *parent) :
     body->CreateFixture(&shape,1.0);
     body->SetUserData(this);
     catched=false;
-}
-
-bool Target::isCatched(){
-    return catched;
 }
 
 //Function to know if the goo tower is in proximity of the target
@@ -92,8 +87,4 @@ void Target::applyImpulse(Goo *goo){
         }
 
     }
-}
-
-b2Vec2 Target::getVPosition(){
-    return toVec(position);
 }

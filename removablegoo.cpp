@@ -9,10 +9,3 @@ RemovableGoo::RemovableGoo(b2World *world, QPoint point, int radius, QObject *pa
     color=QColor(188,211,95);
     secondaryColor=color;
 }
-
-//The only difference with dynamic goo is that the joint status is ignored.
-bool RemovableGoo::isDragable(){
-   return !isSleeping();
-}
-
-

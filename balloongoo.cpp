@@ -142,12 +142,6 @@ void BalloonGoo::drag(){
 
 }
 
-bool BalloonGoo::isDragable(){
-    //Always draggable
-    if (!isSleeping()) return true;
-    else return false;
-}
-
 void BalloonGoo::paintDebug(QPainter &p){
     float fx,fy;
     float f;

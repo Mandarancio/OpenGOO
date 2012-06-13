@@ -41,7 +41,9 @@ private:
     void paint(QPainter &p);
 
 private slots:
-    void closeAll();
+    void closeAll(){
+        emit this->closing();
+    }
 };
 
 #endif // LEVELSELECTOR_H

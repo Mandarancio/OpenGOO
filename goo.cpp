@@ -39,83 +39,11 @@ Goo::Goo( int radius, QObject *parent) :
     type=NONE;
 }
 
-GooType Goo::getType(){
-    return type;
-}
-
 //Check if is on ground
 bool Goo::isOnGround(){
     if (getPPosition().x()-groundPoint.x()>5 || getPPosition().y()-groundPoint.y()>5) onGround=false;
     else onGround=true;
     return onGround;
-}
-
-//Function to select unselect
-void Goo::select(bool s){
-    selected=s;
-}
-
-bool Goo::isSelected(){
-    return selected;
-}
-
-bool Goo::isDragable(){
-    return dragable;
-}
-
-bool Goo::isMoovable(){
-    return moovable;
-}
-
-bool Goo::isFalling(){
-    return falling;
-}
-
-bool Goo::isDragging(){
-    return dragging;
-}
-
-bool Goo::hasJoint(){
-    if (radius && !links.empty()) return true;
-    else return false;
-}
-
-bool Goo::canHaveJoint(){
-    if (hasJoint() && nJoints()<maxJoints) return true;
-    else return false;
-}
-
-bool Goo::isLinked(Goo *goo){
-    return links.contains(goo);
-}
-
-//Return if the goo is sleeping
-bool Goo::isSleeping(){
-    return sleeping;
-}
-
-int Goo::nJoints(){
-    return links.length();
-}
-
-int Goo::getRadius(){
-    return radius;
-}
-
-int Goo::getMaxJoints(){
-    return maxJoints;
-}
-
-int Goo::getGuestNumber(){
-    return guestN;
-}
-
-int Goo::getDistanceToJoint(){
-    return distanceToJoint;
-}
-
-double Goo::getStickness(){
-    return stickness;
 }
 
 int Goo::getNumberOf(GooType type){
@@ -167,9 +95,6 @@ void Goo::move(QPoint p){
         body->SetTransform(toVec(p),0);
 }
 
-void Goo::catched(){}
-void Goo::lost(){}
-
 void Goo::jumpTo(QPoint p){
     stopFollow();
     this->dragable=false;
@@ -183,9 +108,6 @@ void Goo::jumpTo(QPoint p){
     body->SetLinearVelocity(v);
 }
 
-b2Body* Goo::getBody(){
-    return body;
-}
 
 b2Vec2 Goo::getVPosition(){
     if (body==NULL) return b2Vec2(0,0);
@@ -252,10 +174,6 @@ void Goo::destroyThis(){
     emit this->destroyGoo();
 }
 
-Goo* Goo::getTarget(){
-    return target;
-}
-
 QRect Goo::boundingRect(){
     QRect rect(getPPosition()-QPoint(radius,radius),QSize(radius*2,radius*2));
     return rect;
@@ -315,18 +233,6 @@ void Goo::drop(b2Vec2 speed){
     dragging=false;
 }
 
-QList<Goo*> Goo::getLinks(){
-    return links;
-}
-
-Goo* Goo::getPrevious(){
-    return prevTarget;
-}
-
-void Goo::moveToTarget(){
-
-}
-
 void Goo::stopFollow(){
     if (following){
         disconnect(this,SLOT(checkForConnection(Goo*)));
@@ -358,8 +264,3 @@ void Goo::fallDown(){
     body->SetGravityScale(1.0);
     body->SetAngularVelocity(0);
 }
-
-void Goo::neighborsFound(){
-    sleeping=false;
-}
-
