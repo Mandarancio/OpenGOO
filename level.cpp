@@ -26,6 +26,7 @@
 #define INTERVALL 4
 #define DELAY 10
 
+
 Level::Level(QRect geometry, QString level,BackGroundWidget *bg,int flag, QWidget *parent) :
     QWidget(parent), backGroundWidget(bg)
 {
@@ -888,10 +889,7 @@ void Level::paintScore(QPainter &p){
     f.setPixelSize(22);
     path.addText(10+fm.width(QString::number(points)),height()-14,f,QString::number(goal));
     f.setPixelSize(30);
-    int mm,ss;
-    mm=time/60;
-    ss=int(time)-60*mm;
-    path.addText(10,30,f,(mm? QString::number(mm)+":"+(ss>=10 ? "" :"0" )+QString::number(ss) : QString::number(ss)));
+    path.addText(10,30,f,time2string(time));
 
 
 

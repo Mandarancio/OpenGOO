@@ -27,4 +27,6 @@ QRect pRect(QString s, bool &ok, int w=1000,int h=1000); //Parse a string "X Y,W
 QList <QPoint> pList(QString s, bool&ok,int w=1000,int h=1000, int min=3); //Parse a string "X0 Y0,X1 Y1,...,XN YN" in a QList of QPoint scaled of 1000/w and 1000/h
 
 
+QString time2string(int time);
+
 #endif // TOOLS_H
