@@ -11,7 +11,11 @@ public:
     void drag();
     bool createLink(Goo *goo);
     bool destroyLink(Goo *goo);
-    bool isDragable();
+    bool isDragable() {
+        //Always draggable
+        return !isSleeping();
+    }
+
 private:
     b2Vec2 force;
     bool active;

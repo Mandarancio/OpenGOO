@@ -14,9 +14,13 @@ class Ground : public QObject
 public:
 
     explicit Ground(b2World *world,QPoint center,QList<QPoint>shape,QObject *parent = 0);
-    b2Body * getBody(); //Get physical body
+    b2Body * getBody(){ //Get physical body
+        return body;
+    }
     //Function to know if a point is conteined in the ground
-    bool contains(QPoint p);
+    bool contains(QPoint p){
+        return polShape.containsPoint(p,Qt::OddEvenFill);
+    }
     bool contains(Goo * goo);
     bool contains(QPoint p,int r);
 private:

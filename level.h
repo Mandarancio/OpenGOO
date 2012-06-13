@@ -50,7 +50,9 @@ class Level : public QWidget //QWidget <--To use without openGL
     Q_OBJECT
 public:
     explicit Level(QRect geometry,QString level,BackGroundWidget *bg,int flag = STANDARD,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
-    ~Level();
+    ~Level(){
+        clean();
+    }
     //Function to start the level;
     bool startLevel();
 
@@ -182,7 +184,9 @@ public slots:
 private slots:
     //LEVEL LOADER SLOTS:
     void setGoal(int goal);
-    void setName(QString name);
+    void setName(QString name){
+        this->name=name;
+    }
     void setLimit(QRect limit);
     void setGround(QPoint gCenter,QList<QPoint> gList);
     void setTarget(QPoint target);
@@ -216,10 +220,16 @@ private slots:
     void towerLost();                   //Actions to do when the tower in no more near the target
 
     //LEVEL SLOTS:
-    void resume();                      //Close the menu
+    void resume(){                      //Close the menu
+        onMenu=false;
+    }
     void restart();                     //Restart the level
-    void closeAll();                    //Close the game
-    void backToMainMenu();              //Return to Main Menu
+    void closeAll(){                    //Close the game
+        emit this->closing();
+    }
+    void backToMainMenu(){              //Return to Main Menu
+        emit this->eventBackToMainMenu();
+    }
 };
 
 #endif // LEVEL_H

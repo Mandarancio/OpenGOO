@@ -22,16 +22,30 @@ class Goo : public QObject
 public:
     explicit Goo(int radius=15,QObject *parent = 0);
     //GET TYPE
-    GooType getType();
+    GooType getType(){
+        return type;
+    }
 
-    int nJoints();
-    int getMaxJoints();
-    int getRadius();
-    int getGuestNumber();
+    int nJoints(){
+        return links.length();
+    }
+    int getMaxJoints(){
+        return maxJoints;
+    }
+    int getRadius(){
+        return radius;
+    }
+    int getGuestNumber(){
+        return guestN;
+    }
 
-    int getDistanceToJoint();
+    int getDistanceToJoint(){
+        return distanceToJoint;
+    }
 
-    double getStickness();
+    double getStickness(){
+        return stickness;
+    }
 
     //TREE FUNCTION
     int getNumberOf(GooType type);
@@ -43,7 +57,9 @@ public:
     bool canHaveGuest();
 
     //get target
-    Goo* getTarget();
+    Goo* getTarget(){
+        return target;
+    }
 
     QRect boundingRect();
 
@@ -52,19 +68,39 @@ public:
     void drop();
     void drop(b2Vec2 speed);
     //select unselect goo
-    void select(bool s=true);
-    bool isSelected();
+    void select(bool s=true){
+        selected=s;
+    }
+    bool isSelected(){
+        return selected;
+    }
 
     //Return function
-    virtual bool isDragable();
-    bool isMoovable();
-    bool isFalling();
-    bool isDragging();
-    bool hasJoint();
-    bool canHaveJoint();
-    bool isLinked(Goo* goo);
+    virtual bool isDragable(){
+        return dragable;
+    }
+    bool isMoovable(){
+        return moovable;
+    }
+    bool isFalling(){
+        return falling;
+    }
+    bool isDragging(){
+        return dragging;
+    }
+    bool hasJoint(){
+        return radius && !links.empty();
+    }
+    bool canHaveJoint(){
+        return hasJoint() && nJoints()<maxJoints;
+    }
+    bool isLinked(Goo* goo){
+        return links.contains(goo);
+    }
     bool isOnGround();
-    bool isSleeping();
+    bool isSleeping(){
+        return sleeping;
+    }
 
     virtual bool createLink(Goo* goo);
     virtual bool destroyLink(Goo* goo);
@@ -80,17 +116,23 @@ public:
 
     void jumpTo(QPoint p);
 
-    virtual void catched();
-    virtual void lost();
+    virtual void catched(){}
+    virtual void lost(){}
 
 
-    b2Body* getBody();
+    b2Body* getBody(){
+        return body;
+    }
     b2Vec2 getVPosition();
     b2Vec2 getVPositionScaled();
     QPoint getPPosition();
 
-    QList <Goo*> getLinks();
-    Goo* getPrevious();
+    QList <Goo*> getLinks(){
+        return links;
+    }
+    Goo* getPrevious(){
+        return prevTarget;
+    }
 protected:
 
     GooType type;
@@ -131,7 +173,7 @@ protected:
     Goo* target,*prevTarget;
 
 
-    void moveToTarget(); //Move the goos through the joints
+    void moveToTarget(){} //Move the goos through the joints
     void stopFollow();
     void fallDown();
 signals:
@@ -158,7 +200,9 @@ public slots:
     virtual void paint(QPainter &p)=0;//Draw the goo
     //PaintDebug data
     virtual void paintDebug(QPainter &p)=0;
-    virtual void neighborsFound();
+    virtual void neighborsFound(){
+        sleeping=false;
+    }
     virtual void update()=0;
 };
 

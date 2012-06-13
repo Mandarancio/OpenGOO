@@ -17,9 +17,19 @@ class SvgLevelLoader : public QObject
 {
     Q_OBJECT
 public:
-    explicit SvgLevelLoader(QString path="",QSize display=QSize(1000,1000),QObject *parent = 0);
-    void setFile(QString path);
-    void setDisplay(QSize size);
+    explicit SvgLevelLoader(QString path="",QSize display=QSize(1000,1000),QObject *parent = 0) :
+        QObject(parent),
+        path(path),
+        displaySize(display)
+    {
+    }
+
+    void setFile(QString path){
+        this->path=path;
+    }
+    void setDisplay(QSize size){
+        displaySize=size;
+    }
     //function that parse the svg
     bool parse();
     //function to add a created goo

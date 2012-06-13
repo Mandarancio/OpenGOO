@@ -63,31 +63,12 @@ void BackGround::addPolygon(QPolygon polygon, QColor color){
     }
 }
 
-///Set delta
-void BackGround::setDelta(float delta){
-    this->delta=delta;
-}
-
-//get id
-int BackGround::getID(){
-    return id;
-}
-
-void BackGround::setOpenGL(bool flag){
-    openglFlag=flag;
-}
-
 QRect BackGround::computeRect(){
     QRectF rect=polygons[0].first.boundingRect();
     for (int i=1;i<polygons.length();i++){
         rect.unite(polygons[i].first.boundingRect());
     }
     return rect.toRect();
-}
-
-//Set translate
-void BackGround::setTranslate(QPoint p){
-    translate=QPoint(-p.x()*delta,-p.y()*delta);
 }
 
 //paint

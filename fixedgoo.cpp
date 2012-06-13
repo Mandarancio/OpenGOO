@@ -48,7 +48,3 @@ void FixedGoo::contactGround(QPoint p){
     if (p.isNull()) return;
  //TODO
 }
-
-QColor FixedGoo::getColor(){
-    return Qt::black;
-}
