@@ -238,8 +238,9 @@ void Level::clean(){
 Joint* Level::overJoint(Goo *goo){
     int r=qRound(goo->getRadius()/1.41);
     QRect rect(goo->getPPosition()-QPoint(r,r),QSize(r*2,r*2));
+    QPolygon pol=rect2poly(rect);
     for (int i=0;i<joints.length();i++){
-        if (joints[i]->boundingRect().intersects(rect)) return joints[i];
+        if (joints[i]->boundingRect().intersects(rect) && joints[i]->boundingPoly().intersected(pol).count()) return joints[i];
     }
     return NULL;
 }
@@ -525,6 +526,7 @@ void Level::paintEvent(QPaintEvent *e){
             }
         }
     }
+
     if ((flag & DEBUG) && !(flag & ONLYTEXT)) {
         for (int i=0;i<stickys.length();i++)
             stickys[i]->paint(p);
@@ -542,8 +544,7 @@ void Level::paintEvent(QPaintEvent *e){
         p.setPen(Qt::yellow);
 
         if ((flag & DEBUG) && overJoint(dragged)!=NULL) {
-            p.setBrush(Qt::transparent);
-            p.drawRect(overJoint(dragged)->boundingRect());
+            p.drawPolyline(overJoint(dragged)->boundingPoly());
         }
         if ((dragged->getType()!=BALOON &&possibility.length()>1) && (showJointTimer>DELAY))
         {

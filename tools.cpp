@@ -84,3 +84,13 @@ QString time2string(int time){
     return s;
 }
 
+
+QPolygon rect2poly(QRect r){
+    QPolygon pol(5);
+    pol.setPoint(0,r.topLeft());
+    pol.setPoint(1,r.bottomLeft());
+    pol.setPoint(2,r.bottomRight());
+    pol.setPoint(3,r.topRight());
+    pol.setPoint(4,r.topLeft());
+    return pol;
+}

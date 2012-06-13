@@ -32,5 +32,6 @@ QList <QPoint> pList(QString s, bool&ok,int w=1000,int h=1000, int min=3); //Par
 
 
 QString time2string(int time);
+QPolygon rect2poly(QRect r);
 
 #endif // TOOLS_H

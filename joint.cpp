@@ -131,3 +131,18 @@ QRect Joint::boundingRect(){
     return rect;
 }
 
+QPolygon Joint::boundingPoly(){
+    QPolygon poly(5);
+    QRect ra,rb;
+    ra=a->boundingRect();
+    rb=b->boundingRect();
+
+    poly.setPoint(0,ra.topRight());
+    poly.setPoint(1,ra.bottomLeft());
+    poly.setPoint(2,rb.bottomLeft());
+    poly.setPoint(3,rb.topRight());
+    poly.setPoint(4,ra.topRight());
+
+    return poly;
+}
+

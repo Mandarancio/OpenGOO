@@ -24,6 +24,7 @@ public:
     }
     Goo* goo(bool id);
     QRect boundingRect();
+    QPolygon boundingPoly();
     virtual void status(); // function to check the status of the joint
 
 protected:
