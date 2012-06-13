@@ -96,6 +96,7 @@ private:
     //Mouse
     b2Vec2 mousePos;        //Mouse current position (is needed to calculate the speed of the mouse
     b2Vec2 mouseSpeed;      //Mouse speed (so when release the dragged goo, he take the mouse speed)
+    QPoint absoluteMousePos;
     //Level
     QString name;           //Level name
     int goal;               //Number of goo to collect to win
@@ -112,6 +113,7 @@ private:
 
 
     int showJointTimer;
+
 
     //METHOD
     //Level
