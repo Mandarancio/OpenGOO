@@ -19,6 +19,8 @@
 #include "ropejoint.h"
 #include "collisionlistener.h"
 
+#include "flags.h"
+
 #include <QPolygon>
 #include <QTextFormat>
 
@@ -27,13 +29,11 @@
 #define DELAY 10
 
 
-Level::Level(QRect geometry, QString level,BackGroundWidget *bg,int flag, QWidget *parent) :
+Level::Level(QRect geometry, QString level,BackGroundWidget *bg,QWidget *parent) :
     QWidget(parent), backGroundWidget(bg)
 {
     scale=1.0;
     goal = 100;
-    //Set enviroment flag
-    this->flag=flag;
 
     //set the display geometry
     this->setGeometry(0,0,geometry.width(),geometry.height());
@@ -87,7 +87,7 @@ Level::Level(QRect geometry, QString level,BackGroundWidget *bg,int flag, QWidge
     if (flag & DEBUG) qWarning()<<"Game variable initialized!";
 
 
-    menu=new Menu(geometry,this,flag & DEBUG);
+    menu=new Menu(geometry,this);
     onMenu=false;
     mooving=false;
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
