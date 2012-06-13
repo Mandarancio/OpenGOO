@@ -526,6 +526,7 @@ void Level::paintEvent(QPaintEvent *e){
     for (int i=0;i<goos.length();i++){
         if (goos[i] && !goos[i]->isDragging() && !goos[i]->isSelected() && !goos[i]->hasJoint()) {
             goos[i]->update();
+            if (goos[i]->isFalling() && overJoint(goos[i])!=NULL) anchorToJoint(goos[i],overJoint(goos[i]));
             if (display.intersects(goos[i]->boundingRect()) || (flag & OPENGL)){
                 goos[i]->paint(p);
                 if ((flag & DEBUG) && !(flag & ONLYTEXT)){
