@@ -1,7 +1,9 @@
+
 #include "tools.h"
 #include <QDebug>
+
 /*
-	THANKS TO Slyshyk Oleksly for fix the toVecs(*) function
+        THANKS TO Slyshyk Oleksly for fixes
 */
 
 b2Vec2 toVec(QPoint p){
@@ -12,14 +14,6 @@ QPoint toPoint(b2Vec2 v){
     return QPoint(qRound(v.x*10.0),qRound(v.y*10.0));
 }
 
-b2Vec2* toVecs(QList<QPoint> ps){
-    b2Vec2 * vecs=0;
-    vecs= static_cast<b2Vec2*>(qMalloc(ps.length()*sizeof(b2Vec2)));
-    for (int i=0;i<ps.length();i++){
-        vecs[i]=toVec(ps[i]);
-    }
-    return vecs;
-}
 
 QPolygon toPoly(QList<QPoint> ps){
     QPolygon poly(ps.length());

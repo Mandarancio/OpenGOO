@@ -14,7 +14,6 @@
 b2Vec2 toVec(QPoint p); //Convert a QPoint in a b2Vec2
 QPoint toPoint(b2Vec2 v); //Convert a b2Vec2 in a QPoint
 
-b2Vec2* toVecs(QList<QPoint> ps); //Convert a QList of QPoint in an array of b2Vec2
 QPolygon toPoly(QList<QPoint> ps); //Convert a QList of QPoint in a QPolygon
 QPolygon toPoly(QList<QPoint> ps,QPoint center); //Convert a QList of QPoint in a QPolygon transated of *center*
 
