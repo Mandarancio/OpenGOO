@@ -89,7 +89,7 @@ bool BalloonGoo::createLink(Goo *goo){
         body->SetAngularDamping(0.2);
 
 
-        force=-b2Vec2(0,(8*body->GetWorld()->GetGravity().y));
+        force=-b2Vec2(0,(4*body->GetWorld()->GetGravity().y));
 
         return true;
     }

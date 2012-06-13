@@ -240,7 +240,7 @@ Joint* Level::overJoint(Goo *goo){
     QRect rect(goo->getPPosition()-QPoint(r,r),QSize(r*2,r*2));
     QPolygon pol=rect2poly(rect);
     for (int i=0;i<joints.length();i++){
-        if (joints[i]->boundingRect().intersects(rect) && joints[i]->boundingPoly().intersected(pol).count()) return joints[i];
+        if (joints[i]->goo(true)->canHaveGuest() && joints[i]->goo(false)->canHaveGuest() && joints[i]->boundingRect().intersects(rect) && joints[i]->boundingPoly().intersected(pol).count()) return joints[i];
     }
     return NULL;
 }
@@ -572,9 +572,16 @@ void Level::paintEvent(QPaintEvent *e){
         }
     }
     if (selected!=NULL){
+        selected->update();
         selected->paint(p);
         if ((flag & DEBUG) && !(flag & ONLYTEXT)){
                 selected->paintDebug(p);
+        }
+        float d=toVec(selected->getPPosition()-absoluteMousePos-translation).Length()*10;
+        if (d>selected->getRadius()+10){
+            selected->select(false);
+            selected=getGooAt(absoluteMousePos/scale-translation);
+            if (selected!=NULL) selected->select();
         }
     }
 
@@ -672,6 +679,7 @@ void Level::keyPressEvent(QKeyEvent *e){
 
 //~700,~900
 void Level::mouseMoveEvent(QMouseEvent *e){
+    absoluteMousePos=e->pos();
     if (onMenu){
         return;
     }

@@ -10,6 +10,7 @@ class RopeJoint : public Joint
     Q_OBJECT
 public:
     explicit RopeJoint(Goo* a,Goo* b, b2World * world,QObject *parent = 0);
+    void status();
     ~RopeJoint();
 private:
     QList <b2Joint*> joints;
