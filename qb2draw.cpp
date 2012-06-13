@@ -11,22 +11,6 @@
 #define WIDTH 4
 
 
-QB2Draw::QB2Draw(QRect displayGeometry,QPainter *p)
-{
-    this->geometry=displayGeometry; //Set the display geometry (for convert the coordinate system)
-    this->painter=p; //For setting the painter
-    this->scale=10.0;
-}
-
-
-void QB2Draw::setPainter(QPainter *p){
-    painter=p;//Set the painter
-}
-
-void QB2Draw::updateGeometry(QRect displayGeometry){
-    geometry=displayGeometry;//For update the geometry (ex:resizing of the windows)
-}
-
 void QB2Draw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color){
     if (painter==NULL) return; //Check the painter
 
@@ -103,13 +87,4 @@ void QB2Draw::DrawTransform(const b2Transform &xf){
 
     painter->translate(toQPoint(xf.p)); //Translate
     painter->rotate(xf.q.GetAngle()*180.0/3.141628); //Rotate
-}
-
-QColor QB2Draw::toQColor(b2Color color){
-    return QColor(color.r,color.g,color.b); //Convert color
-}
-
-QPoint QB2Draw::toQPoint(b2Vec2 vec){
-    QPoint p(vec.x*scale,vec.y*scale); //Convert in qpoint
-    return p; //change the coordinate system
 }

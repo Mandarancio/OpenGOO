@@ -56,14 +56,6 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     type=DYNAMIC;
 }
 
-void DynamicGoo::catched(){
-    speed=15;
-}
-
-void DynamicGoo::lost(){
-    speed=10;
-}
-
 void DynamicGoo::moveToTarget(){
     //Stop to follow if the goo is dragged for the use
 
@@ -358,10 +350,6 @@ void DynamicGoo::update(){
 }
 
 
-void DynamicGoo::unstick(){
-    sticked=false;
-}
-
 void DynamicGoo::contactGround(){
     //Away to trapass body
     if (isDragging()) {
@@ -422,13 +410,4 @@ void DynamicGoo::contactGround(QPoint p){
             emit this->nextTargetPlease(NULL);
         }
     }
-}
-
-bool DynamicGoo::isDragable(){
-    if (!hasJoint() && !isSleeping()) return true;
-    else return false;
-}
-
-QColor DynamicGoo::getColor(){
-    return this->secondaryColor;
 }

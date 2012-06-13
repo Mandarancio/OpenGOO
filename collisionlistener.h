@@ -10,7 +10,11 @@ class CollisionListener : public QObject, public b2ContactListener
 {
     Q_OBJECT
 public:
-    explicit CollisionListener(QObject *parent = 0); //Constructor
+    explicit CollisionListener(QObject *parent = 0) :
+        QObject(parent)
+    {
+        //Nothing to do here (for now)
+    }
     void PreSolve(b2Contact *contact, const b2Manifold *oldManifold); //Pre solve of the collision
     void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse);
 

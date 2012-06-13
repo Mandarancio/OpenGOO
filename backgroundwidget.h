@@ -30,10 +30,14 @@ signals:
     
 public slots:
     void translated(QPoint p);
-    void setTarget(Target* target);
+    void setTarget(Target* target){
+        this->target=target;
+    }
     void addGround(Ground* ground);
     void addBackGround(BackGround* bg);
-    void setScale(float scale);
+    void setScale(float scale){
+        this->scale=scale;
+    }
     void setLimit(QRect limit);
     void clear();
 };

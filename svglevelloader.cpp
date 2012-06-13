@@ -18,22 +18,6 @@
 
 #include "tools.h"
 
-SvgLevelLoader::SvgLevelLoader(QString path,QSize display,QObject *parent) :
-    QObject(parent)
-{
-    this->path=path;
-    displaySize=display;
-}
-
-
-void SvgLevelLoader::setFile(QString path){
-    this->path=path;
-}
-
-void SvgLevelLoader::setDisplay(QSize size){
-    displaySize=size;
-}
-
 bool SvgLevelLoader::parse(){
     links.clear();
     goos.clear();

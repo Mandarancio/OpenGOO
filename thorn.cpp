@@ -22,10 +22,6 @@ Thorn::Thorn(QPoint center,QList<QPoint>shape, b2World *world, QObject *parent):
 
 }
 
-QRect Thorn::boundingRect(){
-    return polygon.boundingRect();
-}
-
 void Thorn::makeShape(QList<QPoint> points){
     //b2EdgeShape is a shape made of segments
     b2PolygonShape* shape;

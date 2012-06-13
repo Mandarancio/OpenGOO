@@ -114,18 +114,10 @@ void Joint::drawLines(QPainter &p){
     p.drawLine(a.x()+2,a.y()+2,b.x()-2,b.y()-2);
 }
 
-b2Joint* Joint::getJoint(){
-    return joint;
-}
-
 bool Joint::has(Goo *a, Goo *b){ //Check if the joint link this two goo
     if (this->a==a && this->b==b) return true;
     if (this->b==a && this->a==b) return true;
     return false;
-}
-
-JointType Joint::getType(){
-    return type;
 }
 
 QRect Joint::boundingRect(){

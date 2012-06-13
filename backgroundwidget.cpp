@@ -62,14 +62,6 @@ void BackGroundWidget::translated(QPoint p){
     }
 }
 
-void BackGroundWidget::setTarget(Target *target){
-    this->target=target;
-}
-
-void BackGroundWidget::setScale(float scale){
-   this->scale=scale;
-}
-
 void BackGroundWidget::setLimit(QRect limit){
     this->limit=limit;
     QColor c1,c2;

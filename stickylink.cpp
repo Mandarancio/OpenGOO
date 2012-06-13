@@ -27,18 +27,6 @@ void StickyLink::checkStatus(){
 }
 
 
-b2Joint* StickyLink::getJoint(){
-    return joint; //return the phisical join
-}
-void StickyLink::setJoint(b2Joint *j){
-    joint=(b2DistanceJoint*)j;
-}
-
-Goo* StickyLink::getGoo(){
-    return goo;
-}
-
-
 void StickyLink::paint(QPainter &p){
     p.setPen(Qt::red);
     if (!joint || !goo) return;

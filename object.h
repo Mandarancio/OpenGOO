@@ -9,8 +9,13 @@ class Object : public QObject
 {
     Q_OBJECT
 public:
-    explicit Object(QObject *parent = 0);
-    b2Body* getBody();
+    explicit Object(QObject *parent = 0) :
+        QObject(parent)
+    {
+    }
+    b2Body* getBody(){
+        return body;
+    }
     virtual QRect boundingRect()=0;
 protected:
     b2Body * body;

@@ -8,7 +8,12 @@ class QB2Draw : public b2Draw, QObject
 {
 
 public:
-    QB2Draw(QRect displayGeometry,QPainter * p=NULL); //Constructor: Display geometry and painter
+    QB2Draw(QRect displayGeometry,QPainter * p=NULL) :
+        painter(p), //For setting the painter
+        geometry(displayGeometry), //Set the display geometry (for convert the coordinate system)
+        scale(10.0)
+    {
+    }
 
     //void setScale(float sx=1.0, float sy=1.0); TODO
     void DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color); //Draw a polyline
@@ -22,12 +27,20 @@ private:
     QRect geometry; //The geometry
     float scale;
 
-    QPoint toQPoint(b2Vec2 vec); //To convert b2vec2 in QPoint (and also change the coordinate system)
-    QColor toQColor(b2Color color); //To convert b2Color in QColor
+    QPoint toQPoint(b2Vec2 vec){ //To convert b2vec2 in QPoint (and also change the coordinate system)
+        return QPoint(vec.x*scale,vec.y*scale);
+    }
+    QColor toQColor(b2Color color){ //To convert b2Color in QColor
+        return QColor(color.r,color.g,color.b);
+    }
 
 public slots:
-    void updateGeometry(QRect displayGeometry); //Update the geometry
-    void setPainter(QPainter * p); //Set the painter
+    void updateGeometry(QRect displayGeometry){
+        geometry=displayGeometry;//For update the geometry (ex:resizing of the windows)
+    }
+    void setPainter(QPainter * p) {
+        painter=p;
+    }
 };
 
 #endif // QB2DRAW_H

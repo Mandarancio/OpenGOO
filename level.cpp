@@ -108,10 +108,6 @@ Level::Level(QRect geometry, QString level,BackGroundWidget *bg,int flag, QWidge
 
 }
 
-Level::~Level(){
-    clean();
-}
-
 //Function to start the level
 //parse level file
 //start timer
@@ -897,7 +893,7 @@ void Level::paintScore(QPainter &p){
     p.drawPath(path);
 
 }
-\
+
 //Function to paint the win screen
 void Level::paintWin(QPainter &p){
     if (points>=goal){
@@ -971,11 +967,6 @@ void Level::clickButton(QPoint p){
     if (d.x()*d.x()+d.y()*d.y()<60*60) onMenu=!onMenu;
 }
 
-//Resume at game from the menu
-void Level::resume(){
-    onMenu=false;
-}
-
 void Level::restart(){
     clean();
     initialize();
@@ -984,10 +975,6 @@ void Level::restart(){
     connect(target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(target,SIGNAL(towerLost()),this,SLOT(towerLost()));
-}
-
-void Level::closeAll(){
-    emit this->closing();
 }
 
 void Level::destroyGOO(){
@@ -1006,10 +993,6 @@ void Level::destroyJoint(Goo *a, Goo *b){
 }
 
 //LOADER FUNCTION
-
-void Level::setName(QString name){
-    this->name=name;
-}
 
 void Level::setGoal(int goal){
     if (flag & DEBUG) qWarning()<<"Goal:"<<goal;
@@ -1246,12 +1229,6 @@ void Level::stopDragging(){
     drag=false;
     possibility.clear();
     mooving=false;
-}
-
-//function to go at main menu
-void Level::backToMainMenu()
-{
-    emit this->eventBackToMainMenu();
 }
 
 //function to stop a goo

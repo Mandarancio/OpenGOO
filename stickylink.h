@@ -19,11 +19,17 @@ public:
     //Check the status of the joint
     void checkStatus();
     //Return the joint
-    b2Joint* getJoint();
+    b2Joint* getJoint(){
+        return joint;
+    }
     //Set the joint [OBSOLETE]
-    void setJoint(b2Joint* j);
+    void setJoint(b2Joint* j){
+        joint=static_cast<b2DistanceJoint*>(j);
+    }
     //RETURN THE GOO
-    Goo* getGoo();
+    Goo* getGoo(){
+        return goo;
+    }
 
     //DEBUG PAINT
     void paint(QPainter &p);

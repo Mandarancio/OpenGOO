@@ -25,15 +25,6 @@ Ground::Ground(b2World *world, QPoint center, QList<QPoint> shape, QObject *pare
     polShape=toPoly(shape,center);
 }
 
-//Return physical body of the ground
-b2Body* Ground::getBody(){
-    return body;
-}
-
-//Function to know if a point is conteined in the ground
-bool Ground::contains(QPoint p){
-    return polShape.containsPoint(p,Qt::OddEvenFill);
-}
 //Function to know if a goo is conteined in the ground
 bool Ground::contains(Goo*goo){
     QPoint p=goo->getPPosition();

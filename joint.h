@@ -15,9 +15,13 @@ public:
     virtual void paint(QPainter &p); //Paint function
     //DEBUG PAINTER
     void paintDebug(QPainter &p);
-    b2Joint* getJoint(); //To have acces at the material b2joint
+    b2Joint* getJoint(){ //To have acces at the material b2joint
+        return joint;
+    }
     bool has(Goo*a,Goo*b); //To check if this joint link this two GOO
-    JointType getType();
+    JointType getType(){
+        return type;
+    }
     QRect boundingRect();
     virtual void status(); // function to check the status of the joint
 

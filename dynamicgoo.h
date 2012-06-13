@@ -15,14 +15,24 @@ class DynamicGoo :public Goo
     Q_OBJECT
 public:
     DynamicGoo(b2World * world,QPoint p=QPoint(0,0),int radius=15,QObject *parent = 0);
-    void catched(); //if the tower catch the target
-    void lost(); //if is the tower lost the target
+    void catched(){ //if the tower catch the target
+        speed=15;
+    }
+    void lost(){ //if is the tower lost the target
+        speed=10;
+    }
     void contactGround();  //collision between goo and ground
     void contactGround(QPoint p);//collision between goo and ground  in the point p(create a sticky joint!)
-    void unstick(); //To unstick the goo
+    void unstick(){ //To unstick the goo
+        sticked=false;
+    }
     //Function that return if the goo is now draggable (if is linked is not)
-    bool isDragable();
-    QColor getColor();
+    bool isDragable(){
+        return !hasJoint() && !isSleeping();
+    }
+    QColor getColor(){
+        return this->secondaryColor;
+    }
 private:
     b2World * world;// copy of the world
     int speed; //Speed
