@@ -368,6 +368,14 @@ bool Level::createJoints(QPoint p){
 
 }
 
+void Level::anchorToJoint(Goo *goo, Joint *j){
+    if (j->goo(true)->canHaveGuest() && j->goo(false)->canHaveGuest()){
+        bool choise=qrand()%2;
+        goo->setTarget(j->goo(!choise));
+        goo->setTarget(j->goo(choise));
+    }
+}
+
 void Level::timerEvent(QTimerEvent *e){
     if (points<goal)
         time+=step;
@@ -794,13 +802,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     else if (drag){
         if (overJoint(dragged)!=NULL){
             dragged->drop(b2Vec2(0,0));
-            Goo* target,*prev;
-            bool choise=qrand()%2;
-            prev=overJoint(dragged)->goo(!choise);
-            target=overJoint(dragged)->goo(choise);
-
-            dragged->setTarget(prev);
-            dragged->setTarget(target);
+            anchorToJoint(dragged,overJoint(dragged));
         }
         else if (showJointTimer<=DELAY){
             dragged->drop(mouseSpeed);

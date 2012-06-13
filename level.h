@@ -148,7 +148,7 @@ private:
     bool createJoints(QPoint p);    //Function to create
 
 
-
+    void anchorToJoint(Goo* goo,Joint * j);
 
     //Funcion to draw background, score and win
     void paintScore(QPainter &p);
