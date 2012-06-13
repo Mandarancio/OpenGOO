@@ -45,16 +45,14 @@ int main(int argc, char *argv[])
     qsrand(QTime().currentTime().toString("hh:mm:ss.zzz").remove(':').toFloat());
 
     bool forceScreen=false;
-    int flag=STANDARD;
     //Default is screen 0
     int screen=0;
-    QString arg;
     //Check for the run parameters
     for (int i=1;i<argc;i++){
-        arg=QString::fromAscii(argv[i]);
+        QString arg(argv[i]);
         //Check for debug Option
         if (!arg.compare("-Debug",Qt::CaseInsensitive)){
-            flag=flag|DEBUG;
+            flag|=DEBUG;
             qWarning("DEBUG MODE ON");
         }
         //Check for screen force option
@@ -62,17 +60,17 @@ int main(int argc, char *argv[])
             screen=arg.split('=').at(1).toInt(&forceScreen);
         }
         else if (!arg.compare("-opengl",Qt::CaseInsensitive)){
-            flag=flag|OPENGL;
+            flag|=OPENGL;
         }
         else if (!arg.compare("-text",Qt::CaseInsensitive)){
-            flag=flag|ONLYTEXT|DEBUG;
+            flag|=ONLYTEXT|DEBUG;
         }
     }
-    if (flag & STANDARD ) qWarning("STD MODE");
+    if (flag == STANDARD) qWarning("STD MODE");
     if (flag & OPENGL){ qWarning("OPENGL ACTIVATED");
-        argc+=2;
-        argv[argc-2]="-graphicssystem";
-        argv[argc-1]="opengl";
+        argc+=2; // TODO: check if it's valid
+        argv[argc-2]=strdup("-graphicssystem");
+        argv[argc-1]=strdup("opengl");
     }
 
 
@@ -120,7 +118,7 @@ int main(int argc, char *argv[])
     }
     else if (flag & DEBUG) qWarning()<<"Game dir exist!";
     //Create the main widget in the bigger screen
-    MainWidget w(a.desktop()->screenGeometry(screen),flag);
+    MainWidget w(a.desktop()->screenGeometry(screen));
     w.show();
 
     return a.exec();
