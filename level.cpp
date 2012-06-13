@@ -233,6 +233,17 @@ void Level::clean(){
     }
 }
 
+//RETRIVE THE JOINT  (IF ONE) UNDER THE GOO
+
+Joint* Level::overJoint(Goo *goo){
+    int r=qRound(goo->getRadius()/3);
+    QRect rect(goo->getPPosition()-QPoint(r,r),QSize(r*2,r*2));
+    for (int i=0;i<joints.length();i++){
+        if (joints[i]->boundingRect().intersects(rect)) return joints[i];
+    }
+    return NULL;
+}
+
 //retrive a goo in a point (if there is a goo)
 Goo* Level::getGooAt(QPoint p){
     b2Vec2 d;
@@ -318,6 +329,7 @@ QList<Goo*> Level::possibleJoints(QPoint p){
     QList<Goo*> l;
     b2Vec2 pv=toVec(p);
     b2Vec2 d;
+    if (overJoint(dragged)!=NULL) return l;
     for (int i=0;i<goos.length();i++){
         if (goos[i]->canHaveJoint()) {
             d=pv-goos[i]->getVPosition();
@@ -776,7 +788,11 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
         clickButton(e->pos());
     }
     else if (drag){
-        if (showJointTimer<=DELAY){
+        if (overJoint(dragged)!=NULL){
+            dragged->drop();
+            dragged->setTarget(overJoint(dragged)->goo(qrand()%2));
+        }
+        else if (showJointTimer<=DELAY){
             dragged->drop(mouseSpeed);
         }
         else if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();

@@ -130,6 +130,8 @@ private:
     //CLEAN FUNCTION
     void clean();
 
+    Joint* overJoint(Goo* goo);
+
     Goo* getGooAt(QPoint p);    //Funciton to get (if any) a goo in a point +/- the radius of the goo
 
     Goo* getNearest(QPoint p,QList<Goo*> l);
@@ -147,6 +149,7 @@ private:
     bool makeJoint(Goo*a,Goo*b);    //Function to create a single joint between two goos
     QList<Goo*> possibleJoints(QPoint p); //Function to show all the possible joint from a point
     bool createJoints(QPoint p);    //Function to create
+
 
 
 

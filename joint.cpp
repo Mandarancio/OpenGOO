@@ -120,6 +120,11 @@ bool Joint::has(Goo *a, Goo *b){ //Check if the joint link this two goo
     return false;
 }
 
+Goo* Joint::goo(bool id){
+    if (id) return a;
+    else return b;
+}
+
 QRect Joint::boundingRect(){
     QRect rect=a->boundingRect();
     rect=rect.united(b->boundingRect());

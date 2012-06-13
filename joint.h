@@ -22,6 +22,7 @@ public:
     JointType getType(){
         return type;
     }
+    Goo* goo(bool id);
     QRect boundingRect();
     virtual void status(); // function to check the status of the joint
 
