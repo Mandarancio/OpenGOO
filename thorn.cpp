@@ -25,7 +25,7 @@ Thorn::Thorn(QPoint center,QList<QPoint>shape, b2World *world, QObject *parent):
 void Thorn::makeShape(QList<QPoint> points){
     //b2EdgeShape is a shape made of segments
     b2PolygonShape* shape;
-    b2Fixture* fix;
+   // b2Fixture* fix;
     float angle,x,y,w,h,dx,dy;
     h=0.1;
     //make a segment for all the points
@@ -41,7 +41,8 @@ void Thorn::makeShape(QList<QPoint> points){
             shape->SetAsBox(w,h,b2Vec2(x,y),angle);
 
             //shape->Set(toVec(points[i]),toVec(points[i+1]));
-            fix= body->CreateFixture(shape,1.0);
+            //fix=body->CreateFixture(..);
+            body->CreateFixture(shape,1.0);
         }
         else {
             shape=new b2PolygonShape();
@@ -54,7 +55,8 @@ void Thorn::makeShape(QList<QPoint> points){
             shape->SetAsBox(w,h,b2Vec2(x,y),angle);
 
             //shape->Set(toVec(points[i]),toVec(points[i+1]));
-            fix= body->CreateFixture(shape,1.0);
+            //fix=body->CreateFixture(..);
+            body->CreateFixture(shape,1.0);
         }
     }
 
