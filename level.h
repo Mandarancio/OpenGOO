@@ -106,7 +106,7 @@ private:
     Direction dir;          //Translation direction
     QList<Goo*> possibility;  //To show the possible joints on the dragged goo
 
-    QTime startTime;
+    double time;
 
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;

@@ -121,7 +121,7 @@ bool Level::startLevel(){
         if (flag & DEBUG) qWarning()<<"Level parse finished!";
         //start timer
         startTimer(step*1000);
-        startTime= QTime::currentTime();
+        time= 0;
         step=1.0/30.0;
         if (flag & DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
         return true;
@@ -361,6 +361,7 @@ bool Level::createJoints(QPoint p){
 }
 
 void Level::timerEvent(QTimerEvent *e){
+    time+=step;
     e->accept();
     if (drag) showJointTimer++;
     if (drag) dragged->drag();
@@ -881,14 +882,16 @@ void Level::paintScore(QPainter &p){
     QPainterPath path;
 
 
-    QTime delta(0,QTime::currentTime().minute()-startTime.minute(),QTime::currentTime().second()-startTime.second());
     QFontMetrics fm(f);
     path.addText(10,height()-26,f,QString::number(points));
 
     f.setPixelSize(22);
     path.addText(10+fm.width(QString::number(points)),height()-14,f,QString::number(goal));
     f.setPixelSize(30);
-    path.addText(10,30,f,delta.toString("mm:ss"));
+    int mm,ss;
+    mm=time/60;
+    ss=int(time)-60*mm;
+    path.addText(10,30,f,(mm? QString::number(mm)+":"+(ss>=10 ? "" :"0" )+QString::number(ss) : QString::number(ss)));
 
 
 
