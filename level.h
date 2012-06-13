@@ -28,7 +28,6 @@
 #include "svglevelloader.h"
 
 #include "qb2draw.h"
-#include "flags.h"
 
 
 #include "backgroundwidget.h"
@@ -49,7 +48,7 @@ class Level : public QWidget //QWidget <--To use without openGL
 {
     Q_OBJECT
 public:
-    explicit Level(QRect geometry,QString level,BackGroundWidget *bg,int flag = STANDARD,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
+    explicit Level(QRect geometry,QString level,BackGroundWidget *bg,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level(){
         clean();
     }
@@ -59,8 +58,6 @@ public:
 
 private:
     float scale;
-    //Run type flag
-    int flag;
     //LOADER
     SvgLevelLoader * loader;
     //PROPERTY

@@ -2,10 +2,11 @@
 #define FLAGS_H
 
 
-#define STANDARD    0x0000
-#define DEBUG       0x0001
-#define OPENGL      0x0010
-#define ONLYTEXT    0x0100
+static const unsigned char STANDARD  = 0;
+static const unsigned char DEBUG     = 1<<0;
+static const unsigned char OPENGL    = 1<<1;
+static const unsigned char ONLYTEXT  = 1<<2;
 
+extern unsigned char flag;
 
 #endif // FLAGS_H

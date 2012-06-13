@@ -1,17 +1,16 @@
 #include "mainwidget.h"
 #include <QDebug>
 
-
 #include "svglevelloader.h"
 
-MainWidget::MainWidget(QRect geometry,int flag,QWidget *parent)
+#include "flags.h"
+
+MainWidget::MainWidget(QRect geometry,QWidget *parent)
     : QWidget(parent)
 {
     this->showFullScreen();//To have the game full screen
     this->setGeometry(geometry);
     this->geometry=geometry;
-
-    this->flag=flag;
 
     levelS=new LevelSelector(geometry,this);//Create the level selector
     levelS->show();//Show the level selector
@@ -23,12 +22,8 @@ MainWidget::MainWidget(QRect geometry,int flag,QWidget *parent)
 
 MainWidget::~MainWidget()
 {
-    if (levelS!=NULL){
-        delete levelS;
-    }
-    if (level!=NULL){
-        delete level;
-    }
+    delete levelS;
+    delete level;
 }
 
 void MainWidget::closeEvent(QCloseEvent *e){
@@ -55,7 +50,7 @@ void MainWidget::levelSelected()//Create the level selected
         bgWidget->setGeometry(0,0,geometry.width(),geometry.height());
         bgWidget->show();
 
-        level=new Level(geometry,levelS->getLevelSelected(),bgWidget,flag,this); //Create the level
+        level=new Level(geometry,levelS->getLevelSelected(),bgWidget,this); //Create the level
         if (flag & DEBUG) qWarning()<<"LEVEL OBJECT INITILIZED";
 
 

@@ -74,7 +74,8 @@ SOURCES += \
     mainmenu.cpp \
     stickygoo.cpp \
     backgroundwidget.cpp \
-    backtracer.cpp
+    backtracer.cpp \
+    flags.cpp
 
 
 ##FOR TOUCHPAD COMPILE
