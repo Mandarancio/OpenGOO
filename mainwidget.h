@@ -13,7 +13,7 @@ class MainWidget : public QWidget
     Q_OBJECT
 
 public:
-    MainWidget(QRect geometry,int flag,QWidget *parent = 0);
+    MainWidget(QRect geometry,QWidget *parent = 0);
     ~MainWidget();
 private:
     Level *level;
@@ -21,7 +21,6 @@ private:
     BackGroundWidget * bgWidget;
 
     QRect geometry;
-    int flag;
 protected:
     void closeEvent(QCloseEvent *);
 private slots:
