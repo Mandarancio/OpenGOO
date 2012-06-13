@@ -362,7 +362,8 @@ bool Level::createJoints(QPoint p){
 }
 
 void Level::timerEvent(QTimerEvent *e){
-    time+=step;
+    if (points<goal)
+        time+=step;
     e->accept();
     if (drag) showJointTimer++;
     if (drag) dragged->drag();
