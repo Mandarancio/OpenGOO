@@ -27,7 +27,9 @@ This program is free software: you can redistribute it and/or modify
 #include <QGraphicsBlurEffect>
 #include <QTime>
 
+#ifndef Q_OS_WIN32
 #include "backtracer.h"
+#endif
 #include "flags.h"
 
 #define GAMEDIR "/.OpenGOO/"
@@ -36,9 +38,11 @@ This program is free software: you can redistribute it and/or modify
 
 int main(int argc, char *argv[])
 {
+#ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
     BackTracer(SIGFPE);
     BackTracer(SIGSTKFLT);
+#endif
 
      //intialize randseed
     qsrand(QTime().currentTime().toString("hh:mm:ss.zzz").remove(':').toFloat());

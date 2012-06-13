@@ -221,7 +221,7 @@ void DynamicGoo::paint(QPainter &p){
         else p.rotate(this->angle);
         p.setBrush(secondaryColor);
 
-        p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
+        p.drawEllipse(QPoint(0,0),qRound(getRadius()-module),qRound(getRadius()+module));
             rx=3;//+=(rand()%5-2);
             ry=-2;//+=(rand()%5-2);
 
@@ -232,7 +232,7 @@ void DynamicGoo::paint(QPainter &p){
         rg.setColorAt(1,Qt::transparent);
 
         p.setBrush(rg);
-        p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
+        p.drawEllipse(QPoint(0,0),qRound(getRadius()-module),qRound(getRadius()+module));
 
         if ((counter>=delay && !hasJoint()) || isDragging()){
             if (!isDragging()) {

@@ -54,7 +54,7 @@ void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2
     //QColor c=toQColor(Qt::white); //Convert the color
     painter->setPen(Qt::white); //set pen color
     painter->setBrush(Qt::transparent); //set brush color
-    painter->drawEllipse(toQPoint(center),qRound(radius)*scale,qRound(radius)*scale); //Draw circle
+    painter->drawEllipse(toQPoint(center),qRound(radius*scale),qRound(radius*scale)); //Draw circle
 
     painter->save();
     painter->translate(toQPoint(center));

@@ -9,7 +9,6 @@ LIBS +=-lBox2D
 win32:{
 INCLUDEPATH += .
 
-
 #BOX2D_DIR - environment var must point to Box2D dir
 INCLUDEPATH += $$(BOX2D_DIR)
 LIBS +=      -L$$(BOX2D_DIR)/lib
@@ -45,7 +44,6 @@ HEADERS += \
     mainmenu.h \
     stickygoo.h \
     backgroundwidget.h \
-    backtracer.h \
     flags.h
 
 
@@ -74,9 +72,12 @@ SOURCES += \
     mainmenu.cpp \
     stickygoo.cpp \
     backgroundwidget.cpp \
-    backtracer.cpp \
     flags.cpp
 
+!win32{
+HEADERS +=     backtracer.h
+SOURCES += backtracer.cpp
+}
 
 ##FOR TOUCHPAD COMPILE
 #!win32: {

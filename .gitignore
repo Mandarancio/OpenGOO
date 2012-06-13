@@ -2,3 +2,10 @@
 moc_*
 /Makefile
 /OpenGOO
+
+*.user
+*.obj
+*.exe
+Makefile.Debug
+Makefile.Release
+*.manifest
