@@ -33,13 +33,12 @@ This program is free software: you can redistribute it and/or modify
 #define GAMEDIR "/.OpenGOO/"
 
 
-BackTracer segvTracer(SIGSEGV);
-BackTracer fpeTracer(SIGFPE);
-BackTracer stkTracer(SIGSTKFLT);
 
 int main(int argc, char *argv[])
 {
-
+    BackTracer(SIGSEGV);
+    BackTracer(SIGFPE);
+    BackTracer(SIGSTKFLT);
 
      //intialize randseed
     qsrand(QTime().currentTime().toString("hh:mm:ss.zzz").remove(':').toFloat());
