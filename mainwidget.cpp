@@ -22,12 +22,8 @@ MainWidget::MainWidget(QRect geometry,QWidget *parent)
 
 MainWidget::~MainWidget()
 {
-    if (levelS!=NULL){
-        delete levelS;
-    }
-    if (level!=NULL){
-        delete level;
-    }
+    delete levelS;
+    delete level;
 }
 
 void MainWidget::closeEvent(QCloseEvent *e){
