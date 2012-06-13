@@ -234,7 +234,7 @@ void DynamicGoo::paint(QPainter &p){
         p.setBrush(rg);
         p.drawEllipse(QPoint(0,0),getRadius()-module,getRadius()+module);
 
-        if (counter>=delay && !hasJoint() || isDragging()){
+        if ((counter>=delay && !hasJoint()) || isDragging()){
             if (!isDragging()) {
                 bool nE=!(rand()%5);
                 if (eye) nE=rand()%3;

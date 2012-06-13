@@ -18,8 +18,6 @@ inline QPoint toPoint(b2Vec2 v){ //Convert a b2Vec2 in a QPoint
     return QPoint(qRound(v.x*10.0),qRound(v.y*10.0));
 }
 
-
-//b2Vec2* toVecs(QList<QPoint> ps); //Convert a QList of QPoint in an array of b2Vec2
 QPolygon toPoly(QList<QPoint> ps); //Convert a QList of QPoint in a QPolygon
 QPolygon toPoly(QList<QPoint> ps,QPoint center); //Convert a QList of QPoint in a QPolygon transated of *center*
 
