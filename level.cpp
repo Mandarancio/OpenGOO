@@ -380,37 +380,51 @@ void Level::timerEvent(QTimerEvent *e){
     if (points<goal)
         time+=step;
     e->accept();
+
     if (drag) showJointTimer++;
-    if (drag) dragged->drag();
+    if (drag) {
+
+        dragged->drag();
+        dragged->getBody()->SetActive(true);
+        if ((dragged->getVPosition()-0.1*mousePos).Length()>1){
+            b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
+            dragged->getBody()->ApplyForceToCenter(10000*force);
+        }
+        else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
+            dragged->move(toPoint(0.1*mousePos)-translation);
+        }
+    }
+
     if (dir.left) {
         QPoint p=translation;
         moveLeft();
         p=p-translation;
-        if (drag) dragged->move(dragged->getPPosition()+p);
+        //if (drag) dragged->move(dragged->getPPosition()+p);
     }
     else if (dir.right) {
         QPoint p=translation;
         moveRight();
         p=p-translation;
-        if (drag) dragged->move(dragged->getPPosition()+p);
+        //if (drag) dragged->move(dragged->getPPosition()+p);
     }
     if (dir.down) {
         QPoint p=translation;
         moveDown();
         p=p-translation;
-        if (drag) dragged->move(dragged->getPPosition()+p);
+        //if (drag) dragged->move(dragged->getPPosition()+p);
     }
     else if (dir.up) {
         QPoint p=translation;
         moveUp();
         p=p-translation;
-        if (drag) dragged->move(dragged->getPPosition()+p);
+       //if (drag) dragged->move(dragged->getPPosition()+p);
     }
 
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
 
 
-        world->Step(step,10,10);
+     world->Step(step,10,10);
+     if (drag) dragged->drag();
 
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
@@ -680,7 +694,7 @@ void Level::keyPressEvent(QKeyEvent *e){
 
 //~700,~900
 void Level::mouseMoveEvent(QMouseEvent *e){
-    absoluteMousePos=e->pos();
+   // absoluteMousePos=e->pos();
     if (onMenu){
         return;
     }
@@ -708,18 +722,8 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         mouseSpeed.y*=10;
 
         mousePos=10*toVec(e->pos());
-        //Check if mouse is on the ground
-        if (groundContains(dragged)) {
-            dragged->move(stopPosition);
-            if (!groundContains(e->pos()/scale-translation,dragged->getRadius())) stopPosition=e->pos()/scale-translation;
-        }
-        else {
-            if (!groundContains(e->pos()/scale-translation,dragged->getRadius())){
-                dragged->move(e->pos()/scale-translation);
-                stopPosition=dragged->getPPosition();
-            }
 
-        }/*
+        /*
         bool same=true;
         if (possibility.length()!=possibleJoints()*/
         if (possibleJoints(dragged->getPPosition()).length()==0 || possibleJoints(dragged->getPPosition()).length()!=possibility.length()) showJointTimer=0;
@@ -1276,11 +1280,11 @@ void Level::stopDragging(){
 
 //function to stop a goo
 void Level::stopGoo(QPoint p){
-    if (groundContains(p,dragged->getRadius())){
+    /*if (groundContains(p,dragged->getRadius())){
         if (flag & DEBUG) qWarning()<<"P is in the Ground, stop dragging ";
         stopDragging();
     }
-    else stopPosition = p;
+    else stopPosition = p;*/
 }
 
 void Level::addBGShape(int id, QPolygon poly, QColor color){
