@@ -386,9 +386,11 @@ void Level::timerEvent(QTimerEvent *e){
 
         dragged->drag();
         dragged->getBody()->SetActive(true);
-        if ((dragged->getVPosition()-0.1*mousePos).Length()>1){
+        if ((dragged->getVPosition()-0.1*mousePos+toVec(translation)).Length()>3.0){
             b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
-            dragged->getBody()->ApplyForceToCenter(10000*force);
+            force=1.0/force.Length()*force;
+            dragged->getBody()->ApplyForceToCenter(100000.0*force);
+
         }
         else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
             dragged->move(toPoint(0.1*mousePos)-translation);
@@ -424,8 +426,11 @@ void Level::timerEvent(QTimerEvent *e){
 
 
      world->Step(step,10,10);
-     if (drag) dragged->drag();
+     if (drag) {
+         dragged->drag();
+         possibility=possibleJoints(dragged->getPPosition());
 
+     }
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
         StickyLink*sl=new StickyLink(p.first,ground[0]->getBody(),p.second,world,p.first->getStickness());
