@@ -11,7 +11,7 @@
 #define WIDTH 4
 
 
-void QB2Draw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color){
+void QB2Draw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color& /*unused*/){
     if (painter==NULL) return; //Check the painter
 
     QPen pen;//Configure the pen
@@ -26,7 +26,7 @@ void QB2Draw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Col
     painter->drawPolyline(pol); //Draw the polyline
 }
 
-void QB2Draw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color){
+void QB2Draw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color& /*unused*/){
     if (painter==NULL) return; //Check the painter
 
     painter->setPen(Qt::white); //set the pen color
@@ -47,7 +47,7 @@ void QB2Draw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &co
     painter->drawEllipse(toQPoint(center),qRound(radius*scale),qRound(radius*scale)); //draw circonference
 }
 
-void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color){
+void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color& /*unused*/){
     //What is axis??
     if (painter==NULL) return; //Check the painter
 
@@ -70,7 +70,7 @@ void QB2Draw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2
 
 }
 
-void QB2Draw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color){
+void QB2Draw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color& /*unused*/){
     if (painter==NULL) {
         return; //Check if painter is setted
     }
