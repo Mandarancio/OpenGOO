@@ -260,31 +260,38 @@ Goo* Level::getGooAt(QPoint p){
 
 //Function to translate the scene
 void Level::moveUp(){
-    int hy=limit.height()+limit.y();
-    if (translation.y()+10<hy){
-        translation.setY(translation.y()+10);
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x();
+    int yf=translation.y()+10;
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
+
+
 void Level::moveDown(){
-    int hy=limit.y();
-    int sy=translation.y()-geometry().height();
-    if (sy>hy){
-        translation.setY(translation.y()-(sy-10>=hy ? 10 : qAbs(hy-sy)));
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x();
+    int yf=translation.y()-10;
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
 void Level::moveRight(){
-    if (translation.x()-geometry().width()-10>-(limit.width()+limit.x())){
-        translation.setX(translation.x()-10);
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x()-10;
+    int yf=translation.y();
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
 void Level::moveLeft(){
-    if (translation.x()+10<-limit.x()){
-        translation.setX(translation.x()+10);
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x()+10;
+    int yf=translation.y();
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
 
 void Level::moveOf(QPoint dP){
@@ -1076,7 +1083,7 @@ void Level::setGround(QPoint gCenter, QList<QPoint> gList){
 
 void Level::setTarget(QPoint target){
     if (flag & DEBUG) qWarning()<<"Target at:"<<target;
-    this->target=new Target(target,height(),world,this);
+    this->target=new Target(target,limit.height(),world,this);
     //connect target signals with level
     connect(this->target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(this->target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
