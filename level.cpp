@@ -834,10 +834,10 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
             anchorToJoint(dragged,overJoint(dragged));
         }
         else if (showJointTimer<=DELAY){
-            dragged->drop(mouseSpeed);
+            dragged->drop(10.0*mouseSpeed+10.0*toVec(e->pos()-translation-dragged->getPPosition()));
         }
         else if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
-        else dragged->drop(mouseSpeed);
+        else dragged->drop(10.0*mouseSpeed+10.0*toVec(e->pos()-translation-dragged->getPPosition()));
     }
     dragged=NULL;
     drag=false;
