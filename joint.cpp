@@ -93,7 +93,7 @@ void Joint::status(){
     float l=sqrt(dx*dx+dy*dy); //This is the lenght of the joint
     float force= joint->GetReactionForce(1.0/60.0).Length(); //Get the force applied at the joint
 
-    if (l<5.0 || l>20.0 || force>( a->isDragging() || b->isDragging()? 0.08 : 3.0) ) { //If the joint is too short or too long or the force is too much broke the joint
+    if (l<5.0 || l>20.0 || force>( a->isDragging() || b->isDragging()? 0.008 : 3.0) ) { //If the joint is too short or too long or the force is too much broke the joint
         a->destroyLink(b);
         b->destroyLink(a);
         emit destroyJoint(this);
