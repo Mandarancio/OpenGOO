@@ -23,7 +23,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     shape.m_radius=radius/10.0; //radius
 
     b2FixtureDef fixDef; //Definition of the phisical parameters
-    fixDef.restitution=0.3; //collision restitution
+    fixDef.restitution=0.5; //collision restitution
     fixDef.density=1.0; //density
     fixDef.friction=0.1; //friction
     fixDef.shape=&shape; //assign the shape
@@ -234,8 +234,8 @@ void DynamicGoo::paint(QPainter &p){
         p.setBrush(rg);
         p.drawEllipse(QPoint(0,0),qRound(getRadius()-module),qRound(getRadius()+module));
 
-        if ((counter>=delay && !hasJoint()) || isDragging()){
-            if (!isDragging()) {
+        if ((counter>=delay && !hasJoint()) || isDragging() || isFalling()){
+            if (!isDragging() && !isFalling()) {
                 bool nE=!(rand()%5);
                 if (eye) nE=rand()%3;
                 if (eye!=nE && nE){
