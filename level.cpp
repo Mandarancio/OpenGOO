@@ -260,31 +260,38 @@ Goo* Level::getGooAt(QPoint p){
 
 //Function to translate the scene
 void Level::moveUp(){
-    int hy=limit.height()+limit.y();
-    if (translation.y()+10<hy){
-        translation.setY(translation.y()+10);
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x();
+    int yf=translation.y()+10;
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
+
+
 void Level::moveDown(){
-    int hy=limit.y();
-    int sy=translation.y()-geometry().height();
-    if (sy>hy){
-        translation.setY(translation.y()-(sy-10>=hy ? 10 : qAbs(hy-sy)));
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x();
+    int yf=translation.y()-10;
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
 void Level::moveRight(){
-    if (translation.x()-geometry().width()-10>-(limit.width()+limit.x())){
-        translation.setX(translation.x()-10);
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x()-10;
+    int yf=translation.y();
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
 void Level::moveLeft(){
-    if (translation.x()+10<-limit.x()){
-        translation.setX(translation.x()+10);
-        backGroundWidget->translated(translation);
-    }
+    int xf=translation.x()+10;
+    int yf=translation.y();
+    QRect view(-xf,-yf,width(),height());
+    if (!limit.contains(view)) return;
+    translation=QPoint(xf,yf);
+    backGroundWidget->translated(translation);
 }
 
 void Level::moveOf(QPoint dP){
@@ -386,9 +393,11 @@ void Level::timerEvent(QTimerEvent *e){
 
         dragged->drag();
         dragged->getBody()->SetActive(true);
-        if ((dragged->getVPosition()-0.1*mousePos).Length()>1){
+        if ((dragged->getVPosition()-0.1*mousePos+toVec(translation)).Length()>3.0){
             b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
-            dragged->getBody()->ApplyForceToCenter(10000*force);
+            force=1.0/force.Length()*force;
+            dragged->getBody()->ApplyForceToCenter(100000.0*force);
+
         }
         else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
             dragged->move(toPoint(0.1*mousePos)-translation);
@@ -424,8 +433,11 @@ void Level::timerEvent(QTimerEvent *e){
 
 
      world->Step(step,10,10);
-     if (drag) dragged->drag();
+     if (drag) {
+         dragged->drag();
+         possibility=possibleJoints(dragged->getPPosition());
 
+     }
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
         StickyLink*sl=new StickyLink(p.first,ground[0]->getBody(),p.second,world,p.first->getStickness());
@@ -822,10 +834,10 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
             anchorToJoint(dragged,overJoint(dragged));
         }
         else if (showJointTimer<=DELAY){
-            dragged->drop(mouseSpeed);
+            dragged->drop(10.0*mouseSpeed+10.0*toVec(e->pos()-translation-dragged->getPPosition()));
         }
         else if (createJoints(dragged->getPPosition()) || dragged->hasJoint()) dragged->drop();
-        else dragged->drop(mouseSpeed);
+        else dragged->drop(10.0*mouseSpeed+10.0*toVec(e->pos()-translation-dragged->getPPosition()));
     }
     dragged=NULL;
     drag=false;
@@ -1071,7 +1083,7 @@ void Level::setGround(QPoint gCenter, QList<QPoint> gList){
 
 void Level::setTarget(QPoint target){
     if (flag & DEBUG) qWarning()<<"Target at:"<<target;
-    this->target=new Target(target,height(),world,this);
+    this->target=new Target(target,limit.height(),world,this);
     //connect target signals with level
     connect(this->target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(this->target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));

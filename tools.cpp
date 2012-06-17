@@ -80,7 +80,7 @@ QString time2string(int time){
     int mm,ss;
     mm=time/60;
     ss=time-mm*60;
-    s=(mm ? QString::number(mm)+ (ss>=10 ? "":"0") +QString::number(ss) : QString::number(ss));
+    s=(mm ? QString::number(mm)+ ":"+(ss>=10 ? "":"0") +QString::number(ss) : QString::number(ss));
     return s;
 }
 
