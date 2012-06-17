@@ -86,14 +86,3 @@ SOURCES += backtracer.cpp
 #LIBS += -Wl,-rpath,"'\$$ORIGIN/qt'" -L/opt/PalmPDK/device/lib -lpdl -lSDL
 #INCLUDEPATH += /opt/PalmPDK/include/SDL
 #}
-
-
-
-
-
-
-
-
-
-
-

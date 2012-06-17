@@ -1,8 +1,9 @@
+!.gitignore
+.*
 *.o
 moc_*
 /Makefile
 /OpenGOO
-
 *.user
 *.obj
 *.exe
