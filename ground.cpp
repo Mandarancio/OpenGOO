@@ -27,7 +27,7 @@ Ground::Ground(b2World *world, QPoint center, QList<QPoint> shape, QObject *pare
 
 //Function to know if a goo is conteined in the ground
 bool Ground::contains(Goo*goo){
-    if (polShape.intersected(rect2poly(goo->boundingRect())).count()) return true;
+    if (polShape.intersected(goo->boundingRect()).count()) return true;
     return false;
 }
 

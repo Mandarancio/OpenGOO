@@ -238,7 +238,7 @@ void Level::clean(){
 Joint* Level::overJoint(Goo *goo){
     int r=qRound(goo->getRadius()/1.41);
     QRect rect(goo->getPPosition()-QPoint(r,r),QSize(r*2,r*2));
-    QPolygon pol=rect2poly(rect);
+    QPolygon pol(rect);
     for (int i=0;i<joints.length();i++){
         if (joints[i]->goo(true)->canHaveGuest() && joints[i]->goo(false)->canHaveGuest() && joints[i]->boundingRect().intersects(rect) && joints[i]->boundingPoly().intersected(pol).count()) return joints[i];
     }
