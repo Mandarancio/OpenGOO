@@ -10,14 +10,17 @@
 class Thorn : public Object
 {
     Q_OBJECT
+
 public:
-    explicit Thorn(QPoint center,QList<QPoint>shape,b2World * world,QObject *parent = 0);
-    QRect boundingRect(){
+    Thorn(QPoint center, const QList<QPoint>& shape, b2World* world, QObject* parent = 0);
+    
+    QRect boundingRect()
+    {
         return polygon.boundingRect();
     }
+
 private:
     QPolygon polygon;
-    void makeShape(QList<QPoint>points); //Function to make the shape starting from a QList of QPoint
 
 signals:
 
