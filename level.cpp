@@ -402,32 +402,32 @@ void Level::timerEvent(QTimerEvent *e){
             dragged->move(toPoint(0.1*mousePos)-translation);
         }
     }
-
-    if (dir.left) {
-        QPoint p=translation;
-        moveLeft();
-        p=p-translation;
-        //if (drag) dragged->move(dragged->getPPosition()+p);
+    if (!onMenu){
+        if (dir.left) {
+            QPoint p=translation;
+            moveLeft();
+            p=p-translation;
+            //if (drag) dragged->move(dragged->getPPosition()+p);
+        }
+        else if (dir.right) {
+            QPoint p=translation;
+            moveRight();
+            p=p-translation;
+            //if (drag) dragged->move(dragged->getPPosition()+p);
+        }
+        if (dir.down) {
+            QPoint p=translation;
+            moveDown();
+            p=p-translation;
+            //if (drag) dragged->move(dragged->getPPosition()+p);
+        }
+        else if (dir.up) {
+            QPoint p=translation;
+            moveUp();
+            p=p-translation;
+            //if (drag) dragged->move(dragged->getPPosition()+p);
+        }
     }
-    else if (dir.right) {
-        QPoint p=translation;
-        moveRight();
-        p=p-translation;
-        //if (drag) dragged->move(dragged->getPPosition()+p);
-    }
-    if (dir.down) {
-        QPoint p=translation;
-        moveDown();
-        p=p-translation;
-        //if (drag) dragged->move(dragged->getPPosition()+p);
-    }
-    else if (dir.up) {
-        QPoint p=translation;
-        moveUp();
-        p=p-translation;
-       //if (drag) dragged->move(dragged->getPPosition()+p);
-    }
-
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
 
 
