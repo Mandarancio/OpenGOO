@@ -13,116 +13,75 @@ This program is free software: you can redistribute it and/or modify
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#include <QtGui/QApplication>
-#include "mainwidget.h"
-
-#include <QDir>
-
-#include <QRect>
+#include <QApplication>
 #include <QDesktopWidget>
-
+#include <QDir>
+#include <QRect>
 #include <QDebug>
-
-#include <QGraphicsBlurEffect>
 #include <QTime>
 
 #ifndef Q_OS_WIN32
 #include "backtracer.h"
 #endif
 #include "flags.h"
+#include "mainwidget.h"
 
-#define GAMEDIR "/.OpenGOO/"
+static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 
 
 int main(int argc, char *argv[])
 {
-#ifndef Q_OS_WIN32
+    #ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
     BackTracer(SIGFPE);
     BackTracer(SIGSTKFLT);
-#endif
-
-     //intialize randseed
-    qsrand(QTime().currentTime().toString("hh:mm:ss.zzz").remove(':').toFloat());
-
-    bool forceScreen=false;
-    //Default is screen 0
-    int screen=0;
+    #endif
+    
+    //intialize randseed
+    qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
+    
     //Check for the run parameters
-    for (int i=1;i<argc;i++){
+    for (int i=1; i<argc; i++) {
         QString arg(argv[i]);
         //Check for debug Option
-        if (!arg.compare("-Debug",Qt::CaseInsensitive)){
-            flag|=DEBUG;
+        if (!arg.compare("-debug", Qt::CaseInsensitive)) {
+            flag |= DEBUG;
             qWarning("DEBUG MODE ON");
         }
-        //Check for screen force option
-        else if (!arg.split('=').at(0).compare("-Screen",Qt::CaseInsensitive)){
-            screen=arg.split('=').at(1).toInt(&forceScreen);
+        else if (!arg.compare("-opengl", Qt::CaseInsensitive)) {
+            flag |= OPENGL;
         }
-        else if (!arg.compare("-opengl",Qt::CaseInsensitive)){
-            flag|=OPENGL;
-        }
-        else if (!arg.compare("-text",Qt::CaseInsensitive)){
-            flag|=ONLYTEXT|DEBUG;
+        else if (!arg.compare("-text", Qt::CaseInsensitive)) {
+            flag |= ONLYTEXT | DEBUG;
         }
     }
     if (flag == STANDARD) qWarning("STD MODE");
-    if (flag & OPENGL){ qWarning("OPENGL ACTIVATED");
-        argc+=2; // TODO: check if it's valid
-        argv[argc-2]=strdup("-graphicssystem");
-        argv[argc-1]=strdup("opengl");
+    if (flag & OPENGL) {
+        qWarning("OPENGL ACTIVATED");
+        argc += 2; // TODO: check if it's valid
+        argv[argc-2] = strdup("-graphicssystem");
+        argv[argc-1] = strdup("opengl");
     }
-
-
+    
+    
     QApplication a(argc, argv);
-
-    if (screen>a.desktop()->numScreens()-1){
-        qWarning()<<"Screen"<<screen<<"not found!";
-        screen=0;
-        forceScreen=false;
-    }
-
-
-    //screenGeometry() return the geometry of the display
-    //Algorithm to select the bigger screen in a multi screen configuration
-    //If is found a multi screen configuration
-    if (!forceScreen){
-        screen=0;
-        if (a.desktop()->numScreens()>1){
-            //compute the first screen area
-            int area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
-            //check all the other screen and find the bigger one!
-            for (int i=1;i<a.desktop()->numScreens();i++){
-                if (a.desktop()->screenGeometry(i).size().width()*a.desktop()->screenGeometry(i).height() > area){
-                    screen=i;
-                    area=a.desktop()->screenGeometry(screen).size().width()*a.desktop()->screenGeometry(screen).height();
-                }
-            }
-        }
-    }
-
+    
     //CHECK FOR GAME DIR IN HOME DIRECTORY
-    QString homePath=QDir::homePath();
-    QString gameDir=GAMEDIR;
-    QDir dir;
-    dir.setPath(homePath+gameDir);
+    QDir dir(GAMEDIR);
     //If the game dir doesn't exist create it
-    if (!dir.exists()){
-        if (flag & DEBUG) qWarning()<<"Game dir doesn't exist!";
-        dir.mkdir(homePath+gameDir);
-        dir.cd(homePath+gameDir);
+    if (!dir.exists()) {
+        if (flag & DEBUG) qWarning() << "Game dir doesn't exist!";
+        dir.mkdir(GAMEDIR);
+        dir.cd(GAMEDIR);
         //create subdir for user levels and progressions.
-        dir.mkdir("userLevels/");
-        dir.mkdir("userProgression/");
-        dir.mkdir("debug/");
+        dir.mkdir("userLevels");
+        dir.mkdir("userProgression");
+        dir.mkdir("debug");
     }
-    else if (flag & DEBUG) qWarning()<<"Game dir exist!";
-    //Create the main widget in the bigger screen
-    MainWidget w(a.desktop()->screenGeometry(screen));
+    else if (flag & DEBUG) qWarning() << "Game dir exist!";
+    
+    MainWidget w(QRect(0, 0, 800, 600));
     w.show();
-
     return a.exec();
 }

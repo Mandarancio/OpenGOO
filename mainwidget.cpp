@@ -8,7 +8,6 @@
 MainWidget::MainWidget(QRect geometry,QWidget *parent)
     : QWidget(parent)
 {
-    this->showFullScreen();//To have the game full screen
     this->setGeometry(geometry);
     this->geometry=geometry;
 
