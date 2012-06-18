@@ -2,27 +2,34 @@
 #define OBJECT_H
 
 #include <QObject>
-#include <Box2D/Box2D.h>
-#include <QPainter>
+class b2Body;
+class QPainter;
+class QRect;
 
 class Object : public QObject
 {
     Q_OBJECT
+
 public:
-    explicit Object(QObject *parent = 0) :
+    Object(QObject* parent = 0) :
         QObject(parent)
     {
     }
-    b2Body* getBody(){
+    
+    b2Body* getBody()
+    {
         return body;
     }
-    virtual QRect boundingRect()=0;
+    
+    virtual QRect boundingRect() = 0;
+
 protected:
-    b2Body * body;
+    b2Body* body;
+
 signals:
 
 public slots:
-    virtual void paint(QPainter &p)=0;
+    virtual void paint(QPainter& p)=0;
 };
 
 #endif // OBJECT_H
