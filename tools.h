@@ -23,13 +23,8 @@ inline QPoint toPoint(b2Vec2 v)
     return QPoint(qRound(v.x*10.0), qRound(v.y*10.0));
 }
 
-//! Convert a QList of QPoint in a QPolygon
-QPolygon toPoly(const QList<QPoint>& ps);
-
 //! Convert a QList of QPoint in a QPolygon transated of *center*
 QPolygon toPoly(const QList<QPoint>& ps, QPoint center);
-
-
 
 QString time2string(int time);
 

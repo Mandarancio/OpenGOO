@@ -1,25 +1,19 @@
-#include<QPolygon>
-#include<QString>
 #include "tools.h"
+
+#include <QPolygon>
+#include <QString>
 
 /*
         THANKS TO Slyshyk Oleksly for fixes
 */
 
-QPolygon toPoly(const QList<QPoint>& ps)
-{
-    return QVector<QPoint>::fromList(ps);
-}
-
 QPolygon toPoly(const QList<QPoint>& ps, QPoint center)
 {
     QPolygon poly;
-    for (QList<QPoint>::const_iterator it = ps.begin(); it != ps.end(); ++it)
-        poly << center + *it;
+    foreach(const QPoint& point, ps)
+        poly << center + point;
     return poly;
 }
-
-
 
 QString time2string(int time)
 {
