@@ -5,7 +5,6 @@
 #include <QRadialGradient>
 
 
-#include "tools.h"
 #include "fixedgoo.h"
 #include "dynamicgoo.h"
 #include "removablegoo.h"

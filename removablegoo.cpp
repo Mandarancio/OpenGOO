@@ -1,5 +1,4 @@
 #include "removablegoo.h"
-#include "tools.h"
 
 //The constructor is not different at the Dynamic goo constructor
 RemovableGoo::RemovableGoo(b2World *world, QPoint point, int radius, QObject *parent) :

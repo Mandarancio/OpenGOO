@@ -1,3 +1,5 @@
+#include<QPolygon>
+#include<QString>
 #include "tools.h"
 
 /*

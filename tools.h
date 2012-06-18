@@ -5,8 +5,9 @@
 
 #include <QList>
 #include <QPoint>
-#include <QPolygon>
-#include <QString>
+
+class QPolygon;
+class QString;
 
 // Conversion for qt/box2d
 

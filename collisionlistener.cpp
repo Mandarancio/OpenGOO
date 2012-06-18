@@ -2,8 +2,6 @@
 #include "target.h"
 #include "thorn.h"
 
-#include "tools.h"
-
 #include <qmath.h>
 #include <QMetaObject>
 
