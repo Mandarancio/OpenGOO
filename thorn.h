@@ -3,16 +3,21 @@
 
 #include "object.h"
 
-#include <QObject>
-#include <QPainter>
-#include <Box2D/Box2D.h>
+#include <QList>
+#include <QPolygon>
+
+class QPoint;
+class QPainter;
+
+class b2World;
+
 
 class Thorn : public Object
 {
     Q_OBJECT
 
 public:
-    Thorn(QPoint center, const QList<QPoint>& shape, b2World* world, QObject* parent = 0);
+    Thorn(QPoint center, const QList<QPoint>& shape, b2World& world, QObject* parent = 0);
     
     QRect boundingRect()
     {

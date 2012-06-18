@@ -2,9 +2,12 @@
 #define OBJECT_H
 
 #include <QObject>
-class b2Body;
+
 class QPainter;
 class QRect;
+
+class b2Body;
+
 
 class Object : public QObject
 {

@@ -1221,7 +1221,7 @@ void Level::setLevelGeometry(QSize size){
 }
 
 void Level::setThorns(QPoint center, QList<QPoint> list){
-    Thorn *thorn=new Thorn(center,list,world,this);
+    Thorn *thorn=new Thorn(center,list,*world,this);
     objects.push_back(thorn);
 }
 

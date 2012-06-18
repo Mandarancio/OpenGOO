@@ -1,10 +1,15 @@
 #include "thorn.h"
 #include "tools.h"
+
+#include <QPainter>
+#include <QPoint>
 #include <qmath.h>
+
+#include <Box2D/Box2D.h>
 
 static const qreal PI = 3.141593;
 
-Thorn::Thorn(QPoint center, const QList<QPoint>& shape, b2World* world, QObject* parent) :
+Thorn::Thorn(QPoint center, const QList<QPoint>& shape, b2World& world, QObject* parent) :
     Object(parent)
 {
     //Body definition
@@ -14,7 +19,7 @@ Thorn::Thorn(QPoint center, const QList<QPoint>& shape, b2World* world, QObject*
     //center of the body
     def.position = toVec(center);
     //create the body;
-    body = world->CreateBody(&def);
+    body = world.CreateBody(&def);
     
     //create the shape
     //make a segment for all the points
@@ -32,7 +37,6 @@ Thorn::Thorn(QPoint center, const QList<QPoint>& shape, b2World* world, QObject*
         qreal w = qSqrt(dx*dx + dy*dy) / 20.0;
         qreal angle = PI/2.0 - qAtan2(dx,dy);
         
-        //b2EdgeShape is a shape made of segments
         b2PolygonShape shape;
         shape.SetAsBox(w, 0.1, b2Vec2(x,y), angle);
         body->CreateFixture(&shape, 1.0);
