@@ -353,16 +353,3 @@ QColor SvgLevelLoader::parseFill(QDomElement el){
     }
     return color;
 }
-
-//rescale point
-//QPoint SvgLevelLoader::scalePoint(QPoint p){
-//    QPoint cP=p;
-//    //Compute the rescalation factor
-//    float scaleX=1.0,scaleY=1.0;
-//    scaleX=float(displaySize.width())/1000.0;
-//    scaleY=float(displaySize.height())/1000.0;
-//    //rescale the point
-//    cP.setX(qRound(scaleX*float(p.x())));
-//    cP.setY(qRound(scaleY*float(p.y())));
-//    return cP;
-//}
