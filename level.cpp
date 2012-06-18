@@ -49,7 +49,7 @@ Level::Level(QRect geometry, QString level,BackGroundWidget *bg,QWidget *parent)
     initialize();
 
     //setup the leveloader with some enviroment parameters
-    loader=new SvgLevelLoader(level,geometry.size());
+    loader=new SvgLevelLoader(level);
 
     //connect the loader signals
     connect(loader,SIGNAL(fileError()),this,SLOT(backToMainMenu()));
