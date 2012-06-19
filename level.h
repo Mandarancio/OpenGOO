@@ -106,13 +106,19 @@ private:
     Direction dir;          //Translation direction
     QList<Goo*> possibility;  //To show the possible joints on the dragged goo
 
+    //TIMER & COUNTER
+    int showJointTimer;
+
+    int positionTimer;
+    int draggTimer;
+
+
     double time;
 
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
 
 
-    int showJointTimer;
 
 
     //METHOD
