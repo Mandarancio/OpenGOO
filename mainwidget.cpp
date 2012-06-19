@@ -1,6 +1,6 @@
 #include "mainwidget.h"
 #include <QDebug>
-
+#include <QGridLayout>
 #include "svglevelloader.h"
 
 #include "flags.h"
@@ -50,12 +50,15 @@ void MainWidget::levelSelected()//Create the level selected
         bgWidget->show();
 
         level=new Level(geometry,levelS->getLevelSelected(),bgWidget,this); //Create the level
-        if (flag & DEBUG) qWarning()<<"LEVEL OBJECT INITILIZED";
 
+        if (flag & DEBUG) qWarning()<<"LEVEL OBJECT INITILIZED";
+        QGridLayout * layout=new QGridLayout(this);
+        layout->setMargin(0);
+        layout->addWidget(level,0,0,0,0);
+        this->setLayout(layout);
 
         delete levelS;
         levelS=NULL;
-
         connect(level,SIGNAL(closing()),this,SLOT(close()));//Connect the closing of the level with the closing of the game
         connect(level,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
         if (level->startLevel()){
