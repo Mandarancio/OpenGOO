@@ -1317,10 +1317,10 @@ void Level::stopGoo(QPoint p){
     else stopPosition = p;*/
 }
 
-void Level::addBGShape(int id, QPolygon poly, QColor color){
+void Level::addBGShape(int level, QPolygon poly, QColor color){
     int index=-1;
     for (int i=0;i<background.length();i++){
-        if (background[i]->getID()==id) {
+        if (background[i]->getLevel()==level) {
             index=i;
             break;
         }
@@ -1329,11 +1329,10 @@ void Level::addBGShape(int id, QPolygon poly, QColor color){
         background[index]->addPolygon(poly,color);
     }
     else {
-        BackGround *bg=new BackGround(id,this);
-        if (flag & OPENGL) bg->setOpenGL(true);
+        BackGround *bg=new BackGround(level,this);
         backGroundWidget->addBackGround(bg);
         bg->addPolygon(poly,color);
-        bg->setDelta(0.3*(3-id));
+        bg->setDelta(0.3*(3-level));
         background.push_back(bg);
     }
 }

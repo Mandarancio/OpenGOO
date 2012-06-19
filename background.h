@@ -1,59 +1,52 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include <QObject>
+#include <QColor>
 #include <QList>
+#include <QObject>
 #include <QPair>
 #include <QPolygon>
-#include <QColor>
-#include <QPainter>
-#include <QGraphicsScene>
-#include <QImage>
+#include <QScopedPointer>
+class QPainter;
+
 class BackGround : public QObject
 {
     Q_OBJECT
-public:
-    explicit BackGround(int id=0,QObject *parent = 0);
-    ~BackGround();
-    //Add a shape!
-    void addPolygon(QPolygon polygon, QColor color);
-    //set delta
-    void setDelta(float delta){
-        this->delta=delta;
-    }
+    class ImageCache;
 
-    //get id
-    int getID(){
-        return id;
+public:
+    BackGround(int level = 0, QObject* parent = 0);
+    ~BackGround();
+    
+    void addPolygon(const QPolygon& polygon, const QColor& color);
+    
+    int getLevel() const
+    {
+        return level;
     }
-    void setOpenGL(bool flag){
-        openglFlag=flag;
+    
+    void setDelta(float delta)
+    {
+        this->delta = delta;
     }
 
 private:
-    //ID Of the background, usefull for different background.
-    int id;
-    //Delta is the difference of the translation with the main objects
-    float delta;
-    //Translate variable
+    int level;
+    float delta; //!< difference of the translation with the main objects
     QPoint translate;
-    //List of shape with color
-    QRect computeRect();
-    QGraphicsScene *scene;
-    QImage * img;
+    
+    QScopedPointer<ImageCache> img_cache;
     QList < QPair<QPolygon, QColor> > polygons;
-    bool openglFlag;
 
 signals:
 
 public slots:
-    //Function to set translate
-    void setTranslate(QPoint p){
-        translate=QPoint(-p.x()*delta,-p.y()*delta);
+    void setTranslate(QPoint p)
+    {
+        translate = QPoint(-p.x()*delta, -p.y()*delta);
     }
-    //Function to paint
-    void paint(QPainter &p);
-
+    
+    void paint(QPainter& p);
 };
 
 #endif // BACKGROUND_H

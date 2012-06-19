@@ -217,7 +217,7 @@ private slots:
     //Slot to stop a dragged goo in a Point
     void stopGoo(QPoint p);
     //Slot add a shape to background.
-    void addBGShape(int id,QPolygon poly,QColor color);
+    void addBGShape(int level,QPolygon poly,QColor color);
 
     void destroyJoint(Joint * joint);   //Destroy a joint
     void destroyGOO();                  //Destroy a GOO!
