@@ -260,7 +260,7 @@ Goo* Level::getGooAt(QPoint p){
 //Function to translate the scene
 void Level::moveUp(){
     int xf=translation.x();
-    int yf=translation.y()+10;
+    int yf=translation.y()+10+positionTimer;
     QRect view(-xf,-yf,width(),height());
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
@@ -270,14 +270,14 @@ void Level::moveUp(){
 
 void Level::moveDown(){
     int xf=translation.x();
-    int yf=translation.y()-10;
+    int yf=translation.y()-10-positionTimer;
     QRect view(-xf,-yf,width(),height());
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
     backGroundWidget->translated(translation);
 }
 void Level::moveRight(){
-    int xf=translation.x()-10;
+    int xf=translation.x()-10-positionTimer;
     int yf=translation.y();
     QRect view(-xf,-yf,width(),height());
     if (!limit.contains(view)) return;
@@ -285,7 +285,7 @@ void Level::moveRight(){
     backGroundWidget->translated(translation);
 }
 void Level::moveLeft(){
-    int xf=translation.x()+10;
+    int xf=translation.x()+10+positionTimer;
     int yf=translation.y();
     QRect view(-xf,-yf,width(),height());
     if (!limit.contains(view)) return;
@@ -390,15 +390,16 @@ void Level::timerEvent(QTimerEvent *e){
     if (drag) showJointTimer++;
     if (drag) {
 
-        dragged->drag();
         dragged->getBody()->SetActive(true);
         if ((dragged->getVPosition()-0.1*mousePos+toVec(translation)).Length()>3.0){
+            draggTimer++;
             b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
-            force=1.0/force.Length()*force;
-            dragged->getBody()->ApplyForceToCenter(100000.0*force);
+            force=float(10.0*draggTimer)/force.Length()*force;
+            dragged->getBody()->SetLinearVelocity(100000.0*force);
 
         }
         else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
+            draggTimer=0;
             dragged->move(toPoint(0.1*mousePos)-translation);
         }
     }
@@ -407,35 +408,37 @@ void Level::timerEvent(QTimerEvent *e){
             QPoint p=translation;
             moveLeft();
             p=p-translation;
+            positionTimer++;
             //if (drag) dragged->move(dragged->getPPosition()+p);
         }
         else if (dir.right) {
             QPoint p=translation;
             moveRight();
             p=p-translation;
+            positionTimer++;
             //if (drag) dragged->move(dragged->getPPosition()+p);
         }
         if (dir.down) {
             QPoint p=translation;
             moveDown();
             p=p-translation;
+            positionTimer++;
             //if (drag) dragged->move(dragged->getPPosition()+p);
         }
         else if (dir.up) {
             QPoint p=translation;
             moveUp();
             p=p-translation;
+            positionTimer++;
             //if (drag) dragged->move(dragged->getPPosition()+p);
         }
     }
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
-
-
-     world->Step(step,10,10);
+    for (int i=0;i<2;i++)
+        world->Step(step/2,10,10);
      if (drag) {
-         dragged->drag();
          possibility=possibleJoints(dragged->getPPosition());
-
+         dragged->drag();
      }
     for (int i=0;i<stickyToCreate.length();i++){
         QPair<Goo*,QPoint> p= stickyToCreate.at(i);
@@ -687,18 +690,22 @@ void Level::keyPressEvent(QKeyEvent *e){
     case (Qt::Key_Up):
         dir.up=true;
         dir.key=true;
+        this->positionTimer=0;
         break;
     case (Qt::Key_Down):
         dir.down=true;
         dir.key=true;
+        this->positionTimer=0;
         break;
     case (Qt::Key_Left):
         dir.left=true;
         dir.key=true;
+        this->positionTimer=0;
         break;
     case (Qt::Key_Right):
         dir.right=true;
         dir.key=true;
+        this->positionTimer=0;
         break;
     }
 }
@@ -709,20 +716,31 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (onMenu){
         return;
     }
-    if (e->x()<=20)
+    if (e->x()<=20) {
         dir.left=true;
+        this->positionTimer=0;
+    }
     else if (dir.left && !dir.key)
         dir.left=false;
 
-    if (e->y()<=20) dir.up=true;
+    if (e->y()<=20) {
+        dir.up=true;
+        this->positionTimer=0;
+    }
     else if (dir.up && !dir.key)
         dir.up=false;
 
-    if (e->x()>=width()-20) dir.right=true;
+    if (e->x()>=width()-20){
+        dir.right=true;
+        this->positionTimer=0;
+    }
     else if (dir.right && !dir.key)
         dir.right=false;
 
-    if (e->y()>=height()-5) dir.down=true;
+    if (e->y()>=height()-5){
+        dir.down=true;
+        this->positionTimer=0;
+    }
     else if (dir.down && !dir.key)
         dir.down=false;
 
@@ -781,6 +799,7 @@ void Level::mousePressEvent(QMouseEvent *e){
             if (dragged) {
                 possibility.clear();
                 drag=true;
+                draggTimer=0;
                 dragged->drag();
                 dragged->move(e->pos()/scale-translation);
 
