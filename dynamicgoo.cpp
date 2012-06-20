@@ -238,6 +238,7 @@ void DynamicGoo::paint(QPainter &p){
             if (!isDragging() && !isFalling()) {
                 bool nE=!(rand()%5);
                 if (eye) nE=rand()%3;
+
                 if (eye!=nE && nE){
                     eyeSizeL=qrand()%3+5;
                     eyeSizeR=eyeSizeL+qrand()%4-1;
@@ -253,7 +254,7 @@ void DynamicGoo::paint(QPainter &p){
             }
         }
 
-        if (eye && !hasJoint()) {
+        if (eye && !hasJoint()&& !onGround) {
             p.setPen(secondaryColor);
             QRadialGradient rG2(-9,13,eyeSizeL);
             QRadialGradient rG3(9,13,eyeSizeR);

@@ -1,6 +1,9 @@
 #include "levelselector.h"
 
-LevelSelector::LevelSelector(QRect geometry,QWidget *parent):
+#include <QDebug>
+#include <QResizeEvent>
+
+LevelSelector::LevelSelector(QWidget *parent):
     QWidget(parent)
 {
 
@@ -8,8 +11,8 @@ LevelSelector::LevelSelector(QRect geometry,QWidget *parent):
     this->setMouseTracking(true);
     this->grabKeyboard();
 
-    this->setGeometry(0,0,geometry.width(),geometry.height());
-    this->geometry=geometry;
+    //this->setGeometry(0,0,geometry.width(),geometry.height());
+    //this->geometry=geometry;
 
     this->computeHeight();
     this->findLevels();
@@ -32,11 +35,11 @@ void LevelSelector::findLevels()//Find .level file in the current direcotory
     dir->setNameFilters(filters);
     levels=dir->entryList();
     levels.append("Exit")   ;
-    int yOffset=(geometry.height()-levels.size()*(height+30)+30)/2;
+    int yOffset=(height()-levels.size()*(buttonHeight+30)+30)/2;
     for(int j=0;j<levels.size();j++)
     {
-        int y=yOffset+(height+30)*j;
-        buttons.push_back(QRect(geometry.width()/4,y,geometry.width()/2,height));
+        int y=yOffset+(buttonHeight+30)*j;
+        buttons.push_back(QRect(width()/4,y,width()/2,buttonHeight));
     }
     delete dir;
 }
@@ -61,7 +64,7 @@ void LevelSelector::computeHeight(){
     QFont f;
     f.setFamily("Times");
     f.setPointSize(32);
-    height=QFontMetrics(f).height()+30;
+    buttonHeight=QFontMetrics(f).height()+30;
 }
 
 void LevelSelector::mouseReleaseEvent(QMouseEvent *e){
@@ -91,11 +94,22 @@ void LevelSelector::paintEvent(QPaintEvent *e){
     else e->ignore();
 }
 
+void LevelSelector::resizeEvent(QResizeEvent *e){
+    int yOffset=(e->size().height()-buttons.length()*(buttonHeight+30)+30)/2;
+
+    for(int i=0;i<buttons.length();i++)
+    {
+        int y=yOffset+(buttonHeight+30)*i;
+        buttons[i]=QRect(e->size().width()/4,y,e->size().width()/2,buttonHeight);
+    }
+  //  update();
+}
+
 void LevelSelector::paint(QPainter &p){
     QColor bg(0,0,0,200);
     p.setPen(Qt::transparent);
     p.setBrush(bg);
-    p.drawRect(0,0,geometry.width(),geometry.height());
+    p.drawRect(0,0,this->width(),this->height());
     p.setPen(Qt::white);
     p.setBrush(Qt::white);
     for (int i=0;i<levels.length();i++)

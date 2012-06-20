@@ -13,13 +13,14 @@ class LevelSelector : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LevelSelector(QRect geometry,QWidget *parent = 0);
+    explicit LevelSelector(QWidget *parent = 0);
     ~LevelSelector();
     QString getLevelSelected();
 protected:
     void mouseReleaseEvent(QMouseEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
     void paintEvent(QPaintEvent *e);
+    void resizeEvent(QResizeEvent *);
 signals:
     void closing();
     void eventLevelSelected();
@@ -28,7 +29,7 @@ private:
 
     QList<QRect> buttons;
     QRect geometry;
-    int height;
+    int buttonHeight;
 
     QStringList levels;
     int selected;

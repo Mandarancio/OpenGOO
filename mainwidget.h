@@ -2,6 +2,7 @@
 #define MAINWIDGET_H
 
 #include <QWidget>
+#include <QGridLayout>
 #include <QCloseEvent>
 #include "level.h"
 #include "levelselector.h"
@@ -19,7 +20,7 @@ private:
     Level *level;
     LevelSelector *levelS;
     BackGroundWidget * bgWidget;
-
+    QGridLayout * layout;
     QRect geometry;
 protected:
     void closeEvent(QCloseEvent *);
