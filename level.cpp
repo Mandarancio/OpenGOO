@@ -28,6 +28,8 @@
 #define INTERVALL 4
 #define DELAY 10
 
+QTime itime;
+int fps=0;
 
 Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     QWidget(parent), backGroundWidget(bg)
@@ -118,6 +120,7 @@ bool Level::startLevel(){
         if (flag & DEBUG) qWarning()<<"Level parse finished!";
         //start timer
         startTimer(step*1000);
+        itime=QTime::currentTime();
         time= 0;
         step=1.0/30.0;
         if (flag & DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
@@ -387,7 +390,13 @@ void Level::timerEvent(QTimerEvent *e){
     if (points<goal)
         time+=step;
     e->accept();
-
+    if (flag & DEBUG){
+        float dT= (itime.minute()*60.0+itime.second())*1000.0+itime.msec();
+        itime=QTime::currentTime();
+        dT= ((itime.minute()*60.0+itime.second())*1000.0+itime.msec())-dT;
+        //qWarning()<<"IDEAL STEP"<<step*1000.0<<"REAL STEP"<<dT;
+        fps=qRound(1000.0/dT);
+    }
     if (drag) showJointTimer++;
     if (drag) {
 
@@ -396,7 +405,7 @@ void Level::timerEvent(QTimerEvent *e){
             draggTimer++;
             b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
             force=float(10.0*draggTimer)/force.Length()*force;
-            dragged->getBody()->SetLinearVelocity(100000.0*force);
+            dragged->getBody()->SetLinearVelocity(3000.0*force);
 
         }
         else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
@@ -435,9 +444,12 @@ void Level::timerEvent(QTimerEvent *e){
         }
     }
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
-    for (int i=0;i<2;i++)
-        world->Step(step/2,10,10);
-     if (drag) {
+    for (int i=0;i<2;i++){
+        world->Step(step,10.0,10.0);
+        world->ClearForces();
+    }
+
+    if (drag) {
          possibility=possibleJoints(dragged->getPPosition());
          dragged->drag();
      }
@@ -792,6 +804,7 @@ void Level::mousePressEvent(QMouseEvent *e){
         mousePos=10*toVec(e->pos());
         mouseSpeed.SetZero();
 
+
         //If no goo is selected
         if (selected==NULL){
             //Get the goo in this position
@@ -968,6 +981,10 @@ void Level::paintScore(QPainter &p){
     path.addText(10+fm.width(QString::number(points)),height()-14,f,QString::number(goal));
     f.setPixelSize(30);
     path.addText(10,30,f,time2string(time));
+    if (flag & DEBUG){
+        f.setPixelSize(24);
+        path.addText(10,60,f,QString::number(fps)+"FPS");
+    }
 
 
 

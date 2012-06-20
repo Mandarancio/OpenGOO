@@ -44,7 +44,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     dragable=true;
     stickable=true;
     maxJoints=7; //parameters
-    speed=10;
+    speed=5;
     delay=10+qrand()%30;
     counter=qrand()%delay; //COUNTER FOR ANIMATION
 
