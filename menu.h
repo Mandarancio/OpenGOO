@@ -17,6 +17,7 @@ class Menu : public QObject
 public:
     explicit Menu(QRect geometry,QObject *parent = 0);
     void mouseRelease(QMouseEvent *e);
+    void setGeometry(QRect geometry);
 private:
     QStringList index;
     QList<QRect> buttons;

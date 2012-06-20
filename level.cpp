@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QRadialGradient>
+#include <QResizeEvent>
 
 
 #include "fixedgoo.h"
@@ -28,16 +29,16 @@
 #define DELAY 10
 
 
-Level::Level(QRect geometry, QString level,BackGroundWidget *bg,QWidget *parent) :
+Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     QWidget(parent), backGroundWidget(bg)
 {
     scale=1.0;
     goal = 100;
 
     //set the display geometry
-    this->setGeometry(0,0,geometry.width(),geometry.height());
+  //  this->setGeometry(0,0,geometry.width(),geometry.height());
 
-    if (flag & DEBUG) qWarning()<<"Geometry setted:"<<geometry;
+    //if (flag & DEBUG) qWarning()<<"Geometry setted:"<<geometry;
 
 
     //grab keyboard, mouse and track it!
@@ -86,7 +87,7 @@ Level::Level(QRect geometry, QString level,BackGroundWidget *bg,QWidget *parent)
     if (flag & DEBUG) qWarning()<<"Game variable initialized!";
 
 
-    menu=new Menu(geometry,this);
+    menu=new Menu(this->geometry(),this);
     onMenu=false;
     mooving=false;
     connect(menu,SIGNAL(eventClose()),this,SLOT(closeAll()));
@@ -869,6 +870,11 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
         menu->mouseRelease(e);
         return;
     }
+}
+
+
+void Level::resizeEvent(QResizeEvent *e){
+    menu->setGeometry(QRect(0,0,e->size().width(),e->size().height()));
 }
 
 void Level::destroyJoint(Joint *joint){

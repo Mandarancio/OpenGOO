@@ -48,7 +48,7 @@ class Level : public QWidget //QWidget <--To use without openGL
 {
     Q_OBJECT
 public:
-    explicit Level(QRect geometry,QString level,BackGroundWidget *bg,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
+    explicit Level(QString level,BackGroundWidget *bg,QWidget *parent = 0); //Geometry is needed to have the display dimension information, level is the level to load
     ~Level(){
         clean();
     }
@@ -184,6 +184,8 @@ protected:
     void mousePressEvent(QMouseEvent *);
     //Release mouse event
     void mouseReleaseEvent(QMouseEvent *);
+    //Resize window event
+    void resizeEvent(QResizeEvent *);
 
 signals:
     void closing();                     //When level is to close for some error reason

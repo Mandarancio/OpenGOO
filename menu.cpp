@@ -110,3 +110,14 @@ void Menu::mouseRelease(QMouseEvent *e){
         }
     }
 }
+
+
+void Menu::setGeometry(QRect geometry){
+    this->geometry=geometry;
+    int yOffset=(geometry.height()-buttons.length()*(height+30)+30)/2;
+    for(int j=0;j<buttons.length();j++)
+    {
+        int y=yOffset+(height+30)*j;
+        buttons[j]=QRect(geometry.width()/4,y,geometry.width()/2,height);
+    }
+}
