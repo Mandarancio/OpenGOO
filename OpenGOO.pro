@@ -8,7 +8,7 @@ LIBS +=-lBox2D
 
 win32:{
 INCLUDEPATH += .
-
+CONFIG += console
 #BOX2D_DIR - environment var must point to Box2D dir
 INCLUDEPATH += $$(BOX2D_DIR)
 LIBS +=      -L$$(BOX2D_DIR)/lib

@@ -37,10 +37,10 @@ int main(int argc, char *argv[])
     BackTracer(SIGFPE);
     BackTracer(SIGSTKFLT);
     #endif
-    
+
     //intialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
-    
+
     //Check for the run parameters
     for (int i=1; i<argc; i++) {
         QString arg(argv[i]);
@@ -63,10 +63,10 @@ int main(int argc, char *argv[])
         argv[argc-2] = strdup("-graphicssystem");
         argv[argc-1] = strdup("opengl");
     }
-    
-    
+
+
     QApplication a(argc, argv);
-    
+
     //CHECK FOR GAME DIR IN HOME DIRECTORY
     QDir dir(GAMEDIR);
     //If the game dir doesn't exist create it
@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
         dir.mkdir("debug");
     }
     else if (flag & DEBUG) qWarning() << "Game dir exist!";
-    
-    MainWidget w(QRect(0, 0, 800, 600));
+
+    MainWidget w(QRect(50, 50, 800, 600));
     w.show();
     return a.exec();
 }
