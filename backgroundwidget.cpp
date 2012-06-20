@@ -22,13 +22,15 @@ BackGroundWidget::BackGroundWidget(QWidget *parent) :
 void BackGroundWidget::paintEvent(QPaintEvent *e){
     QPainter p(this);
     p.save();
-    p.scale(scale,scale);
-    p.translate(translation);
 
     //DRAW BG COLOR
     p.setPen(Qt::transparent);
+    bgColor.setCenter(translation.x(),translation.y()+height()/2);
     p.setBrush(bgColor);
-    p.drawRect(limit.x(),+limit.y(),limit.width(),limit.height());
+    p.drawRect(this->geometry());
+
+    p.scale(scale,scale);
+    p.translate(translation);
 
     //DRAW BACKGROUND IMAGE
     for (int i=0;i<background.length();i++){
