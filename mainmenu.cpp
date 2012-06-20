@@ -1,6 +1,8 @@
-//#include "mainmenu.h"
-//#define MAINMENULEVEL "mainmenu.level"
-//MainMenu::MainMenu(QRect geometry, RunFlag flag, bool multiWindow, QWidget *parent) :
-//    Level(geometry,MAINMENULEVEL,flag,multiWindow,parent)
-//{
-//}
+#include "mainmenu.h"
+
+#define MAINMENUFILE "test"
+
+MainMenu::MainMenu(BackGroundWidget *bgWidget, QWidget *parent) :
+    Level(MAINMENUFILE,bgWidget,parent)
+{
+}

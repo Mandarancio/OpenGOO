@@ -1,7 +1,6 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-//#include <QWidget> <--To use without opengl
 #include <QWidget>
 #include <QPainter>
 #include <QPaintEvent>
@@ -44,7 +43,7 @@ struct Direction {
 //This is the Scene Widget
 //It initialize evrithing
 //The world (b2World) object is here
-class Level : public QWidget //QWidget <--To use without openGL
+class Level : public QWidget
 {
     Q_OBJECT
 public:

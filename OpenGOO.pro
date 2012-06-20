@@ -41,10 +41,10 @@ HEADERS += \
     background.h \
     ropejoint.h \
     qb2draw.h \
-    mainmenu.h \
     stickygoo.h \
     backgroundwidget.h \
-    flags.h
+    flags.h \
+    mainmenu.h
 
 
 SOURCES += \
@@ -69,10 +69,10 @@ SOURCES += \
     background.cpp \
     ropejoint.cpp \
     qb2draw.cpp \
-    mainmenu.cpp \
     stickygoo.cpp \
     backgroundwidget.cpp \
-    flags.cpp
+    flags.cpp \
+    mainmenu.cpp
 
 !win32{
 HEADERS +=     backtracer.h
