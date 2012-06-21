@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
     #ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
     BackTracer(SIGFPE);
-    BackTracer(SIGSTKFLT);
     #endif
 
     //intialize randseed
@@ -50,10 +49,13 @@ int main(int argc, char *argv[])
             qWarning("DEBUG MODE ON");
         }
         else if (!arg.compare("-opengl", Qt::CaseInsensitive)) {
-            flag |= OPENGL;
+            flag |= OPENGL | FPS;
         }
         else if (!arg.compare("-text", Qt::CaseInsensitive)) {
             flag |= ONLYTEXT | DEBUG;
+        }
+        else if (!arg.compare("-fps",Qt::CaseInsensitive)){
+            flag |= FPS;
         }
     }
     if (flag == STANDARD) qWarning("STD MODE");
