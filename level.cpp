@@ -402,8 +402,8 @@ void Level::timerEvent(QTimerEvent *e){
         if ((dragged->getVPosition()-0.1*mousePos+toVec(translation)).Length()>3.0){
             draggTimer++;
             b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
-            force=float(10.0*draggTimer)/force.Length()*force;
-            dragged->getBody()->SetLinearVelocity(3000.0*force);
+            force=float(1.0*draggTimer)/force.Length()*force;
+            dragged->getBody()->SetLinearVelocity(dragged->getBody()->GetMass()*force);
 
         }
         else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
@@ -1085,6 +1085,10 @@ void Level::restart(){
 void Level::destroyGOO(){
     Goo* goo=dynamic_cast<Goo*>(sender());
     if (goo && !goosToDestroy.contains(goo)){
+        if (goo==dragged) {
+            drag=false;
+            dragged=NULL;
+        }
         goosToDestroy.push_back(goo);
     }
 }

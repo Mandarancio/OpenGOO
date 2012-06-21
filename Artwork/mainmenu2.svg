@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.2 r9819"
-   sodipodi:docname="Nuovo documento 1">
+   sodipodi:docname="mainmenu2.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -25,7 +25,7 @@
          offset="0"
          id="stop3872" />
       <stop
-         style="stop-color:#418dff;stop-opacity:1;"
+         style="stop-color:#005ae1;stop-opacity:1;"
          offset="1"
          id="stop3874" />
     </linearGradient>
@@ -81,9 +81,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.61865234"
-     inkscape:cx="748.07016"
-     inkscape:cy="374.19926"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="830.41751"
+     inkscape:cy="291.27026"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -91,7 +91,9 @@
      inkscape:window-height="1047"
      inkscape:window-x="1280"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -100,7 +102,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -164,5 +166,70 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccccccc"
        transform="translate(0,28.362183)" />
+    <text
+       xml:space="preserve"
+       style="font-size:30.0017662px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="140.54205"
+       y="447.13748"
+       id="text3009"
+       sodipodi:linespacing="125%"
+       transform="matrix(1,0.20101766,0,1,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3011"
+         x="140.54205"
+         y="447.13748"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Holmes207;-inkscape-font-specification:Holmes207">Story</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18.76044273px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1113.8436"
+       y="1191.212"
+       id="text3009-0"
+       sodipodi:linespacing="125%"
+       transform="matrix(1,-0.33903239,0,1,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3011-0"
+         x="1113.8436"
+         y="1191.212"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Holmes207;-inkscape-font-specification:Holmes207">OPTIONS</tspan></text>
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 408.23836,792.33623 -8.1186,-25.42345 0.5047,-1.7395 -5.5962,-16.22056 11.6672,-9.54595 -1.0606,-2.47487 -6.3995,-12.2028 -13.3241,-14.58147 -13.4853,-4.85355 -7.4498,21.73833 0.4749,19.16295 3.0607,13.36396 1.7678,1.41421 13.435,-4.94975 3.182,12.37437 1.0606,-0.35355 10.6066,39.24442 23.62414,91.02213 12.3455,-6.22417 -4.5701,-9.97994 z"
+       id="path3034"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccccccccccccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:53.76399231px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="538.50085"
+       y="522.35791"
+       id="text3009-1"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.91938264,0.44175067,-0.24695936,0.96902584,0,0)"
+       inkscape:transform-center-x="4.5"
+       inkscape:transform-center-y="-6"><tspan
+         sodipodi:role="line"
+         id="tspan3011-5"
+         x="538.50085"
+         y="522.35791"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Holmes207;-inkscape-font-specification:Holmes207">+</tspan></text>
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 779.93878,888.31341 31.11269,-90.50967 28.28428,-36.76955 45.96194,-26.87006 23.33452,7.07107 7.77817,16.26345 -11.3137,139.30004 -108.18734,5.65685 z"
+       id="path3071"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:24.55657959px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1394.9114"
+       y="1027.7469"
+       id="text3009-2"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.96424877,-0.3130157,-0.50464841,1.2008964,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3011-7"
+         x="1394.9114"
+         y="1027.7469"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Holmes207;-inkscape-font-specification:Holmes207">R.I.P.</tspan></text>
   </g>
 </svg>
