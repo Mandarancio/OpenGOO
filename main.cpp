@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     }
     else if (flag & DEBUG) qWarning() << "Game dir exist!";
 
-    MainWidget w(QRect(50, 50, 800, 600));
+    MainWidget w(QRect(50, 50, 1024,800));
     w.show();
     return a.exec();
 }

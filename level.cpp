@@ -133,6 +133,8 @@ bool Level::startLevel(){
 void Level::initialize()
 {
 
+    this->time=0;
+
 
 
     dir.left=false;

@@ -44,7 +44,8 @@ HEADERS += \
     stickygoo.h \
     backgroundwidget.h \
     flags.h \
-    mainmenu.h
+    mainmenu.h \
+    introduction.h
 
 
 SOURCES += \
@@ -72,7 +73,8 @@ SOURCES += \
     stickygoo.cpp \
     backgroundwidget.cpp \
     flags.cpp \
-    mainmenu.cpp
+    mainmenu.cpp \
+    introduction.cpp
 
 !win32{
 HEADERS +=     backtracer.h

@@ -7,6 +7,8 @@
 #include "level.h"
 #include "levelselector.h"
 #include "backgroundwidget.h"
+#include "introduction.h"
+
 
 
 class MainWidget : public QWidget
@@ -21,12 +23,13 @@ private:
     LevelSelector *levelS;
     BackGroundWidget * bgWidget;
     QGridLayout * layout;
-    QRect geometry;
+    Introduction * intro;
 protected:
     void closeEvent(QCloseEvent *);
 private slots:
     void levelSelected();
     void backToMainMenu();
+    void startSelection();
 };
 
 #endif // MAINWIDGET_H

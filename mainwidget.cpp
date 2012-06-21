@@ -3,6 +3,8 @@
 #include <QDebug>
 #include "svglevelloader.h"
 
+#include "introduction.h"
+
 #include "flags.h"
 
 MainWidget::MainWidget(QRect geometry,QWidget *parent)
@@ -10,14 +12,16 @@ MainWidget::MainWidget(QRect geometry,QWidget *parent)
 {
     this->setGeometry(geometry);
 
-    levelS=new LevelSelector(this);//Create the level selector
-    levelS->show();//Show the level selector
+
+    intro=new Introduction(this);
+    intro->show();
     layout=new QGridLayout(this);
     layout->setMargin(0);
-    layout->addWidget(levelS,0,0,0,0);
+    layout->addWidget(intro,0,0,0,0);
     level=NULL;
-    connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
-    connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level
+    levelS=NULL;
+    connect(intro,SIGNAL(introEnd()),this,SLOT(startSelection()));
+
 
 }
 
@@ -52,7 +56,7 @@ void MainWidget::levelSelected()//Create the level selected
 
         layout->removeWidget(levelS);
         bgWidget =new BackGroundWidget(this);
-        bgWidget->setGeometry(0,0,geometry.width(),geometry.height());
+        bgWidget->setGeometry(0,0,width(),height());
         bgWidget->show();
         layout->addWidget(bgWidget,0,0,0,0);
         this->setLayout(layout);
@@ -90,3 +94,14 @@ void MainWidget::backToMainMenu()
     connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
     connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level delete level;
 }
+
+void MainWidget::startSelection(){
+    layout->removeWidget(intro);
+    delete intro;
+    levelS=new LevelSelector(this);//Create the level selector
+    levelS->show();//Show the level selector
+    connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
+    connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level
+    layout->addWidget(levelS,0,0,0,0);
+}
+

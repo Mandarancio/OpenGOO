@@ -98,6 +98,9 @@ public:
         return links.contains(goo);
     }
     bool isOnGround();
+    void setSleep(bool status){
+        sleeping=status;
+    }
     bool isSleeping(){
         return sleeping;
     }

@@ -197,11 +197,11 @@ private slots:
         this->name=name;
     }
     void setLimit(QRect limit);
-    void setGround(QPoint gCenter,QList<QPoint> gList);
     void setTarget(QPoint target);
+    void setGround(QPoint gCenter,QList<QPoint> gList);
+    void setGoo(QPoint center,int id, int type=0);
     void setStartArea(int n,QRect area,int type=0);
     void setJoint(Goo *a, Goo *b);
-    void setGoo(QPoint center,int id, int type=0);
     //To scale at the right dimension
     void setLevelGeometry(QSize size);
     //create thorn
