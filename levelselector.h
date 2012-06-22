@@ -36,6 +36,7 @@ private:
 
 
 
+
     void findLevels();
     void paintButton(int ind, QPainter &p );
     void computeHeight();
