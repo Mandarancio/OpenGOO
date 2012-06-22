@@ -124,7 +124,7 @@ QString LevelSelector::getLevelSelected()
         return "Exit";
 }
 
-void LevelSelector::keyReleaseEvent(QKeyEvent *e){
+void LevelSelector::keyPressEvent(QKeyEvent *e){
     if(e->key()==Qt::Key_Escape)
         emit this->closing();
 }

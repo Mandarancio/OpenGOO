@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QTimerEvent>
 #include <QResizeEvent>
+#include <QKeyEvent>
 
 #include "dynamicgoo.h"
 
@@ -19,8 +20,11 @@ Introduction::Introduction(QWidget *parent) :
         qWarning()<<"Loading intro";
     }
 
+    this->grabKeyboard();
+
     //create world
     //b2vec2(0,2000) is the gravity force
+
     world = new b2World(b2Vec2(0,20.0));
     world->SetAutoClearForces(true);
     world->SetContinuousPhysics(true);
@@ -66,7 +70,9 @@ void Introduction::paintEvent(QPaintEvent *){
     QPainter p(this);
     p.setRenderHints(QPainter::Antialiasing,true);
     p.setBrush(Qt::gray);
+    p.setPen(Qt::transparent);
     p.drawRect(0,0,width(),height());
+    p.save();
     p.scale(scale,scale);
 
     for (int i=0;i<ground.length();i++){
@@ -76,6 +82,12 @@ void Introduction::paintEvent(QPaintEvent *){
         goos[i]->update();
         goos[i]->paint(p);
     }
+    p.restore();
+    if (time>7.0){
+        QColor black(0,0,0,qRound(255.0*(time-7.0)));
+        p.setBrush(black);
+        p.drawRect(0,0,width(),height());
+    }
 }
 
 void Introduction::resizeEvent(QResizeEvent *e){
@@ -83,6 +95,12 @@ void Introduction::resizeEvent(QResizeEvent *e){
     rW=e->size().width()/1280.0;
     rH=e->size().height()/1024.0;
     scale=(rW<rH? rW : rH);
+}
+
+void Introduction::keyPressEvent(QKeyEvent *e){
+    if (e->key()==Qt::Key_Escape){
+        emit introEnd();
+    }
 }
 
 void Introduction::setGround(QPoint gCenter, QList<QPoint> gList){

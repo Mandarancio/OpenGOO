@@ -18,7 +18,7 @@ public:
     QString getLevelSelected();
 protected:
     void mouseReleaseEvent(QMouseEvent *e);
-    void keyReleaseEvent(QKeyEvent *e);
+    void keyPressEvent(QKeyEvent *e);
     void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *);
 signals:

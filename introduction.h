@@ -52,6 +52,8 @@ protected:
     void paintEvent(QPaintEvent *);
     //Resize Event
     void resizeEvent(QResizeEvent *);
+    //Key event (for skip intro)
+    void keyPressEvent(QKeyEvent *);
 signals:
     void introEnd();
 private slots:
