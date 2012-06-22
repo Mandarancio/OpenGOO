@@ -25,7 +25,7 @@ Introduction::Introduction(QWidget *parent) :
     //create world
     //b2vec2(0,2000) is the gravity force
 
-    world = new b2World(b2Vec2(0,20.0));
+    world = new b2World(b2Vec2(0,15.0));
     world->SetAutoClearForces(true);
     world->SetContinuousPhysics(true);
     world->SetAllowSleeping(true);
@@ -60,6 +60,7 @@ void Introduction::timerEvent(QTimerEvent *e){
         world->ClearForces();
     }
     repaint(QRegion(0,0,width(),height()));
+
     if (time>8.0) {
         this->killTimer(e->timerId());
         emit introEnd();
@@ -83,6 +84,29 @@ void Introduction::paintEvent(QPaintEvent *){
         goos[i]->paint(p);
     }
     p.restore();
+    if (time<1.0){
+        QColor bg(0,0,0,qRound(time*180.0));
+        QColor fg(255,255,255,qRound(time*200.0));
+        QFont f("mono",14);
+        f.setBold(true);
+        p.setFont(f);
+        p.setBrush(bg);
+        p.setPen(Qt::transparent);
+        p.drawRoundedRect(15,height()-55,248,40,10,10);
+        p.setPen(fg);
+        p.drawText(25,height()-28,"Press Esc to skip...");
+    }
+    else {
+        p.setBrush(QColor(0,0,0,180));
+        p.setPen(Qt::transparent);
+        p.drawRoundedRect(15,height()-55,248,40,10,10);
+        p.setPen(QColor(255,255,255,200));
+        QFont f("mono",14);
+        f.setBold(true);
+        p.setFont(f);
+        p.drawText(25,height()-28,"Press Esc to skip...");
+
+    }
     if (time>7.0){
         QColor black(0,0,0,qRound(255.0*(time-7.0)));
         p.setBrush(black);
