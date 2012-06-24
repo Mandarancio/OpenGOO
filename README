@@ -26,6 +26,8 @@ DEPENDENCIES
 ----
 
 -Box2d 2.2.1
+-OpenAL
+-Freealut
 -Qt4 and QT4 opengl module
 -Gcc
 -QMake
@@ -42,7 +44,7 @@ make
 
 TO RUN
 ----
-
+The resurces files and folders must be in the same folder of the exectuable.
 Move to the folder that contains the executable.
 Make sure that in this folder also level-svg.level and menu.index are present (if not copy them there).
 ./OpenGOO
