@@ -1,10 +1,10 @@
-QT       += core gui xml
+QT       += core gui xml phonon
 
 TARGET = OpenGOO
 TEMPLATE = app
 #ATTENCTION
 #Lib Box2D must be in system folder and also the header files of it!
-LIBS +=-lBox2D
+LIBS +=-lBox2D -lopenal -lalut
 
 win32:{
 INCLUDEPATH += .
@@ -45,7 +45,8 @@ HEADERS += \
     backgroundwidget.h \
     flags.h \
     mainmenu.h \
-    introduction.h
+    introduction.h\
+    soundsystem.h
 
 
 SOURCES += \
@@ -74,13 +75,18 @@ SOURCES += \
     backgroundwidget.cpp \
     flags.cpp \
     mainmenu.cpp \
-    introduction.cpp
+    introduction.cpp\
+    soundsystem.cpp
 
 !win32{
-HEADERS +=     backtracer.h
+HEADERS += backtracer.h
 SOURCES += backtracer.cpp
 }
 
+#unix{
+#    HEADERS+= qalsasound.h
+#    SOURCES+= qalsasound.cpp
+#}
 ##FOR TOUCHPAD COMPILE
 #!win32: {
 #message(assume qws)

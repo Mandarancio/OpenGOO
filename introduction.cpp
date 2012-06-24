@@ -8,6 +8,7 @@
 #include <QResizeEvent>
 #include <QKeyEvent>
 
+#include "collisionlistener.h"
 #include "dynamicgoo.h"
 
 #define RADIUS 18
@@ -29,10 +30,12 @@ Introduction::Introduction(QWidget *parent) :
     world->SetAutoClearForces(true);
     world->SetContinuousPhysics(true);
     world->SetAllowSleeping(true);
+    world->SetContactListener(new CollisionListener());
+
     if (flag & DEBUG) qWarning()<<"World object created!";
 
     //LOADER initialize
-    this->loader=new SvgLevelLoader("resurces/intro.level",this);
+    this->loader=new SvgLevelLoader("resources/intro.level",this);
     connect(loader,SIGNAL(levelGOO(QPoint,int,int)),this,SLOT(setGoo(QPoint,int,int)));
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));

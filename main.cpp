@@ -26,6 +26,8 @@ This program is free software: you can redistribute it and/or modify
 #include "flags.h"
 #include "mainwidget.h"
 
+#include "soundsystem.h"
+
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 
@@ -82,6 +84,8 @@ int main(int argc, char *argv[])
         dir.mkdir("debug");
     }
     else if (flag & DEBUG) qWarning() << "Game dir exist!";
+
+    soundSystem.initialize();
 
     MainWidget w(QRect(50, 50, 1024,800));
     w.show();

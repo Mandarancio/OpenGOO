@@ -3,12 +3,23 @@
 
 #include <QDebug>
 
+
+
 #include <qmath.h>
 #include <QRadialGradient>
+
+#include "soundsystem.h"
 
 DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     Goo(radius,parent)
 {
+
+
+
+//    mediaObject=Phonon::createPlayer(Phonon::NoCategory, Phonon::MediaSource("resources/sounds/boing.wav"));
+//    qWarning()<<"Medai Object is valid?"<<mediaObject->isValid();
+
+
     this->world=world; //get a copy of the world
     sticked=false; //start not sticked at ground
     color=Qt::white; //the recognize color of normal dynamic goo is white;
@@ -340,6 +351,17 @@ void DynamicGoo::neighborsFound(){
 }
 
 void DynamicGoo::update(){
+    QList <int > toRemove;
+    for (int i=0;i<sources.length();i++){
+        if (!soundSystem.sourceStatus(sources[i].first)){
+            soundSystem.deleteSource(sources[i]);
+            toRemove.push_back(i);
+        }
+    }
+
+    for (int i=0;i<toRemove.length();i++)
+        sources.removeAt(toRemove[i]);
+
     if (!isSleeping()){
         if (hasJoint()){
             body->SetAngularVelocity(0.0);
@@ -362,8 +384,19 @@ void DynamicGoo::contactGround(){
         return;
     }
     else {
+
+        if ( !isSleeping() && qAbs(body->GetAngularVelocity())<20.0 && prevTarget==NULL&& !hasJoint() && (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
+            ALbyte name[100]="resources/sounds/boing.wav";
+            QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
+            soundSystem.setPitch(source.first,24.0/float(radius));
+            soundSystem.setVolume(source.first,body->GetLinearVelocity().Length()/80.0*radius/24.0);
+
+            soundSystem.playSource(source.first);
+            sources.push_back(source);
+        }
         onGround=true;
         groundPoint=this->getPPosition();
+
         //if has joint return;
         if (hasJoint()){
 
@@ -380,6 +413,7 @@ void DynamicGoo::contactGround(){
 }
 
 void DynamicGoo::contactGround(QPoint p){
+
     //Away to trapass body
     if (isDragging()) {
         //Change flag and reset normal status
@@ -390,8 +424,11 @@ void DynamicGoo::contactGround(QPoint p){
         return;
     }
     else {
+
+
         onGround=true;
         groundPoint=this->getPPosition();
+
 
         //if has joint and is not sticked on ground
         if (hasJoint()){

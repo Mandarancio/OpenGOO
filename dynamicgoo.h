@@ -5,6 +5,7 @@
 
 #include <QObject>
 
+
 /*
   this is the most standard goo, if is free is moovable and dragable but
   when is jointed to other ones is not more possible darg or moove it..
@@ -38,17 +39,24 @@ private:
     int speed; //Speed
     bool sticked; //flag to know if is sticked to the ground
 
-protected:
-    void moveToTarget(); //move to the target
-    QColor color; //Color for recognize type of dynamic goo
-    QColor secondaryColor; //For recognize secondary option
-    bool stickable; //Flag to know if is stickable
+    QList <QPair<unsigned int,unsigned int> > sources;
+
+    //Graphics variable
     int counter; //ANIMATION COUNTER
     int rx,ry; //ANIMATION COORDINATE
     bool eye;
     int eyeSizeR,eyeSizeL;
     int delay;
     int angle;
+
+protected:
+    void moveToTarget(); //move to the target
+    QColor color; //Color for recognize type of dynamic goo
+    QColor secondaryColor; //For recognize secondary option
+    bool stickable; //Flag to know if is stickable
+
+
+
 private slots:
 
 public slots:
