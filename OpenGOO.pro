@@ -9,7 +9,13 @@ LIBS +=-lBox2D -lopenal -lalut
 }
 
 win32:{
-LIBS +=-lBox2D -lopenal32 -lalut
+debug:{
+    LIBS +=-lBox2Dd -lopenal32 -lalut
+}
+release:{
+    LIBS +=-lBox2D -lopenal32 -lalut
+}
+
 INCLUDEPATH += .
 CONFIG += console
 #BOX2D_DIR - environment var must point to Box2D dir
