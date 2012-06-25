@@ -10,6 +10,7 @@
 
 #include "collisionlistener.h"
 #include "dynamicgoo.h"
+#include "soundsystem.h"
 
 #define RADIUS 18
 #define INTERVALL 4
@@ -122,6 +123,7 @@ void Introduction::resizeEvent(QResizeEvent *e){
     rW=e->size().width()/1280.0;
     rH=e->size().height()/1024.0;
     scale=(rW<rH? rW : rH);
+    soundSystem.setCenter(QPoint(e->size().width()*scale/2,e->size().height()*scale/2));
 }
 
 void Introduction::keyPressEvent(QKeyEvent *e){

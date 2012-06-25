@@ -13,7 +13,7 @@
 #include "stickygoo.h"
 #include "thorn.h"
 #include "stickylink.h"
-
+#include "soundsystem.h"
 
 #include "balloongoo.h"
 #include "ropejoint.h"
@@ -886,9 +886,18 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     }
 }
 
+void Level::wheelEvent(QWheelEvent *e){
+
+//    if (e->delta()>0 && scale<2.0) scale+=0.1;
+//    else if (e->delta()<0 && scale>-2.0) scale-=0.1;
+//    this->backGroundWidget->setScale(scale);
+    e->ignore();
+}
+
 
 void Level::resizeEvent(QResizeEvent *e){
     menu->setGeometry(QRect(0,0,e->size().width(),e->size().height()));
+    soundSystem.setCenter(QPoint(e->size().width()/2,e->size().height()/2));
 }
 
 void Level::destroyJoint(Joint *joint){

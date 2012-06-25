@@ -183,6 +183,8 @@ protected:
     void mousePressEvent(QMouseEvent *);
     //Release mouse event
     void mouseReleaseEvent(QMouseEvent *);
+    //Weel event for zooming
+    void wheelEvent(QWheelEvent *);
     //Resize window event
     void resizeEvent(QResizeEvent *);
 

@@ -4,7 +4,7 @@
 
 SoundSystem soundSystem;
 
-SoundSystem::SoundSystem()
+SoundSystem::SoundSystem() : center(QPoint(0,0))
 {
 }
 
@@ -28,7 +28,12 @@ bool SoundSystem::initialize(){
 
     //Set active context
     alcMakeContextCurrent(context);
+
     return true;
+}
+
+void SoundSystem::setCenter(QPoint p){
+    center=p;
 }
 
 QPair<unsigned int,unsigned int> SoundSystem::createSource(ALbyte fileName[]){
@@ -103,12 +108,19 @@ void SoundSystem::playWav(ALbyte file[], float volume){
 }
 
 bool SoundSystem::sourceStatus(unsigned int source){
+    if (!active) return false;
     ALenum state;
     alGetSourcei(source, AL_SOURCE_STATE, &state);
     return (state == AL_PLAYING);
 }
 
 void SoundSystem::deleteSource(QPair<unsigned int,unsigned int> source){
+    if (!active) return;
     alDeleteSources(1,&source.first);
     alDeleteBuffers(1,&source.second);
+}
+
+void SoundSystem::setPosition(unsigned int source, QPoint p){
+    if (!active) return;
+    alSource3f(source,AL_POSITION,p.x()-center.x(),p.y()-center.y(),0);
 }

@@ -385,12 +385,12 @@ void DynamicGoo::contactGround(){
     }
     else {
 
-        if ( !isSleeping() && qAbs(body->GetAngularVelocity())<20.0 && prevTarget==NULL&& !hasJoint() && (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
+        if ( !isSleeping() && qAbs(body->GetAngularVelocity())<body->GetLinearVelocity().Length() && prevTarget==NULL&& !hasJoint() && (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
             ALbyte name[100]="resources/sounds/boing.wav";
             QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
-            soundSystem.setPitch(source.first,24.0/float(radius));
+            soundSystem.setPitch(source.first,24.0/float(radius)*60.0/body->GetLinearVelocity().Length());
             soundSystem.setVolume(source.first,body->GetLinearVelocity().Length()/80.0*radius/24.0);
-
+            soundSystem.setPosition(source.first,getPPosition());
             soundSystem.playSource(source.first);
             sources.push_back(source);
         }
