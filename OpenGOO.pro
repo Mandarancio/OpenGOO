@@ -9,12 +9,19 @@ LIBS +=-lBox2D -lopenal -lalut
 }
 
 win32:{
-debug:{
-    LIBS +=-lBox2Dd -lopenal32 -lalut
+DEFINES += _UNICODE
+CONFIG(debug, debug|release) {
+LIBS +=-lBox2Dd -lopenal32 -lalut
 }
-release:{
-    LIBS +=-lBox2D -lopenal32 -lalut
+else {
+LIBS +=-lBox2D -lopenal32 -lalut
+
+#DEFINES += _DEBUG
+QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
+QMAKE_LFLAGS   += /DEBUG
 }
+LIBS += -lDbgHelp -lAdvapi32 -lpsapi -lUser32
+
 
 INCLUDEPATH += .
 CONFIG += console
@@ -28,6 +35,11 @@ LIBS +=      -L$$(OPENAL_DIR)/qtcreator-build
 #FREEALUT_DIR
 INCLUDEPATH += $$(FREEALUT_DIR)/include
 LIBS +=      -L$$(FREEALUT_DIR)/lib
+
+#  Backtrace on win32
+HEADERS += backtracer_win32.h
+SOURCES += backtracer_win32.cpp
+
 }
 
 OTHER_FILES += \

@@ -23,6 +23,10 @@ This program is free software: you can redistribute it and/or modify
 #ifndef Q_OS_WIN32
 #include "backtracer.h"
 #endif
+#ifdef Q_OS_WIN32
+#include "backtracer_win32.h"
+#endif
+
 #include "flags.h"
 #include "mainwidget.h"
 
@@ -38,6 +42,9 @@ int main(int argc, char *argv[])
     #ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
     BackTracer(SIGFPE);
+    #endif
+    #ifdef Q_OS_WIN32
+    AddVectoredExceptionHandler(0, UnhandledException2);
     #endif
 
     //intialize randseed
