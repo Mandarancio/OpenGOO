@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+#include "publicclass.h"
+
 Goo::Goo( int radius, QObject *parent) :
     QObject(parent)
 {
@@ -200,7 +202,18 @@ void Goo::drag(){
         info.speed=body->GetLinearVelocity();
         info.aForce=body->GetAngularVelocity();
     }
-    if (!hasJoint())   body->SetActive(false);
+    if (!hasJoint())  {
+        if (!dragging){
+            ALbyte name[100]="resources/sounds/drag.wav";
+            QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
+            soundSystem.setPitch(source.first,float(radius)/20.0);
+            soundSystem.setVolume(source.first,radius/24.0);
+            soundSystem.setPosition(source.first,getPPosition());
+            soundSystem.playSource(source.first);
+            soundSystem.addSource(source);
+        }
+        body->SetActive(false);
+    }
     body->SetLinearVelocity(b2Vec2(0,0));
     body->SetAngularVelocity(0);
     dragging=true;
@@ -255,6 +268,15 @@ void Goo::checkForConnection(Goo *goo){
 }
 
 void Goo::fallDown(){
+    if (!falling){
+//        ALbyte name[100]="resources/sounds/scream.wav";
+//        QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
+//        soundSystem.setPitch(source.first,float(radius)/20.0);
+//        soundSystem.setVolume(source.first,radius/24.0);
+//        soundSystem.setPosition(source.first,getPPosition());
+//        soundSystem.playSource(source.first);
+//        soundSystem.addSource(source);
+    }
     onGround=false;
     falling=true;
     stopFollow();
