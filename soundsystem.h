@@ -6,6 +6,7 @@
 
 #include <QPair>
 #include <QPoint>
+#include <QList>
 
 class SoundSystem
 {
@@ -29,10 +30,11 @@ public:
 
     bool sourceStatus(unsigned int source);
 
+    void addSource(QPair<unsigned int , unsigned int> source);
     void deleteSource(QPair<unsigned int ,unsigned int>source);
 
-
 private:
+    QList<QPair <unsigned int, unsigned int> > sources;
 
     QPoint center;
 

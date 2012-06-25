@@ -35,6 +35,14 @@ void SoundSystem::setCenter(QPoint p){
 }
 
 QPair<unsigned int,unsigned int> SoundSystem::createSource(ALbyte fileName[]){
+
+    QList <int> toRemove;
+    for (int i=0;i<sources.length();i++)
+        if (!sourceStatus(sources[i].first)) toRemove.push_back(i);
+
+    for (int i=0;i<toRemove.length();i++)
+        sources.removeAt(toRemove[i]);
+
     if (!active) return QPair<unsigned int, unsigned int>(0,0);
     char*     alBuffer;             //data for the buffer
     ALenum alFormatBuffer;    //buffer format
@@ -110,6 +118,11 @@ bool SoundSystem::sourceStatus(unsigned int source){
     ALenum state;
     alGetSourcei(source, AL_SOURCE_STATE, &state);
     return (state == AL_PLAYING);
+}
+
+void SoundSystem::addSource(QPair<unsigned int, unsigned int> source){
+    if (!sources.contains(source))
+        sources.push_back(source);
 }
 
 void SoundSystem::deleteSource(QPair<unsigned int,unsigned int> source){

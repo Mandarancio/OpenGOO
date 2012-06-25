@@ -97,6 +97,18 @@ void Joint::status(){
     if (l<5.0 || l>20.0 || force>( a->isDragging() || b->isDragging()? 0.01 : 8.0) ) { //If the joint is too short or too long or the force is too much broke the joint
         a->destroyLink(b);
         b->destroyLink(a);
+        if (a->isDragging() || b->isDragging()){
+            Goo* d=(a->isDragging()? a : b);
+
+            ALbyte name[100]="resources/sounds/pop.wav";
+            QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
+           // soundSystem.setPitch(source.first,float(d->getRadius())/24.0);
+            soundSystem.setVolume(source.first,0.3*float(d->getRadius())/24.0);
+            soundSystem.setPosition(source.first,d->getPPosition());
+            soundSystem.addSource(source);
+            soundSystem.playSource(source.first);
+
+        }
         emit destroyJoint(this);
     }
 }
