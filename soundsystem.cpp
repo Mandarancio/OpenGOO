@@ -37,9 +37,12 @@ void SoundSystem::setCenter(QPoint p){
 QPair<unsigned int,unsigned int> SoundSystem::createSource(ALbyte fileName[]){
 
     QList <int> toRemove;
-    for (int i=0;i<sources.length();i++)
-        if (!sourceStatus(sources[i].first)) toRemove.push_back(i);
-
+    for (int i=0;i<sources.length();i++) {
+        if (!sourceStatus(sources[i].first)) {
+            deleteSource(sources[i]);
+            toRemove.push_back(i);
+        }
+    }
     for (int i=0;i<toRemove.length();i++)
         sources.removeAt(toRemove[i]);
 
