@@ -8,6 +8,7 @@
 #include <qmath.h>
 #include <QRadialGradient>
 
+#include "publicclass.h"
 #include "soundsystem.h"
 
 DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):

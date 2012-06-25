@@ -62,7 +62,8 @@ HEADERS += \
     flags.h \
     mainmenu.h \
     introduction.h\
-    soundsystem.h
+    soundsystem.h \
+    publicclass.h
 
 
 SOURCES += \
@@ -92,7 +93,8 @@ SOURCES += \
     flags.cpp \
     mainmenu.cpp \
     introduction.cpp\
-    soundsystem.cpp
+    soundsystem.cpp \
+    publicclass.cpp
 
 !win32{
 HEADERS += backtracer.h

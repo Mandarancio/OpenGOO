@@ -11,6 +11,7 @@
 #include "collisionlistener.h"
 #include "dynamicgoo.h"
 #include "soundsystem.h"
+#include "publicclass.h"
 
 #define RADIUS 18
 #define INTERVALL 4

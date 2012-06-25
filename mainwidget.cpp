@@ -11,7 +11,7 @@ MainWidget::MainWidget(QRect geometry,QWidget *parent)
     : QWidget(parent)
 {
     this->setGeometry(geometry);
-
+    this->releaseKeyboard();
 
     intro=new Introduction(this);
     intro->show();

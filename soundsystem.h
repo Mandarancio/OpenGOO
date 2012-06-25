@@ -42,7 +42,6 @@ private:
 
 };
 
-extern SoundSystem soundSystem;
 
 
 #endif // SOUNDSYSTEM_H

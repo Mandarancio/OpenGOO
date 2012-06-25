@@ -19,6 +19,7 @@
 #include "ropejoint.h"
 #include "collisionlistener.h"
 
+#include "publicclass.h"
 #include "flags.h"
 
 #include <QPolygon>
@@ -391,12 +392,12 @@ void Level::timerEvent(QTimerEvent *e){
         time+=step;
     e->accept();
     QTime t2=QTime::currentTime();
-    float dT= (((t2.hour()-itime.hour())*60+(t2.minute()-itime.minute()))*60.0+(t2.second()-itime.second()))*1000.0+t2.msec()-itime.msec();
+    realStep= (((t2.hour()-itime.hour())*60+(t2.minute()-itime.minute()))*60.0+(t2.second()-itime.second()))*1000.0+t2.msec()-itime.msec();
     itime=t2;
-    dT/=1000.0;
-    if (dT<0 || dT>10.0*step) dT=step;
+    realStep/=1000.0;
+    if (realStep<0 || realStep>10.0*step) realStep=step;
     //qWarning()<<"IDEAL STEP"<<step*1000.0<<"REAL STEP"<<dT;
-    fps=qRound(1.0/dT);
+    fps=qRound(1.0/realStep);
     if (drag) showJointTimer++;
     if (drag) {
 
@@ -446,7 +447,7 @@ void Level::timerEvent(QTimerEvent *e){
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
 
     for (int i=0;i<2;i++){
-        world->Step((dT+dT/5.0),10.0,10.0);
+        world->Step((realStep),10.0,10.0);
         world->ClearForces();
     }
 

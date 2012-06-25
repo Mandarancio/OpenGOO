@@ -2,8 +2,6 @@
 #include <AL/alut.h>
 #include <QDebug>
 
-SoundSystem soundSystem;
-
 SoundSystem::SoundSystem() : center(QPoint(0,0))
 {
 }
@@ -122,5 +120,7 @@ void SoundSystem::deleteSource(QPair<unsigned int,unsigned int> source){
 
 void SoundSystem::setPosition(unsigned int source, QPoint p){
     if (!active) return;
+
     alSource3f(source,AL_POSITION,p.x()-center.x(),p.y()-center.y(),0);
+    //alSourcei(source,AL_SOURCE_RELATIVE,AL_TRUE);
 }

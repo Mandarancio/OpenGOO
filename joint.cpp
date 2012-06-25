@@ -1,6 +1,7 @@
 #include "joint.h"
 #include "tools.h"
 
+#include "publicclass.h"
 #include <QLinearGradient>
 
 Joint::Joint(Goo *a, Goo *b, b2World *world,bool child, QObject *parent):
@@ -76,7 +77,7 @@ void Joint::paintDebug(QPainter &p){
     p.setPen(Qt::green  );
     p.drawLine(toPoint(joint->GetBodyA()->GetPosition()),toPoint(joint->GetBodyB()->GetPosition()));
     QPoint m=(toPoint(joint->GetBodyA()->GetPosition())+toPoint(joint->GetBodyB()->GetPosition()))/2;
-    p.drawText(m,QString::number(joint->GetReactionForce(1.0/60.0).Length()));
+    p.drawText(m,QString::number(joint->GetReactionForce(realStep/4.0).Length()));
 }
 
 
@@ -91,9 +92,9 @@ void Joint::status(){
     float dx=(joint->GetBodyA()->GetPosition().x-joint->GetBodyB()->GetPosition().x); //Delta x
     float dy=(joint->GetBodyA()->GetPosition().y-joint->GetBodyB()->GetPosition().y); //Delta y
     float l=sqrt(dx*dx+dy*dy); //This is the lenght of the joint
-    float force= joint->GetReactionForce(1.0/60.0).Length(); //Get the force applied at the joint
+    float force= joint->GetReactionForce(realStep/4.0).Length(); //Get the force applied at the joint
 
-    if (l<5.0 || l>20.0 || force>( a->isDragging() || b->isDragging()? 0.008 : 3.0) ) { //If the joint is too short or too long or the force is too much broke the joint
+    if (l<5.0 || l>20.0 || force>( a->isDragging() || b->isDragging()? 0.01 : 8.0) ) { //If the joint is too short or too long or the force is too much broke the joint
         a->destroyLink(b);
         b->destroyLink(a);
         emit destroyJoint(this);

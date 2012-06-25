@@ -27,6 +27,7 @@ This program is free software: you can redistribute it and/or modify
 #include "mainwidget.h"
 
 #include "soundsystem.h"
+#include "publicclass.h"
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
