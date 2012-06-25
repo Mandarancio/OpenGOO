@@ -362,7 +362,10 @@ void DynamicGoo::update(){
 
     for (int i=0;i<toRemove.length();i++)
         sources.removeAt(toRemove[i]);
-
+    if (isSelected()) {
+        body->SetLinearVelocity(b2Vec2(0,0));
+        return;
+    }
     if (!isSleeping()){
         if (hasJoint()){
             body->SetAngularVelocity(0.0);

@@ -555,7 +555,7 @@ void Level::paintEvent(QPaintEvent *e){
         }
     }
     for (int i=0;i<goos.length();i++){
-        if (goos[i]  && goos[i]->hasJoint() && !goos[i]->isDragging() && !goos[i]->isSelected()){
+        if (goos[i]  && goos[i]->hasJoint() && !goos[i]->isDragging() && goos[i]!=selected){
             goos[i]->update();
             if ( display.intersects(goos[i]->boundingRect()) || (flag & OPENGL)){
                 goos[i]->paint(p);
@@ -566,7 +566,7 @@ void Level::paintEvent(QPaintEvent *e){
         }
     }
     for (int i=0;i<goos.length();i++){
-        if (goos[i] && !goos[i]->isDragging() && !goos[i]->isSelected() && !goos[i]->hasJoint()) {
+        if (goos[i] && !goos[i]->isDragging() && goos[i]!=selected && !goos[i]->hasJoint()) {
             goos[i]->update();
             if (goos[i]->isFalling() && overJoint(goos[i])!=NULL) anchorToJoint(goos[i],overJoint(goos[i]));
             if (display.intersects(goos[i]->boundingRect()) || (flag & OPENGL)){
@@ -620,12 +620,12 @@ void Level::paintEvent(QPaintEvent *e){
         if ((flag & DEBUG) && !(flag & ONLYTEXT)){
             selected->paintDebug(p);
         }
-        float d=toVec(selected->getPPosition()-absoluteMousePos-translation).Length()*10;
-        if (d>selected->getRadius()+10){
-            selected->select(false);
-            selected=getGooAt(absoluteMousePos/scale-translation);
-            if (selected!=NULL) selected->select();
-        }
+//        float d=toVec(selected->getPPosition()-absoluteMousePos+translation).Length()*10;
+//        if (d>selected->getRadius()+10){
+//            selected->select(false);
+//            selected=getGooAt(absoluteMousePos/scale-translation);
+//            if (selected!=NULL) selected->select();
+//        }
     }
 
     if ((flag & DEBUG) && !(flag & ONLYTEXT)){
