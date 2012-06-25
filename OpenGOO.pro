@@ -4,14 +4,30 @@ TARGET = OpenGOO
 TEMPLATE = app
 #ATTENCTION
 #Lib Box2D must be in system folder and also the header files of it!
+!win32{
 LIBS +=-lBox2D -lopenal -lalut
+}
 
 win32:{
+debug:{
+    LIBS +=-lBox2Dd -lopenal32 -lalut
+}
+release:{
+    LIBS +=-lBox2D -lopenal32 -lalut
+}
+
 INCLUDEPATH += .
 CONFIG += console
 #BOX2D_DIR - environment var must point to Box2D dir
 INCLUDEPATH += $$(BOX2D_DIR)
 LIBS +=      -L$$(BOX2D_DIR)/lib
+#OPENAL_DIR
+INCLUDEPATH += $$(OPENAL_DIR)/include
+INCLUDEPATH += $$(OPENAL_DIR)/include/AL
+LIBS +=      -L$$(OPENAL_DIR)/qtcreator-build
+#FREEALUT_DIR
+INCLUDEPATH += $$(FREEALUT_DIR)/include
+LIBS +=      -L$$(FREEALUT_DIR)/lib
 }
 
 OTHER_FILES += \

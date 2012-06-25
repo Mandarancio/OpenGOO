@@ -12,3 +12,7 @@ moc_*
 /Makefile*
 /OpenGOO
 /doc
+
+*.user*
+*.ilk
+*.pdb
