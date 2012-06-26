@@ -179,6 +179,10 @@ protected:
     void moveToTarget(){} //Move the goos through the joints
     void stopFollow();
     void fallDown();
+
+private:
+    QPair <unsigned int, unsigned int> scream;
+
 signals:
     //Signal to retrive a new target.
     void nextTargetPlease(Goo* previous);

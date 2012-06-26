@@ -398,22 +398,14 @@ void Level::timerEvent(QTimerEvent *e){
     if (realStep<0 || realStep>10.0*step) realStep=step;
     //qWarning()<<"IDEAL STEP"<<step*1000.0<<"REAL STEP"<<dT;
     fps=qRound(1.0/realStep);
-    if (drag) showJointTimer++;
-    if (drag) {
+    if (drag){
+        showJointTimer++;
+
 
         dragged->getBody()->SetActive(true);
-        if ((dragged->getVPosition()-0.1*mousePos+toVec(translation)).Length()>3.0){
-            draggTimer++;
-            b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
-            force=float(1.0*draggTimer)/force.Length()*force;
-            dragged->getBody()->SetLinearVelocity(dragged->getBody()->GetMass()*force);
 
-        }
-        else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
-            draggTimer=0;
-            dragged->move(toPoint(0.1*mousePos)-translation);
-        }
     }
+
     if (!onMenu){
         if (dir.left) {
             QPoint p=translation;
@@ -446,8 +438,26 @@ void Level::timerEvent(QTimerEvent *e){
     }
     for (int i=0;i<stickys.length();i++) stickys[i]->checkStatus();
 
-    for (int i=0;i<2;i++){
-        world->Step((realStep),10.0,10.0);
+    int n=qRound(6.0*realStep/step);
+
+    for (int i=0;i<n;i++){
+        if (drag) {
+
+            dragged->getBody()->SetActive(true);
+            if ((dragged->getVPosition()-0.1*mousePos+toVec(translation)).Length()>3.0){
+                draggTimer++;
+                b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
+                force=float(0.5*draggTimer)/force.Length()*force;
+                dragged->getBody()->SetLinearVelocity(dragged->getBody()->GetMass()*force);
+
+            }
+
+            else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
+                draggTimer=0;
+                dragged->move(toPoint(0.1*mousePos)-translation);
+            }
+        }
+        world->Step(0.01,10.0,10.0);
         world->ClearForces();
     }
 
@@ -620,12 +630,12 @@ void Level::paintEvent(QPaintEvent *e){
         if ((flag & DEBUG) && !(flag & ONLYTEXT)){
             selected->paintDebug(p);
         }
-//        float d=toVec(selected->getPPosition()-absoluteMousePos+translation).Length()*10;
-//        if (d>selected->getRadius()+10){
-//            selected->select(false);
-//            selected=getGooAt(absoluteMousePos/scale-translation);
-//            if (selected!=NULL) selected->select();
-//        }
+        //        float d=toVec(selected->getPPosition()-absoluteMousePos+translation).Length()*10;
+        //        if (d>selected->getRadius()+10){
+        //            selected->select(false);
+        //            selected=getGooAt(absoluteMousePos/scale-translation);
+        //            if (selected!=NULL) selected->select();
+        //        }
     }
 
     if ((flag & DEBUG) && !(flag & ONLYTEXT)){
@@ -889,9 +899,9 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 
 void Level::wheelEvent(QWheelEvent *e){
 
-//    if (e->delta()>0 && scale<2.0) scale+=0.1;
-//    else if (e->delta()<0 && scale>-2.0) scale-=0.1;
-//    this->backGroundWidget->setScale(scale);
+    //    if (e->delta()>0 && scale<2.0) scale+=0.1;
+    //    else if (e->delta()<0 && scale>-2.0) scale-=0.1;
+    //    this->backGroundWidget->setScale(scale);
     e->ignore();
 }
 

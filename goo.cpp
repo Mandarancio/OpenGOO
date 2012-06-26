@@ -39,6 +39,9 @@ Goo::Goo( int radius, QObject *parent) :
     target=NULL;
     prevTarget=NULL;
     type=NONE;
+
+    ALbyte name[100]="resources/sounds/scream.wav";
+    scream=soundSystem.createSource(name);
 }
 
 //Check if is on ground
@@ -269,13 +272,11 @@ void Goo::checkForConnection(Goo *goo){
 
 void Goo::fallDown(){
     if (!falling){
-//        ALbyte name[100]="resources/sounds/scream.wav";
-//        QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
-//        soundSystem.setPitch(source.first,float(radius)/20.0);
-//        soundSystem.setVolume(source.first,radius/24.0);
-//        soundSystem.setPosition(source.first,getPPosition());
-//        soundSystem.playSource(source.first);
-//        soundSystem.addSource(source);
+//        if (soundSystem.sourceStatus(scream.first)) soundSystem.stopSource(scream.first);
+//        soundSystem.setPitch(scream.first,float(radius)/20.0);
+//        soundSystem.setVolume(scream.first,radius/24.0);
+//        soundSystem.setPosition(scream.first,getPPosition());
+//        soundSystem.playSource(scream.first);
     }
     onGround=false;
     falling=true;

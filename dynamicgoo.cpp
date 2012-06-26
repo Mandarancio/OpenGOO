@@ -35,7 +35,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     shape.m_radius=radius/10.0; //radius
 
     b2FixtureDef fixDef; //Definition of the phisical parameters
-    fixDef.restitution=0.5; //collision restitution
+    fixDef.restitution=0.2; //collision restitution
     fixDef.density=1.0; //density
     fixDef.friction=0.1; //friction
     fixDef.shape=&shape; //assign the shape
@@ -362,7 +362,7 @@ void DynamicGoo::update(){
 
     for (int i=0;i<toRemove.length();i++)
         sources.removeAt(toRemove[i]);
-    if (isSelected()) {
+    if (isSelected() && !isFalling()) {
         body->SetLinearVelocity(b2Vec2(0,0));
         return;
     }

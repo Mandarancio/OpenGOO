@@ -41,6 +41,7 @@ private:
 
     QList <QPair<unsigned int,unsigned int> > sources;
 
+
     //Graphics variable
     int counter; //ANIMATION COUNTER
     int rx,ry; //ANIMATION COORDINATE

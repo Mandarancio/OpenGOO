@@ -25,6 +25,7 @@ public:
 
 
     void playSource(unsigned int source);
+    void stopSource(unsigned int source);
     void playWav(ALbyte file[],float volume);
 
 

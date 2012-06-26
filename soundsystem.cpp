@@ -86,6 +86,11 @@ void SoundSystem::playSource(unsigned int source){
     alSourcePlay(source);
 }
 
+void SoundSystem::stopSource(unsigned int source){
+    if (!active) return;
+    alSourceStop(source);
+}
+
 void SoundSystem::playWav(ALbyte file[], float volume){
     if (!active) return;
     char*     alBuffer;             //data for the buffer

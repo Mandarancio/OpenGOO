@@ -60,8 +60,8 @@ Introduction::~Introduction(){
 
 void Introduction::timerEvent(QTimerEvent *e){
     time+=step;
-    for (int i=0;i<2;i++){
-        world->Step((step+step/5.0),10.0,10.0);
+    for (int i=0;i<8;i++){
+        world->Step(0.01,10.0,10.0);
         world->ClearForces();
     }
     repaint(QRegion(0,0,width(),height()));
