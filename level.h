@@ -27,7 +27,7 @@
 #include "svglevelloader.h"
 
 #include "qb2draw.h"
-
+#include "soundsystem.h"
 
 #include "backgroundwidget.h"
 
@@ -118,15 +118,13 @@ private:
     QB2Draw * debugPainter;
 
 
+    //SOUND
+    SoundSystem *soundSystem;
+
+
 
 
     //METHOD
-    //Level
-
-//    void readLevel(QString path);   //Function to load the level from file
-//    bool parseString(QString string);   //Split a line of the file in the two component the tag and the real information
-//    bool parseInfo(QString tag,QString info); //Recognize the tag and use the info
-
     BackGroundWidget * backGroundWidget; //This is a widget to draw the semi-static ground and background.
 
     //INITIALIZE FUNCTION

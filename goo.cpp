@@ -41,7 +41,7 @@ Goo::Goo( int radius, QObject *parent) :
     type=NONE;
 
     ALbyte name[100]="resources/sounds/scream.wav";
-    scream=soundSystem.createSource(name);
+    scream=sSystem->createSource(name);
 }
 
 //Check if is on ground
@@ -102,6 +102,15 @@ void Goo::move(QPoint p){
 
 void Goo::jumpTo(QPoint p){
     stopFollow();
+    if (!falling){
+        ALbyte name[100]="resources/sounds/drag.wav";
+        QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
+        sSystem->setPitch(source.first,float(radius)/20.0);
+        sSystem->setVolume(source.first,radius/24.0);
+        sSystem->setPosition(source.first,getPPosition());
+        sSystem->playSource(source.first);
+        sSystem->addSource(source);
+    }
     this->dragable=false;
     this->moovable=false;
     this->falling=true;
@@ -111,6 +120,7 @@ void Goo::jumpTo(QPoint p){
     v.y*=25/v.Length();
     body->SetAngularVelocity(0);
     body->SetLinearVelocity(v);
+
 }
 
 
@@ -208,12 +218,12 @@ void Goo::drag(){
     if (!hasJoint())  {
         if (!dragging){
             ALbyte name[100]="resources/sounds/drag.wav";
-            QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
-            soundSystem.setPitch(source.first,float(radius)/20.0);
-            soundSystem.setVolume(source.first,radius/24.0);
-            soundSystem.setPosition(source.first,getPPosition());
-            soundSystem.playSource(source.first);
-            soundSystem.addSource(source);
+            QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
+            sSystem->setPitch(source.first,float(radius)/20.0);
+            sSystem->setVolume(source.first,radius/24.0);
+            sSystem->setPosition(source.first,getPPosition());
+            sSystem->playSource(source.first);
+            sSystem->addSource(source);
         }
         body->SetActive(false);
     }
@@ -272,11 +282,11 @@ void Goo::checkForConnection(Goo *goo){
 
 void Goo::fallDown(){
     if (!falling){
-//        if (soundSystem.sourceStatus(scream.first)) soundSystem.stopSource(scream.first);
-//        soundSystem.setPitch(scream.first,float(radius)/20.0);
-//        soundSystem.setVolume(scream.first,radius/24.0);
-//        soundSystem.setPosition(scream.first,getPPosition());
-//        soundSystem.playSource(scream.first);
+//        if (sSystem->sourceStatus(scream.first)) sSystem->stopSource(scream.first);
+//        sSystem->setPitch(scream.first,float(radius)/20.0);
+//        sSystem->setVolume(scream.first,radius/24.0);
+//        sSystem->setPosition(scream.first,getPPosition());
+//        sSystem->playSource(scream.first);
     }
     onGround=false;
     falling=true;

@@ -13,7 +13,6 @@
 #include "stickygoo.h"
 #include "thorn.h"
 #include "stickylink.h"
-#include "soundsystem.h"
 
 #include "balloongoo.h"
 #include "ropejoint.h"
@@ -31,6 +30,7 @@
 
 QTime itime;
 int fps=0;
+
 
 Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     QWidget(parent), backGroundWidget(bg)
@@ -136,7 +136,9 @@ void Level::initialize()
 
     this->time=0;
 
-
+    soundSystem=new SoundSystem();
+    soundSystem->initialize();
+    sSystem=soundSystem;
 
     dir.left=false;
     dir.right=false;
@@ -192,6 +194,7 @@ void Level::initialize()
 }
 //Clean function
 void Level::clean(){
+    delete soundSystem;
     //clear object bodies
     backGroundWidget->clear();
     for (int i=0;i<objects.length();i++){
@@ -908,7 +911,7 @@ void Level::wheelEvent(QWheelEvent *e){
 
 void Level::resizeEvent(QResizeEvent *e){
     menu->setGeometry(QRect(0,0,e->size().width(),e->size().height()));
-    soundSystem.setCenter(QPoint(e->size().width()/2,e->size().height()/2));
+    soundSystem->setCenter(QPoint(e->size().width()/2,e->size().height()/2));
 }
 
 void Level::destroyJoint(Joint *joint){

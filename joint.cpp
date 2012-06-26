@@ -101,12 +101,12 @@ void Joint::status(){
             Goo* d=(a->isDragging()? a : b);
 
             ALbyte name[100]="resources/sounds/pop.wav";
-            QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
+            QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
            // soundSystem.setPitch(source.first,float(d->getRadius())/24.0);
-            soundSystem.setVolume(source.first,0.3*float(d->getRadius())/24.0);
-            soundSystem.setPosition(source.first,d->getPPosition());
-            soundSystem.addSource(source);
-            soundSystem.playSource(source.first);
+            sSystem->setVolume(source.first,0.3*float(d->getRadius())/24.0);
+            sSystem->setPosition(source.first,d->getPPosition());
+            sSystem->addSource(source);
+            sSystem->playSource(source.first);
 
         }
         emit destroyJoint(this);

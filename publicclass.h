@@ -3,8 +3,7 @@
 #include "soundsystem.h"
 
 
-extern SoundSystem soundSystem;
 extern float realStep;
-
+extern SoundSystem * sSystem;
 
 #endif // PUBLICCLASS_H

@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     }
     else if (flag & DEBUG) qWarning() << "Game dir exist!";
 
-    soundSystem.initialize();
+    //soundSystem.initialize();
 
     MainWidget w(QRect(50, 50, 1024,800));
     w.show();

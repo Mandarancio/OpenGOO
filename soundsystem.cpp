@@ -58,6 +58,7 @@ QPair<unsigned int,unsigned int> SoundSystem::createSource(ALbyte fileName[]){
     alutLoadWAVFile(fileName,&alFormatBuffer, (void **) &alBuffer,(ALsizei *)&alBufferLen, &alFreqBuffer, &alLoop);
     alGenSources(1, &alSource);
 
+
     //create  buffer
     alGenBuffers(1, &alSampleSet);
 

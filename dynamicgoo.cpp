@@ -42,8 +42,8 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
 
     fixDef.userData=this; //assign a copy of  the object at the body so during the contact is possible to know the info of the goo
     body->CreateFixture(&fixDef); //create the fixture
-    body->SetLinearDamping(0.11);//Not sure about this parameter
-    body->SetAngularDamping(0.05);
+    body->SetLinearDamping(0.21);//Not sure about this parameter
+    body->SetAngularDamping(0.1);
     //set mass
     b2MassData mass;
     mass.center.SetZero();
@@ -354,8 +354,8 @@ void DynamicGoo::neighborsFound(){
 void DynamicGoo::update(){
     QList <int > toRemove;
     for (int i=0;i<sources.length();i++){
-        if (!soundSystem.sourceStatus(sources[i].first)){
-            soundSystem.deleteSource(sources[i]);
+        if (!sSystem->sourceStatus(sources[i].first)){
+            sSystem->deleteSource(sources[i]);
             toRemove.push_back(i);
         }
     }
@@ -391,11 +391,11 @@ void DynamicGoo::contactGround(){
 
         if ( !isSleeping() && qAbs(body->GetAngularVelocity())<body->GetLinearVelocity().Length() && prevTarget==NULL&&  (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
             ALbyte name[100]="resources/sounds/boing.wav";
-            QPair<unsigned int,unsigned int> source =soundSystem.createSource(name);
-            soundSystem.setPitch(source.first,24.0/float(radius)*60.0/body->GetLinearVelocity().Length());
-            soundSystem.setVolume(source.first,body->GetLinearVelocity().Length()/80.0*radius/24.0);
-            soundSystem.setPosition(source.first,getPPosition());
-            soundSystem.playSource(source.first);
+            QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
+            sSystem->setPitch(source.first,24.0/float(radius)*60.0/body->GetLinearVelocity().Length());
+            sSystem->setVolume(source.first,body->GetLinearVelocity().Length()/80.0*radius/24.0);
+            sSystem->setPosition(source.first,getPPosition());
+            sSystem->playSource(source.first);
             sources.push_back(source);
         }
         onGround=true;
