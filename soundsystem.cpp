@@ -4,6 +4,7 @@
 
 SoundSystem::SoundSystem() : center(QPoint(0,0))
 {
+    active=false;
 }
 
 SoundSystem::~SoundSystem(){

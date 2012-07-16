@@ -20,7 +20,7 @@ Introduction::Introduction(QWidget *parent) :
     QWidget(parent),time(0),scale(1.0), translation(QPoint(0,0)),step(1.0/40.0)
 {
     sSystem=new SoundSystem;
-    sSystem->initialize();
+    //sSystem->initialize();
     if (flag & ONLYTEXT || flag & DEBUG){
         qWarning()<<"Loading intro";
     }
@@ -44,7 +44,15 @@ Introduction::Introduction(QWidget *parent) :
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
     loader->parse();
+
+    itime.start();
     startTimer(qRound(step*1000.0));
+    time=itime.elapsed();
+    qWarning()<<time;
+    nFrame=0;
+    endTime=7.0;
+
+
 }
 
 Introduction::~Introduction(){
@@ -62,14 +70,20 @@ Introduction::~Introduction(){
 }
 
 void Introduction::timerEvent(QTimerEvent *e){
-    time+=step;
-    for (int i=0;i<8;i++){
+    nFrame++;
+    float old=time;
+    time=itime.elapsed()/1000.0;
+    realStep= (time-old);
+
+    int n=qRound(6.0*realStep/step);
+
+    for (int i=0;i<n;i++){
         world->Step(0.01,10.0,10.0);
         world->ClearForces();
     }
     repaint(QRegion(0,0,width(),height()));
 
-    if (time>8.0) {
+    if (time>endTime+1.0) {
         this->killTimer(e->timerId());
         emit introEnd();
 
@@ -115,8 +129,8 @@ void Introduction::paintEvent(QPaintEvent *){
         p.drawText(25,height()-28,"Press Esc to skip...");
 
     }
-    if (time>7.0){
-        QColor black(0,0,0,qRound(255.0*(time-7.0)));
+    if (time>endTime){
+        QColor black(0,0,0,qRound(255.0*(time-endTime)));
         p.setBrush(black);
         p.drawRect(0,0,width(),height());
     }
@@ -132,7 +146,7 @@ void Introduction::resizeEvent(QResizeEvent *e){
 
 void Introduction::keyPressEvent(QKeyEvent *e){
     if (e->key()==Qt::Key_Escape && time<7.0){
-        time=7.0;
+        endTime=time;
     }
 }
 
@@ -175,3 +189,4 @@ void Introduction::setGoo(QPoint center,int id, int type){
     }
     else return;
 }
+

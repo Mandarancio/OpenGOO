@@ -103,7 +103,7 @@ void Goo::move(QPoint p){
 void Goo::jumpTo(QPoint p){
     stopFollow();
     if (!falling){
-        ALbyte name[100]="resources/sounds/drag.wav";
+        ALbyte name[100]="resources/sounds/captured.wav";
         QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
         sSystem->setPitch(source.first,float(radius)/20.0);
         sSystem->setVolume(source.first,radius/24.0);
@@ -219,7 +219,7 @@ void Goo::drag(){
         if (!dragging){
             ALbyte name[100]="resources/sounds/drag.wav";
             QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
-            sSystem->setPitch(source.first,float(radius)/20.0);
+            sSystem->setPitch(source.first,20.0/float(radius));
             sSystem->setVolume(source.first,radius/24.0);
             sSystem->setPosition(source.first,getPPosition());
             sSystem->playSource(source.first);

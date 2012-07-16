@@ -1,4 +1,4 @@
-#ifndef MAINMENU_H
+ #ifndef MAINMENU_H
 #define MAINMENU_H
 #include "level.h"
 #include "backgroundwidget.h"

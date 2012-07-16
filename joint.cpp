@@ -103,7 +103,7 @@ void Joint::status(){
             ALbyte name[100]="resources/sounds/pop.wav";
             QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
            // soundSystem.setPitch(source.first,float(d->getRadius())/24.0);
-            sSystem->setVolume(source.first,0.3*float(d->getRadius())/24.0);
+            sSystem->setVolume(source.first,0.2*float(d->getRadius())/24.0);
             sSystem->setPosition(source.first,d->getPPosition());
             sSystem->addSource(source);
             sSystem->playSource(source.first);

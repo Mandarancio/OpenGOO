@@ -5,6 +5,7 @@
 #include <Box2D/Box2D.h>
 #include <QTimerEvent>
 #include <QPaintEvent>
+#include <QTime>
 
 #include "svglevelloader.h"
 #include "qb2draw.h"
@@ -22,16 +23,17 @@ public:
     ~Introduction();
     
 private:
+    QTime itime;
+
     double time;
     float scale;
     float step;
-
+    float endTime;
 
     b2World * world;
 
     QList<Goo*> goos;
     QList<Ground*> ground;
-
 
 
     //LOADER
@@ -43,7 +45,7 @@ private:
 
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
-
+    int nFrame;
 
 protected:
     //Timer event function here the world is updated and after the scene is redr
@@ -60,7 +62,6 @@ private slots:
     void setGround(QPoint gCenter,QList<QPoint> gList);
     void setGoo(QPoint center,int id, int type=0);
     void setStartArea(int n,QRect area,int type=0);
-
 public slots:
 
 };

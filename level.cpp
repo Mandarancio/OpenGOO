@@ -391,14 +391,18 @@ void Level::anchorToJoint(Goo *goo, Joint *j){
 }
 
 void Level::timerEvent(QTimerEvent *e){
-    if (points<goal)
-        time+=step;
+
     e->accept();
     QTime t2=QTime::currentTime();
     realStep= (((t2.hour()-itime.hour())*60+(t2.minute()-itime.minute()))*60.0+(t2.second()-itime.second()))*1000.0+t2.msec()-itime.msec();
+
     itime=t2;
     realStep/=1000.0;
     if (realStep<0 || realStep>10.0*step) realStep=step;
+
+    if (points<goal)
+        time+=realStep;
+
     //qWarning()<<"IDEAL STEP"<<step*1000.0<<"REAL STEP"<<dT;
     fps=qRound(1.0/realStep);
     if (drag){
@@ -902,9 +906,9 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 
 void Level::wheelEvent(QWheelEvent *e){
 
-    //    if (e->delta()>0 && scale<2.0) scale+=0.1;
-    //    else if (e->delta()<0 && scale>-2.0) scale-=0.1;
-    //    this->backGroundWidget->setScale(scale);
+        if (e->delta()>0 && scale<2.0) scale+=0.1;
+        else if (e->delta()<0 && scale>-2.0) scale-=0.1;
+        this->backGroundWidget->setScale(scale);
     e->ignore();
 }
 

@@ -15,7 +15,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.2 r9819"
-   sodipodi:docname="black-goo.v1.0.svg">
+   sodipodi:docname="black-goo.v1.0.svg"
+   inkscape:export-filename="/home/martino/Immagini/OpenGOO/icon.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <linearGradient
@@ -961,16 +964,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497476"
-     inkscape:cx="306.43944"
-     inkscape:cy="-228.40844"
+     inkscape:zoom="0.29018555"
+     inkscape:cx="22.578403"
+     inkscape:cy="142.82805"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1280"
-     inkscape:window-height="965"
+     inkscape:window-height="991"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="1"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -980,7 +983,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -997,7 +1000,7 @@
        sodipodi:cy="430.17764"
        sodipodi:rx="251.0229"
        sodipodi:ry="57.578693"
-       d="m 475.78185,430.17764 a 251.0229,57.578693 0 1 1 -502.045812,0 251.0229,57.578693 0 1 1 502.045812,0 z"
+       d="m 475.78185,430.17764 c 0,31.79984 -112.38679,57.5787 -251.02291,57.5787 -138.63612,0 -251.022902,-25.77886 -251.022902,-57.5787 0,-31.79983 112.386782,-57.57869 251.022902,-57.57869 138.63612,0 251.02291,25.77886 251.02291,57.57869 z"
        transform="matrix(0.95351675,0,0,0.95351675,41.356635,568.94454)" />
     <path
        style="fill:url(#radialGradient4438);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1067,88 +1070,133 @@
        inkscape:connector-curvature="0"
        id="path3871"
        d="m 868.30933,79.393941 c 1.5693,180.560059 12.07892,358.885039 0,542.857149 l 0,165.71429 62.85717,0 -40.00002,-25.71429 c -0.59253,-58.83755 -0.97903,-118.29265 -1.19914,-178.24742 -0.61487,-167.54024 0.0704,-338.98216 1.19914,-511.752579 z"
-       style="fill:url(#linearGradient4421);fill-opacity:1;stroke:none" />
+       style="fill:url(#linearGradient4421);fill-opacity:1;stroke:none"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="cccccccccccc"
        inkscape:connector-curvature="0"
        id="path3943"
        d="m 864.02362,612.96538 c -8.43922,-14.60185 -1.8125,-19.51845 -1.89522,-28.74825 -10.20088,-12.14562 -2.29817,-17.25095 -1.66006,-25.1814 -7.7156,-11.40708 -4.05004,-18.43044 -1.66668,-24.67449 -9.25811,-7.84623 1.99747,-26.40675 8.07909,-28.53872 8.38029,-5.44488 10.8911,3.09152 27.08153,2.85344 5.80145,0.0729 6.34974,20.64749 -3.00964,22.15405 4.92498,1.79949 8.46393,16.55436 -0.66171,26.40518 7.30137,6.00916 5.76686,15.92396 0.19103,25.77565 8.37376,23.34809 -5.9876,41.20904 -7.17262,57.09739 L 863.30933,627.2511 z"
-       style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4417);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 854.90241,625.20111 c 195.56609,3.1305 298.27519,138.53902 131.59928,250.31481 C 1170.1523,933.86028 1094.0309,1201.8434 827.49823,1167.1716 649.42653,1165.2912 597.29138,906.62249 773.53187,870.96942 606.86921,835.62599 678.93724,622.38438 854.90241,625.20111 z"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="scccs"
-       id="path4325" />
+       id="path4325"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4414);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 986.50176,875.51592 c 183.65044,58.34436 107.52914,326.32748 -159.00353,291.65568 -178.0717,-1.8804 -230.20685,-260.54911 -53.96636,-296.20218 38.56495,43.29576 156.3613,37.60197 212.96989,4.5465 z"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc"
-       id="path4148" />
+       id="path4148"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="ccccc"
        inkscape:connector-curvature="0"
        id="path3941"
        d="m 746.18226,874.77354 c -9.1647,-10.43585 -5.74342,-16.67638 2.14285,-21.42857 81.85873,39.74067 161.22798,39.64629 239.28573,18.57142 19.70266,-4.99495 21.41156,15.7051 10.71433,18.57144 -84.7251,19.14705 -169.29118,32.57752 -252.14291,-15.71429 z"
-       style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="ssscs"
        inkscape:connector-curvature="0"
        id="path3933-0"
        d="m 761.57584,476.95784 c 8.06629,-25.46126 10.55986,-84.20427 -25.8287,-87.56093 -32.42725,-2.99125 -59.51994,21.4407 -70.34435,54.99118 -8.52657,26.42825 -7.44173,45.5815 19.65959,56.41459 51.06515,12.61588 71.2702,-7.29444 76.51346,-23.84484 z"
        style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3947-7)"
-       transform="matrix(1.5306852,0,0,1.5306852,-336.74337,30.802652)" />
+       transform="matrix(1.5306852,0,0,1.5306852,-336.74337,30.802652)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4409);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 835.11224,748.62949 c 12.34695,-38.97317 -17.67629,-128.38515 -73.37572,-133.52314 -49.63592,-4.57866 -88.58091,25.24282 -105.14967,76.59805 -13.0515,40.45333 19.92378,76.84199 61.40737,93.42404 78.16467,19.31094 109.09224,-11.1655 117.11802,-36.49895 z"
        id="path2987-8"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssscs" />
+       sodipodi:nodetypes="ssscs"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 747.91816,724.81364 c 11.67221,-19.06983 13.40904,-43.52393 6.0433,-64.46351 -4.21027,-11.11695 -13.39104,-21.16256 -25.54375,-23.15369 -15.54953,-3.00717 -30.91638,5.75458 -40.49195,17.50851 -14.88541,18.20481 -19.54436,43.16552 -16.26196,66.07761 0.90522,5.79225 2.23086,11.83076 6.52473,16.13373 11.69315,13.5713 32.49795,16.83889 48.48985,9.47886 9.44461,-4.16212 17.57952,-11.81357 21.23978,-21.58151 z"
        id="path2991-1"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 715.86059,648.28529 c -10.75393,3.50462 -6.59149,19.64948 4.50411,17.71527 9.06516,-0.57918 8.54577,-13.30277 1.45279,-16.3762 -1.78751,-1.03359 -3.89229,-1.565 -5.9569,-1.33907 z"
        id="path3063-2"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 735.97455,707.2369 c 8.88541,-12.30286 -3.01276,-25.52361 -2.74278,-38.0106 1.19391,-11.87847 17.70967,-13.17885 17.7556,-0.12613 4.06599,13.31011 1.64354,29.95009 -9.76626,38.86381 -1.67094,0.9198 -3.86036,0.54691 -5.24656,-0.72708 z"
        id="path3065-7"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="ssss"
        inkscape:connector-curvature="0"
        id="path3971-1"
        d="m 817.95273,468.68399 c -26.31357,-49.14151 16.76184,-115.68585 67.45704,-82.90669 34.70289,22.43864 57.13329,101.78963 20.43996,112.37076 -25.65488,7.39801 -67.45864,8.70527 -87.897,-29.46407 z"
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3981-4)"
-       transform="matrix(1.5306852,0,0,1.5306852,-336.74337,30.802652)" />
+       transform="matrix(1.5306852,0,0,1.5306852,-336.74337,30.802652)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4402);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 915.28477,737.51104 c -40.27779,-75.22018 83.51424,-198.15005 161.11263,-147.97547 53.1192,34.34649 50.8091,174.35392 -5.3568,190.5503 -39.2695,11.32402 -124.47114,15.85041 -155.75583,-42.57483 z"
        id="path2989-7"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssss" />
+       sodipodi:nodetypes="ssss"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 1065.251,605.59659 c -34.1426,-22.17726 -52.2622,32.09755 -45.1455,59.93941 0.038,36.49789 55.9099,66.34314 74.856,26.59215 9.3809,-28.05215 3.3108,-80.79915 -30.8038,-88.71825"
        id="path2993-1"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 1085.4423,627.89134 c -1.9131,-9.61593 -24.4348,-16.41893 -18.883,-1.79794 4.3686,5.39666 14.0394,22.97425 20.1662,12.22183 1.5653,-5.2065 -0.2232,-10.61316 -0.1899,-15.89075"
        id="path3059-0"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 1078.4544,654.55943 c -5.042,4.81494 0.2901,14.25527 -2.1173,21.49745 -5.7965,4.86666 -10.6455,17.09763 1.08,17.95469 11.3101,-1.21944 17.2205,-14.25912 14.7144,-24.55884 -0.026,-7.86314 -4.0846,-17.27828 -13.6771,-14.8933 z"
        id="path3061-4"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:type="arc"
        style="opacity:0.73062732;fill:#0f0f0f;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter3980-4)"
@@ -1157,8 +1205,11 @@
        sodipodi:cy="430.17764"
        sodipodi:rx="251.0229"
        sodipodi:ry="57.578693"
-       d="m 475.78185,430.17764 a 251.0229,57.578693 0 1 1 -502.045812,0 251.0229,57.578693 0 1 1 502.045812,0 z"
-       transform="matrix(0.95351675,0,0,0.95351675,651.40285,953.60916)" />
+       d="m 475.78185,430.17764 c 0,31.79984 -112.38679,57.5787 -251.02291,57.5787 -138.63612,0 -251.022902,-25.77886 -251.022902,-57.5787 0,-31.79983 112.386782,-57.57869 251.022902,-57.57869 138.63612,0 251.02291,25.77886 251.02291,57.57869 z"
+       transform="matrix(0.95351675,0,0,0.95351675,651.40285,953.60916)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/goo-suicide.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:type="arc"
        style="opacity:0.73062732;fill:#0f0f0f;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter3980-8)"
@@ -1167,71 +1218,107 @@
        sodipodi:cy="430.17764"
        sodipodi:rx="251.0229"
        sodipodi:ry="57.578693"
-       d="m 475.78185,430.17764 a 251.0229,57.578693 0 1 1 -502.045812,0 251.0229,57.578693 0 1 1 502.045812,0 z"
-       transform="matrix(0.95351675,0,0,0.95351675,-631.45426,1062.1941)" />
+       d="m 475.78185,430.17764 c 0,31.79984 -112.38679,57.5787 -251.02291,57.5787 -138.63612,0 -251.022902,-25.77886 -251.022902,-57.5787 0,-31.79983 112.386782,-57.57869 251.022902,-57.57869 138.63612,0 251.02291,25.77886 251.02291,57.57869 z"
+       transform="matrix(0.95351675,0,0,0.95351675,-631.45426,1062.1941)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4438-5);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -379.78665,1000.1432 c 102.81027,12.3025 200.08242,112.6147 201.17577,214.2959 1.18943,110.617 -60.61265,166.7411 -145.14049,210.8985 -31.86642,16.6471 -75.04199,28.8972 -121.72374,29.0241 -61.19241,0.1663 -112.68765,-48.6881 -146.31683,-78.5531 -132.77814,-117.9163 -53.85107,-407.47847 212.00529,-375.6654 z"
        id="path2985-0"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssssss" />
+       sodipodi:nodetypes="ssssss"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="ssscs"
        inkscape:connector-curvature="0"
        id="path3933-05"
        d="m 367.42857,487.50503 c 8.06629,-25.46126 10.55986,-84.20427 -25.8287,-87.56093 -32.42725,-2.99125 -59.51994,21.4407 -70.34435,54.99118 -8.52657,26.42825 -7.44173,45.5815 19.65959,56.41459 51.06515,12.61588 71.2702,-7.29444 76.51346,-23.84484 z"
        style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3947-5)"
-       transform="matrix(1.5306852,0,0,1.5306852,-1009.5543,445.48077)" />
+       transform="matrix(1.5306852,0,0,1.5306852,-1009.5543,445.48077)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4434-2);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -441.01406,1179.452 c 12.34696,-38.9732 16.16383,-128.8902 -39.5356,-134.0282 -49.63592,-4.5787 -91.1063,32.819 -107.67506,84.1742 -13.05149,40.4533 -11.39094,69.7709 30.09264,86.353 78.16467,19.3109 109.09224,-11.1655 117.11802,-36.499 z"
        id="path2987-2"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssscs" />
+       sodipodi:nodetypes="ssscs"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="ssss"
        inkscape:connector-curvature="0"
        id="path3971-0"
        d="m 392.14286,483.63775 c -26.31357,-49.14151 16.76184,-115.68585 67.45704,-82.90669 34.70289,22.43864 57.13329,101.78963 20.43996,112.37076 -25.65488,7.39801 -67.45864,8.70527 -87.897,-29.46407 z"
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3981-7)"
-       transform="matrix(1.5306852,0,0,1.5306852,-1009.5543,445.48077)" />
+       transform="matrix(1.5306852,0,0,1.5306852,-1009.5543,445.48077)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4430-8);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -409.307,1175.0787 c -40.27779,-75.2202 25.6571,-177.07866 103.25549,-126.9041 53.1192,34.3465 87.45309,155.8079 31.28715,172.0043 -39.26955,11.324 -103.25794,13.325 -134.54264,-45.1002 z"
        id="path2989-3"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssss" />
+       sodipodi:nodetypes="ssss"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -475.65046,1137.5129 c 11.67221,-19.0698 13.40903,-43.5239 6.0433,-64.4635 -4.21027,-11.117 -13.39105,-21.1626 -25.54375,-23.1537 -15.54953,-3.0072 -30.91638,5.7546 -40.49195,17.5085 -14.88541,18.2048 -19.54436,43.1656 -16.26196,66.0776 0.90522,5.7923 2.23085,11.8308 6.52473,16.1338 11.69315,13.5713 32.49795,16.8388 48.48984,9.4788 9.44462,-4.1621 17.57953,-11.8135 21.23979,-21.5815 z"
        id="path2991-6"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -331.95787,1051.8966 c -34.14264,-22.1772 -52.26222,32.0976 -45.14557,59.9394 0.0386,36.4979 55.90996,66.3432 74.85606,26.5922 9.38091,-28.0522 3.3108,-80.7992 -30.80385,-88.7183"
        id="path2993-8"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -318.83771,1066.1101 c -1.9131,-9.6159 -24.43473,-16.4189 -18.88292,-1.7979 4.36856,5.3967 14.03939,22.9742 20.16615,12.2218 1.5653,-5.2065 -0.22322,-10.6131 -0.18985,-15.8907"
        id="path3059-1"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -317.74437,1084.697 c -5.04202,4.815 0.29009,14.2553 -2.11728,21.4975 -5.79652,4.8666 -10.64552,17.0976 1.07999,17.9547 11.3101,-1.2195 17.22049,-14.2592 14.71436,-24.5589 -0.0265,-7.8631 -4.08459,-17.2783 -13.67707,-14.8933 z"
        id="path3061-7"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -492.05066,1054.4186 c -10.75394,3.5046 -6.5915,19.6494 4.5041,17.7152 9.06516,-0.5791 8.54577,-13.3027 1.45279,-16.3762 -1.78751,-1.0336 -3.89229,-1.565 -5.95689,-1.339 z"
        id="path3063-5"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -486.58393,1118.926 c 8.88542,-12.3029 -3.01275,-25.5236 -2.74277,-38.0106 1.1939,-11.8785 17.70966,-13.1788 17.75559,-0.1261 4.06599,13.3101 1.64355,29.9501 -9.76626,38.8638 -1.67094,0.9198 -3.86035,0.5469 -5.24656,-0.7271 z"
        id="path3065-1"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/jumpy-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:type="arc"
        style="opacity:0.73062732;fill:#0f0f0f;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter3980-7)"
@@ -1240,90 +1327,132 @@
        sodipodi:cy="430.17764"
        sodipodi:rx="251.0229"
        sodipodi:ry="57.578693"
-       d="m 475.78185,430.17764 a 251.0229,57.578693 0 1 1 -502.045812,0 251.0229,57.578693 0 1 1 502.045812,0 z"
+       d="m 475.78185,430.17764 c 0,31.79984 -112.38679,57.5787 -251.02291,57.5787 -138.63612,0 -251.022902,-25.77886 -251.022902,-57.5787 0,-31.79983 112.386782,-57.57869 251.022902,-57.57869 138.63612,0 251.02291,25.77886 251.02291,57.57869 z"
        transform="matrix(0.95351675,0,0,0.95351675,36.206408,1207.8867)" />
     <path
        style="fill:url(#radialGradient4438-0);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 287.87402,1224.4072 c 102.81028,12.3026 200.08243,112.6147 201.17577,214.296 1.55247,144.3796 -71.52436,209.3801 -271.14994,209.9226 -302.798489,0.8227 -263.216546,-464.089 69.97417,-424.2186 z"
        id="path2985-8"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssss" />
+       sodipodi:nodetypes="ssss"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="ssscs"
        inkscape:connector-curvature="0"
        id="path3933-3"
        d="m 367.42857,487.50503 c 8.06629,-25.46126 10.55986,-84.20427 -25.8287,-87.56093 -32.42725,-2.99125 -59.51994,21.4407 -70.34435,54.99118 -8.52657,26.42825 -7.44173,45.5815 19.65959,56.41459 51.06515,12.61588 71.2702,-7.29444 76.51346,-23.84484 z"
        style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3947-4)"
-       transform="matrix(1.5306852,0,0,1.5306852,-341.8936,669.74483)" />
+       transform="matrix(1.5306852,0,0,1.5306852,-341.8936,669.74483)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4434-8);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 226.64661,1403.7161 c 12.34696,-38.9732 12.5924,-99.6046 -43.10703,-104.7426 -49.63592,-4.5786 -88.999457,3.0836 -104.103632,54.8885 -11.967019,41.0449 6.098919,79.3109 30.092642,86.353 78.16467,19.3109 109.09224,-11.1655 117.11802,-36.4989 z"
        id="path2987-89"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssscs" />
+       sodipodi:nodetypes="ssscs"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        sodipodi:nodetypes="ssss"
        inkscape:connector-curvature="0"
        id="path3971-2"
        d="m 392.14286,483.63775 c -26.31357,-49.14151 16.76184,-115.68585 67.45704,-82.90669 34.70289,22.43864 57.13329,101.78963 20.43996,112.37076 -25.65488,7.39801 -67.45864,8.70527 -87.897,-29.46407 z"
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter3981-71)"
-       transform="matrix(1.5306852,0,0,1.5306852,-341.8936,669.74483)" />
+       transform="matrix(1.5306852,0,0,1.5306852,-341.8936,669.74483)"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4430-1);fill-opacity:1;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 273.35367,1413.6284 c -40.27779,-75.2202 25.6571,-177.0786 103.25549,-126.9041 53.1192,34.3465 51.7388,141.5222 16.28715,157.7186 -37.17392,16.9832 -88.25794,27.6107 -119.54264,-30.8145 z"
        id="path2989-71"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssss" />
+       sodipodi:nodetypes="ssss"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 209.15307,1411.2149 c 11.67221,-19.0698 13.40903,-43.5239 6.0433,-64.4635 -4.21027,-11.1169 -13.39105,-21.1625 -25.54375,-23.1537 -15.54953,-3.0071 -30.91638,5.7546 -40.49195,17.5086 -14.88541,18.2048 -19.54436,43.1655 -16.26196,66.0776 0.90522,5.7922 2.23085,11.8307 6.52473,16.1337 11.69315,13.5713 32.49795,16.8389 48.48984,9.4789 9.44462,-4.1622 17.57953,-11.8136 21.23979,-21.5816 z"
        id="path2991-4"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 318.55994,1334.0178 c -34.14264,-22.1772 -52.26222,32.0976 -45.14557,59.9395 0.0386,36.4978 55.90996,66.3431 74.85606,26.5921 9.38091,-28.0521 3.3108,-80.7991 -30.80385,-88.7182"
        id="path2993-0"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 328.10868,1348.2314 c -1.9131,-9.616 -24.43473,-16.4189 -18.88292,-1.798 4.36856,5.3967 14.03939,22.9743 20.16615,12.2219 1.5653,-5.2065 -0.22322,-10.6132 -0.18985,-15.8908"
        id="path3059-02"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 329.9163,1368.2468 c -5.04202,4.8149 0.29009,14.2552 -2.11728,21.4974 -5.79652,4.8667 -10.64552,17.0976 1.07999,17.9547 11.3101,-1.2194 17.22049,-14.2591 14.71436,-24.5588 -0.0265,-7.8632 -4.08459,-17.2783 -13.67707,-14.8933 z"
        id="path3061-45"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 192.75287,1333.1714 c -10.75394,3.5046 -6.5915,19.6495 4.5041,17.7153 9.06516,-0.5792 8.54577,-13.3028 1.45279,-16.3762 -1.78751,-1.0336 -3.89229,-1.565 -5.95689,-1.3391 z"
        id="path3063-0"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:1.53068519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 198.2196,1404.7499 c 8.88542,-12.3029 -3.01275,-25.5237 -2.74277,-38.0106 1.1939,-11.8785 17.70966,-13.1789 17.75559,-0.1262 4.06599,13.3101 1.64355,29.9501 -9.76626,38.8638 -1.67094,0.9198 -3.86035,0.547 -5.24656,-0.727 z"
        id="path3065-9"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:url(#radialGradient4706);stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.54981550000000001;fill-opacity:1"
        d="m 142.4315,904.69679 c 9.84899,2.52538 75.97511,7.01887 87.12566,-53.03301 -13.61909,4.85721 -93.18657,25.25381 -87.12566,53.03301 z"
        id="path4698"
        inkscape:connector-curvature="0"
        transform="translate(0,540.36218)"
-       sodipodi:nodetypes="ccc" />
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="opacity:0.54981546000000003;fill:url(#radialGradient4872);fill-opacity:1;stroke:none"
        d="m 142.4315,1445.059 c 9.84899,2.5254 75.97511,7.0189 87.12566,-53.033 -13.61909,4.8572 -93.18657,25.2538 -87.12566,53.033 z"
        id="path4698-4"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <path
        style="fill:#ffffff;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 199.82143,887.17856 c 8.67139,1.07934 15.67173,-6.92362 21.96428,-18.21428 -10.98369,1.18824 -23.58599,12.97132 -21.96428,18.21428 z"
        id="path4708"
        inkscape:connector-curvature="0"
        transform="translate(0,540.36218)"
-       sodipodi:nodetypes="ccc" />
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/martino/Immagini/OpenGOO/sad-goo.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>

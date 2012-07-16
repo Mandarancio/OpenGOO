@@ -389,11 +389,12 @@ void DynamicGoo::contactGround(){
     }
     else {
 
-        if ( !isSleeping() && qAbs(body->GetAngularVelocity())<body->GetLinearVelocity().Length() && prevTarget==NULL&&  (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
-            ALbyte name[100]="resources/sounds/boing.wav";
+        if (!isSleeping() && qAbs(body->GetAngularVelocity())<body->GetLinearVelocity().Length() && prevTarget==NULL&&  (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
+
+            ALbyte name[100]="resources/sounds/boing2.wav";
             QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
             sSystem->setPitch(source.first,24.0/float(radius)*60.0/body->GetLinearVelocity().Length());
-            sSystem->setVolume(source.first,body->GetLinearVelocity().Length()/80.0*radius/24.0);
+            sSystem->setVolume(source.first,2.0*body->GetLinearVelocity().Length()/80.0*radius/24.0);
             sSystem->setPosition(source.first,getPPosition());
             sSystem->playSource(source.first);
             sources.push_back(source);
