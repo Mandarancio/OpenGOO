@@ -258,7 +258,7 @@ Goo* Level::getGooAt(QPoint p){
     for (int i=goos.count()-1;i>=0;i--){
         if (goos[i]->isMoovable()&&goos[i]->isDragable()){
             d=b2Vec2(p.x(),p.y())-goos[i]->getVPositionScaled();
-            if (d.Length()<goos[i]->getRadius()*scale) return goos[i];
+            if (d.Length()<goos[i]->getRadius()/scale) return goos[i];
         }
     }
     return NULL;
@@ -451,17 +451,17 @@ void Level::timerEvent(QTimerEvent *e){
         if (drag) {
 
             dragged->getBody()->SetActive(true);
-            if ((dragged->getVPosition()-0.1*mousePos+toVec(translation)).Length()>3.0){
+            if ((dragged->getVPosition()-0.1/scale*mousePos+toVec(translation)).Length()>3.0){
                 draggTimer++;
-                b2Vec2 force=(0.1*mousePos-toVec(translation)-dragged->getVPosition());
+                b2Vec2 force=(0.1/scale*mousePos-toVec(translation)-dragged->getVPosition());
                 force=float(0.5*draggTimer)/force.Length()*force;
                 dragged->getBody()->SetLinearVelocity(dragged->getBody()->GetMass()*force);
 
             }
 
-            else if (!groundContains(toPoint(0.1*mousePos)-translation,5)){
+            else if (!groundContains(toPoint(0.1/scale*mousePos)-translation,5)){
                 draggTimer=0;
-                dragged->move(toPoint(0.1*mousePos)-translation);
+                dragged->move(toPoint(0.1/scale*mousePos)-translation);
             }
         }
         world->Step(0.01,10.0,10.0);
@@ -548,7 +548,7 @@ void Level::paintEvent(QPaintEvent *e){
 
     p.setRenderHint(QPainter::Antialiasing);
 
-    QRect display(-translation,QSize(width(),height()));
+    QRectF display(-QPointF(translation)*scale,QSizeF(width()/scale,height()/scale));
 
     p.save();
     p.scale(scale,scale);
@@ -748,28 +748,28 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     if (onMenu){
         return;
     }
-    if (e->x()<=20) {
+    if (e->x()<=60) {
         dir.left=true;
         this->positionTimer=0;
     }
     else if (dir.left && !dir.key)
         dir.left=false;
 
-    if (e->y()<=20) {
+    if (e->y()<=60) {
         dir.up=true;
         this->positionTimer=0;
     }
     else if (dir.up && !dir.key)
         dir.up=false;
 
-    if (e->x()>=width()-20){
+    if (e->x()>=width()-60){
         dir.right=true;
         this->positionTimer=0;
     }
     else if (dir.right && !dir.key)
         dir.right=false;
 
-    if (e->y()>=height()-5){
+    if (e->y()>=height()-60){
         dir.down=true;
         this->positionTimer=0;
     }
@@ -906,9 +906,10 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 
 void Level::wheelEvent(QWheelEvent *e){
 
-        if (e->delta()>0 && scale<2.0) scale+=0.1;
-        else if (e->delta()<0 && scale>-2.0) scale-=0.1;
-        this->backGroundWidget->setScale(scale);
+    if (e->delta()>0) zoom(0.08);
+    else if (e->delta()<0) zoom(-0.08);
+
+    this->backGroundWidget->setScale(scale);
     e->ignore();
 }
 
@@ -1099,6 +1100,21 @@ void Level::paintButton(QPainter &p){
 void Level::clickButton(QPoint p){
     QPoint d=p-QPoint(width(),height());
     if (d.x()*d.x()+d.y()*d.y()<60*60) onMenu=!onMenu;
+}
+
+//ZOOM FUNCTION
+bool Level::zoom(float d){
+    if (d==0) return false;
+    if (d>0){
+        if (scale>=1.5) return false;
+        scale+=d;
+    }
+    if (d<0) {
+        float s=scale+d;
+        if (limit.width()*s<width() || limit.height()*s<height()) return false;
+        scale=s;
+    }
+    return true;
 }
 
 void Level::restart(){

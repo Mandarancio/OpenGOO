@@ -9,7 +9,7 @@ Target::Target(QPoint position, int height,b2World *world, QObject *parent) :
     def.type=b2_staticBody;
     def.position=toVec(position);
     b2PolygonShape shape;
-    shape.SetAsBox(18,h/2,b2Vec2(0,-h/2-15),0);
+    shape.SetAsBox(1.8,h/2,b2Vec2(0,-h/2),0);
     body=world->CreateBody(&def);
     body->CreateFixture(&shape,1.0);
     body->SetUserData(this);

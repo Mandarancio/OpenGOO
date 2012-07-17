@@ -166,6 +166,8 @@ private:
     void paintButton(QPainter &p);
     void clickButton(QPoint p);
 
+    //ZOOM FUNCTION
+    bool zoom(float d);
 protected:
     //Timer event function here the world is updated and after the scene is redr
     void timerEvent(QTimerEvent *);
