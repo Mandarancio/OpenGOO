@@ -28,12 +28,12 @@ Thorn::Thorn(QPoint center, const QList<QPoint>& shape, b2World& world, QObject*
         qreal dy = point1->y() - point2->y();
         qreal x = (point1->x() + point2->x()) / 20.0;
         qreal y = (point1->y() + point2->y()) / 20.0;
-        
+
         if (point2 == shape.end())
             point2 = shape.begin();
         else
             ++point2;
-        
+
         qreal w = qSqrt(dx*dx + dy*dy) / 20.0;
         qreal angle = PI/2.0 - qAtan2(dx,dy);
         

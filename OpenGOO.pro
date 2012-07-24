@@ -1,4 +1,4 @@
-QT       += core gui xml phonon
+QT       += core gui xml
 
 TARGET = OpenGOO
 TEMPLATE = app

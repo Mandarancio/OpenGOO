@@ -269,7 +269,7 @@ Goo* Level::getGooAt(QPoint p){
 void Level::moveUp(){
     int xf=translation.x();
     int yf=translation.y()+10+positionTimer;
-    QRect view(-xf,-yf,width(),height());
+    QRect view(-xf/scale,-yf/scale,width()/scale,height()/scale);
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
     backGroundWidget->translated(translation);
@@ -279,7 +279,7 @@ void Level::moveUp(){
 void Level::moveDown(){
     int xf=translation.x();
     int yf=translation.y()-10-positionTimer;
-    QRect view(-xf,-yf,width(),height());
+    QRect view(-xf/scale,-yf/scale,width()/scale,height()/scale);
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
     backGroundWidget->translated(translation);
@@ -287,7 +287,7 @@ void Level::moveDown(){
 void Level::moveRight(){
     int xf=translation.x()-10-positionTimer;
     int yf=translation.y();
-    QRect view(-xf,-yf,width(),height());
+    QRect view(-xf/scale,-yf/scale,width()/scale,height()/scale);
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
     backGroundWidget->translated(translation);
@@ -295,7 +295,7 @@ void Level::moveRight(){
 void Level::moveLeft(){
     int xf=translation.x()+10+positionTimer;
     int yf=translation.y();
-    QRect view(-xf,-yf,width(),height());
+    QRect view(-xf/scale,-yf/scale,width()/scale,height()/scale);
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
     backGroundWidget->translated(translation);
@@ -814,7 +814,6 @@ void Level::mouseMoveEvent(QMouseEvent *e){
             }
         }
     }
-
 }
 void Level::mousePressEvent(QMouseEvent *e){
     if (onMenu || points>=goal) return;
@@ -905,7 +904,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 }
 
 void Level::wheelEvent(QWheelEvent *e){
-
+    mousePos=toVec(e->pos());
     if (e->delta()>0) zoom(0.08);
     else if (e->delta()<0) zoom(-0.08);
 
@@ -1108,11 +1107,15 @@ bool Level::zoom(float d){
     if (d>0){
         if (scale>=1.5) return false;
         scale+=d;
+
+        moveOf(toPoint(mousePos)*scale);
     }
     if (d<0) {
         float s=scale+d;
         if (limit.width()*s<width() || limit.height()*s<height()) return false;
         scale=s;
+
+        moveOf(toPoint(mousePos)*scale);
     }
     return true;
 }

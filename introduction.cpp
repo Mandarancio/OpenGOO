@@ -145,7 +145,7 @@ void Introduction::resizeEvent(QResizeEvent *e){
 }
 
 void Introduction::keyPressEvent(QKeyEvent *e){
-    if (e->key()==Qt::Key_Escape && time<7.0){
+    if (e->key()==Qt::Key_Escape && time<7.0 && endTime==7.0){
         endTime=time;
     }
 }

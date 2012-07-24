@@ -78,7 +78,7 @@ void Target::applyImpulse(Goo *goo){
     if (!goo->hasJoint() && !goo->isDragging() && !goo->isSleeping() && catched){
         b2Vec2 d=toVec(position)-goo->getVPosition();
         //if the goo is at least at 15px from the target is catched
-        if (d.Length()<1.5){
+        if (d.Length()<=0.2+goo->getRadius()/10.0){
             emit gooCatched(goo);
         }
         //else if at least at 80px jump!
