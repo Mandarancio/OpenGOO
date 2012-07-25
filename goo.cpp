@@ -34,7 +34,7 @@ Goo::Goo( int radius, QObject *parent) :
     maxGuest=100;
     distanceToJoint=150;
 
-    stickness=0.5;
+    stickness=0.01;
 
     target=NULL;
     prevTarget=NULL;

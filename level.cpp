@@ -139,6 +139,8 @@ void Level::initialize()
     soundSystem=new SoundSystem();
     soundSystem->initialize();
     sSystem=soundSystem;
+//    char name[100]="./resources/music/opengoo.ogg";
+//    soundSystem->playOGG(name);
 
     dir.left=false;
     dir.right=false;

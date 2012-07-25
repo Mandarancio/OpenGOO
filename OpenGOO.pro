@@ -5,7 +5,7 @@ TEMPLATE = app
 #ATTENCTION
 #Lib Box2D must be in system folder and also the header files of it!
 !win32{
-LIBS +=-lBox2D -lopenal -lalut
+LIBS +=-lBox2D -lopenal -lalut  -lvorbisfile -lvorbis -logg
 }
 
 win32:{

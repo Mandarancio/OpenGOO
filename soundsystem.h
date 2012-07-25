@@ -8,6 +8,9 @@
 #include <QPoint>
 #include <QList>
 
+
+#include <vorbis/vorbisfile.h>
+
 class SoundSystem
 {
 public:
@@ -29,10 +32,14 @@ public:
     void playWav(ALbyte file[],float volume);
 
 
+
     bool sourceStatus(unsigned int source);
 
     void addSource(QPair<unsigned int , unsigned int> source);
     void deleteSource(QPair<unsigned int ,unsigned int>source);
+
+    void playOGG(char* name);
+
 
 private:
     QList<QPair <unsigned int, unsigned int> > sources;

@@ -22,7 +22,7 @@ void StickyLink::checkStatus(){
    // qWarning()<<joint->GetReactionForce(1.0/60).Length();
     if (goo==NULL || joint==NULL) return;
     if (goo->isDragging() || !goo->hasJoint()) emit destroySticky();
-    else if (joint->GetReactionForce(realStep/4.0).Length()>strength*4.0){
+    else if (joint->GetReactionForce(realStep/4.0).Length()>strength){
         //qWarning()<<this->strength<<joint->GetReactionForce(1.0/60.0).Length();
         emit destroySticky(); //If the force > of the maximum force barke the link!
     }
