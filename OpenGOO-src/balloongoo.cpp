@@ -176,5 +176,4 @@ void BalloonGoo::update(){
         body->SetAngularVelocity(0.0);
         body->SetTransform(body->GetPosition(),0.0);
     }
-
 }

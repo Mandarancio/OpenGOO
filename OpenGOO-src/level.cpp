@@ -71,8 +71,6 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     if (flag & DEBUG) qWarning()<<"Level loader created, set up and connected!";
 
-
-
     //setup the step variable
     //this one is the interval between step
     step=1.0/40.0;
@@ -81,7 +79,6 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     dragged=NULL;
     selected=NULL;
     target=NULL;
-
 
     showJointTimer=0;
 
@@ -103,13 +100,10 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
         flags += 1* b2Draw::e_shapeBit;
         flags += 1* b2Draw::e_jointBit;
 
-
         debugPainter= new QB2Draw(this->geometry());
         debugPainter->SetFlags(flags);
         world->SetDebugDraw(debugPainter);
     }
-
-
 }
 
 //Function to start the level
@@ -136,11 +130,16 @@ void Level::initialize()
 
     this->time=0;
 
-    soundSystem=new SoundSystem();
+    soundSystem=new SoundSystem(); //Soundsystem for level in-game sounds.
     soundSystem->initialize();
     sSystem=soundSystem;
+
+    //old code.
 //    char name[100]="./resources/music/opengoo.ogg";
 //    soundSystem->playOGG(name);
+
+    playSong = new PlaySoundThread; //SoundSystem for the soundtrack.
+    playSong->start();
 
     dir.left=false;
     dir.right=false;
@@ -175,7 +174,6 @@ void Level::initialize()
     selected=NULL;
     target=NULL;
 
-
     showJointTimer=0;
 
     points=0;
@@ -188,7 +186,6 @@ void Level::initialize()
         flags += 1* b2Draw::e_shapeBit;
         flags += 1* b2Draw::e_jointBit;
 
-
         debugPainter= new QB2Draw(this->geometry());
         debugPainter->SetFlags(flags);
         world->SetDebugDraw(debugPainter);
@@ -196,7 +193,13 @@ void Level::initialize()
 }
 //Clean function
 void Level::clean(){
+
+    playSong->quit();   //Delete song and sound system.
+    playSong->wait();   //Wait the end of the thread.
+
     delete soundSystem;
+    delete playSong;
+
     //clear object bodies
     backGroundWidget->clear();
     for (int i=0;i<objects.length();i++){
@@ -204,45 +207,45 @@ void Level::clean(){
         delete objects[i];
     }
     objects.clear();
-    if (flag & DEBUG) qWarning()<<"Objects deleated";
+    if (flag & DEBUG) qWarning()<<"Objects deleted";
     //clear joints
     for (int i=0;i<joints.length();i++){
         world->DestroyJoint(joints[i]->getJoint());
         delete joints[i];
     }
     joints.clear();
-    if (flag & DEBUG) qWarning()<<"Joints deleated";
+    if (flag & DEBUG) qWarning()<<"Joints deleted";
     //clear stickies;
     for (int i=0;i<stickys.length();i++){
         world->DestroyJoint(stickys[i]->getJoint());
         delete stickys[i];
     }
     stickys.clear();
-    if (flag & DEBUG) qWarning()<<"Stickys deleated";
+    if (flag & DEBUG) qWarning()<<"Stickys deleted";
     //clear goo body
     for (int i=0;i<goos.length();i++){
         world->DestroyBody(goos[i]->getBody());
         delete goos[i];
     }
     goos.clear();
-    if (flag & DEBUG) qWarning()<<"GOOs deleated";
+    if (flag & DEBUG) qWarning()<<"GOOs deleted";
     //clear ground.
     for (int i=0;i<ground.length();i++){
         world->DestroyBody(ground[i]->getBody());
         delete ground[i];
     }
     ground.clear();
-    if (flag & DEBUG) qWarning()<<"Ground deleated";
+    if (flag & DEBUG) qWarning()<<"Ground deleted";
     //clear world.
     delete world;
-    if (flag & DEBUG) qWarning()<<"World deleated";
+    if (flag & DEBUG) qWarning()<<"World deleted";
     if (flag & DEBUG){
         delete debugPainter;
         qWarning()<<"Debug painter deleted";
     }
 }
 
-//RETRIVE THE JOINT  (IF ONE) UNDER THE GOO
+//RETRIVE THE JOINT (IF ONE) UNDER THE GOO
 
 Joint* Level::overJoint(Goo *goo){
     int r=qRound(goo->getRadius()/1.41);
@@ -402,7 +405,7 @@ void Level::timerEvent(QTimerEvent *e){
     realStep/=1000.0;
     if (realStep<0 || realStep>10.0*step) realStep=step;
 
-    if (points<goal)
+    if (points<goal && !onMenu)
         time+=realStep;
 
     //qWarning()<<"IDEAL STEP"<<step*1000.0<<"REAL STEP"<<dT;
@@ -534,9 +537,6 @@ bool Level::groundContains(QPoint p, int radius){
         if (ground[i]->contains(p,radius)) return true;
     return false;
 }
-
-
-
 
 void Level::paintEvent(QPaintEvent *e){
 
@@ -699,6 +699,13 @@ void Level::keyReleaseEvent(QKeyEvent *e){
     switch(e->key()){
     case (Qt::Key_Escape):
         onMenu=!onMenu;
+
+        if (onMenu) {
+            playSong->pauseSong();
+        } else {
+            playSong->startSong();
+        }
+
         break;
     case (Qt::Key_Up):
         dir.up=false;
@@ -746,7 +753,7 @@ void Level::keyPressEvent(QKeyEvent *e){
 
 //~700,~900
 void Level::mouseMoveEvent(QMouseEvent *e){
-    // absoluteMousePos=e->pos();
+    //absoluteMousePos=e->pos();
     if (onMenu){
         return;
     }
@@ -793,13 +800,13 @@ void Level::mouseMoveEvent(QMouseEvent *e){
         //Check for possibles joints
         possibility=possibleJoints(dragged->getPPosition());
     }
-    //Rutine for translate the scene
+    //Routine for translate the scene
     else if (mooving) {
         QPoint d=e->pos()-toPoint(mousePos)/10;
         mousePos=10*toVec(e->pos());
         moveOf(d);
     }
-    //Rutine to show the possible draggable go under the mouse
+    //Routine to show the possible draggable goo under the mouse
     else if (points<goal){
         if (selected!=getGooAt(e->pos()/scale-translation)){
 
@@ -823,7 +830,6 @@ void Level::mousePressEvent(QMouseEvent *e){
         //Compute mouse speed
         mousePos=10*toVec(e->pos());
         mouseSpeed.SetZero();
-
 
         //If no goo is selected
         if (selected==NULL){
@@ -874,7 +880,6 @@ void Level::mousePressEvent(QMouseEvent *e){
     }
 }
 
-
 void Level::mouseReleaseEvent(QMouseEvent *e){
     if (e->button()!=Qt::LeftButton) return;
     if (!drag){
@@ -897,12 +902,12 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     mooving=false;
     showJointTimer=0;
 
-
-
     if (onMenu){
+        playSong->pauseSong();
         menu->mouseRelease(e);
-        return;
     }
+
+    return;
 }
 
 void Level::wheelEvent(QWheelEvent *e){
@@ -917,7 +922,7 @@ void Level::wheelEvent(QWheelEvent *e){
 
 void Level::resizeEvent(QResizeEvent *e){
     menu->setGeometry(QRect(0,0,e->size().width(),e->size().height()));
-    soundSystem->setCenter(QPoint(e->size().width()/2,e->size().height()/2));
+    //soundSystem->setCenter(QPoint(e->size().width()/2,e->size().height()/2)); What is it for?
 }
 
 void Level::destroyJoint(Joint *joint){
@@ -1048,7 +1053,7 @@ void Level::paintWin(QPainter &p){
         p.setFont(f);
         p.setPen(Qt::white);
         QRect r(0,0,width(),150);
-        p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,name+" complete!");
+        p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,name+" completed!");
     }
 }
 //Function to paint the target arrow
@@ -1091,6 +1096,7 @@ void Level::paintTargetArrow(QPainter &p){
 
 //Function to paint the menu button (for touchscreen device)
 void Level::paintButton(QPainter &p){
+    if(onMenu) return;
     p.setPen(Qt::darkGray);
     p.setBrush(QColor(255,255,255,60));
     p.drawEllipse(QPoint(this->width(),this->height()),60,60);
@@ -1099,6 +1105,7 @@ void Level::paintButton(QPainter &p){
 
 //Detect if the button menu is clicked
 void Level::clickButton(QPoint p){
+    if(onMenu) return;
     QPoint d=p-QPoint(width(),height());
     if (d.x()*d.x()+d.y()*d.y()<60*60) onMenu=!onMenu;
 }

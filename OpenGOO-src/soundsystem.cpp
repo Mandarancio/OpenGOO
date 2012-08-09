@@ -12,6 +12,7 @@ SoundSystem::~SoundSystem(){
     if (!active) return;
     alcDestroyContext(context);
     alcCloseDevice(device);
+    active = false;
 }
 
 bool SoundSystem::initialize(){
@@ -40,8 +41,8 @@ QPair<unsigned int,unsigned int> SoundSystem::createSource(ALbyte fileName[]){
 
     QList <int> toRemove;
     for (int i=0;i<sources.length();i++) {
-        if (!sourceStatus(sources[i].first)) {
-            deleteSource(sources[i]);
+        if (!sourceStatus(sources.at(i).first)) {
+            deleteSource(sources.at(i));
             toRemove.push_back(i);
         }
     }
@@ -92,6 +93,11 @@ void SoundSystem::playSource(unsigned int source){
 void SoundSystem::stopSource(unsigned int source){
     if (!active) return;
     alSourceStop(source);
+}
+
+void SoundSystem::pauseSource(unsigned int source) {
+    if(!active) return;
+    alSourcePause(source);
 }
 
 void SoundSystem::playWav(ALbyte file[], float volume){
@@ -152,7 +158,7 @@ void SoundSystem::setPosition(unsigned int source, QPoint p){
 void SoundSystem::playOGG(char* name){
     ALint state;                // The state of the sound source
     ALuint bufferID;            // The OpenAL sound buffer ID
-    ALuint sourceID;            // The OpenAL sound source
+    //ALuint sourceID;            // The OpenAL sound source
     ALenum format;              // The sound data format
     ALsizei freq;               // The frequency of the sound data
 
@@ -172,9 +178,14 @@ void SoundSystem::playOGG(char* name){
     f = fopen(name, "r");
 
     vorbis_info *pInfo;
-    OggVorbis_File *oggFile;
-    ov_open(f, oggFile, NULL, 0);
-    pInfo = ov_info(oggFile, -1);
+    OggVorbis_File oggFile;
+
+    if(ov_open_callbacks(f, &oggFile, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
+        qWarning() << "Input does not appear to be an Ogg bitstream.\n";
+        return;
+    }
+
+    pInfo = ov_info(&oggFile, -1);
 
     // Check the number of channels... always use 16-bit samples
     if (pInfo->channels == 1)
@@ -188,11 +199,11 @@ void SoundSystem::playOGG(char* name){
 
     do {
         // Read up to a buffer's worth of decoded sound data
-        bytes = ov_read(oggFile, array, BUFFER_SIZE, endian, 2, 1, &bitStream);
+        bytes = ov_read(&oggFile, array, BUFFER_SIZE, endian, 2, 1, &bitStream);
         // Append to end of buffer
         bufferData.insert(bufferData.end(), array, array + bytes);
     } while (bytes > 0);
-    ov_clear(oggFile);
+    ov_clear(&oggFile);
 
     // Upload sound data to buffer
       alBufferData(bufferID, format, &bufferData[0], static_cast < ALsizei > (bufferData.size()), freq);
@@ -213,5 +224,9 @@ void SoundSystem::playOGG(char* name){
       // Clean up sound buffer and source
       alDeleteBuffers(1, &bufferID);
       alDeleteSources(1, &sourceID);
+}
 
+ALuint SoundSystem::getSource() {
+    //Gets the active source played with playOGG.
+    return sourceID;
 }

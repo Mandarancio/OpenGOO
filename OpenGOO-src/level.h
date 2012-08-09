@@ -27,7 +27,9 @@
 #include "svglevelloader.h"
 
 #include "qb2draw.h"
-#include "soundsystem.h"
+
+//#include "soundsystem.h"
+#include "playsoundthread.h"
 
 #include "backgroundwidget.h"
 
@@ -117,12 +119,9 @@ private:
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
 
-
     //SOUND
     SoundSystem *soundSystem;
-
-
-
+    PlaySoundThread *playSong;
 
     //METHOD
     BackGroundWidget * backGroundWidget; //This is a widget to draw the semi-static ground and background.
@@ -233,6 +232,7 @@ private slots:
     //LEVEL SLOTS:
     void resume(){                      //Close the menu
         onMenu=false;
+        playSong->startSong();          //Restart playing the song.
     }
     void restart();                     //Restart the level
     void closeAll(){                    //Close the game

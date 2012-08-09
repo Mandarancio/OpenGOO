@@ -1,4 +1,7 @@
-This program is free software: you can redistribute it and/or modify
+    OpenGoo - Open source and free of charge clone of WorldOfGoo.
+    Copyright (C) <2011>  <Martino Ferrari - manda.mgf@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -9,4 +12,4 @@ This program is free software: you can redistribute it and/or modify
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
