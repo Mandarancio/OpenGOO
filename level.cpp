@@ -1048,7 +1048,7 @@ void Level::paintWin(QPainter &p){
         p.setFont(f);
         p.setPen(Qt::white);
         QRect r(0,0,width(),150);
-        p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,name+" complited!");
+        p.drawText(r,Qt::AlignCenter|Qt::AlignHCenter,name+" complete!");
     }
 }
 //Function to paint the target arrow
