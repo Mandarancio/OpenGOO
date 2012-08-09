@@ -1,5 +1,8 @@
 #include "backtracer.h"
 #include <execinfo.h>
+#ifdef __FreeBSD__
+#	include <ucontext.h>
+#endif
 
 #include <QDebug>
 #include <QString>
