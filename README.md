@@ -1,4 +1,4 @@
-# ##OpenGOO##
+##OpenGOO##
 A free and open clone of [World of Goo](http://www.worldofgoo.com/)
 __This software is released under the GPLv3 license__
 
