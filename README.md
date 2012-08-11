@@ -13,11 +13,11 @@ __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.
 ## Credits
 
 * Adam 'Etam' Mizerski        (Coder)
-* Dmitry Marakasov            (Coder)
 * Ferrari Martino             (Founder and coder)
 * Groppi Filippo              (Musician)
-* Oleksiy Slyshyk             (Coder)
+* Marakasov Dmitry            (Coder)
 * Signoretti Fabrizio         (Coder)
+* Slyshyk Oleksiy             (Coder)
 * Torsello Marco              (Coder)
 
 **Let us write your name!**
@@ -27,7 +27,7 @@ __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.
 
 __11/August/2012__
 
-We are competing in the [LPC](lpc.opengameart.org), check us [entry](http://opengameart.org/lpc-code-entries)!
+We are competing in the [LPC](lpc.opengameart.org), check our [entry](http://opengameart.org/lpc-code-entries)!
 The results of the competition will be released at the end of August!
 
 _Martino_
