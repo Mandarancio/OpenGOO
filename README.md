@@ -1,14 +1,14 @@
-# OpenGOO
-=========
+## OpenGOO
 
 A free and open clone of [World of Goo](http://www.worldofgoo.com/)
-__This software is released under the GPLv3 license__
-
 
 * [Home page](http://mandarancio.github.com/OpenGOO/)
-* [Levels](http://opengoolevels.comeze.com/)
 * [Wiki](https://github.com/Mandarancio/OpenGOO/wiki)
+* [Levels](http://opengoolevels.comeze.com/)
 * [Issues](https://github.com/Mandarancio/OpenGOO/issues)
+
+__This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) license__
+
 
 ## Credits
 
@@ -25,8 +25,16 @@ __This software is released under the GPLv3 license__
 
 ## News
 
+__11/August/2012__
 
-_9/August/2012_
+We are competing in the [LPC](lpc.opengameart.org), check us [entry](http://opengameart.org/lpc-code-entries)!
+The results of the competition will be released at the end of August!
+
+_Martino_
+
+* * *
+
+__09/August/2012__
 
 Now I'm working at [CERN](www.cern.ch) so I don't have all the time I'd like to have to work on this project.
 I hope that at the end of the summer I could be operative again.
