@@ -47,9 +47,9 @@ __Martino__
 
 Go to the folder containing the source code [example OpenGOO-src]:
 
-cd ~/OpenGOO/OpenGOO-src
+`cd ~/OpenGOO/OpenGOO-src 
 qmake
-make
+make`
 
 # TO RUN
 
@@ -63,9 +63,9 @@ Then go to the folder containing the executable:
 
 (if you are on OpenGOO/OpenGOO-src folder)
 
-cd ..
-./OpenGOO
+`cd ..
+./OpenGOO`
 
 If you want to more debug output run the game with:
 
-./OpenGOO -Debug
+`./OpenGOO -Debug`
