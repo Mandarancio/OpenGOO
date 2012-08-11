@@ -1,4 +1,6 @@
-##OpenGOO##
+# OpenGOO
+=========
+
 A free and open clone of [World of Goo](http://www.worldofgoo.com/)
 __This software is released under the GPLv3 license__
 
@@ -8,7 +10,7 @@ __This software is released under the GPLv3 license__
 * [Wiki](https://github.com/Mandarancio/OpenGOO/wiki)
 * [Issues](https://github.com/Mandarancio/OpenGOO/issues)
 
-# Credits
+## Credits
 
 * Adam 'Etam' Mizerski        (Coder)
 * Dmitry Marakasov            (Coder)
@@ -18,22 +20,22 @@ __This software is released under the GPLv3 license__
 * Signoretti Fabrizio         (Coder)
 * Torsello Marco              (Coder)
 
-__Let us write your name!__
+**Let us write your name!**
 
 
-# News
+## News
 
 
-__9/August/2012__
+_9/August/2012_
 
 Now I'm working at [CERN](www.cern.ch) so I don't have all the time I'd like to have to work on this project.
 I hope that at the end of the summer I could be operative again.
 
-__Martino__
+_Martino_
 
 
 
-# DEPENDENCIES
+## DEPENDENCIES
 
 * Box2d 2.2.1
 * OpenAL
@@ -43,15 +45,15 @@ __Martino__
 * QMake
 * Make
 
-# TO COMPILE
+## TO COMPILE
 
 Go to the folder containing the source code [example OpenGOO-src]:
 
-`cd ~/OpenGOO/OpenGOO-src 
-qmake
-make`
+    cd ~/OpenGOO/OpenGOO-src
+    qmake
+    make
 
-# TO RUN
+## TO RUN
 
 ##Make sure the required files are in the same folder of the executable:##
 
@@ -63,8 +65,8 @@ Then go to the folder containing the executable:
 
 (if you are on OpenGOO/OpenGOO-src folder)
 
-`cd ..
-./OpenGOO`
+    cd ..
+    ./OpenGOO
 
 If you want to more debug output run the game with:
 
