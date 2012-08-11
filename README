@@ -47,7 +47,7 @@ TO COMPILE
 
 Go to the folder containing the source code [example OpenGOO-src]:
 
-cd ~/OpenGOO
+cd ~/OpenGOO/OpenGOO-src
 qmake
 make
 
@@ -62,6 +62,9 @@ Make sure the required files are in the same folder of the executable:
 
 Then go to the folder containing the executable:
 
+(if you are on OpenGOO/OpenGOO-src folder)
+
+cd ..
 ./OpenGOO
 
 If you want to more debug output run the game with:

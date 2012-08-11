@@ -1,6 +1,9 @@
 QT       += core gui xml
 
 TARGET = OpenGOO
+DESTDIR = ../
+MOC_DIR = Build/Mocs
+OBJECTS_DIR = Build/Objs
 TEMPLATE = app
 #ATTENCTION
 #Lib Box2D must be in system folder and also the header files of it!
@@ -48,7 +51,9 @@ SOURCES += backtracer_win32.cpp
 OTHER_FILES += \
     level-svg.level \
     README \
-    menu.index
+    menu.index \
+    ../README \
+    ../README.md
 
 HEADERS += \
     tools.h \

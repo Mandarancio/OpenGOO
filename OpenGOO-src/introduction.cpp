@@ -17,7 +17,7 @@
 #define INTERVALL 4
 
 Introduction::Introduction(QWidget *parent) :
-    QWidget(parent),time(0),scale(1.0), translation(QPoint(0,0)),step(1.0/40.0)
+    QWidget(parent),time(0),scale(1.0),step(1.0/40.0)
 {
     sSystem=new SoundSystem;
     //sSystem->initialize();
@@ -179,7 +179,7 @@ void Introduction::setStartArea(int n, QRect area,int type){
     if (flag & DEBUG) qWarning()<<"A start area is created.";
 }
 
-void Introduction::setGoo(QPoint center,int id, int type){
+void Introduction::setGoo(QPoint center, int type){
     int radius=RADIUS+(qrand()%(INTERVALL*2)-INTERVALL);
     if (type==0) { //Create a standard gooo
         DynamicGoo* dg=new DynamicGoo(world,center,radius);

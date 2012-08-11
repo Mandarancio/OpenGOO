@@ -30,6 +30,7 @@ void LevelSelector::findLevels()//Find .level file in the current direcotory
 {
     QDir *dir;
     dir=new QDir();
+    dir->cd("Levels");
     QStringList filters;
     filters <<"*.level";
     dir->setNameFilters(filters);
@@ -119,7 +120,7 @@ void LevelSelector::paint(QPainter &p){
 QString LevelSelector::getLevelSelected()
 {
     if(selected!=levels.size())
-        return levels.at(selected);
+        return "Levels/"+levels.at(selected);
     else
         return "Exit";
 }

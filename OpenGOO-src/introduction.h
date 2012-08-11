@@ -40,9 +40,6 @@ private:
     SvgLevelLoader * loader;
 
 
-    //Graphic
-    QPoint translation;     //For the level translation
-
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
     int nFrame;
@@ -60,7 +57,7 @@ signals:
     void introEnd();
 private slots:
     void setGround(QPoint gCenter,QList<QPoint> gList);
-    void setGoo(QPoint center,int id, int type=0);
+    void setGoo(QPoint center, int type=0);
     void setStartArea(int n,QRect area,int type=0);
 public slots:
 
