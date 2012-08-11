@@ -1,4 +1,4 @@
-# OpenGOO
+# ##OpenGOO##
 A free and open clone of [World of Goo](http://www.worldofgoo.com/)
 __This software is released under the GPLv3 license__
 
@@ -18,13 +18,13 @@ __This software is released under the GPLv3 license__
 * Signoretti Fabrizio         (Coder)
 * Torsello Marco              (Coder)
 
-##Let us write your name!##
+__Let us write your name!__
 
 
 # News
 
 
-##9/August/2012##
+__9/August/2012__
 Now I'm working at [CERN](www.cern.ch) so I don't have all the time I'd like to have to work on this project.
 I hope that at the end of the summer I could be operative again.
 
