@@ -76,6 +76,11 @@ Then go to the folder containing the executable:
     cd ..
     ./OpenGOO
 
-If you want to more debug output run the game with:
-
-`./OpenGOO -Debug`
+There are some flag that you can activate:
+  
+    -debug  (for more debug output)
+    -fps    (to know the fps)
+    -opengl (use opengl for more performances)
+    example:
+    ./Opengoo -opengl -debug
+    
