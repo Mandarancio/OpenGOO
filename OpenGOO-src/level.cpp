@@ -308,15 +308,18 @@ void Level::moveLeft(){
 
 void Level::moveOf(QPoint dP){
     int xf,yf;
+    if (flag & DEBUG) qWarning()<<"Translation of"<<dP;
+
     //top left coordinate of the new view field
-    xf=translation.x()+dP.x()/2;
-    yf=translation.y()+dP.y()/2;
+    xf=translation.x()+dP.x();
+    yf=translation.y()+dP.y();
     //view field rectange
     QRect view(-xf,-yf,width()/scale,height()/scale);
     //Check if is possible
     if (!limit.contains(view)) return;
+    if (flag & DEBUG) qWarning()<<"Translation of"<<dP;
     translation=QPoint(xf,yf);
-    if (dP.x()/2 || dP.y()/2)
+    if (dP.x() || dP.y())
         backGroundWidget->translated(translation);
 }
 
@@ -804,7 +807,7 @@ void Level::mouseMoveEvent(QMouseEvent *e){
     else if (mooving) {
         QPoint d=e->pos()-toPoint(mousePos)/10;
         mousePos=10*toVec(e->pos());
-        moveOf(d);
+        moveOf(d/2);
     }
     //Routine to show the possible draggable goo under the mouse
     else if (points<goal){
@@ -913,7 +916,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 void Level::wheelEvent(QWheelEvent *e){
     if (this->dragged) return;
     mousePos=toVec(e->pos());
-    QCursor::setPos(parentWidget()->x()+width()/2,parentWidget()->y()+height()/2);
+   // QCursor::setPos(parentWidget()->x()+width()/2,parentWidget()->y()+height()/2);
 
     if (e->delta()>0) zoom(0.08);
     else if (e->delta()<0) zoom(-0.08);
@@ -1118,6 +1121,9 @@ bool Level::zoom(float d){
     if (d==0) return false;
     if (d>0){
         if (scale>=1.5) return false;
+        int x=width()/2-qRound(mousePos.x*10.0);
+        int y=height()/2-qRound(mousePos.y*10.0);
+        moveOf(QPoint(qRound(x/scale),qRound(y/scale)));
         scale+=d;
 
         //moveOf(-toPoint(mousePos));
@@ -1125,6 +1131,10 @@ bool Level::zoom(float d){
     if (d<0) {
         float s=scale+d;
         if (limit.width()*s<width() || limit.height()*s<height()) return false;
+        int x=width()/2-qRound(mousePos.x*10.0);
+        int y=height()/2-qRound(mousePos.y*10.0);
+        qWarning()<<x<<mousePos.x*10<<width()/2;
+        moveOf(QPoint(qRound(x/scale),qRound(y/scale)));
         scale=s;
 
         //moveOf(-toPoint(mousePos)*scale);
