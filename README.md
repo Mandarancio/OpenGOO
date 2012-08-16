@@ -61,6 +61,8 @@ Go to the folder containing the source code [example OpenGOO-src]:
     cd ~/OpenGOO/OpenGOO-src
     qmake
     make
+    
+You can find the detailed procedure in the [wiki](https://github.com/Mandarancio/OpenGOO/wiki/How-to-start) page.
 
 ## TO RUN
 
