@@ -312,7 +312,7 @@ void Level::moveOf(QPoint dP){
     xf=translation.x()+dP.x()/2;
     yf=translation.y()+dP.y()/2;
     //view field rectange
-    QRect view(-xf,-yf,width(),height());
+    QRect view(-xf,-yf,width()/scale,height()/scale);
     //Check if is possible
     if (!limit.contains(view)) return;
     translation=QPoint(xf,yf);
@@ -550,7 +550,7 @@ void Level::paintEvent(QPaintEvent *e){
 
     p.setRenderHint(QPainter::Antialiasing);
 
-    QRectF display(-QPointF(translation)*scale,QSizeF(width()/scale,height()/scale));
+    QRectF display(-QPointF(translation),QSizeF(width()/scale,height()/scale));
 
     p.save();
     p.scale(scale,scale);
@@ -911,7 +911,10 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 }
 
 void Level::wheelEvent(QWheelEvent *e){
+    if (this->dragged) return;
     mousePos=toVec(e->pos());
+    QCursor::setPos(parentWidget()->x()+width()/2,parentWidget()->y()+height()/2);
+
     if (e->delta()>0) zoom(0.08);
     else if (e->delta()<0) zoom(-0.08);
 
@@ -1117,14 +1120,14 @@ bool Level::zoom(float d){
         if (scale>=1.5) return false;
         scale+=d;
 
-        moveOf(toPoint(mousePos)*scale);
+        //moveOf(-toPoint(mousePos));
     }
     if (d<0) {
         float s=scale+d;
         if (limit.width()*s<width() || limit.height()*s<height()) return false;
         scale=s;
 
-        moveOf(toPoint(mousePos)*scale);
+        //moveOf(-toPoint(mousePos)*scale);
     }
     return true;
 }
@@ -1398,13 +1401,13 @@ void Level::stopDragging(){
 }
 
 //function to stop a goo
-void Level::stopGoo(QPoint p){
+//void Level::stopGoo(QPoint p){
     /*if (groundContains(p,dragged->getRadius())){
         if (flag & DEBUG) qWarning()<<"P is in the Ground, stop dragging ";
         stopDragging();
     }
     else stopPosition = p;*/
-}
+//}
 
 void Level::addBGShape(int level, QPolygon poly, QColor color){
     int index=-1;

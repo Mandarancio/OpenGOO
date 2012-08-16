@@ -217,7 +217,7 @@ private slots:
     //Slot to stop dragging a goo (is used when the user try to drag a goo in some not permitted position)
     void stopDragging();
     //Slot to stop a dragged goo in a Point
-    void stopGoo(QPoint p);
+   //OBSOLETE void stopGoo(QPoint p);
     //Slot add a shape to background.
     void addBGShape(int level,QPolygon poly,QColor color);
 
