@@ -1123,7 +1123,7 @@ bool Level::zoom(float d){
         if (scale>=1.5) return false;
         int x=width()/2-qRound(mousePos.x*10.0);
         int y=height()/2-qRound(mousePos.y*10.0);
-        moveOf(QPoint(qRound(x/scale),qRound(y/scale)));
+        moveOf(QPoint(qRound(x/2),qRound(y/2)));
         scale+=d;
 
         //moveOf(-toPoint(mousePos));
@@ -1134,7 +1134,7 @@ bool Level::zoom(float d){
         int x=width()/2-qRound(mousePos.x*10.0);
         int y=height()/2-qRound(mousePos.y*10.0);
         qWarning()<<x<<mousePos.x*10<<width()/2;
-        moveOf(QPoint(qRound(x/scale),qRound(y/scale)));
+        moveOf(QPoint(qRound(x/10),qRound(y/10)));
         scale=s;
 
         //moveOf(-toPoint(mousePos)*scale);
