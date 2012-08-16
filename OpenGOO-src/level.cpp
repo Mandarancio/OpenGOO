@@ -916,10 +916,16 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
 void Level::wheelEvent(QWheelEvent *e){
     if (this->dragged) return;
     mousePos=toVec(e->pos());
-   // QCursor::setPos(parentWidget()->x()+width()/2,parentWidget()->y()+height()/2);
+    int dx,dy;
 
-    if (e->delta()>0) zoom(0.08);
-    else if (e->delta()<0) zoom(-0.08);
+    dx=width()/2-mousePos.x*10;
+    dy=height()/2-mousePos.y*10;
+
+    QCursor::setPos(QCursor::pos().x()+dx/12, QCursor::pos().y()+dy/12);
+    // QCursor::setPos(parentWidget()->x()+width()/2,parentWidget()->y()+height()/2);
+
+    if (e->delta()>0) zoom(0.04);
+    else if (e->delta()<0) zoom(-0.04);
 
     this->backGroundWidget->setScale(scale);
     e->ignore();
@@ -1134,7 +1140,7 @@ bool Level::zoom(float d){
         int x=width()/2-qRound(mousePos.x*10.0);
         int y=height()/2-qRound(mousePos.y*10.0);
         qWarning()<<x<<mousePos.x*10<<width()/2;
-        moveOf(QPoint(qRound(x/10),qRound(y/10)));
+        moveOf(QPoint(qRound(x/10),qRound(-y/10)));
         scale=s;
 
         //moveOf(-toPoint(mousePos)*scale);
