@@ -6,6 +6,7 @@ A free and open clone of [World of Goo](http://www.worldofgoo.com/)
 * [Wiki](https://github.com/Mandarancio/OpenGOO/wiki)
 * [Levels](http://opengoolevels.comeze.com/)
 * [Issues](https://github.com/Mandarancio/OpenGOO/issues)
+* [Contribute](https://github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate)
 
 __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) license__
 

@@ -1,14 +1,25 @@
-Made by Martino Ferrari <manda.mgf@gmail.com>
-This software is released under the GPLv3 license
+** - OpenGOO Game - **
+
+A free and open clone of World of Goo, (www.worldofgoo.com).
+
+------------------------------------------------
+HOME-PAGE  mandarancio.github.com/OpenGOO
+WIKI 	   github.com/Mandarancio/OpenGOO/wiki
+LEVELS     opengoolevels.comeze.com
+ISSUES     github.com/Mandarancio/OpenGOO/issues
+CONTRIBUTE github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate
+------------------------------------------------
+
+This software is released under the GPLv3 license (www.gnu.org/licenses/gpl-3.0.html).
 
 CREDITS
 ----
 Adam 'Etam' Mizerski        (Coder)
-Dmitry Marakasov            (Coder)
 Ferrari Martino             (Founder and coder)
 Groppi Filippo              (Musician)
-Oleksiy Slyshyk             (Coder)
+Marakasov Dmitry            (Coder)
 Signoretti Fabrizio         (Coder)
+Slyshyk Oleksiy             (Coder)
 Torsello Marco              (Coder)
 
 Let us write your name!
@@ -17,18 +28,21 @@ Let us write your name!
 NEWS
 ----
 
-09/August/2012
-Now I'm working at CERN so I don't have all the time I'd like to have to work on this project.
-I hope that at the end of the summer I could be operative again.
+11/August/2012
+
+We are competing in the Liberated Pixel Cup (lpc.opengameart.org), check our entry at (http://opengameart.org/lpc-code-entries)!
+The results of the competition will be released at the end of August!
 
 Martino
 
+* * *
 
-------------------------------------------------
-SITE http://mandarancio.github.com/OpenGOO/
-WIKI https://github.com/Mandarancio/OpenGOO/wiki
-------------------------------------------------
+09/August/2012
 
+Now I'm working at CERN (www.cern.ch) so I don't have all the time I'd like to have to work on this project.
+I hope that at the end of the summer I could be operative again.
+
+Martino
 
 
 DEPENDENCIES
@@ -56,22 +70,23 @@ TO RUN
 
 Make sure the required files are in the same folder of the executable:
 
--menu.index
--the .svg level files (not in a subfolder)
--the 'resources' folder.
+    -menu.index
+    -the .svg level files (not in a subfolder)
+    -the 'resources' folder.
 
 Then go to the folder containing the executable:
 
 (if you are on OpenGOO/OpenGOO-src folder)
 
-cd ..
-./OpenGOO
+    cd ..
+    ./OpenGOO
 
-If you want to more debug output run the game with:
-
-./OpenGOO -Debug
-
-----
-
-FOR MORE LEVELS GO TO: http://opengoolevels.comeze.com/
+There are some flag that you can activate:
+  
+    -debug  (for more debug output)
+    -fps    (to know the fps)
+    -opengl (use opengl for more performances)
+    
+    example:
+    ./Opengoo -opengl -debug
 
