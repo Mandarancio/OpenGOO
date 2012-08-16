@@ -65,6 +65,8 @@ cd ~/OpenGOO/OpenGOO-src
 qmake
 make
 
+You can find the detailed procedure in the wiki page: github.com/Mandarancio/OpenGOO/wiki/How-to-start .
+
 TO RUN
 ----
 
