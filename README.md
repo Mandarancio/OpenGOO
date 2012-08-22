@@ -21,8 +21,7 @@ __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.
 * Slyshyk Oleksiy             (Coder)
 * Torsello Marco              (Coder)
 
-**Let us write your name!**
-
+[**Let us write your name!**](https://github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate)
 
 ## News
 
