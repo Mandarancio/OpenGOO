@@ -16,16 +16,6 @@ LIBS += -lexecinfo
 
 win32:{
 DEFINES += _UNICODE
-CONFIG(debug, debug|release) {
-LIBS +=-lBox2Dd -lopenal32 -lalut
-}
-else {
-LIBS +=-lBox2D -lopenal32 -lalut
-
-#DEFINES += _DEBUG
-QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
-QMAKE_LFLAGS   += /DEBUG
-}
 LIBS += -lDbgHelp -lAdvapi32 -lpsapi -lUser32
 
 
@@ -41,6 +31,27 @@ LIBS +=      -L$$(OPENAL_DIR)/qtcreator-build
 #FREEALUT_DIR
 INCLUDEPATH += $$(FREEALUT_DIR)/include
 LIBS +=      -L$$(FREEALUT_DIR)/lib
+#OGG_DIR
+INCLUDEPATH += $$(OGG_DIR)/include
+#VORBIS_DIR
+INCLUDEPATH += $$(VORBIS_DIR)/include
+
+
+CONFIG(debug, debug|release) {
+LIBS +=-lBox2Dd -lopenal32 -lalut -llibogg -llibvorbis -llibvorbisfile
+
+LIBS +=      -L$$(OGG_DIR)/win32/VS2010/Win32/Debug
+LIBS +=      -L$$(VORBIS_DIR)/win32/VS2010/Win32/Debug
+}
+else {
+LIBS +=-lBox2D -lopenal32 -lalut -llibogg -llibvorbis -llibvorbisfile
+#DEFINES += _DEBUG
+QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
+QMAKE_LFLAGS   += /DEBUG
+
+LIBS +=      -L$$(OGG_DIR)/win32/VS2010/Win32/Release
+LIBS +=      -L$$(VORBIS_DIR)/win32/VS2010/Win32/Release
+}
 
 #  Backtrace on win32
 HEADERS += backtracer_win32.h
