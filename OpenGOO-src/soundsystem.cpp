@@ -172,10 +172,13 @@ void SoundSystem::playOGG(char* name){
     int bitStream;
     long bytes;
     char array[BUFFER_SIZE];    // Local fixed size array
-    FILE *f;
+    FILE *f = NULL;
 
     // Open for binary reading
-    f = fopen(name, "r");
+    if( (f = fopen(name, "r")) == NULL){
+            qWarning()<<"file "<<name<<" not opened.";
+            return;
+        }
 
     vorbis_info *pInfo;
     OggVorbis_File oggFile;

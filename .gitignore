@@ -16,3 +16,4 @@ moc_*
 *.user*
 *.ilk
 *.pdb
+Makefile*

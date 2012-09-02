@@ -30,7 +30,7 @@ bool SvgLevelLoader::parse(){
         if (doc.setContent(&file)){
             QDomElement root= doc.documentElement();
             if (root.tagName().compare("svg")!=0){
-                qWarning()<<"Parse error, file is not a svg file!";
+                qWarning()<<QString("Parse error, file %1 is not a svg file!").arg(path);
                 emit fileError();
                 return false;
             }
@@ -173,13 +173,13 @@ bool SvgLevelLoader::parse(){
             return true;
         }
         else {
-            qWarning()<<"File is not an xml! Error!";
+            qWarning()<<QString("File %1 is not an xml! Error!").arg(path);
             emit fileError();
             return false;
         }
     }
     else {
-        qWarning()<<"File not found! Error!";
+        qWarning()<<QString("File %1 not found! Error!").arg(path);
         emit fileError();
         return false;
     }
