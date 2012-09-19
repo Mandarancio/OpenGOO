@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>OpenGOO Gallery</title>
+
+<!--
+	1 ) Reference to the files containing the JavaScript and CSS.
+	These files must be located on your server.
+-->
+
+<script type="text/javascript" src="./highslide/highslide-full.js"></script>
+<link rel="stylesheet" type="text/css" href="./highslide/highslide.css" />
+
+<!--
+	2) Optionally override the settings defined at the top
+	of the highslide.js file. The parameter hs.graphicsDir is important!
+-->
+
+<script type="text/javascript">
+hs.graphicsDir = './highslide/graphics/';
+hs.showCredits = false;
+hs.align = 'center';
+hs.transitions = ['expand', 'crossfade'];
+//hs.outlineType = 'glossy-dark';
+hs.outlineType = 'rounded-white';
+hs.fadeInOut = true;
+//hs.wrapperClassName = 'dark';
+
+// Add the controlbar
+hs.addSlideshow ({
+	//slideshowGroup: 'group1',
+	interval: 5000,
+	repeat: false,
+	useControls: true,
+	fixedControls: false,
+	overlayOptions: {
+		className: 'controls-in-heading',
+		opacity: 1,
+		position: 'top right',
+		//position: 'bottom center',
+		offsetY: 0,
+		hideOnMouseOut: false
+	}
+});
+
+hs.headingText = '&nbsp;'; // Add an empty heading to make room for the controlbar
+
+// START options first gallery - images
+var mixedImages1 = {
+	slideshowGroup: 'group1',
+	captionEval: 'this.thumb.alt'
+};
+
+// options first gallery - videos
+var mixedVideos1 = {
+	objectType: 'iframe',
+	slideshowGroup: 'group1',
+	wrapperClassName: 'you-tube',
+	width: 500, 
+	objectWidth: 500, 
+	objectHeight: 405, 
+	objectLoadTime: 'after',
+	preserveContent: false,
+	allowSizeReduction: false,
+	captionEval: 'this.thumb.alt'
+};
+// END options first gallery
+
+// START options second gallery - images only
+var configImages1 = {
+	slideshowGroup: 'group2',
+	captionEval: 'this.thumb.alt'
+};
+// END options second gallery
+
+// START options third gallery - mini-gallery
+var miniGallery1 = {
+	slideshowGroup: 'group3',
+	thumbnailId: 'thumb1',
+	captionEval: 'this.a.title'
+};
+// END options second gallery
+</script>
+
+<style type="text/css">
+.you-tube .highslide-header, .you-tube .highslide-footer {
+	display: none;
+}
+
+@font-face {
+    font-family: "Bitstream Vera Sans";
+    src: url("./font/Vera.ttf") format("truetype");
+    /*src: url("./font/Vera-Bold.ttf") format("truetype");*/
+    }
+    .myfont {font-family:Bitstream Vera Sans, "Bitstream Vera Sans";}
+
+body{
+height:1000px;
+font-family:Bitstream Vera Sans;
+}
+
+</style>
+
+</head>
+
+<body id="galleryP">
+
+<h5>Images:</h5>
+
+<div class="highslide-gallery">
+
+<a href="./images/gallery/dimostrativeGoal.png" class="highslide" onclick="return hs.expand(this, mixedImages1)">
+	<img src="./images/gallery/dimostrativeGoal.thumb.png" alt="Caption text - mixed gallery" />
+</a>
+
+<a href="./images/gallery/debugMode.png" class="highslide" onclick="return hs.expand(this, mixedImages1)">
+	<img src="./images/gallery/debugMode.thumb1.png" alt="Caption text - mixed gallery" />
+</a>
+
+<a href="./images/gallery/onTablet.png" class="highslide" onclick="return hs.expand(this, mixedImages1)">
+	<img src="./images/gallery/onTablet.thumb.png" alt="Caption text - mixed gallery" />
+</a>
+
+<a href="./images/gallery/jointProposal.png" class="highslide" onclick="return hs.expand(this, mixedImages1)">
+	<img src="./images/gallery/jointProposal.thumb.png" alt="Caption text - mixed gallery" />
+</a>
+
+<a href="./images/gallery/gooBallons.png" class="highslide" onclick="return hs.expand(this, mixedImages1)">
+	<img src="./images/gallery/gooBallons.thumb.png" alt="Caption text - mixed gallery" />
+</a>
+
+<a href="./images/gallery/ballonsAndSticky.png" class="highslide" onclick="return hs.expand(this, mixedImages1)">
+	<img src="./images/gallery/ballonsAndSticky.thumb.png" alt="Caption text - mixed gallery" />
+</a>
+
+<a href="./images/gallery/tablet.jpg" class="highslide" onclick="return hs.expand(this, mixedImages1)">
+	<img src="./images/gallery/tablet.thumb.jpg" alt="Caption text - mixed gallery" />
+</a>
+
+
+<h5>Videos:</h5>
+
+<a href="http://www.youtube.com/embed/fP8XWLfnyZY?rel=0" class="highslide" onclick="return hs.htmlExpand(this, mixedVideos1)">
+	<img src="http://img.youtube.com/vi/fP8XWLfnyZY/1.jpg" alt="Caption text - mixed gallery" width="120" />
+</a>
+
+<a href="http://www.youtube.com/embed/zQQnN-7_Yrs?rel=0" class="highslide" onclick="return hs.htmlExpand(this, mixedVideos1)">
+	<img src="http://img.youtube.com/vi/zQQnN-7_Yrs/1.jpg" alt="Caption text - mixed gallery" width="120" />
+</a>
+
+<a href="http://www.youtube.com/embed/GBfwMdD5in4?rel=0" class="highslide" onclick="return hs.htmlExpand(this, mixedVideos1)">
+	<img src="http://img.youtube.com/vi/GBfwMdD5in4/1.jpg" alt="Caption text - mixed gallery" width="120" />
+</a>
+
+<a href="http://www.youtube.com/embed/GW8FxFbq3ug?rel=0" class="highslide" onclick="return hs.htmlExpand(this, mixedVideos1)">
+	<img src="http://img.youtube.com/vi/GW8FxFbq3ug/1.jpg" alt="Caption text - mixed gallery" width="120" />
+</a>
+
+<a href="http://www.youtube.com/embed/MWMdaAc5kzY?rel=0" class="highslide" onclick="return hs.htmlExpand(this, mixedVideos1)">
+	<img src="http://img.youtube.com/vi/MWMdaAc5kzY/1.jpg" alt="Caption text - mixed gallery" width="120" />
+</a>
+
+<a href="http://www.youtube.com/embed/kPrpdJcXbRk?rel=0" class="highslide" onclick="return hs.htmlExpand(this, mixedVideos1)">
+	<img src="http://img.youtube.com/vi/kPrpdJcXbRk/1.jpg" alt="Caption text - mixed gallery" width="120" />
+</a>
+
+</div>
+
+
+</body>
+</html>

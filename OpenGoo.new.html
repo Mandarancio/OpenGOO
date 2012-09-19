@@ -1,0 +1,77 @@
+<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> -->
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <link rel="stylesheet" type="text/css" href="page-style.css" />
+   <title>OpenGOO game official site</title>
+
+<script type="text/javascript">
+
+function resizeFrame(id) {
+
+    var newheight;
+    var newwidth;
+
+    if(document.getElementById){
+        newheight=document.getElementById(id).contentWindow.document .body.scrollHeight;
+        //newwidth=document.getElementById(id).contentWindow.document .body.scrollWidth;
+    }
+
+    document.getElementById(id).height= (newheight) + "px";
+    //document.getElementById(id).width= (newwidth) + "px";
+    
+//var wn = window.frames[frame];
+//document.getElementById(wn).style.height=wn.docum ent.body.scrollHeight;
+}
+</script>
+
+</head>
+
+<body>
+
+<!--
+<div class="social">
+  <a href="http://www.facebook.com/OpenGoo" target="__blank">
+  <img border="0" width="35" src="./images/Facebook_icon_hd.png"/></a>
+    
+  <a href="https://plus.google.com/116142039249930637097/posts" target="__blank">
+  <img border="0" width="35" src="./images/google+_icon.png"/></a>
+    
+  <a href="https://twitter.com/#!/Opengoo_dev" target="__blank">
+  <img border="0" width="36" src="./images/twitter_icon.png"/></a>  
+</div> -->
+
+<div class="description">
+  <h1> OpenGOO </h1> A free and open clone of World Of Goo. <!-- <br><i>Dedicated to Aurélie.</i> -->
+</div>
+
+<div class="menu">
+<ul>
+  <li><a id="homeL" class="link" target="frame" href="home.html">Home</a></li>
+  <li><a id="newsL" class="link" target="frame" href="news.html">News</a></li>
+  <li><a id="wikiL" class="link" href="https://github.com/Mandarancio/OpenGOO/wiki" target="_blank">Wiki</a></li>
+  <li><a id="galleryL" class="link" target="frame" href="gallery.html">Gallery</a></li>
+  <li><a id="downloadL" class="link" target="frame" href="download.html">Download</a></li>
+  <li><a id="gitL" class="link" href="https://github.com/Mandarancio/OpenGOO" target="_blank">GitHub</a></li>
+  <li><a id="authorsL" class="link" target="frame" href="authors.html">Authors</a></li>
+</ul>
+</div>
+
+<!-- Inizio Codice ShinyStat -->
+<div class="counter" align="center">
+<a href="http://www.shinystat.com/it" target="_top">
+<img src="http://www.shinystat.com/cgi-bin/shinystat.cgi?USER=OpenGOO" alt="Contatori visite gratuiti" border="0" /></a>
+</div>
+<!-- Fine Codice ShinyStat -->
+
+<div class="verticalLine">
+<img src="./images/separator.png"/> 
+</div>
+
+<iframe id="frame" name="frame" src="home.html" onload="resizeFrame('frame');"></iframe>
+
+</body>
+
+</html> 

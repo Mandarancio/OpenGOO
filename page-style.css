@@ -1,0 +1,168 @@
+/*  OpenGOO website.
+ *  Project and initial design: Fabrizio Signoretti - fasigno37@gmail.com
+ *  Design contributors: Filippo Groppi - filogro@gmail.com, Martino Ferrari - manda.mgf@gmail.com.
+ * 
+ * It uses highslide for the gallery page: http://highslide.com/
+*/
+
+@font-face {
+    font-family: "Bitstream Vera Sans";
+    src: url("./font/Vera.ttf") format("truetype");
+    /*src: url("./font/Vera-Bold.ttf") format("truetype");*/
+    }
+    .myfont {font-family:Bitstream Vera Sans, "Bitstream Vera Sans";}
+    
+body {
+  /*margin-top: 1px;*/
+  /*margin:0px;
+  height:100%;
+  width:100%;*/
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #f5f5f5;
+  font-family: /*Helvetica, Arial, FreeSans, san-serif,*/ Bitstream Vera Sans;
+  color: #494a4a;
+}
+
+H1 {
+  font-style:normal; 
+  margin:0px;
+}
+
+div.description {
+  font-size:1.2em; 
+  font-style:italic;
+  width:380px;
+  padding:0px;
+  position:absolute;
+  padding:10px;
+  margin:0px auto;
+  left:25%;
+  right:25%;
+}
+
+div.counter {
+  position:absolute;
+  width:130px;
+  bottom:5%;
+  left:20px;
+}
+
+/*
+div.social {
+  width:130px;
+  text-align:center;
+  top:500px;
+  left:0px;
+  right:10px;
+  padding:0px;
+  margin:0px;
+  position:absolute;
+  border:2px;
+  padding:10px;
+  margin:20px;
+}
+*/
+
+/*Menu's first letters color*/
+
+#homeL:first-letter {
+  color:#ffcd00;
+}
+
+#newsL:first-letter {
+  color:#abc837;  
+}
+
+#wikiL:first-letter {
+  color:#6f916f;
+}
+
+#downloadL:first-letter {
+  color:#2ca089;
+}
+
+#galleryL:first-letter {
+  color:#00aad4;  
+}
+
+#gitL:first-letter {
+  color:#5500d4;  
+}
+
+#authorsL:first-letter {
+  color:#ab37c8;
+}
+
+/*Menu's hover and visited colors*/
+
+#homeL:hover, #homeL:active {
+  color:#ffcd00;
+}
+
+#newsL:hover, #newsL:active {
+  color:#abc837;
+}
+
+#wikiL:hover, #wikiL.active {
+  color:#6f916f;
+}
+
+#galleryL:hover, #galleryL:active {
+  color:#00aad4;
+}
+
+#downloadL:hover, #downloadL:active {
+  color:#2ca089;
+}
+
+#gitL:hover, #gitL:active {
+  color:#5500d4;
+}
+
+#authorsL:hover, #authorsL:active {
+  color:#ab37c8;
+}
+
+a.link:link {
+  outline: 0;
+  font-size:27px;
+  color:#494a4a;
+  display:block;
+  height:40px;
+  width:195px;
+  /*font-weight:bold;*/
+  /*text-shadow: 0 2px 0 #fff;*/
+  /*background-image:url('./images/scuro.png');*/
+  text-decoration:none;
+  text-transform:uppercase;
+  /*border:1px solid black;*/
+  /*margin:2px;*/
+}
+
+ul {
+  list-style-type:none;
+  text-decoration:none;
+  position:absolute;
+  top:150px;
+  left:-15px;
+  margin:0px;
+}
+
+#frame {
+  position:relative;
+  top:150px;
+  left:265px;
+  border:0;
+  margin-left:0px;
+  width:79%;
+  overflow: hidden;
+  /*overflow-x: hidden*/
+}
+
+div.verticalLine {
+position:fixed;
+left:240px;
+width:30px;
+height:100%;
+}
