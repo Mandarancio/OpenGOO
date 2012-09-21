@@ -1,115 +1,70 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset='utf-8'>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <link rel="stylesheet" type="text/css" href="page-style.css" />
+   <title>OpenGOO game official site</title>
 
-  <title>Mandarancio/OpenGOO @ GitHub</title>
+<script type="text/javascript">
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #cccccc;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
+function resizeFrame(id) {
+
+    var newheight;
+
+    if(document.getElementById){
+        newheight=document.getElementById(id).contentWindow.document .body.scrollHeight;
     }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #1a1a1a; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #1a1a1a; }
-    h3 { text-align: center; color: #1a1a1a; }
-    a { color: #1a1a1a; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+
+    document.getElementById(id).height= (newheight) + "px";
+}
+</script>
+
 </head>
 
 <body>
-  <a href="https://github.com/Mandarancio/OpenGOO"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
-  <div id="container">
+<!--
+<div class="social">
+  <a href="http://www.facebook.com/OpenGoo" target="__blank">
+  <img border="0" width="35" src="./images/Facebook_icon_hd.png"/></a>
+    
+  <a href="https://plus.google.com/116142039249930637097/posts" target="__blank">
+  <img border="0" width="35" src="./images/google+_icon.png"/></a>
+    
+  <a href="https://twitter.com/#!/Opengoo_dev" target="__blank">
+  <img border="0" width="36" src="./images/twitter_icon.png"/></a>  
+</div> -->
 
-    <div class="download">
-      <a href="https://github.com/Mandarancio/OpenGOO/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/Mandarancio/OpenGOO/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
-    </div>
-    
-    <div class="social">
-    <a href="http://www.facebook.com/OpenGoo">
-        <img border="0" width="50" src="./Facebook_icon_hd.png"/></a>
-        &nbsp;
-    <a href="https://plus.google.com/s/opengoo">
-        <img border="0" width="50" src="./google+_icon.png"/></a>
-	&nbsp;
-    <a href="https://twitter.com/#!/Opengoo_dev">
-        <img border="0" width="51" src="./twitter_icon.png"/></a>  
-    </div>
-    
-    <h1><a href="https://github.com/Mandarancio/OpenGOO">OpenGOO</a>
-      <span class="small">by <a href="https://github.com/Mandarancio">Mandarancio</a></span></h1>
+<div class="description">
+  <h1> OpenGOO </h1> A free and open clone of World Of Goo. <!-- <br><i>Dedicated to Aurélie.</i> -->
+</div>
 
-    <div class="description">
-      A free and open clone of World Of Goo. <br><i>Dedicated to Aurélie.</i>
-    </div>
-    <iframe width="560" height="315" src="http://www.youtube.com/embed/MWMdaAc5kzY" frameborder="0" allowfullscreen></iframe>
-    <iframe width="420" height="315" src="http://www.youtube.com/embed/GBfwMdD5in4" frameborder="0" allowfullscreen></iframe>
-    
-      <p>This is a simple personal project for learn box2d (a 2d physic engine).
-The project is of course free and open.
-I use qt and open gl for graphic and objects interaction and Box2d for the physic </p>
-    
-      <p><b>If you wanna share your levels or try others Bruno Clemente is working on a sharing platform.<br>
-      you can find it here: <a href="http://opengoolevels.comeze.com/">OpenGOO Levels</a>
-      </p></b>
-    
-      <b
+<div class="menu">
+<ul>
+  <li><a id="homeL" class="link" target="frame" href="home.html">Home</a></li>
+  <li><a id="newsL" class="link" target="frame" href="news.html">News</a></li>
+  <li><a id="wikiL" class="link" href="https://github.com/Mandarancio/OpenGOO/wiki" target="_blank">Wiki</a></li>
+  <li><a id="galleryL" class="link" target="frame" href="gallery.html">Gallery</a></li>
+  <li><a id="downloadL" class="link" target="frame" href="download.html">Download</a></li>
+  <li><a id="gitL" class="link" href="https://github.com/Mandarancio/OpenGOO" target="_blank">GitHub</a></li>
+  <li><a id="authorsL" class="link" target="frame" href="authors.html">Authors</a></li>
+</ul>
+</div>
 
-    
-      <b>License</b>
-      <p>GPL v3</p>
-    
-      <h2><a href="https://github.com/Mandarancio/OpenGOO/wiki">WIKI</a></h2>
-      <b>To compile and install: <a href="https://github.com/Mandarancio/OpenGOO/wiki/How-to-start">How to start</a><br>
-      To make new levels: <a href="https://github.com/Mandarancio/OpenGOO/wiki/How-to-create-a-level">How to create a level</a></b><br>
-    
-      <h2>Authors</h2>
-      <p>Martino Ferrari (manda [dot] mgf [at] gmail [dot] com)</p>
-      <p>Marco Torsello</p>
-      <p>Slyshyk Oleksiy (alexSlyshy [at] gmail [dot] com) </p>
-      
-      <h2>Thanks to</h2>
-      <p>Every one try it</p>
-      <p>Bruno Clemente for the share platform</p>
-    
+<!-- Inizio Codice ShinyStat -->
+<div class="counter" align="center">
+<a href="http://www.shinystat.com/it" target="_top">
+<img src="http://www.shinystat.com/cgi-bin/shinystat.cgi?USER=OpenGOO" alt="Contatori visite gratuiti" border="0" /></a>
+</div>
+<!-- Fine Codice ShinyStat -->
 
-    
- 
-    
+<div class="verticalLine">
+<img src="./images/separator.png"/> 
+</div>
 
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/Mandarancio/OpenGOO/zipball/master">zip</a> or
-      <a href="https://github.com/Mandarancio/OpenGOO/tarball/master">tar formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/Mandarancio/OpenGOO</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/Mandarancio/OpenGOO">Mandarancio/OpenGOO</a>
-    </div>
-
-  </div>
+<iframe id="frame" name="frame" src="home.html" onload="resizeFrame('frame');"></iframe>
 
 </body>
-</html>
+
+</html> 

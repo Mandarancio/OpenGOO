@@ -6,22 +6,23 @@
 */
 
 @font-face {
-    font-family: "Bitstream Vera Sans";
-    src: url("./font/Vera.ttf") format("truetype");
-    /*src: url("./font/Vera-Bold.ttf") format("truetype");*/
-    }
-    .myfont {font-family:Bitstream Vera Sans, "Bitstream Vera Sans";}
+  font-family: "Bitstream Vera Sans";
+  src: url("./font/Vera.ttf") format("truetype");
+  /*src: url("./font/Vera-Bold.ttf") format("truetype");*/
+  }
+  .myfont {font-family:Bitstream Vera Sans, "Bitstream Vera Sans";}
     
 body {
-  /*margin-top: 1px;*/
-  /*margin:0px;
-  height:100%;
-  width:100%;*/
   margin-left: auto;
   margin-right: auto;
   background-color: #f5f5f5;
   font-family: /*Helvetica, Arial, FreeSans, san-serif,*/ Bitstream Vera Sans;
   color: #494a4a;
+  
+  /*margin-top: 1px;*/
+  /*margin:0px;
+  height:100%;
+  width:100%;*/
 }
 
 H1 {
@@ -64,6 +65,32 @@ div.social {
 }
 */
 
+ul {
+  list-style-type:none;
+  text-decoration:none;
+  position:absolute;
+  top:150px;
+  left:-15px;
+  margin:0px;
+}
+
+a.link:link, a.link:visited {
+  outline: 0;
+  font-size:25px;
+  color:#494a4a;
+  display:block;
+  height:40px;
+  width:195px;
+  text-decoration:none;
+  text-transform:uppercase;
+  
+  /*font-weight:bold;*/
+  /*text-shadow: 0 2px 0 #fff;*/
+  /*background-image:url('./images/scuro.png');*/
+  /*border:1px solid black;*/
+  /*margin:2px;*/
+}
+
 /*Menu's first letters color*/
 
 #homeL:first-letter {
@@ -96,57 +123,32 @@ div.social {
 
 /*Menu's hover and visited colors*/
 
-#homeL:hover, #homeL:active {
+#homeL:hover {
   color:#ffcd00;
 }
 
-#newsL:hover, #newsL:active {
+#newsL:hover {
   color:#abc837;
 }
 
-#wikiL:hover, #wikiL.active {
+#wikiL:hover {
   color:#6f916f;
 }
 
-#galleryL:hover, #galleryL:active {
+#galleryL:hover {
   color:#00aad4;
 }
 
-#downloadL:hover, #downloadL:active {
+#downloadL:hover {
   color:#2ca089;
 }
 
-#gitL:hover, #gitL:active {
+#gitL:hover {
   color:#5500d4;
 }
 
-#authorsL:hover, #authorsL:active {
+#authorsL:hover {
   color:#ab37c8;
-}
-
-a.link:link {
-  outline: 0;
-  font-size:27px;
-  color:#494a4a;
-  display:block;
-  height:40px;
-  width:195px;
-  /*font-weight:bold;*/
-  /*text-shadow: 0 2px 0 #fff;*/
-  /*background-image:url('./images/scuro.png');*/
-  text-decoration:none;
-  text-transform:uppercase;
-  /*border:1px solid black;*/
-  /*margin:2px;*/
-}
-
-ul {
-  list-style-type:none;
-  text-decoration:none;
-  position:absolute;
-  top:150px;
-  left:-15px;
-  margin:0px;
 }
 
 #frame {
@@ -157,12 +159,11 @@ ul {
   margin-left:0px;
   width:79%;
   overflow: hidden;
-  /*overflow-x: hidden*/
 }
 
 div.verticalLine {
-position:fixed;
-left:240px;
-width:30px;
-height:100%;
+  position:fixed;
+  left:240px;
+  width:30px;
+  height:100%;
 }
