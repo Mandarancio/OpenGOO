@@ -2,9 +2,17 @@
 <html>
 
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <link rel="stylesheet" type="text/css" href="page-style.css" />
-   <title>OpenGOO game official site</title>
+   <title>OpenGOO Game Official Site</title>
+   
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta http-equiv="content-language" content="EN">
+   <meta name="title" content="OpenGOO Game Official Site">
+   <meta name="description" content="OpenGOO, a free and open clone of World of Goo">
+   <meta name="keywords" content="GOO, OpenGOO, OpenGoo, WorldOfGoo, World of Goo">
+   <meta name="robots" content="INDEX,FOLLOW">
+   <meta name="creation_Date" content="09/24/2012">
+   <meta name="revisit-after" content="15 days">
 
 <script type="text/javascript">
 
@@ -52,18 +60,19 @@ function resizeFrame(id) {
 </ul>
 </div>
 
-<!-- Inizio Codice ShinyStat -->
+<!-- ShinyStat code -->
 <div class="counter" align="center">
 <a href="http://www.shinystat.com/it" target="_top">
-<img src="http://www.shinystat.com/cgi-bin/shinystat.cgi?USER=OpenGOO" alt="Contatori visite gratuiti" border="0" /></a>
+<img src="http://www.shinystat.com/cgi-bin/shinystat.cgi?USER=OpenGOO" alt="Counter" border="0" /></a>
 </div>
-<!-- Fine Codice ShinyStat -->
+<!-- End ShinyStat code -->
 
 <div class="verticalLine">
 <img src="./images/separator.png"/> 
 </div>
 
-<iframe id="frame" name="frame" src="home.html" onload="resizeFrame('frame');"></iframe>
+<!--Opera doesn't support overflow property in css -->
+<iframe id="frame" name="frame" src="home.html" scrolling="no" onload="resizeFrame('frame');"></iframe>
 
 </body>
 
