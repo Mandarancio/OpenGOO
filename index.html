@@ -9,13 +9,66 @@
    <meta http-equiv="content-language" content="EN">
    <meta name="title" content="OpenGOO Game Official Site">
    <meta name="description" content="OpenGOO, a free and open clone of World of Goo">
-   <meta name="keywords" content="GOO, OpenGOO, OpenGoo, WorldOfGoo, World of Goo">
+   <meta name="keywords" content="Open Goo,Open goo,OpenGOO,OpenGoo,Opengoo,WorldOfGoo,World of Goo,GOO">
    <meta name="robots" content="INDEX,FOLLOW">
    <meta name="creation_Date" content="09/24/2012">
    <meta name="revisit-after" content="15 days">
 
 <script type="text/javascript">
 
+/* The function gets all the elements from a class name in the document */
+function getElementsByClass(searchClass, domNode, tagName) { 
+	if (domNode == null) domNode = document;
+	if (tagName == null) tagName = '*';
+	var el = new Array();
+	var tags = domNode.getElementsByTagName(tagName);
+	var tcl = " "+searchClass+" ";
+	for(i=0,j=0; i<tags.length; i++) { 
+		var test = " " + tags[i].className + " ";
+		if (test.indexOf(tcl) != -1) 
+			el[j++] = tags[i];
+	} 
+	return el;
+}
+
+/* The function colors the links when they are clicked and visited in the iframe */
+function activeLink(id) {
+
+
+  var objs = getElementsByClass("link");
+  
+  for(var i=0; i<objs.length; i++) {
+    objs[i].style.color='';
+  }
+  
+  switch(id) {
+  
+    case 'homeL':
+      document.getElementById(id).style.color="#ffcd00";
+    break;
+    
+    case 'newsL':
+      document.getElementById(id).style.color="#abc837";
+    break;
+    
+    case 'galleryL':
+      document.getElementById(id).style.color="#00aad4";
+    break;
+    
+    case 'downloadL':
+      document.getElementById(id).style.color="#2ca089";
+    break;
+    
+    case 'authorsL':
+      document.getElementById(id).style.color="#ab37c8";
+    break;
+  
+  } 
+  
+}
+
+/* The function fits the iframe size according to the page height */
+/* In some browsers the height is not shrunk back with smaller pages */
 function resizeFrame(id) {
 
     var newheight;
@@ -26,11 +79,12 @@ function resizeFrame(id) {
 
     document.getElementById(id).height= (newheight) + "px";
 }
+
 </script>
 
 </head>
 
-<body>
+<body onload="activeLink('homeL')">
 
 <!--
 <div class="social">
@@ -50,13 +104,13 @@ function resizeFrame(id) {
 
 <div class="menu">
 <ul>
-  <li><a id="homeL" class="link" target="frame" href="home.html">Home</a></li>
-  <li><a id="newsL" class="link" target="frame" href="news.html">News</a></li>
+  <li><a id="homeL" class="link" target="frame" href="home.html" onclick="activeLink('homeL')" >Home</a></li>
+  <li><a id="newsL" class="link" target="frame" href="news.html" onclick="activeLink('newsL')" >News</a></li>
   <li><a id="wikiL" class="link" href="https://github.com/Mandarancio/OpenGOO/wiki" target="_blank">Wiki</a></li>
-  <li><a id="galleryL" class="link" target="frame" href="gallery.html">Gallery</a></li>
-  <li><a id="downloadL" class="link" target="frame" href="download.html">Download</a></li>
+  <li><a id="galleryL" class="link" target="frame" href="gallery.html" onclick="activeLink('galleryL')" >Gallery</a></li>
+  <li><a id="downloadL" class="link" target="frame" href="download.html" onclick="activeLink('downloadL')" >Download</a></li>
   <li><a id="gitL" class="link" href="https://github.com/Mandarancio/OpenGOO" target="_blank">GitHub</a></li>
-  <li><a id="authorsL" class="link" target="frame" href="authors.html">Authors</a></li>
+  <li><a id="authorsL" class="link" target="frame" href="authors.html" onclick="activeLink('authorsL')" >Authors</a></li>
 </ul>
 </div>
 
