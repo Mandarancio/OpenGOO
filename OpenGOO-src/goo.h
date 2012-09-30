@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QList>
 
-#include <Box2D/Box2D.h>
+#include "lib/Box2D/Box2D.h"
 
 /*Change FIXED to FIXED_GOO, because it conflict with win32 typedef. Slyshyk*/
 enum GooType {NONE,FIXED_GOO,DYNAMIC,REMOVIBLE,BALOON,STICKY};

@@ -2,7 +2,7 @@
 #define BALLOONGOO_H
 #include "dynamicgoo.h"
 
-#include <Box2D/Box2D.h>
+#include "lib/Box2D/Box2D.h"
 
 class BalloonGoo : public DynamicGoo
 {

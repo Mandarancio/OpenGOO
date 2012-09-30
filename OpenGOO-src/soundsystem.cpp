@@ -175,7 +175,11 @@ void SoundSystem::playOGG(char* name){
     FILE *f = NULL;
 
     // Open for binary reading
+#ifdef __WIN32__
+    if( (f = fopen(name, "rb")) == NULL){
+#else
     if( (f = fopen(name, "r")) == NULL){
+#endif
             qWarning()<<"file "<<name<<" not opened.";
             return;
         }

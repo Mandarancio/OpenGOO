@@ -140,6 +140,7 @@ void Level::initialize()
 
     playSong = new PlaySoundThread; //SoundSystem for the soundtrack.
     playSong->start();
+    mute = false;
 
     dir.left=false;
     dir.right=false;
@@ -677,6 +678,7 @@ void Level::paintEvent(QPaintEvent *e){
     paintWin(p);
     paintScore(p);
     paintButton(p);
+    paintMute(p);
 
     //    p.beginNativePainting();
 
@@ -703,10 +705,12 @@ void Level::keyReleaseEvent(QKeyEvent *e){
     case (Qt::Key_Escape):
         onMenu=!onMenu;
 
-        if (onMenu) {
-            playSong->pauseSong();
-        } else {
-            playSong->startSong();
+        if(!mute) {
+            if (onMenu) {
+                playSong->pauseSong();
+            } else {
+                playSong->startSong();
+            }
         }
 
         break;
@@ -887,6 +891,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     if (e->button()!=Qt::LeftButton) return;
     if (!drag){
         clickButton(e->pos());
+        clickMute(e->pos());
     }
     else if (drag){
         if (overJoint(dragged)!=NULL){
@@ -906,7 +911,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     showJointTimer=0;
 
     if (onMenu){
-        playSong->pauseSong();
+        if(!mute) playSong->pauseSong();
         menu->mouseRelease(e);
     }
 
@@ -1120,6 +1125,48 @@ void Level::clickButton(QPoint p){
     if(onMenu) return;
     QPoint d=p-QPoint(width(),height());
     if (d.x()*d.x()+d.y()*d.y()<60*60) onMenu=!onMenu;
+}
+
+void Level::paintMute(QPainter &p){
+
+    if(onMenu) return;
+
+    QRectF target(this->width()-150.0, this->height()-60.0, 65.0, 50.0);
+    QRectF source(0.0, 0.0, 65.0, 50.0);
+    QImage *image;
+
+    if(mute)
+        image = new QImage("./resources/muteON.png");
+    else
+        image = new QImage("./resources/muteOFF.png");
+
+    p.drawImage(target, *image, source);
+    
+    delete image;
+
+}
+
+void Level::clickMute(QPoint p){
+
+    if(onMenu) return;
+
+    if((p.x() >= width()-150.0 &&
+       p.x() <= width()-150.0+65.0) &&
+       (p.y() >= height()-60.0 &&
+       p.y() <= height()-60.0+50.0))
+    {
+        if(mute) {
+            playSong->startSong();
+            mute = !mute;
+        }
+        else {
+            playSong->pauseSong();
+            mute = !mute;
+        }
+
+        QPaintEvent *pEvent = new QPaintEvent(QRect(this->width()-150, this->height()-60, 65, 50));
+        pEvent->rect();
+    }
 }
 
 //ZOOM FUNCTION

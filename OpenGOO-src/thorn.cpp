@@ -5,7 +5,7 @@
 #include <QPoint>
 #include <qmath.h>
 
-#include <Box2D/Box2D.h>
+#include "lib/Box2D/Box2D.h"
 
 static const qreal PI = 3.141593;
 

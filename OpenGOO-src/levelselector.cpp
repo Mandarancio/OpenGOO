@@ -119,7 +119,7 @@ void LevelSelector::paint(QPainter &p){
 
 QString LevelSelector::getLevelSelected()
 {
-    if(selected!=levels.size())
+    if(selected+1!=levels.size())
         return "Levels/"+levels.at(selected);
     else
         return "Exit";

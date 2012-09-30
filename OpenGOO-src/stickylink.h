@@ -2,7 +2,7 @@
 #define STICKYLINK_H
 
 #include <QObject>
-#include <Box2D/Box2D.h>
+#include "lib/Box2D/Box2D.h"
 
 #include "ground.h"
 #include "goo.h"

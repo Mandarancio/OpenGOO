@@ -7,7 +7,7 @@
 #include <QTimerEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
-#include <Box2D/Box2D.h>
+#include "lib/Box2D/Box2D.h"
 
 #include <QTime>
 
@@ -122,6 +122,8 @@ private:
     //SOUND
     SoundSystem *soundSystem;
     PlaySoundThread *playSong;
+    
+    bool mute;  // if true turn off music, if false turn on music
 
     //METHOD
     BackGroundWidget * backGroundWidget; //This is a widget to draw the semi-static ground and background.
@@ -167,6 +169,11 @@ private:
 
     //ZOOM FUNCTION
     bool zoom(float d);
+    
+    //MUTE BUTTON
+    void paintMute(QPainter &p);
+    void clickMute(QPoint p);
+    
 protected:
     //Timer event function here the world is updated and after the scene is redr
     void timerEvent(QTimerEvent *);
