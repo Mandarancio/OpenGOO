@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QPainter>
 
-#include "lib/Box2D/Box2D.h"
+#include <Box2D/Box2D.h>
 
 #include "goo.h"
 

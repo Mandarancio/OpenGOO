@@ -2,7 +2,7 @@
 #define QB2DRAW_H
 #include <QObject>
 #include <QPainter>
-#include "lib/Box2D/Box2D.h"
+#include <Box2D/Box2D.h>
 
 class QB2Draw : public b2Draw, QObject
 {

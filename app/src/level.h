@@ -7,7 +7,7 @@
 #include <QTimerEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
-#include "lib/Box2D/Box2D.h"
+#include <Box2D/Box2D.h>
 
 #include <QTime>
 

@@ -2,7 +2,7 @@
 #define COLLISIONLISTENER_H
 
 #include <QObject>
-#include "lib/Box2D/Box2D.h"
+#include <Box2D/Box2D.h>
 #include "goo.h"
 
 

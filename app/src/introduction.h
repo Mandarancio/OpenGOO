@@ -2,7 +2,7 @@
 #define INTRODUCTION_H
 
 #include <QWidget>
-#include "lib/Box2D/Box2D.h"
+#include <Box2D/Box2D.h>
 #include <QTimerEvent>
 #include <QPaintEvent>
 #include <QTime>
