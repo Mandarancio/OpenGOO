@@ -20,6 +20,7 @@ __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.
 * Signoretti Fabrizio         (Coder)
 * Slyshyk Oleksiy             (Coder)
 * Torsello Marco              (Coder)
+* Dmitry Batarov              (Patch)
 
 [**Let us write your name!**](https://github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate)
 
@@ -45,7 +46,6 @@ _Martino_
 
 ## DEPENDENCIES
 
-* Box2d 2.2.1
 * OpenAL
 * Freealut
 * Qt4 and QT4 opengl module
