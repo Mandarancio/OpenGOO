@@ -2,7 +2,7 @@
 #define ROPEJOINT_H
 
 #include "joint.h"
-#include "lib/Box2D/Box2D.h"
+#include <Box2D/Box2D.h>
 #include <QList>
 
 class RopeJoint : public Joint
