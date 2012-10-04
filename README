@@ -17,6 +17,7 @@ CREDITS
 Adam 'Etam' Mizerski        (Coder)
 Ferrari Martino             (Founder and coder)
 Groppi Filippo              (Musician)
+Batarov Dmitry              (Patch)
 Marakasov Dmitry            (Coder)
 Signoretti Fabrizio         (Coder)
 Slyshyk Oleksiy             (Coder)
@@ -83,7 +84,7 @@ Then go to the folder containing the executable:
     cd ..
     ./OpenGOO
 
-There are some flag that you can activate:
+There are some flags that you can activate:
   
     -debug  (for more debug output)
     -fps    (to know the fps)

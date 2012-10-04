@@ -16,11 +16,12 @@ __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.
 * Adam 'Etam' Mizerski        (Coder)
 * Ferrari Martino             (Founder and coder)
 * Groppi Filippo              (Musician)
+* Batarov Dmitry              (Patch)
 * Marakasov Dmitry            (Coder)
 * Signoretti Fabrizio         (Coder)
 * Slyshyk Oleksiy             (Coder)
 * Torsello Marco              (Coder)
-* Dmitry Batarov              (Patch)
+
 
 [**Let us write your name!**](https://github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate)
 
@@ -78,7 +79,7 @@ Then go to the folder containing the executable:
     cd ..
     ./OpenGOO
 
-There are some flag that you can activate:
+There are some flags that you can activate:
   
     -debug  (for more debug output)
     -fps    (to know the fps)
