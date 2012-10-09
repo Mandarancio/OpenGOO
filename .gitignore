@@ -17,3 +17,4 @@ moc_*
 *.ilk
 *.pdb
 Makefile*
+*.dll
