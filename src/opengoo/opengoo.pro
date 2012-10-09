@@ -29,7 +29,7 @@ INCLUDEPATH += ../extlibs/freealut/freealut-1.1.0-src/include
 LIBS += -L../extlibs/libs
 
 !win32{
-LIBS +=-lopenal -lalut  -lvorbisfile -lvorbis -logg
+LIBS +=-lopenal -lalut  -lvorbisfile -lvorbis -logg -lBox2D
 freebsd-g++|freebsd-clang {
 LIBS += -lexecinfo
 }
