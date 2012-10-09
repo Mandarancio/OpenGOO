@@ -3,7 +3,7 @@
 QT       += core gui xml
 
 
-DESTDIR = ../../bin
+DESTDIR = ../../
 TEMPLATE = app
 
 CONFIG(debug, debug|release) {
