@@ -6,6 +6,6 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 
-SUBDIRS = extlibs \
-          app
+SUBDIRS = src
+
 
