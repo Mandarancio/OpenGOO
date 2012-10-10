@@ -32,7 +32,7 @@ void Menu::paint(QPainter &p){
 }
 
 void Menu::loadMenuFile(){
-    QFile file("menu.index");
+    QFile file("./resources/menu.index");
     if (file.open(QFile::ReadOnly)){
         QTextStream in(&file);
         QString tmp;
