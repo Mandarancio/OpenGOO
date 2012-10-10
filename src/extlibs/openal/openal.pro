@@ -16,12 +16,11 @@ else{
 TARGET      = openal
 OBJECTS_DIR = build/release
 MOC_DIR = build/release
-
-LIBS += -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32
 QMAKE_CFLAGS_RELEASE += /MD
 #QMAKE_LFLAGS += /NODEFAULTLIB
 }
 
+LIBS += -lwinmm -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32
 DEFINES += _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE
 DEFINES += AL_ALEXT_PROTOTYPES AL_BUILD_LIBRARY
 DEFINES += strcasecmp=_stricmp strncasecmp=_strnicmp snprintf=_snprintf isfinite=_finite isnan=_isnan

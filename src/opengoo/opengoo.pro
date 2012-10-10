@@ -57,7 +57,7 @@ INCLUDEPATH += $$(VORBIS_DIR)/include
 
 CONFIG(debug, debug|release) {
 #LIBS += -lopenal32 -lalut -llibogg -llibvorbis -llibvorbisfile
-LIBS += -lopenal -lalut  -lvorbisfile -lvorbis -logg
+LIBS += -lopenald -lalutd  -lvorbisfiled -lvorbisd -loggd -lBox2dd
 
 LIBS +=      -L$$(OGG_DIR)/win32/VS2010/Win32/Debug
 LIBS +=      -L$$(VORBIS_DIR)/win32/VS2010/Win32/Debug

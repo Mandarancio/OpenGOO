@@ -15,16 +15,16 @@ CONFIG(debug, debug|release) {
 TARGET      = vorbisd
 OBJECTS_DIR = build/debug
 MOC_DIR = build/debug
-LIBS += -logg
+LIBS += -loggd
 }
 else{
 TARGET      = vorbis
 OBJECTS_DIR = build/release
 MOC_DIR = build/release
 LIBS += -logg
-QMAKE_LFLAGS += /DEF:".\\libvorbis-1.3.3\\win32\\vorbis.def"
 }
 
+QMAKE_LFLAGS += /DEF:".\\libvorbis-1.3.3\\win32\\vorbis.def"
 DEFINES += _CRT_SECURE_NO_WARNINGS
 
 INCLUDEPATH += ./libvorbis-1.3.3/include \

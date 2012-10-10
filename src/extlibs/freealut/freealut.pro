@@ -13,16 +13,17 @@ CONFIG(debug, debug|release) {
 TARGET      = alutd
 OBJECTS_DIR = build/debug
 MOC_DIR = build/debug
+LIBS += -lopenald
 }
 else{
 TARGET      = alut
 OBJECTS_DIR = build/release
 MOC_DIR = build/release
 
-DEFINES += HAVE_WINDOWS_H HAVE_SLEEP HAVE__STAT ALUT_BUILD_LIBRARY _WIN32
 LIBS += -lopenal
 }
 
+DEFINES += HAVE_WINDOWS_H HAVE_SLEEP HAVE__STAT ALUT_BUILD_LIBRARY _WIN32
 DEFINES += _CRT_SECURE_NO_WARNINGS
 
 INCLUDEPATH += ../libvorbis/libvorbis-1.3.3/include \

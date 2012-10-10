@@ -18,8 +18,9 @@ OBJECTS_DIR = build/release
 MOC_DIR = build/release
 
 DEFINES += WIN32 NDEBUG _WINDOWS _USRDLL LIBOGG_EXPORTS
-QMAKE_LFLAGS += /DEF:".\\libogg-1.3.0\\win32\\ogg.def"
 }
+
+QMAKE_LFLAGS += /DEF:".\\libogg-1.3.0\\win32\\ogg.def"
 
 DEFINES += _CRT_SECURE_NO_WARNINGS
 
