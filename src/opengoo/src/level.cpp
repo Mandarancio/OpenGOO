@@ -164,6 +164,7 @@ void Level::initialize()
     //setup our modified collisionlistener
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
+    //FIXME : used obsolete slot stopGoo(QPoint)
     connect(cl,SIGNAL(stopGOO(QPoint)),this,SLOT(stopGoo(QPoint)));
     if (flag & DEBUG) qWarning()<<"Collision listener created and set up!";
 
