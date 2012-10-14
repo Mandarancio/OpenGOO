@@ -179,7 +179,8 @@ void Introduction::setStartArea(int n, QRect area,int type){
     if (flag & DEBUG) qWarning()<<"A start area is created.";
 }
 
-void Introduction::setGoo(QPoint center, int type){
+void Introduction::setGoo(QPoint center,int id, int type){
+    Q_UNUSED(id)
     int radius=RADIUS+(qrand()%(INTERVALL*2)-INTERVALL);
     if (type==0) { //Create a standard gooo
         DynamicGoo* dg=new DynamicGoo(world,center,radius);

@@ -57,7 +57,7 @@ signals:
     void introEnd();
 private slots:
     void setGround(QPoint gCenter,QList<QPoint> gList);
-    void setGoo(QPoint center, int type=0);
+    void setGoo(QPoint center, int id=0, int type=0);
     void setStartArea(int n,QRect area,int type=0);
 public slots:
 
