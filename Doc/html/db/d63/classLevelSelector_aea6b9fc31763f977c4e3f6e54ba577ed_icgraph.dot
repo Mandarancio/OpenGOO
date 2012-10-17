@@ -1,0 +1,16 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="LevelSelector::getLevelSelected",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="MainWidget::levelSelected",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#a7460c5640216291772a423c19db16f14"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="MainWidget::backToMainMenu",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#aa4d9ebf32f9d2f370209810e1d98cf4f"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="MainWidget::startSelection",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#ace13c66ba2a6a0f0abfbc9041e35a4f2"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="MainWidget::MainWidget",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#af5f794244d1985dc2e40d2f17d8ff552"];
+}

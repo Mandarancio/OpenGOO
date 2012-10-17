@@ -1,0 +1,11 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="HandleCommonException",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="GetExceptionModule",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/def/backtracer__win32_8cpp.html#aa09531a116f4aedc290bc18f132fa575"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="GetExceptionName",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/def/backtracer__win32_8cpp.html#ae51d1070d5781aaf2ebc2ef812914854"];
+}

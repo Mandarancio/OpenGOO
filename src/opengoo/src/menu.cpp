@@ -1,12 +1,12 @@
 #include "menu.h"
+#include "flags.h"
+
 #include <QColor>
 #include <QTextStream>
 #include <QFile>
 #include <QFont>
 #include <QFontMetrics>
 #include <QDebug>
-
-#include "flags.h"
 
 Menu::Menu(QRect geometry, QObject *parent) :
     QObject(parent)
@@ -16,7 +16,6 @@ Menu::Menu(QRect geometry, QObject *parent) :
 
     loadMenuFile();
     selected=0;
-
 }
 
 void Menu::paint(QPainter &p){
@@ -72,7 +71,6 @@ void Menu::paintButton(int ind, QPainter &p){
     p.drawRoundedRect(buttons.at(ind),15,15);
     p.setPen(Qt::white);
     p.drawText(buttons.at(ind),Qt::AlignCenter,index.at(ind));
-
 }
 
 void Menu::computeHeight(){
@@ -103,7 +101,11 @@ void Menu::mouseRelease(QMouseEvent *e){
             break;
         case(3):
             emit this->eventClose();
+            qWarning() << "Esci!";
             break;
+//        case(4):
+//            qWarning() << "Opzioni!";
+//            break;
         default:
             return;
             break;

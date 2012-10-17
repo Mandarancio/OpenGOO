@@ -38,8 +38,10 @@ Introduction::Introduction(QWidget *parent) :
 
     if (flag & DEBUG) qWarning()<<"World object created!";
 
-    //LOADER initialize
+    //LOADER initialization:
+
     this->loader=new SvgLevelLoader("resources/intro.level",this);
+
     connect(loader,SIGNAL(levelGOO(QPoint,int,int)),this,SLOT(setGoo(QPoint,int,int)));
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
     connect(loader,SIGNAL(levelGround(QPoint,QList<QPoint>)),this,SLOT(setGround(QPoint,QList<QPoint>)));
@@ -51,8 +53,6 @@ Introduction::Introduction(QWidget *parent) :
     qWarning()<<time;
     nFrame=0;
     endTime=7.0;
-
-
 }
 
 Introduction::~Introduction(){
@@ -179,7 +179,8 @@ void Introduction::setStartArea(int n, QRect area,int type){
     if (flag & DEBUG) qWarning()<<"A start area is created.";
 }
 
-void Introduction::setGoo(QPoint center, int type){
+void Introduction::setGoo(QPoint center,int id, int type){
+    Q_UNUSED(id)
     int radius=RADIUS+(qrand()%(INTERVALL*2)-INTERVALL);
     if (type==0) { //Create a standard gooo
         DynamicGoo* dg=new DynamicGoo(world,center,radius);

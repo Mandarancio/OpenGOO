@@ -1,11 +1,11 @@
-#include "mainwidget.h"
-
 #include <QDebug>
+
 #include "svglevelloader.h"
-
 #include "introduction.h"
-
+#include "mainwidget.h"
 #include "flags.h"
+
+#include "mainmenu.h"
 
 MainWidget::MainWidget(QRect geometry,QWidget *parent)
     : QWidget(parent)
@@ -15,14 +15,15 @@ MainWidget::MainWidget(QRect geometry,QWidget *parent)
 
     intro=new Introduction(this);
     intro->show();
+
     layout=new QGridLayout(this);
     layout->setMargin(0);
     layout->addWidget(intro,0,0,0,0);
+
     level=NULL;
     levelS=NULL;
+
     connect(intro,SIGNAL(introEnd()),this,SLOT(startSelection()));
-
-
 }
 
 MainWidget::~MainWidget()
@@ -32,15 +33,15 @@ MainWidget::~MainWidget()
 }
 
 void MainWidget::closeEvent(QCloseEvent *e){
+
     if (level!=NULL){
         level->close();
     }
-
-    e->accept();
+  e->accept();
 }
 
 
-void MainWidget::levelSelected()//Create the level selected
+void MainWidget::levelSelected() //Create the level selected
 {
 
     if(flag & DEBUG)qWarning()<<"Level Selected "<<levelS->getLevelSelected().toAscii();
@@ -65,8 +66,7 @@ void MainWidget::levelSelected()//Create the level selected
 
         layout->addWidget(level,0,0,0,0);
 
-        if (flag & DEBUG) qWarning()<<"LEVEL OBJECT INITILIZED";
-
+        if (flag & DEBUG) qWarning()<<"LEVEL OBJECT INITIALIZED";
 
         connect(level,SIGNAL(closing()),this,SLOT(close()));//Connect the closing of the level with the closing of the game
         connect(level,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
@@ -82,26 +82,27 @@ void MainWidget::levelSelected()//Create the level selected
 void MainWidget::backToMainMenu()
 {
     this->show();
-    if (flag & DEBUG) qWarning()<<"Back to Main Menu!";
+    if (flag & DEBUG) qWarning() << "Back to Main Menu!";
     layout->removeWidget(level);
     layout->removeWidget(bgWidget);
     delete level;
     delete bgWidget;
-    levelS=new LevelSelector(this);//Create the level selector
-    levelS->show();//Show the level selector
+    levelS=new LevelSelector(this);                                             //Create the level selector
+    levelS->show();                                                             //Show the level selector
     layout->addWidget(levelS,0,0,0,0);
     level=NULL;
-    connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
-    connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level delete level;
+    connect(levelS,SIGNAL(closing()),this,SLOT(close()));                       //Connect the closing of the levelSelector with the closing of the game
+    connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));    //Connect the choose of the the level to the creation of the level delete level;
 }
 
-void MainWidget::startSelection(){
+void MainWidget::startSelection()
+{
     layout->removeWidget(intro);
     delete intro;
-    levelS=new LevelSelector(this);//Create the level selector
-    levelS->show();//Show the level selector
-    connect(levelS,SIGNAL(closing()),this,SLOT(close())); //Connect the closing of the levelSelector with the closing of the game
-    connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));//Connect the choose of the the level to the creation of the level
+    levelS=new LevelSelector(this);                                             //Creates the level selector
+    levelS->show();                                                             //Shows the level selector
+    connect(levelS,SIGNAL(closing()),this,SLOT(close()));                       //Connect the closing of the levelSelector with the closing of the game
+    connect(levelS,SIGNAL(eventLevelSelected()),this,SLOT(levelSelected()));    //Connect the choose of the the level to the creation of the level
     layout->addWidget(levelS,0,0,0,0);
 }
 

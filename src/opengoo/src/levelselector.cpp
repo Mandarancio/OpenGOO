@@ -1,12 +1,11 @@
-#include "levelselector.h"
-
 #include <QDebug>
 #include <QResizeEvent>
+
+#include "levelselector.h"
 
 LevelSelector::LevelSelector(QWidget *parent):
     QWidget(parent)
 {
-
     this->grabMouse();    
     this->setMouseTracking(true);
     this->grabKeyboard();
@@ -18,7 +17,6 @@ LevelSelector::LevelSelector(QWidget *parent):
     this->findLevels();
 }
 
-
 LevelSelector::~LevelSelector()
 {
     this->setMouseTracking(false);
@@ -26,8 +24,12 @@ LevelSelector::~LevelSelector()
     this->releaseMouse();
 }
 
-void LevelSelector::findLevels()//Find .level file in the current direcotory
+void LevelSelector::findLevels()
 {
+    //!
+    //!Searches the '.level' files in Levels directory.
+    //!
+
     QDir *dir;
     dir=new QDir();
     dir->cd("Levels");
@@ -45,8 +47,8 @@ void LevelSelector::findLevels()//Find .level file in the current direcotory
     delete dir;
 }
 
-void LevelSelector::paintButton(int ind, QPainter &p){
-
+void LevelSelector::paintButton(int ind, QPainter &p)
+{
     QFont f;
     f.setFamily("Times");
     f.setPointSize(32);
@@ -58,17 +60,18 @@ void LevelSelector::paintButton(int ind, QPainter &p){
     p.drawRoundedRect(buttons.at(ind),15,15);
     p.setPen(Qt::white);
     p.drawText(buttons.at(ind),Qt::AlignCenter,levels.at(ind));
-
 }
 
-void LevelSelector::computeHeight(){
+void LevelSelector::computeHeight()
+{
     QFont f;
     f.setFamily("Times");
     f.setPointSize(32);
     buttonHeight=QFontMetrics(f).height()+30;
 }
 
-void LevelSelector::mouseReleaseEvent(QMouseEvent *e){
+void LevelSelector::mouseReleaseEvent(QMouseEvent *e)
+{
     if (e->button()==Qt::LeftButton){        
         selected=-1;
         for (int i=0;i<buttons.length();i++){
@@ -85,7 +88,8 @@ void LevelSelector::mouseReleaseEvent(QMouseEvent *e){
 
 }
 
-void LevelSelector::paintEvent(QPaintEvent *e){
+void LevelSelector::paintEvent(QPaintEvent *e)
+{
     //Initialize painter
     QPainter p(this);
     //call the pain function
@@ -95,7 +99,8 @@ void LevelSelector::paintEvent(QPaintEvent *e){
     else e->ignore();
 }
 
-void LevelSelector::resizeEvent(QResizeEvent *e){
+void LevelSelector::resizeEvent(QResizeEvent *e)
+{
     int yOffset=(e->size().height()-buttons.length()*(buttonHeight+30)+30)/2;
 
     for(int i=0;i<buttons.length();i++)
@@ -106,7 +111,8 @@ void LevelSelector::resizeEvent(QResizeEvent *e){
   //  update();
 }
 
-void LevelSelector::paint(QPainter &p){
+void LevelSelector::paint(QPainter &p)
+{
     QColor bg(0,0,0,200);
     p.setPen(Qt::transparent);
     p.setBrush(bg);
@@ -125,7 +131,8 @@ QString LevelSelector::getLevelSelected()
         return "Exit";
 }
 
-void LevelSelector::keyPressEvent(QKeyEvent *e){
+void LevelSelector::keyPressEvent(QKeyEvent *e)
+{
     if(e->key()==Qt::Key_Escape)
         emit this->closing();
 }

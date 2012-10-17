@@ -1,10 +1,11 @@
-#include "level.h"
 #include <QDebug>
 #include <QFile>
+#include <QPolygon>
+#include <QTextFormat>
 #include <QTextStream>
-#include <QRadialGradient>
 #include <QResizeEvent>
-
+#include <QRadialGradient>
+#include "level.h"
 
 #include "fixedgoo.h"
 #include "dynamicgoo.h"
@@ -13,16 +14,11 @@
 #include "stickygoo.h"
 #include "thorn.h"
 #include "stickylink.h"
-
 #include "balloongoo.h"
 #include "ropejoint.h"
 #include "collisionlistener.h"
-
 #include "publicclass.h"
 #include "flags.h"
-
-#include <QPolygon>
-#include <QTextFormat>
 
 #define RADIUS 18
 #define INTERVALL 4
@@ -30,7 +26,6 @@
 
 QTime itime;
 int fps=0;
-
 
 Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     QWidget(parent), backGroundWidget(bg)
@@ -43,7 +38,6 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
 
     //if (flag & DEBUG) qWarning()<<"Geometry setted:"<<geometry;
 
-
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
     this->grabMouse();
@@ -52,7 +46,7 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
 
     initialize();
 
-    //setup the leveloader with some enviroment parameters
+    //setups the leveloader with some environment parameters
     loader=new SvgLevelLoader(level);
 
     //connect the loader signals
@@ -109,7 +103,8 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
 //Function to start the level
 //parse level file
 //start timer
-bool Level::startLevel(){
+bool Level::startLevel()
+{
     //load the level
     if (loader->parse()){
         if (flag & DEBUG) qWarning()<<"Level parse finished!";
@@ -164,6 +159,7 @@ void Level::initialize()
     //setup our modified collisionlistener
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
+    //FIXME : used obsolete slot stopGoo(QPoint)
     connect(cl,SIGNAL(stopGOO(QPoint)),this,SLOT(stopGoo(QPoint)));
     if (flag & DEBUG) qWarning()<<"Collision listener created and set up!";
 

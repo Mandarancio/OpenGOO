@@ -9,7 +9,9 @@
 #include "backgroundwidget.h"
 #include "introduction.h"
 
-
+/*!
+ * The MainWidget class is the starting point of the game.
+ */
 
 class MainWidget : public QWidget
 {
@@ -18,14 +20,17 @@ class MainWidget : public QWidget
 public:
     MainWidget(QRect geometry,QWidget *parent = 0);
     ~MainWidget();
+
 private:
     Level *level;
     LevelSelector *levelS;
     BackGroundWidget * bgWidget;
     QGridLayout * layout;
     Introduction * intro;
+
 protected:
     void closeEvent(QCloseEvent *);
+
 private slots:
     void levelSelected();
     void backToMainMenu();

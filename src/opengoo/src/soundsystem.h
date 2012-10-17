@@ -8,8 +8,11 @@
 #include <QPoint>
 #include <QList>
 
-
 #include <vorbis/vorbisfile.h>
+
+/*!
+ * The SoundSystem class manages the sound using openAL.
+ */
 
 class SoundSystem
 {

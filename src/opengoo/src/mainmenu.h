@@ -7,7 +7,7 @@ class MainMenu : public Level
 {
     Q_OBJECT
 public:
-    explicit MainMenu(BackGroundWidget * bgWidget,QWidget *parent = 0);
+    explicit MainMenu(BackGroundWidget *, QWidget *parent = 0);
     
 signals:
     

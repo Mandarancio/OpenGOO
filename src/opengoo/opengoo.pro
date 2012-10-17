@@ -116,6 +116,7 @@ HEADERS += \
     src/soundsystem.h \
     src/publicclass.h \
     src/playsoundthread.h \
+    src/options.h
 
 
 SOURCES += \
@@ -148,6 +149,7 @@ SOURCES += \
     src/soundsystem.cpp \
     src/publicclass.cpp \
     src/playsoundthread.cpp \
+    src/options.cpp
 
 
 !win32{

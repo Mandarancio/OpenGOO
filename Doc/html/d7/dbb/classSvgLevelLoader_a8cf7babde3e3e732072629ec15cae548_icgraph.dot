@@ -1,0 +1,26 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="SvgLevelLoader::levelGoal",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="SvgLevelLoader::parse",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d7/dbb/classSvgLevelLoader.html#a3bbc09b35d62e646892ca2e213e7fd22"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Introduction::Introduction",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d0/d24/classIntroduction.html#a48393f6ccb41a853300b4bbd44a2be21"];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Level::startLevel",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/d9d/classLevel.html#a30245d7fbba8bf74310289f2c6233af7"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="MainWidget::levelSelected",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#a7460c5640216291772a423c19db16f14"];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="MainWidget::backToMainMenu",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#aa4d9ebf32f9d2f370209810e1d98cf4f"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="MainWidget::startSelection",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#ace13c66ba2a6a0f0abfbc9041e35a4f2"];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="MainWidget::MainWidget",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d73/classMainWidget.html#af5f794244d1985dc2e40d2f17d8ff552"];
+  Node2 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Level::restart",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/d9d/classLevel.html#ab18900b8195c469cc78c906216eb9eb0"];
+  Node9 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Level::Level",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/d9d/classLevel.html#aab4805fc7397cd5ab9d9852a1d403a0d"];
+}

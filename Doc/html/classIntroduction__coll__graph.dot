@@ -1,0 +1,46 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Introduction",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="QWidget",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classQWidget.html"];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" goos" ,fontname="Helvetica"];
+  Node3 [label="QList\< Goo * \>",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" loader" ,fontname="Helvetica"];
+  Node4 [label="SvgLevelLoader",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classSvgLevelLoader.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="QObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classQObject.html"];
+  Node6 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" goos" ,fontname="Helvetica"];
+  Node6 [label="QList\< QPair\< int, Goo * \> \>",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node7 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" path" ,fontname="Helvetica"];
+  Node7 [label="QString",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node8 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" w\nh" ,fontname="Helvetica"];
+  Node8 [label="int",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node9 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" links" ,fontname="Helvetica"];
+  Node9 [label="QList\< QPair\< int, int \> \>",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node10 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" translation" ,fontname="Helvetica"];
+  Node10 [label="QPoint",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node11 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" time" ,fontname="Helvetica"];
+  Node11 [label="double",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node12 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" world" ,fontname="Helvetica"];
+  Node12 [label="b2World *",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node13 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" scale\nendTime\nstep" ,fontname="Helvetica"];
+  Node13 [label="float",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node14 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" ground" ,fontname="Helvetica"];
+  Node14 [label="QList\< Ground * \>",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node8 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" nFrame" ,fontname="Helvetica"];
+  Node15 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" itime" ,fontname="Helvetica"];
+  Node15 [label="QTime",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node16 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" debugPainter" ,fontname="Helvetica"];
+  Node16 [label="QB2Draw",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classQB2Draw.html"];
+  Node17 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node17 [label="b2Draw",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classb2Draw.html"];
+  Node5 -> Node16 [dir="back",color="firebrick4",fontsize="10",style="solid",fontname="Helvetica"];
+  Node18 -> Node16 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" painter" ,fontname="Helvetica"];
+  Node18 [label="QPainter *",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node13 -> Node16 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" scale" ,fontname="Helvetica"];
+  Node19 -> Node16 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" geometry" ,fontname="Helvetica"];
+  Node19 [label="QRect",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+}

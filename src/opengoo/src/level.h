@@ -8,32 +8,23 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <Box2D/Box2D.h>
-
 #include <QTime>
-
 #include <QPair>
 
-
-#include "goo.h"
+#include "backgroundwidget.h"
+#include "playsoundthread.h"
+#include "svglevelloader.h"
 #include "balloongoo.h"
+//#include "soundsystem.h"
+#include "background.h"
+#include "stickylink.h"
+#include "goo.h"
 #include "ground.h"
 #include "joint.h"
 #include "target.h"
 #include "menu.h"
 #include "object.h"
-
-#include "background.h"
-
-#include "svglevelloader.h"
-
 #include "qb2draw.h"
-
-//#include "soundsystem.h"
-#include "playsoundthread.h"
-
-#include "backgroundwidget.h"
-
-#include "stickylink.h"
 
 
 struct Direction {

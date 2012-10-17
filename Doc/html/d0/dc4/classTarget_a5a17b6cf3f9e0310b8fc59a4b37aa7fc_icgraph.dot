@@ -1,0 +1,9 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Target::paint",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="BackGroundWidget::paintEvent",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/d7a/classBackGroundWidget.html#a377aa81b4d8c8d3dea52bc3dbb11b3ba"];
+}

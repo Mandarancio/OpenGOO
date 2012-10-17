@@ -1,0 +1,32 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="BackGroundWidget::translated",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Level::moveDown",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#ab09ebc81124b403418c6b06cde8d1a0d"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Level::timerEvent",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#a47263f00b559de3fce0164f9efac0f6b"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Level::moveLeft",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#aefcc41497f4662a636ef3a6aae0d2567"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Level::moveOf",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#a8fa0911e62e5d06be61c764dee7c1f2f"];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Level::mouseMoveEvent",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#a7221d73229e77fcddcfe04205f00daac"];
+  Node5 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Level::zoom",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#ad6362f8e1989aaf0f094c04128a2e194"];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Level::wheelEvent",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#aff490e6567883a3156fe0a88fbf00f82"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Level::moveRight",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#a00a5e20cd17829985b96cca60386db70"];
+  Node9 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Level::moveUp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#a566021f3e62cfe546f06bd076c720e45"];
+  Node10 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="Level::setLimit",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#a45ce4c97429c9d9c3272ebe5df5bdbaa"];
+  Node11 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="Level::Level",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLevel.html#aab4805fc7397cd5ab9d9852a1d403a0d"];
+}

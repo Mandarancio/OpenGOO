@@ -11,6 +11,10 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 
+/*!
+ * The class 'menu' draws the game menu reading the entries in menu.index file located in 'resources' folder.
+ */
+
 class Menu : public QObject
 {
     Q_OBJECT

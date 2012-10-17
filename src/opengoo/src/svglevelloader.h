@@ -1,21 +1,19 @@
 #ifndef SVGLEVELLOADER_H
 #define SVGLEVELLOADER_H
 
-#include <QObject>
-
 #include <QDomElement>
-
+#include <QObject>
 #include <QList>
 #include <QPoint>
 #include <QRect>
 #include <QPair>
-
 
 #include "goo.h"
 
 class SvgLevelLoader : public QObject
 {
     Q_OBJECT
+
 public:
     explicit SvgLevelLoader(QString path="", QObject *parent = 0) :
         QObject(parent),
@@ -26,15 +24,15 @@ public:
     void setFile(QString path){
         this->path=path;
     }
+
     //function that parse the svg
     bool parse();
     //function to add a created goo
     void addGoo(int id, Goo* goo);
+
 private:
     int h,w;
     QPoint translation;
-
-
 
     //function that return the list index of a goo from id (-1 not found)
     int getIndex(int id);
@@ -43,8 +41,6 @@ private:
     void parseBackground(QDomElement el);
     //Parse ground object
     //void parseGround(QDomElement el);
-
-
 
     //function to parse a translation from a domelement
     QPoint parseTransform(QDomElement el);
@@ -60,13 +56,11 @@ private:
     QColor parseFill(QDomElement el);
 
 
-    //point rescalation
-//    QPoint scalePoint(QPoint p);
+    // point rescalation
+    // QPoint scalePoint(QPoint p);
 
     //path of the file to open
     QString path;
-
-
 
     //List to store links to be created
     QList<QPair<int,int> > links;
@@ -93,6 +87,7 @@ signals:
     void addLevelThorn(QPoint center,QList<QPoint> thornPoints);
     //add a shape to a bg object
     void addBackGroundShape(int id,QPolygon poly,QColor color);
+
 public slots:
 
 };

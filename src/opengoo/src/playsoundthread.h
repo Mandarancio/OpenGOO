@@ -6,6 +6,10 @@
 #include "soundsystem.h"
 #include "publicclass.h"
 
+/*!
+ * The PlaySoundThread class is a thread that manages the background song.
+ */
+
 class PlaySoundThread : public QThread
 {
     Q_OBJECT

@@ -3,7 +3,8 @@
 #include <QDebug>
 #include <vector>
 #define BUFFER_SIZE  512 //32768     // 32 KB buffers
-SoundSystem::SoundSystem() : center(QPoint(0,0))
+
+SoundSystem::SoundSystem():center(QPoint(0,0))
 {
     active=false;
 }
@@ -51,11 +52,11 @@ QPair<unsigned int,unsigned int> SoundSystem::createSource(ALbyte fileName[]){
 
     if (!active) return QPair<unsigned int, unsigned int>(0,0);
     char*     alBuffer;             //data for the buffer
-    ALenum alFormatBuffer;    //buffer format
-    ALsizei   alFreqBuffer;       //frequency
-    long       alBufferLen;        //bit depth
-    ALboolean    alLoop;         //loop
-    unsigned int alSource;      //source
+    ALenum alFormatBuffer;          //buffer format
+    ALsizei   alFreqBuffer;         //frequency
+    long       alBufferLen;         //bit depth
+    ALboolean    alLoop;            //loop
+    unsigned int alSource;          //source
     unsigned int alSampleSet;
 
     alutLoadWAVFile(fileName,&alFormatBuffer, (void **) &alBuffer,(ALsizei *)&alBufferLen, &alFreqBuffer, &alLoop);
@@ -125,9 +126,8 @@ void SoundSystem::playWav(ALbyte file[], float volume){
     alSourcef(alSource,AL_GAIN,volume);
     alSourcePlay(alSource);
     alutUnloadWAV(alFormatBuffer,alBuffer,alBufferLen,alFreqBuffer);
-   // alDeleteSources(1,&alSource);
+    // alDeleteSources(1,&alSource);
     alDeleteBuffers(1,&alSampleSet);
-
 }
 
 bool SoundSystem::sourceStatus(unsigned int source){
@@ -156,6 +156,7 @@ void SoundSystem::setPosition(unsigned int source, QPoint p){
 }
 
 void SoundSystem::playOGG(char* name){
+
     ALint state;                // The state of the sound source
     ALuint bufferID;            // The OpenAL sound buffer ID
     //ALuint sourceID;            // The OpenAL sound source
@@ -180,9 +181,9 @@ void SoundSystem::playOGG(char* name){
 #else
     if( (f = fopen(name, "r")) == NULL){
 #endif
-            qWarning()<<"file "<<name<<" not opened.";
-            return;
-        }
+        qWarning()<<"file "<<name<<" not opened.";
+        return;
+    }
 
     vorbis_info *pInfo;
     OggVorbis_File oggFile;
@@ -213,27 +214,30 @@ void SoundSystem::playOGG(char* name){
     ov_clear(&oggFile);
 
     // Upload sound data to buffer
-      alBufferData(bufferID, format, &bufferData[0], static_cast < ALsizei > (bufferData.size()), freq);
+    alBufferData(bufferID, format, &bufferData[0], static_cast < ALsizei > (bufferData.size()), freq);
 
-      // Attach sound buffer to source
-      alSourcei(sourceID, AL_BUFFER, bufferID);
+    // Attach sound buffer to source
+    alSourcei(sourceID, AL_BUFFER, bufferID);
 
-      alSourcef(sourceID,AL_GAIN,0.5f);
-      // Finally, play the sound!!!
-      alSourcePlay(sourceID);
-      // This is a busy wait loop but should be good enough for example purpose
-      do {
+    alSourcef(sourceID,AL_GAIN,0.5f);
+    // Finally, play the sound!!!
+    alSourcePlay(sourceID);
+    // This is a busy wait loop but should be good enough for example purpose
+    do {
         // Query the state of the souce
         alGetSourcei(sourceID, AL_SOURCE_STATE, &state);
-      } while (state != AL_STOPPED);
+    } while (state != AL_STOPPED);
 
 
-      // Clean up sound buffer and source
-      alDeleteBuffers(1, &bufferID);
-      alDeleteSources(1, &sourceID);
+    // Clean up sound buffer and source
+    alDeleteBuffers(1, &bufferID);
+    alDeleteSources(1, &sourceID);
 }
 
 ALuint SoundSystem::getSource() {
-    //Gets the active source played with playOGG.
+    //!
+    //!Gets the active source played with playOGG.
+    //!
+
     return sourceID;
 }

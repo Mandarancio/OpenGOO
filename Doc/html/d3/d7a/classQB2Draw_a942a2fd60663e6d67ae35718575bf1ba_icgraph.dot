@@ -1,0 +1,19 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="QB2Draw::toQPoint",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="QB2Draw::DrawPolygon",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d3/d7a/classQB2Draw.html#aae38ab3ac45fb04912aebfa1cd1986b3"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="QB2Draw::DrawSolidPolygon",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d3/d7a/classQB2Draw.html#a634b9b7de1a54f7b137b51350e416588"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="QB2Draw::DrawCircle",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d3/d7a/classQB2Draw.html#a4860d39ba71abf5ae45e9694b853388c"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="QB2Draw::DrawSolidCircle",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d3/d7a/classQB2Draw.html#ae718180034b29dfb77fd9e0f5da77ac1"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="QB2Draw::DrawSegment",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d3/d7a/classQB2Draw.html#af3f6722f9e2f9c875229919bbc9be7f8"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="QB2Draw::DrawTransform",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d3/d7a/classQB2Draw.html#a60b49c71ea60f988573bd8620ddc3d1d"];
+}
