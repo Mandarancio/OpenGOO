@@ -26,6 +26,7 @@ BalloonGoo::BalloonGoo(b2World *world, QPoint p, int radius, QObject *parent):
     body->SetFixedRotation(true);
 
     type=BALOON;
+    active=false;
 }
 
 void BalloonGoo::paint(QPainter &p){
