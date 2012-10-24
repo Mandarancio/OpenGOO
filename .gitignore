@@ -20,4 +20,6 @@ Makefile*
 *.dll
 *.exp
 *.lib
-*.lib
+*libs/*.lib
+src/extlibs/libs/*.lib
+start.bat
