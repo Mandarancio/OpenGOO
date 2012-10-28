@@ -1,0 +1,18 @@
+OpenGooDTS Report <uuid> generated on <date-time>
+
+-----------------------------------------------------
+-	            Architecture		    -
+-----------------------------------------------------
+- <gameVer> in <build>
+- <os> on <architecture> with <vga>, <driverVer>
+
+-----------------------------------------------------
+-		       Report			    -
+-----------------------------------------------------
+-Tracer=
+<debugOutput>
+-UserDescription=
+<userDescription>
+
+-----------------------------------------------------
+Sent on <sendDate>

@@ -1,0 +1,4 @@
+Determinare scheda video?? E versione del driver?? 
+
+Scheda video lspci.
+Versione driver??

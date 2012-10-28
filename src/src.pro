@@ -7,5 +7,6 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS = extlibs \
-          opengoo
+          opengoo \
+          opengoodst
 

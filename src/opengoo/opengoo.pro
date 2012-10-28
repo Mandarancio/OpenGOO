@@ -1,5 +1,3 @@
-
-
 QT       += core gui xml
 
 
@@ -26,6 +24,7 @@ INCLUDEPATH += ../extlibs/openal/openal-soft-1.14/include/AL
 INCLUDEPATH += ../extlibs/libvorbis/libvorbis-1.3.3/include
 INCLUDEPATH += ../extlibs/libogg/libogg-1.3.0/include
 INCLUDEPATH += ../extlibs/freealut/freealut-1.1.0-src/include
+INCLUDEPATH += ../opengoodst/src
 LIBS += -L../extlibs/libs
 
 !win32{
@@ -116,7 +115,8 @@ HEADERS += \
     src/soundsystem.h \
     src/publicclass.h \
     src/playsoundthread.h \
-    src/options.h
+    src/options.h \
+    src/crashxmlmodule.h
 
 
 SOURCES += \
@@ -149,7 +149,8 @@ SOURCES += \
     src/soundsystem.cpp \
     src/publicclass.cpp \
     src/playsoundthread.cpp \
-    src/options.cpp
+    src/options.cpp \
+    src/crashxmlmodule.cpp
 
 
 !win32{

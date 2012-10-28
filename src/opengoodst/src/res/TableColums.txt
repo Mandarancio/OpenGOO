@@ -1,0 +1,5 @@
+Sended::
+GameVersion - Date - Send Date - Fixed - in version.
+
+Unsended::
+GameVersion - Date

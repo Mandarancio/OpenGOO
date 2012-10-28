@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/res/images">
+        <file>res/black-goo.riscaled.png</file>
+        <file>res/black-goo.v1.0.svg</file>
+        <file>res/logo.svg</file>
+        <file>res/g4567.png</file>
+        <file>res/icon.png</file>
+    </qresource>
+</RCC>

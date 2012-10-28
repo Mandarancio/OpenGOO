@@ -1,0 +1,12 @@
+<!DOCTYPE debugFile>
+<gameReports>
+ <sysInfo os="ArchLinux" arch="1" driverVer="*" build="*" vga="NVidia" gameVer="pA1" inUse="0">
+  <report userDescription="This is a sent report" sent="1" sendDate="Mon Jul 2 09:53:19 2012" uuid="{feeb4441-2acc-4174-893b-ada82ff5b827}" debugOutput="The backtrace + debug output" date-time="Mon Jul 2 09:53:19 2012" fixed="0" gameVerFix=""/>
+  <report userDescription="This is an unsent report" sent="0" sendDate="" uuid="{faab4441-2acc-4073-893b-ada82ff5b827}" debugOutput="The backtrace + debug output" date-time="Sun Jul 8 09:53:19 2012" fixed="0" gameVerFix=""/>
+ </sysInfo>
+ <sysInfo os="Fedora 16" arch="2" driverVer="*" build="*" vga="Ati" gameVer="pA2" inUse="1">
+  <report userDescription="This is a sent report" sent="1" sendDate="Mon Jul 2 09:53:19 2012" uuid="{feeb4441-2acc-4073-893b-ada82ff5b838}" debugOutput="The backtrace + debug output" date-time="Mon Jul 2 09:53:19 2012" fixed="0" gameVerFix=""/>
+  <report userDescription="This is an unsent report" sent="0" sendDate="" uuid="{feeb4551-2acc-4073-893b-ada82ff5b827}" debugOutput="The backtrace + debug output" date-time="Sun Jul 8 09:53:19 2012" fixed="0" gameVerFix=""/>
+  <report userDescription="This is a textual sent report, fixed" sent="1" sendDate="Sat Jul 7 09:53:19 2012" uuid="{feeb4441-2acc-4073-893b-ada82ff5b827}" debugOutput="No debug output" date-time="Sat Jul 7 09:53:19 2012" fixed="1" gameVerFix="pA3"/>
+ </sysInfo>
+</gameReports>

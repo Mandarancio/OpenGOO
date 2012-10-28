@@ -6,6 +6,7 @@
 
 #include <QDebug>
 #include <QString>
+#include <QProcess>
 
 static void SignalHandler(int32_t sig, siginfo_t *info, void *scp);
 
@@ -22,14 +23,36 @@ static void SignalHandler(int32_t sig, siginfo_t *info, void *scp){
     int32_t nSize = backtrace(array, 64);
     char ** symbols = backtrace_symbols(array, nSize);
     ucontext_t * ucx = static_cast<ucontext_t*>(scp);
-    qWarning() << "signal " << sig << " si_code " << info->si_code << " si_addr " << hex
+
+    QString backtraceText;
+    QTextStream backtraceStream(&backtraceText);
+
+
+    backtraceStream << "signal " << sig << " si_code " << info->si_code << " si_addr " << hex
         << info->si_addr << dec << " ss_sp "
         << ucx->uc_stack.ss_sp;
+
     for (int32_t i = 2; i < nSize; i++)
-        qWarning()<<symbols[i];
+        backtraceStream<<symbols[i];
 
     free(symbols);
     signal(SIGABRT, SIG_DFL);
+
+    //At crash the reports is generated and OpenGooDst is launched.
+
+    CrashXmlModule *reportModule = new CrashXmlModule(/*backtraceText*/);
+    QUuid reportQUuid = reportModule->getUuid();
+
+    QProcess *myProcess = new QProcess;
+
+    QString program = "./OpenGooDst";
+    QStringList arguments;
+    arguments << "-m" << "-Uuid=" + reportQUuid;
+
+    myProcess->start(program, arguments);
+
+    delete reportModule;
+
     exit(sig);
 }
 
