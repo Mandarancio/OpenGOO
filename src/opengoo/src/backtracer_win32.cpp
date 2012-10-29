@@ -16,6 +16,8 @@
      case code:\
       return _T(#code);
 
+const DWORD MS_VC_EXCEPTION=0x406D1388;
+
 LPTSTR GetExceptionName(DWORD code)
 {
     switch(code)
@@ -45,6 +47,9 @@ LPTSTR GetExceptionName(DWORD code)
 
     case 0xE06D7363:
         return _T("C++ Exception");
+
+    case MS_VC_EXCEPTION:
+        return _T("Visual C++ exception");
 
     default:
         return _T("Unknown exception");
@@ -102,7 +107,7 @@ void printStack( void )
 
      SymInitialize( process, NULL, TRUE );
 
-     frames               = CaptureStackBackTrace( 0, 100, stack, NULL );
+     frames               = CaptureStackBackTrace( 0, 62, stack, NULL );
      symbol               = ( SYMBOL_INFO * )calloc( sizeof( SYMBOL_INFO ) + 256 * sizeof( char ), 1 );
      symbol->MaxNameLen   = 255;
      symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
@@ -145,7 +150,7 @@ void save_stack()
 
         SymInitialize( process, NULL, TRUE );
 
-        frames               = CaptureStackBackTrace( 0, 100, stack, NULL );
+        frames               = CaptureStackBackTrace( 0, 62, stack, NULL );
         symbol               = ( SYMBOL_INFO * )calloc( sizeof( SYMBOL_INFO ) + 256 * sizeof( char ), 1 );
         symbol->MaxNameLen   = 255;
         symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
@@ -288,6 +293,10 @@ void HandleCommonException(LPEXCEPTION_POINTERS info)
 
 LONG WINAPI UnhandledException2(LPEXCEPTION_POINTERS exceptionInfo)
 {
+    // Visual C++ exception
+    if(exceptionInfo->ExceptionRecord->ExceptionCode == MS_VC_EXCEPTION)
+        return EXCEPTION_EXECUTE_HANDLER;
+
     save_dump(exceptionInfo);
     save_stack();
     switch(exceptionInfo->ExceptionRecord->ExceptionCode)
