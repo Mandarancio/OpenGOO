@@ -12,5 +12,5 @@ QUuid CrashXmlModule::getUuid() {
     //!
     //!The function returns the QUuid of the report generated and saved.
     //!
-
+    return QUuid();
 }
