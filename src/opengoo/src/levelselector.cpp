@@ -6,7 +6,9 @@
 LevelSelector::LevelSelector(QWidget *parent):
     QWidget(parent)
 {
-    this->grabMouse();    
+#ifndef DONT_GRAB_MOUSE
+    this->grabMouse();
+#endif
     this->setMouseTracking(true);
     this->grabKeyboard();
 
@@ -21,7 +23,9 @@ LevelSelector::~LevelSelector()
 {
     this->setMouseTracking(false);
     this->releaseKeyboard();
+#ifndef DONT_GRAB_MOUSE
     this->releaseMouse();
+#endif
 }
 
 void LevelSelector::findLevels()

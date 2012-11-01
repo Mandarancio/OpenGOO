@@ -40,7 +40,9 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
 
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
+#ifndef DONT_GRAB_MOUSE
     this->grabMouse();
+#endif
     this->setMouseTracking(true);
     if (flag & DEBUG) qWarning()<<"Mouse and keyboard grabbed";
 
@@ -125,16 +127,12 @@ void Level::initialize()
 
     this->time=0;
 
-    soundSystem=new SoundSystem(); //Soundsystem for level in-game sounds.
-    soundSystem->initialize();
-    sSystem=soundSystem;
+    sSystem=new SoundSystem(); //Soundsystem for level in-game sounds.
+    sSystem->initialize();
 
-    //old code.
-//    char name[100]="./resources/music/opengoo.ogg";
-//    soundSystem->playOGG(name);
+    sSystem->initMusic("./resources/music/opengoo.ogg");
+    sSystem->startMusic();
 
-    playSong = new PlaySoundThread; //SoundSystem for the soundtrack.
-    playSong->start();
     mute = false;
 
     dir.left=false;
@@ -191,11 +189,10 @@ void Level::initialize()
 //Clean function
 void Level::clean(){
 
-    playSong->quit();   //Delete song and sound system.
-    playSong->wait();   //Wait the end of the thread.
+//Delete song and sound system.
+    sSystem->delMusic();
+    delete sSystem;
 
-    delete soundSystem;
-    delete playSong;
 
     //clear object bodies
     backGroundWidget->clear();
@@ -703,9 +700,9 @@ void Level::keyReleaseEvent(QKeyEvent *e){
 
         if(!mute) {
             if (onMenu) {
-                playSong->pauseSong();
+                sSystem->pauseMusic();
             } else {
-                playSong->startSong();
+                sSystem->startMusic();
             }
         }
 
@@ -907,7 +904,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     showJointTimer=0;
 
     if (onMenu){
-        if(!mute) playSong->pauseSong();
+        if(!mute) sSystem->pauseMusic();
         menu->mouseRelease(e);
     }
 
@@ -1152,11 +1149,11 @@ void Level::clickMute(QPoint p){
        p.y() <= height()-60.0+50.0))
     {
         if(mute) {
-            playSong->startSong();
+            sSystem->startMusic();
             mute = !mute;
         }
         else {
-            playSong->pauseSong();
+            sSystem->pauseMusic();
             mute = !mute;
         }
 
@@ -1486,4 +1483,9 @@ void Level::addBGShape(int level, QPolygon poly, QColor color){
         bg->setDelta(0.3*(3-level));
         background.push_back(bg);
     }
+}
+
+void Level::resume(){                      //Close the menu
+    onMenu=false;
+    sSystem->startMusic();          //Restart playing the song.
 }

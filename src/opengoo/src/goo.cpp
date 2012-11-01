@@ -40,8 +40,7 @@ Goo::Goo( int radius, QObject *parent) :
     prevTarget=NULL;
     type=NONE;
 
-    ALbyte name[100]="resources/sounds/scream.wav";
-    scream=sSystem->createSource(name);
+    scream = sSystem->createPair(SoundSystem::scream);
 }
 
 //Check if is on ground
@@ -103,8 +102,8 @@ void Goo::move(QPoint p){
 void Goo::jumpTo(QPoint p){
     stopFollow();
     if (!falling){
-        ALbyte name[100]="resources/sounds/captured.wav";
-        QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
+
+        QPair<unsigned int,unsigned int> source =sSystem->createPair(SoundSystem::captured);
         sSystem->setPitch(source.first,float(radius)/20.0);
         sSystem->setVolume(source.first,radius/24.0);
         sSystem->setPosition(source.first,getPPosition());
@@ -217,8 +216,7 @@ void Goo::drag(){
     }
     if (!hasJoint())  {
         if (!dragging){
-            ALbyte name[100]="resources/sounds/drag.wav";
-            QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
+            QPair<unsigned int,unsigned int> source = sSystem->createPair(SoundSystem::drag);
             sSystem->setPitch(source.first,20.0/float(radius));
             sSystem->setVolume(source.first,radius/24.0);
             sSystem->setPosition(source.first,getPPosition());
@@ -230,9 +228,6 @@ void Goo::drag(){
     body->SetLinearVelocity(b2Vec2(0,0));
     body->SetAngularVelocity(0);
     dragging=true;
-
-
-
 }
 
 void Goo::drop(){

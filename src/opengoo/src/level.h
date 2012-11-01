@@ -12,7 +12,6 @@
 #include <QPair>
 
 #include "backgroundwidget.h"
-#include "playsoundthread.h"
 #include "svglevelloader.h"
 #include "balloongoo.h"
 //#include "soundsystem.h"
@@ -110,10 +109,6 @@ private:
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
 
-    //SOUND
-    SoundSystem *soundSystem;
-    PlaySoundThread *playSong;
-    
     bool mute;  // if true turn off music, if false turn on music
 
     //METHOD
@@ -228,10 +223,7 @@ private slots:
     void towerLost();                   //Actions to do when the tower in no more near the target
 
     //LEVEL SLOTS:
-    void resume(){                      //Close the menu
-        onMenu=false;
-        playSong->startSong();          //Restart playing the song.
-    }
+    void resume();                      //Close the menu
     void restart();                     //Restart the level
     void closeAll(){                    //Close the game
         emit this->closing();
