@@ -100,8 +100,7 @@ void Joint::status(){
         if (a->isDragging() || b->isDragging()){
             Goo* d=(a->isDragging()? a : b);
 
-            ALbyte name[100]="resources/sounds/pop.wav";
-            QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
+            QPair<unsigned int,unsigned int> source =sSystem->createPair(SoundSystem::pop);
            // soundSystem.setPitch(source.first,float(d->getRadius())/24.0);
             sSystem->setVolume(source.first,0.2*float(d->getRadius())/24.0);
             sSystem->setPosition(source.first,d->getPPosition());

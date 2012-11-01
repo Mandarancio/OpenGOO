@@ -391,8 +391,7 @@ void DynamicGoo::contactGround(){
 
         if (!isSleeping() && qAbs(body->GetAngularVelocity())<body->GetLinearVelocity().Length() && prevTarget==NULL&&  (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
 
-            ALbyte name[100]="resources/sounds/boing2.wav";
-            QPair<unsigned int,unsigned int> source =sSystem->createSource(name);
+            QPair<unsigned int,unsigned int> source =sSystem->createPair(SoundSystem::boing2);
             sSystem->setPitch(source.first,24.0/float(radius)*60.0/body->GetLinearVelocity().Length());
             sSystem->setVolume(source.first,2.0*body->GetLinearVelocity().Length()/80.0*radius/24.0);
             sSystem->setPosition(source.first,getPPosition());
