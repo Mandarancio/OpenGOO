@@ -40,7 +40,9 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
 
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
+#ifndef DONT_GRAB_MOUSE
     this->grabMouse();
+#endif
     this->setMouseTracking(true);
     if (flag & DEBUG) qWarning()<<"Mouse and keyboard grabbed";
 

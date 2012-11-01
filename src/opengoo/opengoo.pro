@@ -35,7 +35,7 @@ LIBS += -lexecinfo
 }
 
 win32:{
-DEFINES += _UNICODE
+DEFINES += _UNICODE DONT_GRAB_MOUSE
 LIBS += -lDbgHelp -lAdvapi32 -lpsapi -lUser32
 
 
