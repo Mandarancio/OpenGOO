@@ -114,7 +114,6 @@ HEADERS += \
     src/introduction.h\
     src/soundsystem.h \
     src/publicclass.h \
-    src/playsoundthread.h \
     src/options.h \
     src/crashxmlmodule.h
 
@@ -148,7 +147,6 @@ SOURCES += \
     src/introduction.cpp\
     src/soundsystem.cpp \
     src/publicclass.cpp \
-    src/playsoundthread.cpp \
     src/options.cpp \
     src/crashxmlmodule.cpp
 

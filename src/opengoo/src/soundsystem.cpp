@@ -1,243 +1,263 @@
 #include "soundsystem.h"
 #include <AL/alut.h>
+#include <QFileInfo>
 #include <QDebug>
 #include <vector>
-#define BUFFER_SIZE  512 //32768     // 32 KB buffers
 
-SoundSystem::SoundSystem():center(QPoint(0,0))
+SoundSystem::SoundSystem()
 {
     active=false;
+    bufScream = bufBoing2 = bufPop = bufCaptured = bufDrag = NULL;
 }
 
-SoundSystem::~SoundSystem(){
-    if (!active) return;
-    alcDestroyContext(context);
-    alcCloseDevice(device);
-    active = false;
+SoundSystem::~SoundSystem()
+{
+    if (active) alutExit();
 }
 
-bool SoundSystem::initialize(){
+bool SoundSystem::initialize()
+{
+    active = alutInit(NULL, NULL);
+    return active;
+}
 
-    device = alcOpenDevice(NULL);
-    if (device == NULL)
+void SoundSystem::setCenter(QPoint p)
+{
+    center=p;
+}
+
+QPair<unsigned int,unsigned int> SoundSystem::createPair(const char* fileName)
+{
+    if (!active) return QPair<unsigned int, unsigned int>(0,0);
+    ALuint source;          //source
+    ALuint buffer;       // buffer
+
+    // [1] create  buffer and source
+    buffer = createBufferFromFile(fileName);
+    source = genSource();
+
+    // [2] attach the buffer to source
+    attachBuffer(source, buffer);
+
+    return QPair<unsigned int, unsigned int>(source, buffer);
+}
+
+QPair<unsigned int,unsigned int> SoundSystem::createPair(typeSound type)
+{
+    if (!active) return QPair<unsigned int, unsigned int>(0,0);
+    ALuint buffer;          // Buffer ID
+    ALuint source;          // Source ID
+
+    // [1] Create  buffer and source
+    source = genSource();
+
+    // [2] Attach the buffer to source
+    switch(type)
     {
-        qWarning("OpenAL problem! No audio device found!");
-        return false;
+        case scream:
+         if(bufScream == NULL) bufScream = createBufferFromFile("resources/sounds/scream.wav");
+         buffer = bufScream;
+         break;
+        case boing2:
+            if(bufBoing2 == NULL) bufBoing2 = createBufferFromFile("resources/sounds/boing2.wav");
+            buffer = bufBoing2;
+            break;
+        case pop:
+            if(bufPop == NULL) bufPop = createBufferFromFile("resources/sounds/pop.wav");
+            buffer = bufPop;
+            break;
+        case captured:
+            if(bufCaptured == NULL) bufCaptured = createBufferFromFile("resources/sounds/captured.wav");
+            buffer = bufCaptured;
+            break;
+        case drag:
+            if(bufDrag == NULL) bufDrag = createBufferFromFile("resources/sounds/drag.wav");
+            buffer = bufDrag;
+            break;
+        default:
+            buffer = NULL;
+            break;
     }
-    active=true;
-    //Create a context
-    context=alcCreateContext(device,NULL);
 
-    //Set active context
-    alcMakeContextCurrent(context);
+    attachBuffer(source, buffer);
+
+    return QPair<unsigned int, unsigned int>(source, buffer);
+}
+
+void SoundSystem::setVolume(unsigned int source, float volume)
+{
+    if (active) alSourcef(source,AL_GAIN,volume);
+}
+
+void SoundSystem::setPitch(unsigned int source, float value)
+{
+    if (active) alSourcef(source,AL_PITCH,value);
+}
+
+void SoundSystem::playSource(unsigned int source)
+{
+    if (active) alSourcePlay(source);
+}
+
+void SoundSystem::stopSource(unsigned int source)
+{
+    if (active) alSourceStop(source);
+}
+
+void SoundSystem::pauseSource(unsigned int source)
+{
+    if(active) alSourcePause(source);
+}
+
+bool SoundSystem::sourceStatus(unsigned int source)
+{
+    if (!active) return false;
+
+    ALenum state;
+
+    alGetSourcei(source, AL_SOURCE_STATE, &state);
+
+    return (state == AL_PLAYING);
+}
+
+void SoundSystem::addSource(QPair<unsigned int, unsigned int> source)
+{
+    if (!sources.contains(source)) sources.push_back(source);
+}
+
+void SoundSystem::deleteSource(QPair<unsigned int,unsigned int> source)
+{
+    if (active) {
+        deleteSource(source.first);
+        deleteBuffer(source.second);
+    }
+}
+
+void SoundSystem::setPosition(unsigned int source, QPoint p)
+{
+    if (active) alSource3f(source,AL_POSITION,p.x()-center.x(),p.y()-center.y(),0);
+}
+
+ALuint SoundSystem::genBuffer()
+{
+    alGetError(); // clear error code
+
+    ALuint buffer;
+
+    alGenBuffers(1, &buffer);
+
+    if (alGetError() != AL_NO_ERROR) return -1;
+
+    return buffer;
+}
+
+ALuint SoundSystem::genSource()
+{
+    ALuint source;
+
+    alGenSources(1, &source);
+    if (alGetError() != AL_NO_ERROR) return -1;
+
+    return source;
+}
+
+bool SoundSystem::attachBuffer(ALuint source, ALint buffer)
+{
+    alSourcei(source, AL_BUFFER, buffer);
+    if (alGetError() != AL_NO_ERROR) return false;
 
     return true;
 }
 
-void SoundSystem::setCenter(QPoint p){
-    center=p;
-}
+ALuint SoundSystem::createBufferFromOGG (const char *filename)
+{
+    OggVorbis_File vorbisFile;
 
-QPair<unsigned int,unsigned int> SoundSystem::createSource(ALbyte fileName[]){
+    if(ov_fopen(filename, &vorbisFile) < 0) return -1;
 
-    QList <int> toRemove;
-    for (int i=0;i<sources.length();i++) {
-        if (!sourceStatus(sources.at(i).first)) {
-            deleteSource(sources.at(i));
-            toRemove.push_back(i);
-        }
-    }
-    for (int i=0;i<toRemove.length();i++)
-        sources.removeAt(toRemove[i]);
+    vorbis_info *pInfo = ov_info(&vorbisFile, -1);
 
-    if (!active) return QPair<unsigned int, unsigned int>(0,0);
-    char*     alBuffer;             //data for the buffer
-    ALenum alFormatBuffer;          //buffer format
-    ALsizei   alFreqBuffer;         //frequency
-    long       alBufferLen;         //bit depth
-    ALboolean    alLoop;            //loop
-    unsigned int alSource;          //source
-    unsigned int alSampleSet;
-
-    alutLoadWAVFile(fileName,&alFormatBuffer, (void **) &alBuffer,(ALsizei *)&alBufferLen, &alFreqBuffer, &alLoop);
-    alGenSources(1, &alSource);
-
-
-    //create  buffer
-    alGenBuffers(1, &alSampleSet);
-
-    //put the data into our sampleset buffer
-    alBufferData(alSampleSet, alFormatBuffer, alBuffer, alBufferLen, alFreqBuffer);
-
-    //assign the buffer to this source
-    alSourcei(alSource, AL_BUFFER, alSampleSet);
-    alutUnloadWAV(alFormatBuffer,alBuffer,alBufferLen,alFreqBuffer);
-
-    return QPair<unsigned int, unsigned int>(alSource,alSampleSet);
-}
-
-void SoundSystem::setVolume(unsigned int source, float volume){
-    if (!active) return;
-    alSourcef(source,AL_GAIN,volume);
-}
-
-void SoundSystem::setPitch(unsigned int source, float value){
-    if (!active) return;
-    alSourcef(source,AL_PITCH,value);
-}
-
-void SoundSystem::playSource(unsigned int source){
-    if (!active) return;
-    alSourcePlay(source);
-}
-
-void SoundSystem::stopSource(unsigned int source){
-    if (!active) return;
-    alSourceStop(source);
-}
-
-void SoundSystem::pauseSource(unsigned int source) {
-    if(!active) return;
-    alSourcePause(source);
-}
-
-void SoundSystem::playWav(ALbyte file[], float volume){
-    if (!active) return;
-    char*     alBuffer;             //data for the buffer
-    ALenum alFormatBuffer;    //buffer format
-    ALsizei   alFreqBuffer;       //frequency
-    long       alBufferLen;        //bit depth
-    ALboolean    alLoop;         //loop
-    unsigned int alSource;      //source
-    unsigned int alSampleSet;
-
-    alutLoadWAVFile(file,&alFormatBuffer, (void **) &alBuffer,(ALsizei *)&alBufferLen, &alFreqBuffer, &alLoop);
-    alGenSources(1, &alSource);
-
-    //create  buffer
-    alGenBuffers(1, &alSampleSet);
-
-    //put the data into our sampleset buffer
-    alBufferData(alSampleSet, alFormatBuffer, alBuffer, alBufferLen, alFreqBuffer);
-
-    //assign the buffer to this source
-    alSourcei(alSource, AL_BUFFER, alSampleSet);
-
-    alSourcef(alSource,AL_GAIN,volume);
-    alSourcePlay(alSource);
-    alutUnloadWAV(alFormatBuffer,alBuffer,alBufferLen,alFreqBuffer);
-    // alDeleteSources(1,&alSource);
-    alDeleteBuffers(1,&alSampleSet);
-}
-
-bool SoundSystem::sourceStatus(unsigned int source){
-    if (!active) return false;
-    ALenum state;
-    alGetSourcei(source, AL_SOURCE_STATE, &state);
-    return (state == AL_PLAYING);
-}
-
-void SoundSystem::addSource(QPair<unsigned int, unsigned int> source){
-    if (!sources.contains(source))
-        sources.push_back(source);
-}
-
-void SoundSystem::deleteSource(QPair<unsigned int,unsigned int> source){
-    if (!active) return;
-    alDeleteSources(1,&source.first);
-    alDeleteBuffers(1,&source.second);
-}
-
-void SoundSystem::setPosition(unsigned int source, QPoint p){
-    if (!active) return;
-
-    alSource3f(source,AL_POSITION,p.x()-center.x(),p.y()-center.y(),0);
-    //alSourcei(source,AL_SOURCE_RELATIVE,AL_TRUE);
-}
-
-void SoundSystem::playOGG(char* name){
-
-    ALint state;                // The state of the sound source
-    ALuint bufferID;            // The OpenAL sound buffer ID
-    //ALuint sourceID;            // The OpenAL sound source
     ALenum format;              // The sound data format
-    ALsizei freq;               // The frequency of the sound data
-
-    std::vector < char > bufferData; // The sound buffer data from file
-
-    // Create sound buffer and source
-    alGenBuffers(1, &bufferID);
-    alGenSources(1, &sourceID);
-
-    int endian = 0;             // 0 for Little-Endian, 1 for Big-Endian
-    int bitStream;
-    long bytes;
-    char array[BUFFER_SIZE];    // Local fixed size array
-    FILE *f = NULL;
-
-    // Open for binary reading
-#ifdef __WIN32__
-    if( (f = fopen(name, "rb")) == NULL){
-#else
-    if( (f = fopen(name, "r")) == NULL){
-#endif
-        qWarning()<<"file "<<name<<" not opened.";
-        return;
-    }
-
-    vorbis_info *pInfo;
-    OggVorbis_File oggFile;
-
-    if(ov_open_callbacks(f, &oggFile, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
-        qWarning() << "Input does not appear to be an Ogg bitstream.\n";
-        return;
-    }
-
-    pInfo = ov_info(&oggFile, -1);
 
     // Check the number of channels... always use 16-bit samples
     if (pInfo->channels == 1)
         format = AL_FORMAT_MONO16;
     else
         format = AL_FORMAT_STEREO16;
-    // end if
 
-    // The frequency of the sampling rate
-    freq = pInfo->rate;
+    long bytes;
+    const int BUFFER_SIZE = 4096;
+    char vorbisfileBuffer[BUFFER_SIZE];    // Local fixed size array
+    int bitStream;
+    std::vector < char > bufferData; // The sound buffer data from file
 
     do {
         // Read up to a buffer's worth of decoded sound data
-        bytes = ov_read(&oggFile, array, BUFFER_SIZE, endian, 2, 1, &bitStream);
+        bytes = ov_read(&vorbisFile, vorbisfileBuffer, BUFFER_SIZE, 0, 2, 1, &bitStream);
         // Append to end of buffer
-        bufferData.insert(bufferData.end(), array, array + bytes);
+        bufferData.insert(bufferData.end(), vorbisfileBuffer, vorbisfileBuffer + bytes);
     } while (bytes > 0);
-    ov_clear(&oggFile);
 
-    // Upload sound data to buffer
-    alBufferData(bufferID, format, &bufferData[0], static_cast < ALsizei > (bufferData.size()), freq);
+    ALuint bufferID = genBuffer();            // The OpenAL sound buffer ID
+    alBufferData(bufferID, format, &bufferData[0],  (ALsizei)bufferData.size(), pInfo->rate);
+    ov_clear(&vorbisFile);
 
-    // Attach sound buffer to source
-    alSourcei(sourceID, AL_BUFFER, bufferID);
-
-    alSourcef(sourceID,AL_GAIN,0.5f);
-    // Finally, play the sound!!!
-    alSourcePlay(sourceID);
-    // This is a busy wait loop but should be good enough for example purpose
-    do {
-        // Query the state of the souce
-        alGetSourcei(sourceID, AL_SOURCE_STATE, &state);
-    } while (state != AL_STOPPED);
-
-
-    // Clean up sound buffer and source
-    alDeleteBuffers(1, &bufferID);
-    alDeleteSources(1, &sourceID);
+    return bufferID;
 }
 
-ALuint SoundSystem::getSource() {
-    //!
-    //!Gets the active source played with playOGG.
-    //!
+ALuint SoundSystem::createBufferFromFile (const char *filename)
+{
+    ALuint buffer;
+    QFileInfo fi(filename);
+    QString ext = fi.suffix();
 
-    return sourceID;
+    if(ext.compare("ogg", Qt::CaseInsensitive) == 0) buffer = createBufferFromOGG (filename);
+    else if (ext.compare("wav", Qt::CaseInsensitive) == 0) buffer = alutCreateBufferFromFile(filename);
+    else return -1;
+
+    return buffer;
+}
+
+void SoundSystem::deleteBuffer(ALuint buffer)
+{
+    alDeleteBuffers(1, &buffer);
+}
+
+void SoundSystem::deleteSource(ALuint source)
+{
+    alDeleteSources(1, &source);
+}
+void SoundSystem::initMusic(const char* filename)
+{
+    ALuint buffer; // The OpenAL sound buffer ID
+
+    // [1] Create sound buffer and source
+    buffer = createBufferFromFile(filename);
+    srcMusic = genSource();
+
+    // [2] Attach sound buffer to source
+    attachBuffer(srcMusic, buffer);
+
+    musicLoop = new SoundLoop(srcMusic);
+}
+
+void SoundSystem::delMusic()
+{
+    stopMusic();
+    delete musicLoop;
+}
+
+void SoundSystem::startMusic()
+{
+    musicLoop->start();
+}
+
+void SoundSystem::stopMusic()
+{
+    alSourceStop(srcMusic);
+}
+
+void SoundSystem::pauseMusic()
+{
+    alSourcePause(srcMusic);
 }
