@@ -227,7 +227,7 @@ void SoundSystem::deleteSource(ALuint source)
 {
     alDeleteSources(1, &source);
 }
-void SoundSystem::initMusic(const char* filename)
+void SoundSystem::initMusic(const char* filename, bool isLoopMode)
 {
     ALuint buffer; // The OpenAL sound buffer ID
 
@@ -238,7 +238,7 @@ void SoundSystem::initMusic(const char* filename)
     // [2] Attach sound buffer to source
     attachBuffer(srcMusic, buffer);
 
-    musicLoop = new SoundLoop(srcMusic);
+    musicLoop = new SoundLoop(srcMusic, isLoopMode);
 }
 
 void SoundSystem::delMusic()
