@@ -130,7 +130,7 @@ void Level::initialize()
     sSystem=new SoundSystem(); //Soundsystem for level in-game sounds.
     sSystem->initialize();
 
-    sSystem->initMusic("./resources/music/opengoo.ogg");
+    sSystem->initMusic("./resources/music/opengoo.ogg", true);
     sSystem->startMusic();
 
     mute = false;

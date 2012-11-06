@@ -44,7 +44,7 @@ public:
     void addSource(QPair<unsigned int , unsigned int> source);
     void deleteSource(QPair<unsigned int ,unsigned int>source);
 
-    void initMusic(const char* filename);
+    void initMusic(const char* filename, bool isLoopMode=false);
     void delMusic();
     void startMusic();
     void stopMusic();
@@ -77,14 +77,19 @@ private:
 class SoundLoop : public QThread{
     ALuint sourceID;
     void run()
-    {
+    {       
         alSourcePlay(sourceID);
     }
 
 public:
-    SoundLoop(ALuint source)
+    SoundLoop(ALuint source, bool isLoopMode=false)
     {
         sourceID = source;
+        if (isLoopMode)
+        {
+            alSourcei(sourceID, AL_LOOPING, AL_TRUE);
+        }
+        
     }
 };
 
