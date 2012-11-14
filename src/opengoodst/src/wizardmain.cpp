@@ -19,7 +19,11 @@ WizardMain::WizardMain(QUuid uuid, QWidget *parent) : //!Launched by main.
 
         this->report = rep;
 
-    } else return;
+    } else {
+
+        qWarning() << "QUuid not valid";
+        return;
+    }
 }
 
 WizardMain::WizardMain(Report *report, XmlModule *xml, bool mode, QWidget *parent) : //!Launched by ManagerGui.
@@ -28,6 +32,8 @@ WizardMain::WizardMain(Report *report, XmlModule *xml, bool mode, QWidget *paren
     //!
     //!mode boolean var indicates if the report is pure textual or a normal report.
     //!If mode is set to true, the wizard is launched with the wizard_s2 page.
+    //!
+    //!From ManagerGui is launched with false, from sendTextReportForm is launched with true.
     //!
 
     this->mode = mode;
@@ -42,29 +48,31 @@ WizardMain::~WizardMain() {
 
 void WizardMain::init(QWidget *parent) {
 
+    lastPage=0;
+
     //setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);          //The titlebar is customized to delete the close button. NOT USED, DECENTRALIZES THE WIZARD ON THE SCREEN.
 
     //If false, the wizard will be launch from s2 page.
     if(mode==false) {
 
         //The first wizard page is visible only if launched from console in wizard mode,
-        //parent is NULL only if the wizard is launch by managergui class.
+        //parent is NULL only if the wizard is launched by main.
 
-        if(parent == NULL)
+        if(parent == NULL) {
             addPage(new WizardGui_s0);
+            lastPage++;                 //The last page is incremented to identify the last page id.
+        }
 
         addPage(new WizardGui_s1);
+        lastPage++;
     }
 
     addPage(new WizardGui_s2);
     addPage(new WizardGui_s3);
 
-    if(mode == false) {
-        connect(page(2), SIGNAL(reportSent()),this, SLOT(wizardReportSent())); //A pointer to the WizardGui_s2 is set, the class will emit the reportSent() SIGNAL when the report is sent and should be saved on file.
-    }
-    else {
-        connect(page(0), SIGNAL(reportSent()),this, SLOT(wizardReportSent())); //A pointer to the WizardGui_s2 is set, the class will emit the reportSent() SIGNAL when the report is sent and should be saved on file.
-    }
+    lastPage++;
+
+    connect(page(lastPage-1), SIGNAL(reportSent()),this, SLOT(wizardReportSent())); //A pointer to the WizardGui_s2 is set, the class will emit the reportSent() SIGNAL when the report is sent and should be saved on file.
 
     QList<QWizard::WizardButton> layout;
     layout << QWizard::Stretch << QWizard::Stretch << QWizard::Stretch << QWizard::Stretch << QWizard::CancelButton << QWizard::BackButton << QWizard::Stretch << QWizard::NextButton << QWizard::FinishButton;
@@ -107,27 +115,24 @@ void WizardMain::closeEvent(QCloseEvent *event) {
     //!SLOT: catches the close button event on the wizard and ignore it only on the last page.
     //!
 
-    //It saves the changes only if there are edits from the user.
+    //!If the user closes the wizard the textual report is saved.
 
     QString userText;
 
     if(mode == false) {
-
-        userText = this->field("UserDescription").toString();
-    } else {
-
-        //If the user closes the wizard the textual report is saved.
-        xml->save();
+          userText = this->field("UserDescription").toString();
+          report->setUserText(userText); //User description inserted.
     }
 
-    if (userText.isEmpty() == false && QString::compare(report->getUserText(), userText) != 0) {
+    xml->save();
 
-        report->setUserText(userText); //User description inserted.
-        xml->save(); //The changes are saved on file when the user has changed the description.
-    }
+    //The event is ignored on the last page of the wizard because the user must press 'finished'
+    //to execute the last code.
 
-    if(currentId() == 3)
-    event->ignore();
+    //The last page changes the id according to the wizard mode.
+
+    if(currentId() == lastPage)
+        event->ignore();
 
     emit rejected(); //The signal is used by sendtextreportform class to close the form.
 }

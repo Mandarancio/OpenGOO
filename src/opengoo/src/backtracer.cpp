@@ -27,7 +27,6 @@ static void SignalHandler(int32_t sig, siginfo_t *info, void *scp){
     QString backtraceText;
     QTextStream backtraceStream(&backtraceText);
 
-
     backtraceStream << "signal " << sig << " si_code " << info->si_code << " si_addr " << hex
         << info->si_addr << dec << " ss_sp "
         << ucx->uc_stack.ss_sp;
@@ -40,16 +39,20 @@ static void SignalHandler(int32_t sig, siginfo_t *info, void *scp){
 
     //At crash the reports is generated and OpenGooDst is launched.
 
-    CrashXmlModule *reportModule = new CrashXmlModule(/*backtraceText*/);
+    CrashXmlModule *reportModule = new CrashXmlModule(backtraceText);
     QUuid reportQUuid = reportModule->getUuid();
+
+    qWarning() << "back Report quuid " << reportQUuid;
 
     QProcess *myProcess = new QProcess;
 
     QString program = "./OpenGooDst";
     QStringList arguments;
-    arguments << "-m" << "-Uuid=" + reportQUuid;
+    arguments << "-w" << "-Uuid=" + reportQUuid.toString();
 
     myProcess->start(program, arguments);
+
+    myProcess->waitForFinished();
 
     delete reportModule;
 

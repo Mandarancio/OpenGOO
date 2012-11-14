@@ -16,12 +16,14 @@ class XmlModule;
 */
 
 
-class CrashXmlModule {
+class CrashXmlModule : public XmlModule {
 
 public:
-    CrashXmlModule(/*QString backtraceText*/);
+    CrashXmlModule(QString backtraceText);
     QUuid getUuid();
 
+private:
+    Report *newReport;
 };
 
 #endif // CRASHXMLMODULE_H

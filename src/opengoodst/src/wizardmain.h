@@ -25,7 +25,9 @@ private:
 
     Report *report;
     XmlModule *xml;
-    bool mode;                      //!mode boolean var indicates if the report is pure textual or a normal report.
+    bool mode;                      //!Mode boolean var indicates if the report is pure textual or a normal report.
+
+    int lastPage;                   //!Indicates the last page id of the wizard.
 
 public:
     explicit WizardMain(QUuid uuid, QWidget *parent = 0);                                   //!Launched by main (wizard mode).

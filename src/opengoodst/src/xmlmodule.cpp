@@ -1,5 +1,7 @@
 #include "xmlmodule.h"
 
+const QString XMLPATH="./resources/test.xml";
+
 XmlModule::XmlModule()
 {
 
@@ -14,7 +16,7 @@ void XmlModule::load() {
     //!Opens xml file and loads reports in memory.
     //!
 
-    QFile file( "./resources/test.xml" );
+    QFile file( XMLPATH );
     if( !file.open( QIODevice::ReadOnly ) )
         return;
 
@@ -216,7 +218,7 @@ bool XmlModule::save() {
 
     //Output on file:
 
-    QFile file( "test.xml" );
+    QFile file( XMLPATH );
     if( !file.open( QIODevice::WriteOnly ) )
       return false;
 

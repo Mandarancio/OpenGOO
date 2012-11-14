@@ -26,13 +26,17 @@ private:
 
     QDomDocument *doc;
     QList<Architecture*> archs;
-    QList<Report*> *reports;
 
     void load();
 
     //Save-support functions:
     void createXmlArchitecture(QDomElement*, Architecture*);
     void createXmlReport(QDomElement*, Report*);
+
+protected:
+
+    QList<Report*> *reports;
+
 };
 
 #endif // XMLMODULE_H

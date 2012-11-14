@@ -115,7 +115,8 @@ HEADERS += \
     src/soundsystem.h \
     src/publicclass.h \
     src/options.h \
-    src/crashxmlmodule.h
+    src/crashxmlmodule.h \
+    ../OpenGOO/src/opengoodst/src/xmlmodule.h
 
 
 SOURCES += \
@@ -148,8 +149,10 @@ SOURCES += \
     src/soundsystem.cpp \
     src/publicclass.cpp \
     src/options.cpp \
-    src/crashxmlmodule.cpp
-
+    src/crashxmlmodule.cpp \
+    ../opengoodst/src/xmlmodule.cpp \
+    ../opengoodst/src/architecture.cpp \
+    ../opengoodst/src/report.cpp
 
 !win32{
 HEADERS += src/backtracer.h
