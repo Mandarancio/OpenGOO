@@ -1104,7 +1104,7 @@ void Level::paintTargetArrow(QPainter &p){
 
 }
 
-//Function to paint the menu button (for touchscreen device)
+//Function to paint the menu button (for touchscreen devices)
 void Level::paintButton(QPainter &p){
     if(onMenu) return;
     p.setPen(Qt::darkGray);
@@ -1487,5 +1487,8 @@ void Level::addBGShape(int level, QPolygon poly, QColor color){
 
 void Level::resume(){                      //Close the menu
     onMenu=false;
-    sSystem->startMusic();          //Restart playing the song.
+
+    if(!mute) {
+        sSystem->startMusic();             //Restart playing the song only if it wasn't muted.
+    }
 }

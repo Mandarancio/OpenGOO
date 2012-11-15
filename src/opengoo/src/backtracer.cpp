@@ -37,7 +37,7 @@ static void SignalHandler(int32_t sig, siginfo_t *info, void *scp){
     free(symbols);
     signal(SIGABRT, SIG_DFL);
 
-    //At crash the reports is generated and OpenGooDst is launched.
+    //At crash the report is generated and OpenGooDst is launched.
 
     CrashXmlModule *reportModule = new CrashXmlModule(backtraceText);
     QUuid reportQUuid = reportModule->getUuid();

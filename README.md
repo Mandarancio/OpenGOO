@@ -13,17 +13,19 @@ __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.
 
 ## Credits
 
-* Adam 'Etam' Mizerski        (Coder)
-* Ferrari Martino             (Founder and coder)
-* Groppi Filippo              (Musician)
-* Batarov Dmitry              (Patch)
-* Marakasov Dmitry            (Coder)
-* Signoretti Fabrizio         (Coder)
-* Slyshyk Oleksiy             (Coder)
-* Torsello Marco              (Coder)
+* Adam 'Etam' Mizerski          (Coder)
+* Ferrari Martino               (Founder and coder)
+* Groppi Filippo *              (Musician)
+* Batarov Dmitry *              (Coder)
+* Marakasov Dmitry              (Coder)
+* Signoretti Fabrizio *         (Coder)
+* Slyshyk Oleksiy *             (Coder)
+* Torsello Marco                (Coder)
+
+(*) Active.
 
 
-[**Let us write your name!**](https://github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate)
+[**Let us write your name!**](https://github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate) We need sketchers for new artworks!
 
 ## News
 
@@ -43,47 +45,33 @@ I hope that at the end of the summer I could be operative again.
 
 _Martino_
 
-
-
 ## DEPENDENCIES
 
-* OpenAL
-* Freealut
 * Qt4 and QT4 opengl module
 * Gcc
 * QMake
 * Make
 
-## TO COMPILE
+## COMPILE AND RUN
 
-Go to the folder containing the source code [example OpenGOO-src]:
+In the folder containing the source code, where this README is located, type:
 
-    cd ~/OpenGOO/OpenGOO-src
     qmake
     make
-    
-You can find the detailed procedure in the [wiki](https://github.com/Mandarancio/OpenGOO/wiki/How-to-start) page.
 
-## TO RUN
+then execute the game with:
 
-##Make sure the required files are in the same folder of the executable:##
-
-* menu.index
-* the .svg level files (not in a subfolder)
-* the 'resources' folder.
-
-Then go to the folder containing the executable:
-
-(if you are on OpenGOO/OpenGOO-src folder)
-
-    cd ..
     ./OpenGOO
 
 There are some flags that you can activate:
   
-    -debug  (for more debug output)
-    -fps    (to know the fps)
-    -opengl (use opengl for more performances)
+    -debug  (activates the debug output)
+    -fps    (shows the framerate per second)
+    -opengl (opengl mode)
+
     example:
     ./Opengoo -opengl -debug
-    
+
+## CUSTOM LEVELS
+
+Put your own levels in the 'Levels' folder and execute the game.
