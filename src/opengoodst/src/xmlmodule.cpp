@@ -165,7 +165,7 @@ void XmlModule::createXmlReport(QDomElement* cn, Report* report) {
 
     //CHECK COMPLETENESS OF FIELDS!!!!!!!!!!!!
 
-    cn->setAttribute( "uuid", report->getUuid() );
+    cn->setAttribute( "uuid", report->getUuid().toString() );
     cn->setAttribute( "date-time", report->getDateTime().toString() );
     cn->setAttribute( "debugOutput", report->getDebugText() );
     cn->setAttribute( "userDescription", report->getUserText() );

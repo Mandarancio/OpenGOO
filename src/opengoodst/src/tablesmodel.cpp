@@ -2,7 +2,8 @@
 
 #include <QDebug>
 
-TablesModel::TablesModel(QList<Report*> *reports, QObject *parent)
+TablesModel::TablesModel(QList<Report*> *reports, QObject *parent) :
+    QAbstractTableModel(parent)
 {
     this->reports = reports;
 }

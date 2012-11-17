@@ -4,7 +4,7 @@ Copyright (C) <2012>  <Fabrizio Signoretti - fasigno37@gmail.com>
 Under GPLv3.
 */
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QMessageBox>
 #include <QTranslator>
 #include <QWidget>

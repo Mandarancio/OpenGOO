@@ -6,7 +6,7 @@
 #include <QEventLoop>
 #include <QDebug>
 #include <QFtp>
-#include <QFtp>
+
 
 #include "wizardmain.h"
 #include "report.h"

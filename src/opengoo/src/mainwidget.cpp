@@ -44,7 +44,7 @@ void MainWidget::closeEvent(QCloseEvent *e){
 void MainWidget::levelSelected() //Create the level selected
 {
 
-    if(flag & DEBUG)qWarning()<<"Level Selected "<<levelS->getLevelSelected().toAscii();
+    if(flag & DEBUG)qWarning()<<"Level Selected "<<levelS->getLevelSelected().toLatin1();
     if(!levelS->getLevelSelected().compare("Exit")){
         this->close();
         return;
