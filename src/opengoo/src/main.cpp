@@ -33,6 +33,9 @@
 #include "soundsystem.h"
 #include "publicclass.h"
 
+#include <logger.h>
+#include <consoleappender.h>
+
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 
@@ -46,6 +49,19 @@ int main(int argc, char *argv[])
     #ifdef Q_OS_WIN32
     AddVectoredExceptionHandler(0, UnhandledException2);
     #endif
+
+    ConsoleAppender * con_apd;
+    con_apd  = new ConsoleAppender(LoggerEngine::LevelInfo,stdout,"%d - <%l> - %m%n");
+    LoggerEngine::addAppender(con_apd);
+    con_apd  = new ConsoleAppender(LoggerEngine::LevelDebug |
+                                   LoggerEngine::LevelCritical|
+                                   LoggerEngine::LevelError |
+                                   LoggerEngine::LevelException |
+                                   LoggerEngine::LevelFatal,stdout,"%d - <%l> - %m %f:%i%n");
+    LoggerEngine::addAppender(con_apd);
+
+    logInfo("TEST FIRST LOG STRING");
+    logDebug("TeST DEbug string");
 
     //intialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());

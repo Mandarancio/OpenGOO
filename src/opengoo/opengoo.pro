@@ -25,7 +25,9 @@ INCLUDEPATH += ../extlibs/libvorbis/libvorbis-1.3.3/include
 INCLUDEPATH += ../extlibs/libogg/libogg-1.3.0/include
 INCLUDEPATH += ../extlibs/freealut/freealut-1.1.0-src/include
 INCLUDEPATH += ../opengoodst/src
-LIBS += -L../extlibs/libs
+INCLUDEPATH += ../libs/logger/src
+LIBS += -L../extlibs/libs -L../libs/lib
+LIBS += -llogger
 
 !win32{
 LIBS +=-lopenal -lalut  -lvorbisfile -lvorbis -logg -lBox2D

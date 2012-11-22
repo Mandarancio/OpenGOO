@@ -6,6 +6,7 @@
 *.o
 *.obj
 *.user
+*.a
 
 moc_*
 
