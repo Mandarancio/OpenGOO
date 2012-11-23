@@ -36,6 +36,8 @@
 #include <logger.h>
 #include <consoleappender.h>
 
+void gooMessageOutput(QtMsgType type, const char *msg);
+
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 
@@ -53,15 +55,14 @@ int main(int argc, char *argv[])
     ConsoleAppender * con_apd;
     con_apd  = new ConsoleAppender(LoggerEngine::LevelInfo,stdout,"%d - <%l> - %m%n");
     LoggerEngine::addAppender(con_apd);
-    con_apd  = new ConsoleAppender(LoggerEngine::LevelDebug |
-                                   LoggerEngine::LevelCritical|
-                                   LoggerEngine::LevelError |
+    con_apd  = new ConsoleAppender(LoggerEngine::LevelDebug     |
+                                   LoggerEngine::LevelWarn      |
+                                   LoggerEngine::LevelCritical  |
+                                   LoggerEngine::LevelError     |
                                    LoggerEngine::LevelException |
-                                   LoggerEngine::LevelFatal,stdout,"%d - <%l> - %m %f:%i%n");
+                                   LoggerEngine::LevelFatal,stdout,"%d - <%l> - %m [%f:%i]%n");
     LoggerEngine::addAppender(con_apd);
-
-    logInfo("TEST FIRST LOG STRING");
-    logDebug("TeST DEbug string");
+    qInstallMsgHandler(gooMessageOutput);
 
     //intialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
         //Check for debug Option
         if (!arg.compare("-debug", Qt::CaseInsensitive)) {
             flag |= DEBUG;
-            qWarning("DEBUG MODE ON");
+            logWarn("DEBUG MODE ON");
         }
         else if (!arg.compare("-opengl", Qt::CaseInsensitive)) {
             flag |= OPENGL | FPS;
@@ -84,9 +85,9 @@ int main(int argc, char *argv[])
             flag |= FPS;
         }
     }
-    if (flag == STANDARD) qWarning("STD MODE");
+    if (flag == STANDARD) logWarn("STD MODE");
     if (flag & OPENGL) {
-        qWarning("OPENGL ACTIVATED");
+        logWarn("OPENGL ACTIVATED");
         argc += 2; // TODO: check if it's valid
         argv[argc-2] = strdup("-graphicssystem");
         argv[argc-1] = strdup("opengl");
@@ -114,4 +115,22 @@ int main(int argc, char *argv[])
     MainWidget w(QRect(50, 50, 1024,800));
     w.show();
     return a.exec();
+}
+
+void gooMessageOutput(QtMsgType type, const char *msg)
+{
+    switch (type) {
+    case QtDebugMsg:
+        logDebug(QLatin1String(msg));
+        break;
+    case QtWarningMsg:
+        logWarn(QLatin1String(msg));
+        break;
+    case QtCriticalMsg:
+        logCritical(QLatin1String(msg));
+        break;
+    case QtFatalMsg:
+        logException(QLatin1String(msg));
+        abort();
+    }
 }
