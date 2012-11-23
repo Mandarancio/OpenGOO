@@ -3,6 +3,7 @@
 
 #include <qmath.h>
 #include <QDebug>
+#include <logger.h>
 #include <QPainter>
 #include <QTimerEvent>
 #include <QResizeEvent>
@@ -22,7 +23,7 @@ Introduction::Introduction(QWidget *parent) :
     sSystem=new SoundSystem;
     //sSystem->initialize();
     if (flag & ONLYTEXT || flag & DEBUG){
-        qWarning()<<"Loading intro";
+        logWarn("Loading intro");
     }
 
     this->grabKeyboard();
@@ -36,7 +37,7 @@ Introduction::Introduction(QWidget *parent) :
     world->SetAllowSleeping(true);
     world->SetContactListener(new CollisionListener());
 
-    if (flag & DEBUG) qWarning()<<"World object created!";
+    if (flag & DEBUG) logWarn("World object created!");
 
     //LOADER initialization:
 
@@ -50,7 +51,7 @@ Introduction::Introduction(QWidget *parent) :
     itime.start();
     startTimer(qRound(step*1000.0));
     time=itime.elapsed();
-    qWarning()<<time;
+    logWarn(QString("Time elapsed %1").arg(time));
     nFrame=0;
     endTime=7.0;
 }
@@ -153,7 +154,7 @@ void Introduction::keyPressEvent(QKeyEvent *e){
 void Introduction::setGround(QPoint gCenter, QList<QPoint> gList){
     Ground * g=new Ground(world,gCenter,gList,this);
     ground.push_back(g);
-    if (flag & DEBUG) qWarning()<<"Ground created.";
+    if (flag & DEBUG) logWarn("Ground created.");
 }
 
 
@@ -176,7 +177,7 @@ void Introduction::setStartArea(int n, QRect area,int type){
         else return;
 
     }
-    if (flag & DEBUG) qWarning()<<"A start area is created.";
+    if (flag & DEBUG) logWarn("A start area is created.");
 }
 
 void Introduction::setGoo(QPoint center,int id, int type){

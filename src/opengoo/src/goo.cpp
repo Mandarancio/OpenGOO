@@ -155,12 +155,12 @@ bool Goo::destroyLink(Goo *goo){
         links.removeAt(links.indexOf(goo));
         emit this->loseLink(goo);
 //        if (dragging){
-//            qWarning("removed link!");
+//            logWarn("removed link!");
 //            b2Joint*j=body->GetWorld()->GetJointList()->GetNext();
 //            for (int i=1;i<body->GetWorld()->GetJointCount();i++){
 //                if (j==NULL) break;
 //                if (j->GetBodyA()==body || j->GetBodyB()==body) {
-//                    qWarning()<<"ERROR";
+//                    logWarn()<<"ERROR";
 //                    b2Joint *n=j->GetNext();
 //                    body->GetWorld()->DestroyJoint(j);
 //                    j=n;

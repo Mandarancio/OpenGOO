@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QResizeEvent>
 #include <QRadialGradient>
+#include <logger.h>
 #include "level.h"
 
 #include "fixedgoo.h"
@@ -36,7 +37,7 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     //set the display geometry
     //  this->setGeometry(0,0,geometry.width(),geometry.height());
 
-    //if (flag & DEBUG) qWarning()<<"Geometry setted:"<<geometry;
+    //if (flag & DEBUG) logWarn()<<"Geometry setted:"<<geometry;
 
     //grab keyboard, mouse and track it!
     this->grabKeyboard();
@@ -44,7 +45,7 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     this->grabMouse();
 #endif
     this->setMouseTracking(true);
-    if (flag & DEBUG) qWarning()<<"Mouse and keyboard grabbed";
+    if (flag & DEBUG) logWarn("Mouse and keyboard grabbed");
 
     initialize();
 
@@ -65,7 +66,7 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     connect(loader,SIGNAL(addLevelThorn(QPoint,QList<QPoint>)),this,SLOT(setThorns(QPoint,QList<QPoint>)));
 
     connect(loader,SIGNAL(levelStartArea(int,QRect,int)),this,SLOT(setStartArea(int,QRect,int)));
-    if (flag & DEBUG) qWarning()<<"Level loader created, set up and connected!";
+    if (flag & DEBUG) logWarn("Level loader created, set up and connected!");
 
     //setup the step variable
     //this one is the interval between step
@@ -80,7 +81,7 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
 
     points=0;
     catched=false;
-    if (flag & DEBUG) qWarning()<<"Game variable initialized!";
+    if (flag & DEBUG) logWarn("Game variable initialized!");
 
 
     menu=new Menu(this->geometry(),this);
@@ -91,7 +92,7 @@ Level::Level(QString level,BackGroundWidget *bg,QWidget *parent) :
     connect(menu,SIGNAL(eventRestart()),this,SLOT(restart()));
     connect(menu,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
     if (flag & DEBUG) {
-        qWarning()<<"Menu set up!";
+        logWarn("Menu set up!");
         uint32 flags = 0;//Set the flags
         flags += 1* b2Draw::e_shapeBit;
         flags += 1* b2Draw::e_jointBit;
@@ -109,12 +110,12 @@ bool Level::startLevel()
 {
     //load the level
     if (loader->parse()){
-        if (flag & DEBUG) qWarning()<<"Level parse finished!";
+        if (flag & DEBUG) logWarn("Level parse finished!");
         //start timer
         startTimer(qRound(1000.0/(1.0/step)));
         itime=QTime::currentTime();
         time= 0;
-        if (flag & DEBUG) qWarning()<<"Timer started!"<<"Time step is:"<<step<<"second";
+        if (flag & DEBUG) logWarn(QString("Timer started! Time step is:%1 second").arg(step));
         return true;
     }
     else return false;
@@ -152,14 +153,14 @@ void Level::initialize()
     world->SetAutoClearForces(true);
     world->SetContinuousPhysics(true);
     world->SetAllowSleeping(true);
-    if (flag & DEBUG) qWarning()<<"World object created!";
+    if (flag & DEBUG) logWarn("World object created!");
 
     //setup our modified collisionlistener
     CollisionListener *cl=new CollisionListener(this);
     world->SetContactListener(cl);
     //FIXME : used obsolete slot stopGoo(QPoint)
     connect(cl,SIGNAL(stopGOO(QPoint)),this,SLOT(stopGoo(QPoint)));
-    if (flag & DEBUG) qWarning()<<"Collision listener created and set up!";
+    if (flag & DEBUG) logWarn("Collision listener created and set up!");
 
     //setup the step variable
     //this one is the interval between step
@@ -173,10 +174,10 @@ void Level::initialize()
 
     points=0;
     catched=false;
-    if (flag & DEBUG) qWarning()<<"Game variable initialized!";
+    if (flag & DEBUG) logWarn("Game variable initialized!");
 
     if (flag & DEBUG) {
-        qWarning()<<"Menu set up!";
+        logWarn("Menu set up!");
         uint32 flags = 0;//Set the flags
         flags += 1* b2Draw::e_shapeBit;
         flags += 1* b2Draw::e_jointBit;
@@ -201,41 +202,41 @@ void Level::clean(){
         delete objects[i];
     }
     objects.clear();
-    if (flag & DEBUG) qWarning()<<"Objects deleted";
+    if (flag & DEBUG) logWarn("Objects deleted");
     //clear joints
     for (int i=0;i<joints.length();i++){
         world->DestroyJoint(joints[i]->getJoint());
         delete joints[i];
     }
     joints.clear();
-    if (flag & DEBUG) qWarning()<<"Joints deleted";
+    if (flag & DEBUG) logWarn("Joints deleted");
     //clear stickies;
     for (int i=0;i<stickys.length();i++){
         world->DestroyJoint(stickys[i]->getJoint());
         delete stickys[i];
     }
     stickys.clear();
-    if (flag & DEBUG) qWarning()<<"Stickys deleted";
+    if (flag & DEBUG) logWarn("Stickys deleted");
     //clear goo body
     for (int i=0;i<goos.length();i++){
         world->DestroyBody(goos[i]->getBody());
         delete goos[i];
     }
     goos.clear();
-    if (flag & DEBUG) qWarning()<<"GOOs deleted";
+    if (flag & DEBUG) logWarn("GOOs deleted");
     //clear ground.
     for (int i=0;i<ground.length();i++){
         world->DestroyBody(ground[i]->getBody());
         delete ground[i];
     }
     ground.clear();
-    if (flag & DEBUG) qWarning()<<"Ground deleted";
+    if (flag & DEBUG) logWarn("Ground deleted");
     //clear world.
     delete world;
-    if (flag & DEBUG) qWarning()<<"World deleted";
+    if (flag & DEBUG) logWarn("World deleted");
     if (flag & DEBUG){
         delete debugPainter;
-        qWarning()<<"Debug painter deleted";
+        logWarn("Debug painter deleted");
     }
 }
 
@@ -302,7 +303,8 @@ void Level::moveLeft(){
 
 void Level::moveOf(QPoint dP){
     int xf,yf;
-    if (flag & DEBUG) qWarning()<<"Translation of"<<dP;
+    if (flag & DEBUG) logWarn(QString("Translation of point(%1,%2)").arg(dP.rx())
+                              .arg(dP.ry()));
 
     //top left coordinate of the new view field
     xf=translation.x()+dP.x();
@@ -311,7 +313,8 @@ void Level::moveOf(QPoint dP){
     QRect view(-xf,-yf,width()/scale,height()/scale);
     //Check if is possible
     if (!limit.contains(view)) return;
-    if (flag & DEBUG) qWarning()<<"Translation of"<<dP;
+    if (flag & DEBUG) logWarn(QString("Translation of point(%1,%2)").arg(dP.rx())
+                              .arg(dP.ry()));
     translation=QPoint(xf,yf);
     if (dP.x() || dP.y())
         backGroundWidget->translated(translation);
@@ -405,7 +408,7 @@ void Level::timerEvent(QTimerEvent *e){
     if (points<goal && !onMenu)
         time+=realStep;
 
-    //qWarning()<<"IDEAL STEP"<<step*1000.0<<"REAL STEP"<<dT;
+    //logWarn()<<"IDEAL STEP"<<step*1000.0<<"REAL STEP"<<dT;
     fps=qRound(1.0/realStep);
     if (drag){
         showJointTimer++;
@@ -984,13 +987,13 @@ void Level::giveTarget(Goo *previous){
                     }
                 }
                 if (target==previous){
-                    qWarning()<<"ERROR";
+                    logWarn("ERROR");
 
                 }
                 goo->setTarget(target);
             }
             else {
-                // qWarning()<<"Here!!";
+                // logWarn()<<"Here!!";
             }
         }
     }
@@ -1179,7 +1182,7 @@ bool Level::zoom(float d){
         if (limit.width()*s<width() || limit.height()*s<height()) return false;
         int x=width()/2-qRound(mousePos.x*10.0);
         int y=height()/2-qRound(mousePos.y*10.0);
-        qWarning()<<x<<mousePos.x*10<<width()/2;
+        logWarn(QString("x:%1 mp:%2 w:53").arg(x).arg(mousePos.x*10).arg(width()/2));
         moveOf(QPoint( x/10, -y/10 ));
         scale=s;
 
@@ -1220,12 +1223,14 @@ void Level::destroyJoint(Goo *a, Goo *b){
 //LOADER FUNCTION
 
 void Level::setGoal(int goal){
-    if (flag & DEBUG) qWarning()<<"Goal:"<<goal;
+    if (flag & DEBUG) logWarn(QString("Goal:%1").arg(goal));
     this->goal=goal;
 }
 
 void Level::setLimit(QRect limit){
-    if (flag & DEBUG) qWarning()<<"Level limit:"<<limit;
+    if (flag & DEBUG) logWarn(QString("Level limit:%1 %2 %3 %4")
+                              .arg(limit.x()).arg(limit.y())
+                              .arg(limit.width()).arg(limit.height()));
     this->limit=limit;
     float sx=float(width())/float(limit.width());
     float sy=float(height())/float(limit.height());
@@ -1237,25 +1242,25 @@ void Level::setLimit(QRect limit){
     backGroundWidget->setLimit(limit);
     backGroundWidget->translated(translation);
     backGroundWidget->setScale(scale);
-    if (flag & DEBUG) qWarning()<<"SCALE"<<scale;
+    if (flag & DEBUG) logWarn(QString("SCALE %1").arg(scale));
 }
 
 void Level::setGround(QPoint gCenter, QList<QPoint> gList){
     Ground * g=new Ground(world,gCenter,gList,this);
     backGroundWidget->addGround(g);
     ground.push_back(g);
-    if (flag & DEBUG) qWarning()<<"Ground created.";
+    if (flag & DEBUG) logWarn("Ground created.");
 }
 
 void Level::setTarget(QPoint target){
-    if (flag & DEBUG) qWarning()<<"Target at:"<<target;
+    if (flag & DEBUG) logWarn(QString("Target at: (%1,%2)").arg(target.rx()).arg(target.ry()));
     this->target=new Target(target,limit.height(),world,this);
     //connect target signals with level
     connect(this->target,SIGNAL(gooCatched(Goo*)),this,SLOT(gooCatched(Goo*)));
     connect(this->target,SIGNAL(towerCatch()),this,SLOT(towerCatched()));
     connect(this->target,SIGNAL(towerLost()),this,SLOT(towerLost()));
     backGroundWidget->setTarget(this->target);
-    if (flag & DEBUG) qWarning()<<"Target connected!";
+    if (flag & DEBUG) logWarn("Target connected!");
 
 }
 
@@ -1314,7 +1319,7 @@ void Level::setStartArea(int n, QRect area,int type){
         }
         else return;
     }
-    if (flag & DEBUG) qWarning()<<"A start area is created.";
+    if (flag & DEBUG) logWarn("A start area is created.");
 }
 
 void Level::setJoint(Goo*a,Goo*b){
@@ -1322,7 +1327,7 @@ void Level::setJoint(Goo*a,Goo*b){
 
     makeJoint(a,b);
 
-    if (flag & DEBUG) qWarning()<<"First joint created!";
+    if (flag & DEBUG) logWarn("First joint created!");
 }
 
 void Level::setGoo(QPoint center,int id, int type){
@@ -1384,7 +1389,8 @@ void Level::setGoo(QPoint center,int id, int type){
 }
 
 void Level::setLevelGeometry(QSize size){
-    if (flag & DEBUG) qWarning()<<"Level size"<<size;
+    if (flag & DEBUG) logWarn(QString("Level size: %1x%2")
+                              .arg(size.width()).arg(size.height()));
 }
 
 void Level::setThorns(QPoint center, QList<QPoint> list){
@@ -1459,7 +1465,7 @@ void Level::stopDragging(){
 //function to stop a goo
 //void Level::stopGoo(QPoint p){
     /*if (groundContains(p,dragged->getRadius())){
-        if (flag & DEBUG) qWarning()<<"P is in the Ground, stop dragging ";
+        if (flag & DEBUG) logWarn()<<"P is in the Ground, stop dragging ";
         stopDragging();
     }
     else stopPosition = p;*/

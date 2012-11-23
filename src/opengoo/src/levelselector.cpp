@@ -81,7 +81,7 @@ void LevelSelector::mouseReleaseEvent(QMouseEvent *e)
         for (int i=0;i<buttons.length();i++){
             if (buttons[i].contains(e->pos())) selected=i;
         }        
-        //qWarning(levels.at(selected).toAscii());
+        //logWarn(levels.at(selected).toAscii());
         if (selected==-1) return;
         if( selected==buttons.size()-1)
                 emit this->closing();

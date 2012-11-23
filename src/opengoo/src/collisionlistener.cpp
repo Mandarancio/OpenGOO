@@ -7,6 +7,7 @@
 
 
 #include <QDebug>
+#include <logger.h>
 
 void CollisionListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold){
     //if (oldManifold->points==contact->GetManifold()->points) contact->SetEnabled(false); //To skip continuos contact
@@ -114,7 +115,7 @@ void CollisionListener::PostSolve(b2Contact *contact, const b2ContactImpulse *im
                     else if (b->isDragging()) emit stopGOO(b->getPPosition()); //Advice to stop the goo
                 }
             }
-            else if (th) qWarning()<<"THORN";
+            else if (th) logWarn("THORN");
         }
     }
     else if (!b) {

@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <logger.h>
 
 #include "svglevelloader.h"
 #include "introduction.h"
@@ -44,7 +45,7 @@ void MainWidget::closeEvent(QCloseEvent *e){
 void MainWidget::levelSelected() //Create the level selected
 {
 
-    if(flag & DEBUG)qWarning()<<"Level Selected "<<levelS->getLevelSelected().toLatin1();
+    if(flag & DEBUG)logWarn(QString("Level Selected %1").arg(levelS->getLevelSelected()));
     if(!levelS->getLevelSelected().compare("Exit")){
         this->close();
         return;
@@ -66,14 +67,14 @@ void MainWidget::levelSelected() //Create the level selected
 
         layout->addWidget(level,0,0,0,0);
 
-        if (flag & DEBUG) qWarning()<<"LEVEL OBJECT INITIALIZED";
+        if (flag & DEBUG) logWarn("LEVEL OBJECT INITIALIZED.");
 
         connect(level,SIGNAL(closing()),this,SLOT(close()));//Connect the closing of the level with the closing of the game
         connect(level,SIGNAL(eventBackToMainMenu()),this,SLOT(backToMainMenu()));
         if (level->startLevel()){
             level->show();//Show the Level
 
-            if (flag & DEBUG) qWarning()<<"level showed an signal connected.";
+            if (flag & DEBUG) logWarn("level showed an signal connected.");
         }
 
     }
@@ -82,7 +83,7 @@ void MainWidget::levelSelected() //Create the level selected
 void MainWidget::backToMainMenu()
 {
     this->show();
-    if (flag & DEBUG) qWarning() << "Back to Main Menu!";
+    if (flag & DEBUG) logWarn("Back to Main Menu!");
     layout->removeWidget(level);
     layout->removeWidget(bgWidget);
     delete level;

@@ -7,6 +7,7 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QDebug>
+#include <logger.h>
 
 Menu::Menu(QRect geometry, QObject *parent) :
     QObject(parent)
@@ -55,7 +56,7 @@ void Menu::loadMenuFile(){
 
         file.close();
     }
-    else qWarning("Menu file dosn't exist!");
+    else logWarn("Menu file dosn't exist!");
 }
 
 void Menu::paintButton(int ind, QPainter &p){
@@ -101,10 +102,10 @@ void Menu::mouseRelease(QMouseEvent *e){
             break;
         case(3):
             emit this->eventClose();
-            qWarning() << "Esci!";
+            logWarn("Esci!");
             break;
 //        case(4):
-//            qWarning() << "Opzioni!";
+//            logWarn() << "Opzioni!";
 //            break;
         default:
             return;

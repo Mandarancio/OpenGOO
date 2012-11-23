@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     QDir dir(GAMEDIR);
     //If the game dir doesn't exist create it
     if (!dir.exists()) {
-        if (flag & DEBUG) qWarning() << "Game dir doesn't exist!";
+        if (flag & DEBUG) logWarn("Game dir doesn't exist!");
         dir.mkdir(GAMEDIR);
         dir.cd(GAMEDIR);
         //create subdir for user levels and progressions.
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         dir.mkdir("userProgression");
         dir.mkdir("debug");
     }
-    else if (flag & DEBUG) qWarning() << "Game dir exist!";
+    else if (flag & DEBUG) logWarn("Game dir exist!");
 
     //soundSystem.initialize();
 

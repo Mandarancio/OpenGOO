@@ -18,7 +18,7 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
 
 
 //    mediaObject=Phonon::createPlayer(Phonon::NoCategory, Phonon::MediaSource("resources/sounds/boing.wav"));
-//    qWarning()<<"Medai Object is valid?"<<mediaObject->isValid();
+//    logWarn()<<"Medai Object is valid?"<<mediaObject->isValid();
 
 
     this->world=world; //get a copy of the world

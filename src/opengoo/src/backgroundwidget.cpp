@@ -1,6 +1,7 @@
 #include "backgroundwidget.h"
 #include <QPainter>
 #include <QDebug>
+#include <logger.h>
 
 
 BackGroundWidget::BackGroundWidget(QWidget *parent) :
@@ -71,7 +72,8 @@ void BackGroundWidget::setLimit(QRect limit){
     QColor c1,c2;
     c1.setRgb(95,141,211);
     c2.setRgb(21,33,50);
-    qWarning()<<limit;
+    logWarn(QString("Background limits: %1 %2 %3 %4").arg(limit.x()).arg(limit.y())
+            .arg(limit.width()).arg(limit.height()));
     bgColor=QRadialGradient(QPoint(0,height()/2),(limit.width()>limit.height() ? limit.width() : limit.height()));
     bgColor.setColorAt(0,c1);
     bgColor.setColorAt(1,c2);

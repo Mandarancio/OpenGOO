@@ -5,6 +5,7 @@
 #endif
 
 #include <QDebug>
+#include <logger.h>
 #include <QString>
 #include <QProcess>
 
@@ -42,7 +43,7 @@ static void SignalHandler(int32_t sig, siginfo_t *info, void *scp){
     CrashXmlModule *reportModule = new CrashXmlModule(backtraceText);
     QUuid reportQUuid = reportModule->getUuid();
 
-    qWarning() << "back Report quuid " << reportQUuid;
+    logWarn(QString("back Report quuid %1").arg(reportQUuid.toString()));
 
     QProcess *myProcess = new QProcess;
 

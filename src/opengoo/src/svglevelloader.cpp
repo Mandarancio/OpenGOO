@@ -8,6 +8,7 @@
 #include <QDomElement>
 
 #include <QDebug>
+#include <logger.h>
 #include <QSize>
 #include <QRect>
 #include <QPolygon>
@@ -30,7 +31,7 @@ bool SvgLevelLoader::parse(){
         if (doc.setContent(&file)){
             QDomElement root= doc.documentElement();
             if (root.tagName().compare("svg")!=0){
-                qWarning()<<QString("Parse error, file %1 is not a svg file!").arg(path);
+                logWarn(QString("Parse error, file %1 is not a svg file!").arg(path));
                 emit fileError();
                 return false;
             }
@@ -54,7 +55,7 @@ bool SvgLevelLoader::parse(){
 //                    emit levelGoal(goal);
                 }
                 if (node.toElement().tagName().compare("g")==0){
-                 //   qWarning()<<"Gruppo principale";
+                 //   logWarn()<<"Gruppo principale";
                     translation=this->parseTransform(node.toElement());
                     break;
 
@@ -74,7 +75,7 @@ bool SvgLevelLoader::parse(){
                     type=id.split('-').at(0);
                     numGOO=id.split('-').at(2).toInt(&ok);
                     if (!ok) {
-                        qWarning()<<"Errore";
+                        logWarn("Errore");
                         continue;
                     }
                     //compute the type of goo;
@@ -142,7 +143,7 @@ bool SvgLevelLoader::parse(){
                     if (type.length()!=3) ok=false;
 
                     if (!ok) {
-                        qWarning()<<"Goo malformed!";
+                        logWarn("Goo malformed!");
                         continue;
                     }
                     else {
@@ -173,13 +174,13 @@ bool SvgLevelLoader::parse(){
             return true;
         }
         else {
-            qWarning()<<QString("File %1 is not an xml! Error!").arg(path);
+            logWarn(QString("File %1 is not an xml! Error!").arg(path));
             emit fileError();
             return false;
         }
     }
     else {
-        qWarning()<<QString("File %1 not found! Error!").arg(path);
+        logWarn(QString("File %1 not found! Error!").arg(path));
         emit fileError();
         return false;
     }
@@ -308,7 +309,7 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
         }
         if (!((str.split(' ').at(i)[0]>='0' &&  str.split(' ').at(i)[0]<='9')|| str.split(' ').at(i)[0]=='-' )) {
             if (i>2) list.push_back(list[i-2-skip]);
-            qWarning()<<"ERROR"<<str.split(' ').at(i);
+            logWarn(str.split(' ').at(i));
             continue;
         }
         else {
@@ -326,7 +327,7 @@ QList<QPoint> SvgLevelLoader::parsePointList(QDomElement el){
             list.push_back(p);
         }
     }
-    //) qWarning()<<list;
+    //) logWarn()<<list;
     return list;
 }
 
@@ -340,14 +341,14 @@ QColor SvgLevelLoader::parseFill(QDomElement el){
             QString value=style.split(';').at(i).split(':').at(1);
 
             value.remove('#');
-            //qWarning()<<value;
+            //logWarn()<<value;
             int r,g,b;
             bool ok=true;
             r=value.mid(0,2).toInt(&ok,16);
             g=value.mid(2,2).toInt(&ok,16);
             b=value.mid(4,2).toInt(&ok,16);
 
-            //qWarning()<<r<<g<<b;
+            //logWarn()<<r<<g<<b;
             color=QColor(r,g,b);
         }
     }
