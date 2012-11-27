@@ -66,6 +66,14 @@ DynamicGoo::DynamicGoo(b2World *world, QPoint p, int radius,  QObject *parent):
     eyeSizeR=eyeSizeL+qrand()%4-1;
     eye=false;
     type=DYNAMIC;
+
+    if (Goo::sSystem->IsFail()) { boingSound = SoundSystem::NONETYPE; }
+    else { boingSound = Goo::sSystem->Create(SoundSystem::BOING); }
+}
+
+DynamicGoo::~DynamicGoo()
+{
+    Goo::sSystem->Delete(boingSound);
 }
 
 void DynamicGoo::moveToTarget(){
@@ -352,16 +360,6 @@ void DynamicGoo::neighborsFound(){
 }
 
 void DynamicGoo::update(){
-    QList <int > toRemove;
-    for (int i=0;i<sources.length();i++){
-        if (!sSystem->sourceStatus(sources[i].first)){
-            sSystem->deleteSource(sources[i]);
-            toRemove.push_back(i);
-        }
-    }
-
-    for (int i=0;i<toRemove.length();i++)
-        sources.removeAt(toRemove[i]);
     if (isSelected() && !isFalling()) {
         body->SetLinearVelocity(b2Vec2(0,0));
         return;
@@ -389,14 +387,12 @@ void DynamicGoo::contactGround(){
     }
     else {
 
-        if (!isSleeping() && qAbs(body->GetAngularVelocity())<body->GetLinearVelocity().Length() && prevTarget==NULL&&  (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 ))){
-
-            QPair<unsigned int,unsigned int> source =sSystem->createPair(SoundSystem::boing2);
-            sSystem->setPitch(source.first,24.0/float(radius)*60.0/body->GetLinearVelocity().Length());
-            sSystem->setVolume(source.first,2.0*body->GetLinearVelocity().Length()/80.0*radius/24.0);
-            sSystem->setPosition(source.first,getPPosition());
-            sSystem->playSource(source.first);
-            sources.push_back(source);
+        if (!isSleeping() && qAbs(body->GetAngularVelocity())<body->GetLinearVelocity().Length() && prevTarget==NULL&&  (target==NULL ||(target!=NULL && (target->getVPosition()-body->GetPosition()).Length()<radius/10 )))
+        {
+            Goo::sSystem->SetPitch(boingSound, 24.0/float(radius)*60.0/body->GetLinearVelocity().Length());
+            Goo::sSystem->SetVolume(boingSound, 2.0*body->GetLinearVelocity().Length()/80.0*radius/24.0);
+            Goo::sSystem->SetPosition(boingSound, getPPosition());
+            Goo::sSystem->Play(boingSound);
         }
         onGround=true;
         groundPoint=this->getPPosition();

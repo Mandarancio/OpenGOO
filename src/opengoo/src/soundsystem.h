@@ -1,96 +1,104 @@
 #ifndef SOUNDSYSTEM_H
 #define SOUNDSYSTEM_H
 
-#include <AL/al.h>
-#include <AL/alc.h>
+#include <vector>
+#include <list>
 
+#include <QObject>
 #include <QPair>
 #include <QPoint>
 #include <QList>
 #include <QThread>
 
-#include <vorbis/vorbisfile.h>
+#include <OGAlut>
+#include <OGMPlayer>
 
 /*!
- * The SoundSystem class manages the sound using openAL.
+ * The SoundSystem class manages the sound using OpenAL.
  */
-class SoundLoop;
 
-class SoundSystem
-{
-public:
-    SoundSystem();
-    ~SoundSystem();
+struct OGShareBuffer
+{   
+    int type; // Type of share buffer
+    int counter; // Number of share buffers of this type
+    OGuint buffer; // Buffer which contain audio data
 
-    enum typeSound{scream, boing2, pop, captured, drag};
+    OGShareBuffer(int soundType, OGuint shareBuffer)
+        : type(soundType), counter(1), buffer(shareBuffer) {}
 
-    bool initialize();
-    void setCenter(QPoint p);
+    OGShareBuffer(int soundType, int numBuffers, OGuint shareBuffer)
+        : type(soundType), counter(numBuffers), buffer(shareBuffer) {}
 
-    QPair <unsigned int,unsigned int> createPair(const char* fileName);
-    QPair <unsigned int,unsigned int> createPair(typeSound type);
-
-
-    void setVolume(unsigned int source,float volume);
-    void setPitch(unsigned int source, float value);
-    void setPosition(unsigned int source, QPoint p);
-
-    void playSource(unsigned int source);
-    void stopSource(unsigned int source);
-    void pauseSource(unsigned int source);
-
-    bool sourceStatus(unsigned int source);
-
-    void addSource(QPair<unsigned int , unsigned int> source);
-    void deleteSource(QPair<unsigned int ,unsigned int>source);
-
-    void initMusic(const char* filename, bool isLoopMode=false);
-    void delMusic();
-    void startMusic();
-    void stopMusic();
-    void pauseMusic();
-
-private:
-    QList<QPair <unsigned int, unsigned int> > sources;
-    QPoint center;
-    bool active;
-
-    SoundLoop* musicLoop;
-    ALuint srcMusic;
-
-    ALuint bufScream;
-    ALuint bufBoing2;
-    ALuint bufPop;
-    ALuint bufCaptured;
-    ALuint bufDrag;
-
-    ALuint genBuffer();
-    ALuint genSource();
-    ALuint createBufferFromFile (const char* filename);
-    ALuint createBufferFromOGG (const char* filename);
-    bool attachBuffer(ALuint source, ALint buffer);
-    void deleteBuffer(ALuint buffer);
-    void deleteSource(ALuint source);
 };
 
+struct OGSoundObject
+{
+    int id; // Id of sound object
+    OGuint source; // Source with attached share buffer
+    int type; // Type of the share buffer
 
-class SoundLoop : public QThread{
-    ALuint sourceID;
-    void run()
-    {       
-        alSourcePlay(sourceID);
-    }
+    OGSoundObject(int idSoundObject, OGuint sourceId, int typeBuffer)
+        : id(idSoundObject), source(sourceId), type(typeBuffer) {}
+};
+
+class SoundSystem : public QObject
+{
+        Q_OBJECT
 
 public:
-    SoundLoop(ALuint source, bool isLoopMode=false)
-    {
-        sourceID = source;
-        if (isLoopMode)
-        {
-            alSourcei(sourceID, AL_LOOPING, AL_TRUE);
-        }
-        
-    }
+    static SoundSystem* GetInstance(void);
+    static void DestroyInstance(void) { if (m_instance_) delete m_instance_; }
+
+    enum typeSound{NONETYPE, SCREAM, BOING, POP, CAPTURED, DRAG};
+
+    void Open(); // Initialize sound system
+    void Close(); // Deinitialize sound system
+
+    int Create(typeSound type); // Create sound object
+    void Delete(int id);    // Delete sound object
+
+
+    void SetVolume(int id, float volume); // Set volume of sound object
+    void SetPitch(int id, float pitch); // Set ptich of sound object
+    void SetPosition(int id, QPoint p); // Set position of sound object
+    void SetCenter(QPoint p); // ??
+    void Play(int id); // Play sound object
+    void Stop(int id); // Stop sound object
+    void Pause(int id); // Pause sound object
+
+    int Status(int id); // Get status of sound object
+
+    void OpenBGMusic(const OGpchar filename, bool loopmode=false, bool streammode=false);
+    void CloseBGMusic();
+    void PlayBGMusic();
+    void StopBGMusic();
+    void PauseBGMusic();
+
+    bool IsFail() const { return isFailbit_; }
+    bool IsOpen() const { return isOpen_; }
+
+private:
+    static SoundSystem* m_instance_;
+    std::list<OGSoundObject> soundObjects_;
+    std::list<OGShareBuffer> shareBuffers_;
+    int soundSourceID_;
+    QPoint center_;
+    OGMPlayer* player_;
+
+    bool isFailbit_;
+    bool isOpen_;
+    bool isMusicPlay_;
+
+    SoundSystem();
+    ~SoundSystem() { Close(); }
+
+    void CreateShareBuffer_(typeSound type);
+    void DeleteShareBuffer_(typeSound type);
+    void AddShareBuffer_(typeSound type);
+    OGuint GetShareBuffer_(typeSound type);
+
+    // Translate type of share buffer in file name
+    std::string SoundTypeToName_(typeSound type);
 };
 
 #endif // SOUNDSYSTEM_H

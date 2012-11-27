@@ -7,6 +7,8 @@
 
 #include <Box2D/Box2D.h>
 
+#include "soundsystem.h"
+
 /*Change FIXED to FIXED_GOO, because it conflict with win32 typedef. Slyshyk*/
 enum GooType {NONE,FIXED_GOO,DYNAMIC,REMOVIBLE,BALOON,STICKY};
 
@@ -21,6 +23,7 @@ class Goo : public QObject
     Q_OBJECT
 public:
     explicit Goo(int radius=15,QObject *parent = 0);
+    virtual ~Goo();
     //GET TYPE
     GooType getType(){
         return type;
@@ -180,8 +183,13 @@ protected:
     void stopFollow();
     void fallDown();
 
+    // Sound
+    SoundSystem* sSystem;
+    int capturedSound;
+    int dragSound;
+
 private:
-    QPair <unsigned int, unsigned int> scream;
+    int screamSound;
 
 signals:
     //Signal to retrive a new target.

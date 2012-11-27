@@ -16,6 +16,7 @@ class DynamicGoo :public Goo
     Q_OBJECT
 public:
     DynamicGoo(b2World * world,QPoint p=QPoint(0,0),int radius=15,QObject *parent = 0);
+    ~DynamicGoo();
     void catched(){ //if the tower catch the target
         speed=15;
     }
@@ -49,6 +50,9 @@ private:
     int eyeSizeR,eyeSizeL;
     int delay;
     int angle;
+
+    //Sound
+    int boingSound;
 
 protected:
     void moveToTarget(); //move to the target

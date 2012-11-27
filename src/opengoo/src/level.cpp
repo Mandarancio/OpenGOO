@@ -128,13 +128,16 @@ void Level::initialize()
 
     this->time=0;
 
-    sSystem=new SoundSystem(); //Soundsystem for level in-game sounds.
-    sSystem->initialize();
+    sSystem = SoundSystem::GetInstance(); //Soundsystem for level in-game sounds.
+    sSystem->Open();
 
-    sSystem->initMusic("./resources/music/opengoo.ogg", true);
-    sSystem->startMusic();
-
-    mute = false;
+    if (sSystem->IsFail()) { mute = true; }
+    else
+    {
+        sSystem->OpenBGMusic("./resources/music/opengoo.ogg", true, true);
+        sSystem->PlayBGMusic();
+        mute = false;
+    }
 
     dir.left=false;
     dir.right=false;
@@ -190,11 +193,6 @@ void Level::initialize()
 //Clean function
 void Level::clean(){
 
-//Delete song and sound system.
-    sSystem->delMusic();
-    delete sSystem;
-
-
     //clear object bodies
     backGroundWidget->clear();
     for (int i=0;i<objects.length();i++){
@@ -238,6 +236,9 @@ void Level::clean(){
         delete debugPainter;
         logWarn("Debug painter deleted");
     }
+
+    //Delete song and sound system.
+    sSystem->Close();
 }
 
 //RETRIVE THE JOINT (IF ONE) UNDER THE GOO
@@ -703,9 +704,9 @@ void Level::keyReleaseEvent(QKeyEvent *e){
 
         if(!mute) {
             if (onMenu) {
-                sSystem->pauseMusic();
+                sSystem->PauseBGMusic();
             } else {
-                sSystem->startMusic();
+                sSystem->PlayBGMusic();
             }
         }
 
@@ -907,7 +908,7 @@ void Level::mouseReleaseEvent(QMouseEvent *e){
     showJointTimer=0;
 
     if (onMenu){
-        if(!mute) sSystem->pauseMusic();
+        if(!mute) sSystem->PauseBGMusic();
         menu->mouseRelease(e);
     }
 
@@ -1152,11 +1153,11 @@ void Level::clickMute(QPoint p){
        p.y() <= height()-60.0+50.0))
     {
         if(mute) {
-            sSystem->startMusic();
+            sSystem->PlayBGMusic();
             mute = !mute;
         }
         else {
-            sSystem->pauseMusic();
+            sSystem->PauseBGMusic();
             mute = !mute;
         }
 
@@ -1495,6 +1496,6 @@ void Level::resume(){                      //Close the menu
     onMenu=false;
 
     if(!mute) {
-        sSystem->startMusic();             //Restart playing the song only if it wasn't muted.
+        sSystem->PlayBGMusic();             //Restart playing the song only if it wasn't muted.
     }
 }

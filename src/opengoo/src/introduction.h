@@ -13,8 +13,6 @@
 #include "goo.h"
 #include "ground.h"
 
-
-
 class Introduction : public QWidget
 {
     Q_OBJECT
@@ -43,6 +41,9 @@ private:
     //DEBUGGER PAINTER!
     QB2Draw * debugPainter;
     int nFrame;
+
+    //SOUND
+    SoundSystem* sSystem;
 
 protected:
     //Timer event function here the world is updated and after the scene is redr
