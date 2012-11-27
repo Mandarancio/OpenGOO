@@ -1,263 +1,340 @@
 #include "soundsystem.h"
-#include <AL/alut.h>
-#include <QFileInfo>
-#include <QDebug>
-#include <vector>
+
+SoundSystem* SoundSystem::m_instance_ = 0;
 
 SoundSystem::SoundSystem()
 {
-    active=false;
-    bufScream = bufBoing2 = bufPop = bufCaptured = bufDrag = NULL;
+    isOpen_ = false;
+    player_ = 0;
+    isMusicPlay_ = false;
 }
 
-SoundSystem::~SoundSystem()
+SoundSystem* SoundSystem::GetInstance()
 {
-    if (active) alutExit();
+    if (!m_instance_) { m_instance_ = new SoundSystem; }
+
+    return m_instance_;
 }
 
-bool SoundSystem::initialize()
+void SoundSystem::Open()
 {
-    active = alutInit(NULL, NULL);
-    return active;
+    if (isOpen_) { return; }
+
+    if (OGAlut::Init())
+    {
+        isOpen_ = true;
+        isFailbit_ = false;
+        soundSourceID_ = 1;
+        player_ = 0;
+    }
+    else
+    {
+        isOpen_ = false;
+        isFailbit_ = true;
+    }
 }
 
-void SoundSystem::setCenter(QPoint p)
+void SoundSystem::Close()
 {
-    center=p;
+    if (isOpen_)
+    {
+        isOpen_ = false;
+        CloseBGMusic();
+        if(!soundObjects_.empty())
+        {
+            soundObjects_.clear();
+            shareBuffers_.clear();
+        }
+
+        OGAlut::Exit();
+    }
 }
 
-QPair<unsigned int,unsigned int> SoundSystem::createPair(const char* fileName)
+int SoundSystem::Create(typeSound type)
 {
-    if (!active) return QPair<unsigned int, unsigned int>(0,0);
-    ALuint source;          //source
-    ALuint buffer;       // buffer
+    if (!isOpen_) { return NONETYPE; }
 
-    // [1] create  buffer and source
-    buffer = createBufferFromFile(fileName);
-    source = genSource();
+    CreateShareBuffer_(type);
+    OGuint buffer = GetShareBuffer_(type);
 
-    // [2] attach the buffer to source
-    attachBuffer(source, buffer);
+    if (buffer == -1) { return NONETYPE; }
 
-    return QPair<unsigned int, unsigned int>(source, buffer);
+    OGuint source = OGAlut::CreateSource();
+    OGAlut::AttachBuffer(source, buffer);
+
+    if (!soundObjects_.empty()) { soundSourceID_++; }
+
+    soundObjects_.push_back(OGSoundObject(soundSourceID_, source, type));
+
+    return soundSourceID_;
 }
 
-QPair<unsigned int,unsigned int> SoundSystem::createPair(typeSound type)
+void SoundSystem::Delete(int id)
 {
-    if (!active) return QPair<unsigned int, unsigned int>(0,0);
-    ALuint buffer;          // Buffer ID
-    ALuint source;          // Source ID
+    if (!isOpen_ || id == NONETYPE) { return; }
 
-    // [1] Create  buffer and source
-    source = genSource();
+    for (std::list<OGSoundObject>::iterator it=soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id)
+        {
+            OGAlut::DeleteSource(it->source);
+            DeleteShareBuffer_((typeSound)it->type);
+            soundObjects_.erase(it);
 
-    // [2] Attach the buffer to source
+            return;
+        }
+    }
+}
+
+void SoundSystem::CreateShareBuffer_(typeSound type)
+{
+    std::string path("resources/sounds/");
+    std::string filename(SoundTypeToName_(type));
+    std::string ext(".wav");
+    std::string fullname(path + filename + ext);
+    OGuint buffer;
+
+    if (filename.compare("NONETYPE") == 0) { return; }
+
+    if (shareBuffers_.empty())
+    {
+        buffer = OGAlut::CreateBufferFromFile((OGpchar)fullname.c_str());
+        shareBuffers_.push_back(OGShareBuffer(type, buffer));
+
+        return;
+    }
+
+    for (std::list<OGShareBuffer>::iterator it=shareBuffers_.begin(); it !=  shareBuffers_.end(); it++)
+    {
+        if (it->type == type)
+        {
+            it->counter = it->counter + 1;
+
+            return;
+        }
+    }
+
+    buffer = OGAlut::CreateBufferFromFile((OGpchar)fullname.c_str());
+    shareBuffers_.push_back(OGShareBuffer(type, buffer));
+}
+
+void SoundSystem::DeleteShareBuffer_(typeSound type)
+{  
+    for (std::list<OGShareBuffer>::iterator it=shareBuffers_.begin(); it !=  shareBuffers_.end(); it++)
+    {
+        if (it->type == type)
+        {
+            it->counter = it->counter - 1;
+            if (it->counter == 0)
+            {
+                OGAlut::DeleteBuffer(it->buffer);
+                shareBuffers_.erase(it);
+
+            }
+
+            return;
+        }
+    }
+}
+
+OGuint SoundSystem::GetShareBuffer_(typeSound type)
+{
+    if (shareBuffers_.empty()) { return -1; }
+
+    for (std::list<OGShareBuffer>::iterator it=shareBuffers_.begin(); it !=  shareBuffers_.end(); it++)
+    {
+        if (it->type == type)
+        {
+            return it->buffer;
+        }
+    }
+
+    return -1;
+}
+
+std::string SoundSystem::SoundTypeToName_(typeSound type)
+{   
+    std::string name;
+
     switch(type)
     {
-        case scream:
-         if(bufScream == NULL) bufScream = createBufferFromFile("resources/sounds/scream.wav");
-         buffer = bufScream;
-         break;
-        case boing2:
-            if(bufBoing2 == NULL) bufBoing2 = createBufferFromFile("resources/sounds/boing2.wav");
-            buffer = bufBoing2;
-            break;
-        case pop:
-            if(bufPop == NULL) bufPop = createBufferFromFile("resources/sounds/pop.wav");
-            buffer = bufPop;
-            break;
-        case captured:
-            if(bufCaptured == NULL) bufCaptured = createBufferFromFile("resources/sounds/captured.wav");
-            buffer = bufCaptured;
-            break;
-        case drag:
-            if(bufDrag == NULL) bufDrag = createBufferFromFile("resources/sounds/drag.wav");
-            buffer = bufDrag;
-            break;
-        default:
-            buffer = NULL;
-            break;
+    case SCREAM:
+        name = "scream";
+        break;
+    case BOING:
+        name = "boing";
+        break;
+    case POP:
+        name = "pop";
+        break;
+    case CAPTURED:
+        name = "captured";
+        break;
+    case DRAG:
+        name = "drag";
+        break;
+    default:
+        name = "NONETYPE";
+        break;
     }
 
-    attachBuffer(source, buffer);
-
-    return QPair<unsigned int, unsigned int>(source, buffer);
+    return name;
 }
 
-void SoundSystem::setVolume(unsigned int source, float volume)
+void SoundSystem::SetVolume(int id, float volume)
 {
-    if (active) alSourcef(source,AL_GAIN,volume);
-}
 
-void SoundSystem::setPitch(unsigned int source, float value)
-{
-    if (active) alSourcef(source,AL_PITCH,value);
-}
+    if (!isOpen_ || id == NONETYPE)
 
-void SoundSystem::playSource(unsigned int source)
-{
-    if (active) alSourcePlay(source);
-}
+    for (std::list<OGSoundObject>::iterator it=soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id)
+        {
+            OGAlut::SetVolume(it->source, volume);
 
-void SoundSystem::stopSource(unsigned int source)
-{
-    if (active) alSourceStop(source);
-}
-
-void SoundSystem::pauseSource(unsigned int source)
-{
-    if(active) alSourcePause(source);
-}
-
-bool SoundSystem::sourceStatus(unsigned int source)
-{
-    if (!active) return false;
-
-    ALenum state;
-
-    alGetSourcei(source, AL_SOURCE_STATE, &state);
-
-    return (state == AL_PLAYING);
-}
-
-void SoundSystem::addSource(QPair<unsigned int, unsigned int> source)
-{
-    if (!sources.contains(source)) sources.push_back(source);
-}
-
-void SoundSystem::deleteSource(QPair<unsigned int,unsigned int> source)
-{
-    if (active) {
-        deleteSource(source.first);
-        deleteBuffer(source.second);
+            return;
+        }
     }
 }
 
-void SoundSystem::setPosition(unsigned int source, QPoint p)
+void SoundSystem::SetPitch(int id, float pitch)
 {
-    if (active) alSource3f(source,AL_POSITION,p.x()-center.x(),p.y()-center.y(),0);
+    if (!isOpen_ || id == NONETYPE) { return; }
+
+    for (std::list<OGSoundObject>::iterator it =  soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id)
+        {
+            OGAlut::SetPitch(it->source, pitch);
+
+            return;
+        }
+    }
 }
 
-ALuint SoundSystem::genBuffer()
+void SoundSystem::SetCenter(QPoint p)
 {
-    alGetError(); // clear error code
-
-    ALuint buffer;
-
-    alGenBuffers(1, &buffer);
-
-    if (alGetError() != AL_NO_ERROR) return -1;
-
-    return buffer;
+    center_ = p;
 }
 
-ALuint SoundSystem::genSource()
+void SoundSystem::Play(int id)
 {
-    ALuint source;
+    if (!isOpen_ || id == NONETYPE) { return; }
 
-    alGenSources(1, &source);
-    if (alGetError() != AL_NO_ERROR) return -1;
+    for (std::list<OGSoundObject>::iterator it=soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id)
+        {
+            OGAlut::Play(it->source);
 
-    return source;
+            return;
+        }
+    }
 }
 
-bool SoundSystem::attachBuffer(ALuint source, ALint buffer)
+void SoundSystem::Stop(int id)
 {
-    alSourcei(source, AL_BUFFER, buffer);
-    if (alGetError() != AL_NO_ERROR) return false;
+    if (!isOpen_ || id == NONETYPE) { return; }
 
-    return true;
+    for (std::list<OGSoundObject>::iterator it=soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id)
+        {
+            OGAlut::Stop(it->source);
+
+            return;
+        }
+    }
 }
 
-ALuint SoundSystem::createBufferFromOGG (const char *filename)
+void SoundSystem::Pause(int id)
 {
-    OggVorbis_File vorbisFile;
+    if(!isOpen_ && id == NONETYPE) { return; }
 
-    if(ov_fopen(filename, &vorbisFile) < 0) return -1;
+    for (std::list<OGSoundObject>::iterator it=soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id)
+        {
+            OGAlut::Pause(it->source);
 
-    vorbis_info *pInfo = ov_info(&vorbisFile, -1);
-
-    ALenum format;              // The sound data format
-
-    // Check the number of channels... always use 16-bit samples
-    if (pInfo->channels == 1)
-        format = AL_FORMAT_MONO16;
-    else
-        format = AL_FORMAT_STEREO16;
-
-    long bytes;
-    const int BUFFER_SIZE = 4096;
-    char vorbisfileBuffer[BUFFER_SIZE];    // Local fixed size array
-    int bitStream;
-    std::vector < char > bufferData; // The sound buffer data from file
-
-    do {
-        // Read up to a buffer's worth of decoded sound data
-        bytes = ov_read(&vorbisFile, vorbisfileBuffer, BUFFER_SIZE, 0, 2, 1, &bitStream);
-        // Append to end of buffer
-        bufferData.insert(bufferData.end(), vorbisfileBuffer, vorbisfileBuffer + bytes);
-    } while (bytes > 0);
-
-    ALuint bufferID = genBuffer();            // The OpenAL sound buffer ID
-    alBufferData(bufferID, format, &bufferData[0],  (ALsizei)bufferData.size(), pInfo->rate);
-    ov_clear(&vorbisFile);
-
-    return bufferID;
+            return;
+        }
+    }
 }
 
-ALuint SoundSystem::createBufferFromFile (const char *filename)
+int SoundSystem::Status(int id)
 {
-    ALuint buffer;
-    QFileInfo fi(filename);
-    QString ext = fi.suffix();
+    if (!isOpen_ || id == NONETYPE) { return -1; }
 
-    if(ext.compare("ogg", Qt::CaseInsensitive) == 0) buffer = createBufferFromOGG (filename);
-    else if (ext.compare("wav", Qt::CaseInsensitive) == 0) buffer = alutCreateBufferFromFile(filename);
-    else return -1;
+    for (std::list<OGSoundObject>::iterator it =  soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id) { return OGAlut::GetState(it->source); }
+    }
 
-    return buffer;
+    return -1;
 }
 
-void SoundSystem::deleteBuffer(ALuint buffer)
+void SoundSystem::SetPosition(int id, QPoint p)
 {
-    alDeleteBuffers(1, &buffer);
+    if (!isOpen_ || id == NONETYPE) { return; }
+
+    float x = p.x()-center_.x();
+    float y = p.y()-center_.y();
+
+    for (std::list<OGSoundObject>::iterator it=soundObjects_.begin(); it !=  soundObjects_.end(); it++)
+    {
+        if (it->id == id)
+        {
+            OGAlut::SetPosition(it->source, x, y);
+            return;
+        }
+    }
 }
 
-void SoundSystem::deleteSource(ALuint source)
+void SoundSystem::OpenBGMusic(const OGpchar filename, bool loopmode, bool streammode)
 {
-    alDeleteSources(1, &source);
-}
-void SoundSystem::initMusic(const char* filename, bool isLoopMode)
-{
-    ALuint buffer; // The OpenAL sound buffer ID
+    if (!isOpen_)
+    {
+        player_ = 0;
+        return;
+    }
 
-    // [1] Create sound buffer and source
-    buffer = createBufferFromFile(filename);
-    srcMusic = genSource();
-
-    // [2] Attach sound buffer to source
-    attachBuffer(srcMusic, buffer);
-
-    musicLoop = new SoundLoop(srcMusic, isLoopMode);
+    if (player_ == 0)
+    {
+        player_ = new OGMPlayer;
+        player_->Open(filename, loopmode, streammode);
+    }
 }
 
-void SoundSystem::delMusic()
+void SoundSystem::CloseBGMusic()
 {
-    stopMusic();
-    delete musicLoop;
+    delete player_;
+    player_ = 0;
+    isMusicPlay_ = false;
 }
 
-void SoundSystem::startMusic()
+void SoundSystem::PlayBGMusic()
 {
-    musicLoop->start();
+    if (player_)
+    {
+        player_->Play();
+        isMusicPlay_ = true;
+    }
 }
 
-void SoundSystem::stopMusic()
+void SoundSystem::StopBGMusic()
 {
-    alSourceStop(srcMusic);
+    if (player_)
+    {
+        player_->Stop();
+        isMusicPlay_ = false;
+    }
 }
-
-void SoundSystem::pauseMusic()
+void SoundSystem::PauseBGMusic()
 {
-    alSourcePause(srcMusic);
+    if (player_)
+    {
+        player_->Pause();
+        isMusicPlay_ = false;
+    }
 }

@@ -24,10 +24,17 @@ INCLUDEPATH += ../extlibs/openal/openal-soft-1.14/include/AL
 INCLUDEPATH += ../extlibs/libvorbis/libvorbis-1.3.3/include
 INCLUDEPATH += ../extlibs/libogg/libogg-1.3.0/include
 INCLUDEPATH += ../extlibs/freealut/freealut-1.1.0-src/include
+INCLUDEPATH += ../opengoo/src
 INCLUDEPATH += ../opengoodst/src
 INCLUDEPATH += ../libs/logger/src
 LIBS += -L../extlibs/libs -L../libs/lib
+
+CONFIG(debug, debug|release) {
+LIBS += -lloggerd
+}
+else {
 LIBS += -llogger
+}
 
 !win32{
 LIBS +=-lopenal -lalut  -lvorbisfile -lvorbis -logg -lBox2D
@@ -118,7 +125,13 @@ HEADERS += \
     src/publicclass.h \
     src/options.h \
     src/crashxmlmodule.h \
-    ../OpenGOO/src/opengoodst/src/xmlmodule.h
+    ../OpenGOO/src/opengoodst/src/xmlmodule.h \
+    src/og_types.h \
+    src/og_oggfile.h \
+    src/og_mplayer.h \
+    src/og_ifile.h \
+    src/og_alut.h \
+    src/og_wavfile.h
 
 
 SOURCES += \
@@ -154,7 +167,11 @@ SOURCES += \
     src/crashxmlmodule.cpp \
     ../opengoodst/src/xmlmodule.cpp \
     ../opengoodst/src/architecture.cpp \
-    ../opengoodst/src/report.cpp
+    ../opengoodst/src/report.cpp \
+    src/og_wavefile.cpp \
+    src/og_oggfile.cpp \
+    src/og_mplayer.cpp \
+    src/og_alut.cpp
 
 !win32{
 HEADERS += src/backtracer.h

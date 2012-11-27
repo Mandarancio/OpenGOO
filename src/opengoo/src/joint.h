@@ -12,6 +12,7 @@ class Joint : public QObject
     Q_OBJECT
 public:
     explicit Joint(Goo* a,Goo* b, b2World * world,bool child=false,QObject *parent = 0); //cunstractor: the two goo to link and the phisical world
+    ~Joint();
     virtual void paint(QPainter &p); //Paint function
     //DEBUG PAINTER
     void paintDebug(QPainter &p);
@@ -38,6 +39,11 @@ private:
     float animationValue;
     int counter;
     void drawLines(QPainter & p);
+
+    // Sound
+    SoundSystem* sSystem;
+    int popSound;
+
 signals:
     void destroyJoint(Joint *j); //SIGNAL FOR DESTROY THIS JOINT
 public slots:

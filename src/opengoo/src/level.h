@@ -14,7 +14,6 @@
 #include "backgroundwidget.h"
 #include "svglevelloader.h"
 #include "balloongoo.h"
-//#include "soundsystem.h"
 #include "background.h"
 #include "stickylink.h"
 #include "goo.h"
@@ -159,6 +158,9 @@ private:
     //MUTE BUTTON
     void paintMute(QPainter &p);
     void clickMute(QPoint p);
+
+    //Sound
+    SoundSystem* sSystem;
     
 protected:
     //Timer event function here the world is updated and after the scene is redr

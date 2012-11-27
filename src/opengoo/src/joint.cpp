@@ -14,6 +14,15 @@ Joint::Joint(Goo *a, Goo *b, b2World *world,bool child, QObject *parent):
     if (!child) initialize(world);
     animationValue=0.0;
     counter=1;
+
+    sSystem = SoundSystem::GetInstance();
+    if (sSystem->IsFail()) { popSound = SoundSystem::NONETYPE; }
+    else { popSound = sSystem->Create(SoundSystem::POP); }
+}
+
+Joint::~Joint()
+{
+    sSystem->Delete(popSound);
 }
 
 void Joint::initialize(b2World * world){
@@ -100,12 +109,10 @@ void Joint::status(){
         if (a->isDragging() || b->isDragging()){
             Goo* d=(a->isDragging()? a : b);
 
-            QPair<unsigned int,unsigned int> source =sSystem->createPair(SoundSystem::pop);
            // soundSystem.setPitch(source.first,float(d->getRadius())/24.0);
-            sSystem->setVolume(source.first,0.2*float(d->getRadius())/24.0);
-            sSystem->setPosition(source.first,d->getPPosition());
-            sSystem->addSource(source);
-            sSystem->playSource(source.first);
+            sSystem->SetVolume(popSound, 0.2*float(d->getRadius())/24.0);
+            sSystem->SetPosition(popSound, d->getPPosition());
+            sSystem->Play(popSound);
 
         }
         emit destroyJoint(this);
