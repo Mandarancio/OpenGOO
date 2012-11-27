@@ -31,6 +31,7 @@ MainWidget::~MainWidget()
 {
     delete levelS;
     delete level;
+    SoundSystem::DestroyInstance();
 }
 
 void MainWidget::closeEvent(QCloseEvent *e){

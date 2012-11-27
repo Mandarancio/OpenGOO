@@ -20,8 +20,8 @@
 Introduction::Introduction(QWidget *parent) :
     QWidget(parent),time(0),scale(1.0),step(1.0/40.0)
 {
-    sSystem=new SoundSystem;
-    //sSystem->initialize();
+    sSystem = SoundSystem::GetInstance();
+    sSystem->Open();
     if (flag & ONLYTEXT || flag & DEBUG){
         logWarn("Loading intro");
     }
@@ -57,7 +57,6 @@ Introduction::Introduction(QWidget *parent) :
 }
 
 Introduction::~Introduction(){
-    delete sSystem;
     delete loader;
     for (int i=0;i<goos.length();i++){
         delete goos[i];
@@ -68,6 +67,7 @@ Introduction::~Introduction(){
     }
     ground.clear();
     delete world;
+    sSystem->Close();
 }
 
 void Introduction::timerEvent(QTimerEvent *e){
@@ -142,7 +142,7 @@ void Introduction::resizeEvent(QResizeEvent *e){
     rW=e->size().width()/1280.0;
     rH=e->size().height()/1024.0;
     scale=(rW<rH? rW : rH);
-    sSystem->setCenter(QPoint(e->size().width()*scale/2,e->size().height()*scale/2));
+    sSystem->SetCenter(QPoint(e->size().width()*scale/2,e->size().height()*scale/2));
 }
 
 void Introduction::keyPressEvent(QKeyEvent *e){

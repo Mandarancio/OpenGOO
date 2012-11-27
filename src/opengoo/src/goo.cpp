@@ -40,7 +40,27 @@ Goo::Goo( int radius, QObject *parent) :
     prevTarget=NULL;
     type=NONE;
 
-    scream = sSystem->createPair(SoundSystem::scream);
+    sSystem = SoundSystem::GetInstance();
+
+    if (sSystem->IsFail())
+    {
+        screamSound = SoundSystem::NONETYPE;
+        capturedSound = SoundSystem::NONETYPE;
+        dragSound = SoundSystem::NONETYPE;
+    }
+    else
+    {
+        screamSound = sSystem->Create(SoundSystem::SCREAM);
+        capturedSound =sSystem->Create(SoundSystem::CAPTURED);
+        dragSound = sSystem->Create(SoundSystem::DRAG);
+    }
+}
+
+Goo::~Goo()
+{
+    sSystem->Delete(screamSound);
+    sSystem->Delete(capturedSound);
+    sSystem->Delete(dragSound);
 }
 
 //Check if is on ground
@@ -101,14 +121,12 @@ void Goo::move(QPoint p){
 
 void Goo::jumpTo(QPoint p){
     stopFollow();
-    if (!falling){
-
-        QPair<unsigned int,unsigned int> source =sSystem->createPair(SoundSystem::captured);
-        sSystem->setPitch(source.first,float(radius)/20.0);
-        sSystem->setVolume(source.first,radius/24.0);
-        sSystem->setPosition(source.first,getPPosition());
-        sSystem->playSource(source.first);
-        sSystem->addSource(source);
+    if (!falling)
+    {
+        sSystem->SetPitch(capturedSound, float(radius)/20.0);
+        sSystem->SetVolume(capturedSound, radius/24.0);
+        sSystem->SetPosition(capturedSound, getPPosition());
+        sSystem->Play(capturedSound);
     }
     this->dragable=false;
     this->moovable=false;
@@ -215,13 +233,12 @@ void Goo::drag(){
         info.aForce=body->GetAngularVelocity();
     }
     if (!hasJoint())  {
-        if (!dragging){
-            QPair<unsigned int,unsigned int> source = sSystem->createPair(SoundSystem::drag);
-            sSystem->setPitch(source.first,20.0/float(radius));
-            sSystem->setVolume(source.first,radius/24.0);
-            sSystem->setPosition(source.first,getPPosition());
-            sSystem->playSource(source.first);
-            sSystem->addSource(source);
+        if (!dragging)
+        {
+            sSystem->SetPitch(dragSound, 20.0/float(radius));
+            sSystem->SetVolume(dragSound, radius/24.0);
+            sSystem->SetPosition(dragSound, getPPosition());
+            sSystem->Play(dragSound);
         }
         body->SetActive(false);
     }
