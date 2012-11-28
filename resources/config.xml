@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<param name="screen_width" value="800"/>
+	<param name="screen_height" value="600"/>
+</config>
