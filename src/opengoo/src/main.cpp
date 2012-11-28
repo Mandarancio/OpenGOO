@@ -36,11 +36,17 @@
 #include <logger.h>
 #include <consoleappender.h>
 
+struct OGGameConfig
+{
+    int screen_width;
+    int screen_height;
+    QString language;
+};
+
 void gooMessageOutput(QtMsgType type, const char *msg);
+void ReadConfig(OGGameConfig* config);
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
-
-
 
 int main(int argc, char *argv[])
 {
@@ -108,9 +114,11 @@ int main(int argc, char *argv[])
     }
     else if (flag & DEBUG) logWarn("Game dir exist!");
 
-    //soundSystem.initialize();
+    OGGameConfig config;
 
-    MainWidget w(QRect(50, 50, 1024,800));
+    ReadConfig(&config);
+
+    MainWidget w(QRect(50, 50, config.screen_width, config.screen_height));
     w.show();
     return a.exec();
 }
@@ -130,5 +138,58 @@ void gooMessageOutput(QtMsgType type, const char *msg)
     case QtFatalMsg:
         logException(QLatin1String(msg));
         abort();
+    }
+}
+
+void ReadConfig(OGGameConfig* config)
+{
+    const int SCREEN_WIDTH = 800;
+    const int SCREEN_HEIGTH = 600;
+    QDomDocument domDoc;
+    QFile file("./resources/config.xml");
+
+    if (file.open(QIODevice::ReadOnly))
+    {
+        if (domDoc.setContent(&file))
+        {
+            QDomElement domElement = domDoc.documentElement();
+            if (domElement.tagName() != "config")
+            {
+                config->screen_width = SCREEN_WIDTH;
+                config->screen_height = SCREEN_HEIGTH;
+            }
+
+            for(QDomNode n = domElement.firstChild(); !n.isNull(); n = n.nextSibling())
+             {
+                 QDomElement domElement = n.toElement();
+
+                 if (domElement.tagName() == "param")
+                 {
+                     QString attribute = domElement.attribute("name", "");
+
+                     if (attribute == "screen_width")
+                     {
+                         config->screen_width = domElement.attribute("value", "").toInt();
+                     }
+                     else if (attribute == "screen_height")
+                     {
+                         config->screen_height = domElement.attribute("value", "").toInt();
+                     }
+                     else if (attribute == "language")
+                     {
+                         config->language = domElement.attribute("value", "");
+                     }
+                 }
+             }
+        }
+
+        file.close();
+    }
+
+    else
+    {
+        gooMessageOutput(QtWarningMsg, "File config.xml not found");
+        config->screen_width = SCREEN_WIDTH;
+        config->screen_height = SCREEN_HEIGTH;
     }
 }
