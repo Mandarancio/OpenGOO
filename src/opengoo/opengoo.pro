@@ -125,7 +125,7 @@ HEADERS += \
     src/publicclass.h \
     src/options.h \
     src/crashxmlmodule.h \
-    ../OpenGOO/src/opengoodst/src/xmlmodule.h \
+    ../opengoodst/src/xmlmodule.h \
     src/og_types.h \
     src/og_oggfile.h \
     src/og_mplayer.h \
