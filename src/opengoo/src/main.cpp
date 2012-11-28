@@ -88,9 +88,7 @@ int main(int argc, char *argv[])
     if (flag == STANDARD) logWarn("STD MODE");
     if (flag & OPENGL) {
         logWarn("OPENGL ACTIVATED");
-        argc += 2; // TODO: check if it's valid
-        argv[argc-2] = strdup("-graphicssystem");
-        argv[argc-1] = strdup("opengl");
+        QApplication::setGraphicsSystem("opengl");
     }
 
 
