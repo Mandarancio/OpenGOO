@@ -1,0 +1,11 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Goo::canHaveJoint",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Goo::hasJoint",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d5/d5d/classGoo.html#ae809f97fb4c0c7f58a63cbed66f0ba5c"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Goo::nJoints",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d5/d5d/classGoo.html#a0e7e7badc0a969ffca1e3d1341238e78"];
+}

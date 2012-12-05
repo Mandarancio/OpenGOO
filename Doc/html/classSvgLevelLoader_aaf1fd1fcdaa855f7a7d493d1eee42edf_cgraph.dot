@@ -1,0 +1,20 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="SvgLevelLoader::parseBackground",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="SvgLevelLoader::addBackGroundShape",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classSvgLevelLoader.html#ac6e06903293c6a3fe87f5e5747723b5e"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="SvgLevelLoader::parseFill",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classSvgLevelLoader.html#a2fad092b3cc396c16c8998dfa5ef5b4e"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="SvgLevelLoader::parsePointList",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classSvgLevelLoader.html#abda6b66187cc29c7d2afda688ec38412"];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="SvgLevelLoader::parseTransform",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classSvgLevelLoader.html#aac30601434ed0f5f52f475c5315f7daf"];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="SvgLevelLoader::strToPoint",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classSvgLevelLoader.html#a9faa5bb2a40a6bacaa0f28fc6460000f"];
+  Node4 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="toPoly",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$tools_8cpp.html#aea21719bd05ff099d0aa190b4555c352",tooltip="Convert a QList of QPoint in a QPolygon transated of *center*."];
+}

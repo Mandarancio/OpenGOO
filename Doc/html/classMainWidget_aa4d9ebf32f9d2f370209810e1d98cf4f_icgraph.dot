@@ -1,0 +1,14 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="MainWidget::backToMainMenu",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="MainWidget::levelSelected",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classMainWidget.html#a7460c5640216291772a423c19db16f14"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="MainWidget::startSelection",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classMainWidget.html#ace13c66ba2a6a0f0abfbc9041e35a4f2"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="MainWidget::MainWidget",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classMainWidget.html#af5f794244d1985dc2e40d2f17d8ff552"];
+}

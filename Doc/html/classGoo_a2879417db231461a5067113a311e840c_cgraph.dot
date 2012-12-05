@@ -1,0 +1,13 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Goo::destroyThis",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Goo::destroyGoo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGoo.html#a3c1f204e1566566727846c20ea23e726"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Goo::destroyJoint",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGoo.html#a8cf2277a2304fa038a56edddee704966"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Goo::loseLink",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGoo.html#a8dbb600f747f7e1bd4bc47629cbc9ec9"];
+}
