@@ -71,7 +71,7 @@ int SoundSystem::Create(typeSound type)
 
 void SoundSystem::Delete(int id)
 {
-    if (!isOpen_ || id == NONETYPE) { return; }
+    if (!isOpen_ || id == NONETYPE || soundObjects_.empty()) { return; }
 
     for (std::list<OGSoundObject>::iterator it=soundObjects_.begin(); it !=  soundObjects_.end(); it++)
     {
