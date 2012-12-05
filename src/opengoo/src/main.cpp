@@ -19,6 +19,7 @@
 #include <QRect>
 #include <QDebug>
 #include <QTime>
+#include <QXmlStreamWriter>
 
 #ifndef Q_OS_WIN32
 #include "backtracer.h"
@@ -41,6 +42,7 @@ struct OGGameConfig
     int screen_width;
     int screen_height;
     QString language;
+    bool fullscreen;
 };
 
 void gooMessageOutput(QtMsgType type, const char *msg);
@@ -119,6 +121,9 @@ int main(int argc, char *argv[])
     ReadConfig(&config);
 
     MainWidget w(QRect(50, 50, config.screen_width, config.screen_height));
+
+    if (config.fullscreen) { w.setWindowState(Qt::WindowFullScreen); }
+
     w.show();
     return a.exec();
 }
@@ -146,6 +151,11 @@ void ReadConfig(OGGameConfig* config)
     const int SCREEN_WIDTH = 800;
     const int SCREEN_HEIGTH = 600;
     QDomDocument domDoc;
+// Default settings
+    config->screen_width = SCREEN_WIDTH;
+    config->screen_height = SCREEN_HEIGTH;
+    config->fullscreen = true;
+
     QFile file("./resources/config.xml");
 
     if (file.open(QIODevice::ReadOnly))
@@ -153,43 +163,86 @@ void ReadConfig(OGGameConfig* config)
         if (domDoc.setContent(&file))
         {
             QDomElement domElement = domDoc.documentElement();
+
             if (domElement.tagName() != "config")
             {
-                config->screen_width = SCREEN_WIDTH;
-                config->screen_height = SCREEN_HEIGTH;
+                gooMessageOutput(QtWarningMsg, "File config.xml is corrupted");
+                file.close();
+
+                return;
             }
 
             for(QDomNode n = domElement.firstChild(); !n.isNull(); n = n.nextSibling())
-             {
-                 QDomElement domElement = n.toElement();
+            {
+                QDomElement domElement = n.toElement();
 
-                 if (domElement.tagName() == "param")
-                 {
-                     QString attribute = domElement.attribute("name", "");
+                if (domElement.tagName() == "param")
+                {
+                    QString attribute = domElement.attribute("name", "");
 
-                     if (attribute == "screen_width")
-                     {
-                         config->screen_width = domElement.attribute("value", "").toInt();
-                     }
-                     else if (attribute == "screen_height")
-                     {
-                         config->screen_height = domElement.attribute("value", "").toInt();
-                     }
-                     else if (attribute == "language")
-                     {
-                         config->language = domElement.attribute("value", "");
-                     }
-                 }
-             }
+                    if (attribute == "screen_width")
+                    {
+                        config->screen_width = domElement.attribute("value", "").toInt();
+                    }
+                    else if (attribute == "screen_height")
+                    {
+                        config->screen_height = domElement.attribute("value", "").toInt();
+                    }
+                    else if (attribute == "language")
+                    {
+                        config->language = domElement.attribute("value", "");
+                    }
+                    else if (attribute == "fullscreen")
+                    {
+                        if (domElement.attribute("value", "") == "true")
+                        {
+                            config->fullscreen = true;
+                        }
+                        else { config->fullscreen = false; }
+                    }
+                }
+            }
+        }
+        else
+        {
+            gooMessageOutput(QtWarningMsg, "File config.xml has incorrect xml format");
         }
 
         file.close();
     }
-
     else
     {
         gooMessageOutput(QtWarningMsg, "File config.xml not found");
-        config->screen_width = SCREEN_WIDTH;
-        config->screen_height = SCREEN_HEIGTH;
+        file.open(QIODevice::WriteOnly);
+        QString xmlData;
+        QTextStream out(&file);
+        QXmlStreamWriter stream(&xmlData);
+        stream.setAutoFormatting(true);
+        stream.writeStartDocument();
+        stream.writeStartElement("config");
+
+        stream.writeStartElement("param");
+        stream.writeAttribute("name", "screen_width");
+        stream.writeAttribute("value",  QString::number(SCREEN_WIDTH));
+        stream.writeEndElement(); // end screen_width
+
+        stream.writeStartElement("param");
+        stream.writeAttribute("name", "screen_height");
+        stream.writeAttribute("value",  QString::number(SCREEN_HEIGTH));
+        stream.writeEndElement(); // end screen_height
+
+        stream.writeStartElement("param");
+        stream.writeAttribute("name", "fullscreen");
+
+        if (config->fullscreen) { stream.writeAttribute("value",  "true"); }
+        else { stream.writeAttribute("value",  "false"); }
+
+        stream.writeEndElement(); // end fullscreen
+
+        stream.writeEndElement(); // end config
+
+        stream.writeEndDocument();
+        out << xmlData;
+        file.close();
     }
 }
