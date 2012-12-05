@@ -31,6 +31,7 @@ MainWidget::~MainWidget()
 {
     delete levelS;
     delete level;
+    if (intro) { delete intro; }
     SoundSystem::DestroyInstance();
 }
 
@@ -101,6 +102,7 @@ void MainWidget::startSelection()
 {
     layout->removeWidget(intro);
     delete intro;
+    intro = 0;
     levelS=new LevelSelector(this);                                             //Creates the level selector
     levelS->show();                                                             //Shows the level selector
     connect(levelS,SIGNAL(closing()),this,SLOT(close()));                       //Connect the closing of the levelSelector with the closing of the game
