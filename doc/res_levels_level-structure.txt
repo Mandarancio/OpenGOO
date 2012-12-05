@@ -1,0 +1,151 @@
+This document describes the structure of res/levels/<level-id>.level.xml:
+
+This file describes the initial set up of the level:
+- balls position
+- camera position
+- completion requirement
+- sign post
+- music
+
+Structure overview: 
+  <level>
+    <camera>+
+      <poi>+
+    </camera>
+    <music />?
+    <loopsound />?
+    <signpost />*
+    <pipe>
+      <Vertex />3+
+    </pipe>?
+    <BallInstance />*
+    <Strand>*
+    <levelexit />?
+    <endoncollision ???>?
+    <endonmessage ???>?
+    <fire ???>*
+    <targetheight ???>?
+  </level>
+
+Nodes' details:
+<level ballsrequired="string" letterboxed="boolean" visualdebug="boolean" autobounds="boolean" textcolor="rgb_color" texteffects="boolean" timebugprobability="real" strandgeom?="boolean" allowskip?="boolean" texteffects?="boolean" cursor1color?="rgb_color" cursor2color?="rgb_color" cursor3color?="rgb_color" cursor4color?="rgb_color">
+  attributes:  
+  - ballsrequired: an integer that represents the minimum number of balls to collect to complete
+    the level, or an empty string if there is no such requirement (for example, in island maps)
+  - letterboxed: "true" in level map, "false" in island map. Letter box display ~(16/9).
+  - visualdebug: ?
+  - autobounds: ? "true" to indicate that the player camera is bounded to a 'visited' area. That is the player need to move its construct to extend the bound. "false" indicates that the player can visit all the level with the camera.
+  - textcolor: color of displayed text
+  - timebugprobability: ? Probably of occurrences of a time bug (based on what? Move ?). 
+                        Notes: There is also some level with value "false" or "".
+  - strandgeom: ? I wonder if this indicates the presence of existing non deformable geometry (e.g. the grey cubes)
+  - texteffects: ? Only a few level have it.  
+  - cursor1color: ? Set to green in HelloWorld, GravePineVirus.  
+  - cursor2color: ? Set to cyan in HelloWorld, GravePineVirus.  
+  - cursor3color: ? Set to blue in HelloWorld, GravePineVirus.  
+  - cursor4color: ? Set to red in HelloWorld, GravePineVirus.  
+
+<camera aspect?="string" endpos?="2d_pos" endzoom?="real">
+  Defines the camera used to "see" the level depending on user screen format (wide/normal).
+  attributes:
+  - aspect: value may be either "widescreen" or "normal". Typically a level 
+    always has two camera, one "widescreen" and one "normal" camera.
+  - endpos: ? (for animation ?)
+  - endzoom: ? (for animation ?)
+
+<poi pause="real" pos="2d_pos" traveltime="real" zoom="real">
+  Defines the point of interest of the camera
+  attributes:
+  - pause: ? duration in second (for animation ?)
+  - pos: ? Position of the point of interest on the screen in camera space
+  - traveltime: ? duration in second (for animation ?)
+  - zoom: ? Zoom factor. 1 and 0.889 are largely used values. Other value usually in range 0.5-1.8
+  
+<music id="string">
+  Defines the music used in the level
+  attributes:
+  id: ? reference to a music resource id
+
+<loopsound id="string">
+  attributes:
+  id: ? reference to a sound resource id
+  
+<signpost alpha="real" colorize="rgb_color" depth="real" image="string" name="string" x="real" y="real" rotation="real" scalex="real" scaley="real" text="text" particles?="fx">
+  Defines a sign-post usually used to provide types or story telling.
+  attributes:
+  - alpha: transparency factory. Always set to 1.
+  - colorize: ? 3 values found (0,0,0à, (128,128,128) & (255,255,255)
+  - depth: ? Z position in camera space. range in -800 to +100. Most frequent is -8.
+  - image: ? reference to an image resource. Most level have a unique image that is reused accross sign post.
+  - name: ? just an name for edition ?
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - rotation: ? rotation around the Z axis ? Usually in range [-180,+180]
+  - scalex: ? widden factor? Usually in range [0.7,1.3]
+  - scaley: ? widden factor? Usually in range [0.7,1.3]  
+  - text: reference id for text painted on the sign-post.
+  - particles: ? Reference to particule effect applied to sign-post. Not present for most level. An handful have the value "signpostAlertMom"
+  
+<pipe id="integer" depth="real" type?="">
+  Defines the exit pipe.
+  attributes:
+  - id: unique id of the pipe in the level
+  - depth: ?Z position in camera space. Usually in range [0,8]
+  - type: ? Known value: "BEAUTY", "ISH", "BLACK"
+  
+<Vertex x="real" y="real">
+  Defines a bending point of the exit pipe.
+  attributes:
+  - x: ? X position in camera space. The chain of vertex form the pipe shape.
+  - y: ? Y position in camera space. The chain of vertex form the pipe shape.
+  
+<BallInstance id="integer" type="string" x="real" y="real" angle="real" discovered?="boolean">
+  Creates and specify the characteristics of a ball instance (e.g. a Goo)
+  attributes:
+  - id: unique id of the ball instance in the level (referenced by Strand)
+  - type: Reference to a ball name defined in res/balls/Ball. Example: "common_albino", "Ivy", "AnchorFriendly", "common", "Distant", "BombShaft", "Fish", "Beauty", "Anchor", "Fuze"...
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - angle: ? rotation around the Z axis ? Usually 0.
+  - discovered: ? Indicates if it can be used by the player. Usually "true".
+  
+<Strand gb1="integer" gb2="integer">
+  Defines a pre-existing arm that bind two ball instance together.
+  attributes:
+  - gb1: id of the BallInstance that is bound to gb2
+  - gb2: id of the BallInstance that is bound to gb1
+  
+<levelexit id="integer" filter="string" pos="2d_pos" radius="real">
+  ???? Defines a circular zone that provoques the end of the level when a goo reach it?
+  attributes:
+  - id: always "theExit".
+  - filter: Specify BallInstance type that trigger the end of the level. Comma separated list. May be empty. Example: filter="UglyProduct,BeautyProductEye".
+  - pos: Position of the center of the exit zone
+  - radius: Radius of the circular exit zone based on pos. Always 75.
+  
+<endoncollision id1="string" id2="string" delay="real">
+  ???
+  attributes:
+  - id1: name of a ???
+  - id2: name of a ???
+  - delay: ? time in second.
+
+<endonmessage id="text">
+  ??? Ends the level when the referenced message is displayed ?
+  attributes:
+  - id: reference to text that will end the level when displayed ?
+  
+<fire x="real" y="real" radius="real" depth="real" particles="fx">
+  A circular zone of fire that can light-up certain balls.
+  attributes:
+      - x: ? X position in camera space
+      - y: ? Y position in camera space  
+      - radius: Radius of the circular collision zone.
+      - depth: ?Z position in camera space. Usually in range [-24,0]
+  - particles: Effects used to display the fire zone.
+  
+<targetheight y="real">
+  ??? Ends the level when a ball has reached the specified height ?
+  attributes:
+  - y: ? Y position in camera space  
+  

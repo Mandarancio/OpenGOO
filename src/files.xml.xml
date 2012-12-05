@@ -1,0 +1,1851 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Created by WooGLE v0.76 Beta 2 -->
+<folder name="res">
+  <folder name="balls">
+    <folder name="Anchor">
+      <file name="body" type="png" />
+    </folder>
+    <folder name="AnchorSticky">
+      <file name="body" type="png" />
+    </folder>
+    <folder name="balloon">
+      <file name="body2" type="png" />
+      <file name="deflate1" type="ogg" />
+      <file name="deflate2" type="ogg" />
+      <file name="inflate1" type="ogg" />
+      <file name="inflate2" type="ogg" />
+      <file name="pop1" type="ogg" />
+      <file name="pop2" type="ogg" />
+      <file name="rubberpull1" type="ogg" />
+      <file name="rubberpull2" type="ogg" />
+      <file name="rubberpull3" type="ogg" />
+      <file name="rubberpull4" type="ogg" />
+      <file name="rubberpull5" type="ogg" />
+      <file name="shine" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="string3" type="png" />
+      <file name="string_inactive" type="png" />
+    </folder>
+    <folder name="Beauty">
+      <file name="body" type="png" />
+      <file name="bpop" type="ogg" />
+      <file name="eyeLeft" type="png" />
+      <file name="eyeRight" type="png" />
+      <file name="lips" type="png" />
+      <file name="pupil" type="png" />
+      <file name="shadow" type="png" />
+    </folder>
+    <folder name="BeautyProduct">
+      <file name="ball" type="png" />
+      <file name="lips" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="BeautyProductEye">
+      <file name="bg" type="png" />
+      <file name="pupil" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="Bit">
+      <file name="arm" type="png" />
+      <file name="body" type="png" />
+      <file name="chirp01" type="ogg" />
+      <file name="chirp02" type="ogg" />
+      <file name="chirp03" type="ogg" />
+      <file name="chirp04" type="ogg" />
+      <file name="chirp05" type="ogg" />
+      <file name="chirp06" type="ogg" />
+      <file name="chirp07" type="ogg" />
+      <file name="chirp08" type="ogg" />
+      <file name="chirp09" type="ogg" />
+      <file name="chirp10" type="ogg" />
+      <file name="chirp11" type="ogg" />
+      <file name="chirp12" type="ogg" />
+      <file name="launch01" type="ogg" />
+      <file name="launch02" type="ogg" />
+      <file name="launch03" type="ogg" />
+      <file name="launch04" type="ogg" />
+      <file name="launch05" type="ogg" />
+      <file name="launch06" type="ogg" />
+      <file name="launch07" type="ogg" />
+      <file name="pain01" type="ogg" />
+      <file name="pain02" type="ogg" />
+      <file name="pain03" type="ogg" />
+      <file name="pain04" type="ogg" />
+      <file name="pop1" type="ogg" />
+      <file name="pop2" type="ogg" />
+      <file name="pupil" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="BlockHead">
+      <file name="body1" type="png" />
+      <file name="body2" type="png" />
+      <file name="body3" type="png" />
+      <file name="bodyDrag" type="png" />
+      <file name="break01" type="ogg" />
+      <file name="break02" type="ogg" />
+      <file name="break03" type="ogg" />
+      <file name="bump01" type="ogg" />
+      <file name="bump02" type="ogg" />
+      <file name="bump03" type="ogg" />
+      <file name="bump04" type="ogg" />
+      <file name="bump05" type="ogg" />
+      <file name="bump06" type="ogg" />
+      <file name="dragmarker" type="png" />
+      <file name="eyeSqr" type="png" />
+      <file name="eyeSqr2" type="png" />
+      <file name="shadow" type="png" />
+    </folder>
+    <folder name="BombMini">
+      <file name="body" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="spring_goo_burnt" type="png" />
+    </folder>
+    <folder name="BombShaft">
+      <file name="body" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="spring_goo_burnt" type="png" />
+    </folder>
+    <folder name="BombSticky">
+      <file name="body" type="png" />
+      <file name="detachmarker" type="png" />
+      <file name="detonate1" type="ogg" />
+      <file name="dragmarker" type="png" />
+      <file name="eyeLid1" type="png" />
+      <file name="eyeLid2" type="png" />
+      <file name="shadow" type="png" />
+      <file name="spikes" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="spring_goo_burnt" type="png" />
+      <file name="valve" type="png" />
+    </folder>
+    <folder name="Bone">
+      <file name="arm" type="png" />
+      <file name="arm_detach" type="png" />
+      <file name="body1" type="png" />
+      <file name="body2" type="png" />
+      <file name="jaw" type="png" />
+      <file name="shad" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="common">
+      <file name="batsqueak01" type="ogg" />
+      <file name="batsqueak02" type="ogg" />
+      <file name="batsqueak03" type="ogg" />
+      <file name="batsqueak04" type="ogg" />
+      <file name="batsqueak05" type="ogg" />
+      <file name="batsqueak06" type="ogg" />
+      <file name="batsqueak07" type="ogg" />
+      <file name="batsqueak08" type="ogg" />
+      <file name="batsqueak09" type="ogg" />
+      <file name="batsqueak10" type="ogg" />
+      <file name="batsqueak11" type="ogg" />
+      <file name="batsqueak12" type="ogg" />
+      <file name="batsqueak13" type="ogg" />
+      <file name="batsqueak14" type="ogg" />
+      <file name="batsqueak15" type="ogg" />
+      <file name="batsqueak16" type="ogg" />
+      <file name="body" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="common_albino">
+      <file name="body" type="png" />
+      <file name="eyeBlack1" type="png" />
+      <file name="eyeBlack2" type="png" />
+      <file name="eyeBlack3" type="png" />
+      <file name="glow" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="common_black">
+      <file name="common_ball" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="Distant">
+      <file name="arm" type="png" />
+      <file name="body" type="png" />
+      <file name="detachmarker" type="png" />
+      <file name="dragmarker" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="Drained">
+      <file name="body" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="DrainedIsh">
+      <file name="body" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="EvilEye">
+      <file name="bg" type="png" />
+      <file name="detachmarker" type="png" />
+      <file name="dragmarker" type="png" />
+      <file name="pupil" type="png" />
+      <file name="shine" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="vein" type="png" />
+    </folder>
+    <folder name="Fish">
+      <file name="body" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="squak1" type="ogg" />
+      <file name="squak2" type="ogg" />
+      <file name="squak3" type="ogg" />
+      <file name="squak4" type="ogg" />
+      <file name="string3" type="png" />
+      <file name="string_inactive" type="png" />
+      <file name="wingflap1" type="ogg" />
+      <file name="wingflap2" type="ogg" />
+      <file name="wingflap3" type="ogg" />
+      <file name="wingLeft" type="png" />
+      <file name="wingRight" type="png" />
+    </folder>
+    <folder name="Fuse">
+      <file name="body" type="png" />
+      <file name="igniteBurn01" type="ogg" />
+      <file name="igniteBurn02" type="ogg" />
+      <file name="igniteBurn03" type="ogg" />
+      <file name="igniteBurn04" type="ogg" />
+      <file name="pop01" type="ogg" />
+      <file name="pop02" type="ogg" />
+      <file name="pop03" type="ogg" />
+      <file name="pop04" type="ogg" />
+      <file name="pop05" type="ogg" />
+      <file name="pop06" type="ogg" />
+      <file name="pop07" type="ogg" />
+      <file name="sizzle01" type="ogg" />
+      <file name="sizzle02" type="ogg" />
+      <file name="sizzle03" type="ogg" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="spring_goo_burnt" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="GooProduct">
+      <file name="ball" type="png" />
+      <file name="goop" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+    </folder>
+    <folder name="Hex">
+      <file name="ball" type="png" />
+    </folder>
+    <folder name="IconWindowRect">
+      <file name="body" type="png" />
+      <file name="label" type="png" />
+    </folder>
+    <folder name="IconWindowSquare">
+      <file name="body" type="png" />
+      <file name="label" type="png" />
+    </folder>
+    <folder name="Ivy">
+      <file name="arm_connected" type="png" />
+      <file name="arm_detach" type="png" />
+      <file name="body" type="png" />
+      <file name="bodyAttached" type="png" />
+      <file name="chirp01" type="ogg" />
+      <file name="chirp02" type="ogg" />
+      <file name="chirp03" type="ogg" />
+      <file name="chirp04" type="ogg" />
+      <file name="chirp05" type="ogg" />
+      <file name="leaves1" type="png" />
+      <file name="leaves2" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="Pilot">
+      <file name="arm" type="png" />
+      <file name="arrow" type="png" />
+      <file name="body" type="png" />
+      <file name="eye1" type="png" />
+      <file name="eye2" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="Pixel">
+      <file name="arm" type="png" />
+      <file name="body" type="png" />
+      <file name="chirp01" type="ogg" />
+      <file name="chirp02" type="ogg" />
+      <file name="chirp03" type="ogg" />
+      <file name="chirp04" type="ogg" />
+      <file name="chirpUp01" type="ogg" />
+      <file name="chirpUp02" type="ogg" />
+      <file name="chirpUp03" type="ogg" />
+      <file name="chirpUp04" type="ogg" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="PixelProduct">
+      <file name="arm" type="png" />
+      <file name="body" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="Pokey">
+      <file name="arm_connected" type="png" />
+      <file name="arm_detach" type="png" />
+      <file name="body" type="png" />
+      <file name="bodyStuck" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="RectHead">
+      <file name="body1" type="png" />
+      <file name="body2" type="png" />
+    </folder>
+    <folder name="SimCommon">
+      <file name="arm" type="png" />
+      <file name="body" type="png" />
+      <file name="dragmarker" type="png" />
+    </folder>
+    <folder name="Spam">
+      <file name="s1" type="png" />
+      <file name="s2" type="png" />
+      <file name="s3" type="png" />
+      <file name="s4" type="png" />
+      <file name="s5" type="png" />
+      <file name="s6" type="png" />
+    </folder>
+    <folder name="TimeBug">
+      <file name="body" type="png" />
+      <file name="glow" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="wingLeft" type="png" />
+      <file name="wingRight" type="png" />
+    </folder>
+    <folder name="Ugly">
+      <file name="body" type="png" />
+      <file name="eyeLeft" type="png" />
+      <file name="eyeRight" type="png" />
+      <file name="lips" type="png" />
+      <file name="pupil" type="png" />
+      <file name="shadow" type="png" />
+      <file name="uglypop" type="ogg" />
+    </folder>
+    <folder name="UglyProduct">
+      <file name="ball" type="png" />
+      <file name="lips" type="png" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+    </folder>
+    <folder name="UndeletePill">
+      <file name="body" type="png" />
+    </folder>
+    <folder name="UndeletePillFizz">
+      <file name="pop4" type="ogg" />
+    </folder>
+    <folder name="UtilAttachUnwalkable">
+      <file name="ball" type="png" />
+      <file name="spring_goo" type="png" />
+    </folder>
+    <folder name="UtilAttachWalkable">
+      <file name="ball" type="png" />
+      <file name="spring_goo" type="png" />
+    </folder>
+    <folder name="UtilChapter2">
+      <file name="ball" type="png" />
+      <file name="spring_goo" type="png" />
+    </folder>
+    <folder name="UtilGooGlobberMom">
+      <file name="arm" type="png" />
+      <file name="globberPop" type="ogg" />
+    </folder>
+    <folder name="UtilNoAttachUnwalkable">
+      <file name="ball" type="png" />
+      <file name="spring_goo" type="png" />
+    </folder>
+    <folder name="UtilNoAttachWalkableSmall">
+      <file name="ball" type="png" />
+      <file name="spring_goo" type="png" />
+    </folder>
+    <folder name="UtilProductLauncherScreamer">
+      <file name="productLaunch" type="ogg" />
+    </folder>
+    <folder name="water">
+      <file name="body" type="png" />
+      <file name="drip01" type="ogg" />
+      <file name="drip02" type="ogg" />
+      <file name="drip03" type="ogg" />
+      <file name="drip04" type="ogg" />
+      <file name="drip05" type="ogg" />
+      <file name="drip06" type="ogg" />
+      <file name="drip07" type="ogg" />
+      <file name="drip08" type="ogg" />
+      <file name="drip09" type="ogg" />
+      <file name="drip10" type="ogg" />
+      <file name="shad" type="png" />
+      <file name="splash01" type="ogg" />
+      <file name="splash02" type="ogg" />
+      <file name="splash03" type="ogg" />
+      <file name="splash04" type="ogg" />
+      <file name="splat1" type="png" />
+      <file name="splat2" type="png" />
+      <file name="spring_goo" type="png" />
+      <file name="strand_pull" type="png" />
+    </folder>
+    <folder name="WindowRect">
+      <file name="b1" type="png" />
+      <file name="b2" type="png" />
+      <file name="b3" type="png" />
+      <file name="b4" type="png" />
+    </folder>
+    <folder name="WindowSquare">
+      <file name="body_clc" type="png" />
+      <file name="body_cnsl" type="png" />
+      <file name="body_ntpd" type="png" />
+      <file name="bump01" type="ogg" />
+      <file name="bump02" type="ogg" />
+      <file name="bump03" type="ogg" />
+      <file name="bump04" type="ogg" />
+    </folder>
+    <folder name="ZBomb">
+      <file name="body" type="png" />
+      <file name="ignite01" type="ogg" />
+      <file name="ignite02" type="ogg" />
+      <file name="ignite03" type="ogg" />
+      <file name="ignite04" type="ogg" />
+    </folder>
+    <folder name="ZBombMom">
+      <file name="body" type="png" />
+      <file name="pop" type="ogg" />
+    </folder>
+    <folder name="_generic">
+      <file name="attach01" type="ogg" />
+      <file name="attach02" type="ogg" />
+      <file name="attach03" type="ogg" />
+      <file name="death1" type="ogg" />
+      <file name="death2" type="ogg" />
+      <file name="death3" type="ogg" />
+      <file name="death4" type="ogg" />
+      <file name="death5" type="ogg" />
+      <file name="detached1" type="ogg" />
+      <file name="detachmarker_128_p1" type="png" />
+      <file name="detachmarker_128_p2" type="png" />
+      <file name="detachmarker_80_p1" type="png" />
+      <file name="detachmarker_80_p2" type="png" />
+      <file name="dragmarker_128_p1" type="png" />
+      <file name="dragmarker_128_p2" type="png" />
+      <file name="dragmarker_80_p1" type="png" />
+      <file name="dragmarker_80_p2" type="png" />
+      <file name="dragmarker_ish_80_p1" type="png" />
+      <file name="eye_fem_l1" type="png" />
+      <file name="eye_fem_l2" type="png" />
+      <file name="eye_fem_r1" type="png" />
+      <file name="eye_fem_r2" type="png" />
+      <file name="eye_glass_1" type="png" />
+      <file name="eye_glass_2" type="png" />
+      <file name="eye_glass_3" type="png" />
+      <file name="eye_sleep_left1" type="png" />
+      <file name="eye_sleep_right1" type="png" />
+      <file name="eye_strain_left1" type="png" />
+      <file name="eye_strain_right1" type="png" />
+      <file name="glee1" type="ogg" />
+      <file name="glee10" type="ogg" />
+      <file name="glee11" type="ogg" />
+      <file name="glee2" type="ogg" />
+      <file name="glee3" type="ogg" />
+      <file name="glee4" type="ogg" />
+      <file name="glee5" type="ogg" />
+      <file name="glee6" type="ogg" />
+      <file name="glee7" type="ogg" />
+      <file name="glee8" type="ogg" />
+      <file name="glee9" type="ogg" />
+      <file name="hilite16" type="png" />
+      <file name="hilite8" type="png" />
+      <file name="hit1" type="ogg" />
+      <file name="hit2" type="ogg" />
+      <file name="hit3" type="ogg" />
+      <file name="hit4" type="ogg" />
+      <file name="mouth_open1" type="png" />
+      <file name="mumble1" type="ogg" />
+      <file name="mumble2" type="ogg" />
+      <file name="mumble3" type="ogg" />
+      <file name="mumble4" type="ogg" />
+      <file name="mumble5" type="ogg" />
+      <file name="mumble6" type="ogg" />
+      <file name="mumble7" type="ogg" />
+      <file name="pipeEnter1" type="ogg" />
+      <file name="pipeEnter2" type="ogg" />
+      <file name="pipeEnter3" type="ogg" />
+      <file name="pipeEnter4" type="ogg" />
+      <file name="pipeEnter5" type="ogg" />
+      <file name="pupil1" type="png" />
+      <file name="rockcollide" type="ogg" />
+      <file name="rollover1" type="ogg" />
+      <file name="rollover2" type="ogg" />
+      <file name="rollover3" type="ogg" />
+      <file name="rollover4" type="ogg" />
+      <file name="rollover5" type="ogg" />
+      <file name="rollover6" type="ogg" />
+      <file name="rollover7" type="ogg" />
+      <file name="rollover8" type="ogg" />
+      <file name="shadowCircle49" type="png" />
+      <file name="shadowCircle59" type="png" />
+      <file name="snap1" type="ogg" />
+      <file name="spring_goo_inactive" type="png" />
+      <file name="stick1" type="ogg" />
+      <file name="stick2" type="ogg" />
+      <file name="stick3" type="ogg" />
+      <file name="stick4" type="ogg" />
+      <file name="stick5" type="ogg" />
+      <file name="stick6" type="ogg" />
+      <file name="wiggle1" type="ogg" />
+      <file name="wiggle10" type="ogg" />
+      <file name="wiggle2" type="ogg" />
+      <file name="wiggle3" type="ogg" />
+      <file name="wiggle4" type="ogg" />
+      <file name="wiggle5" type="ogg" />
+      <file name="wiggle6" type="ogg" />
+      <file name="wiggle7" type="ogg" />
+      <file name="wiggle8" type="ogg" />
+      <file name="wiggle9" type="ogg" />
+      <file name="windowMarker" type="png" />
+    </folder>
+  </folder>
+  <folder name="images">
+    <file name="backtoisland" type="png" />
+    <file name="blacksquare" type="png" />
+    <file name="cancel_over" type="png" />
+    <file name="cancel_up" type="png" />
+    <file name="chainlink" type="png" />
+    <file name="clouds" type="png" />
+    <file name="continue_over.de" type="png" />
+    <file name="continue_over.es" type="png" />
+    <file name="continue_over.fr" type="png" />
+    <file name="continue_over.it" type="png" />
+    <file name="continue_over" type="png" />
+    <file name="continue_up.de" type="png" />
+    <file name="continue_up.es" type="png" />
+    <file name="continue_up.fr" type="png" />
+    <file name="continue_up.it" type="png" />
+    <file name="continue_up" type="png" />
+    <file name="cursor_circle" type="png" />
+    <file name="cursor_text" type="png" />
+    <file name="exit_arrow" type="png" />
+    <file name="gamemenubutton" type="png" />
+    <file name="gamemenubutton_over" type="png" />
+    <file name="geomcircle" type="png" />
+    <file name="geomrect" type="png" />
+    <file name="hinge" type="png" />
+    <file name="islandarrow" type="png" />
+    <file name="islandicon_1" type="png" />
+    <file name="islandicon_2" type="png" />
+    <file name="islandicon_3" type="png" />
+    <file name="islandicon_4" type="png" />
+    <file name="islandicon_5" type="png" />
+    <file name="islandicon_wogc" type="png" />
+    <file name="islandicon_wogc3d" type="png" />
+    <file name="islandicon_wogcd" type="png" />
+    <file name="lensFlare" type="png" />
+    <file name="levelarrow" type="png" />
+    <file name="motor" type="png" />
+    <file name="newmail" type="png" />
+    <file name="nukem_button_over" type="png" />
+    <file name="nukem_button_up" type="png" />
+    <file name="nukem_coverClosed_over" type="png" />
+    <file name="nukem_coverClosed_up" type="png" />
+    <file name="nukem_coverOpen_over" type="png" />
+    <file name="nukem_coverOpen_up" type="png" />
+    <file name="playername_textfield" type="png" />
+    <file name="playernameok_over" type="png" />
+    <file name="playernameok_up" type="png" />
+    <file name="popup" type="png" />
+    <file name="profilebutton_over" type="png" />
+    <file name="profilebutton_up" type="png" />
+    <file name="profilebuttonempty_over" type="png" />
+    <file name="profilebuttonempty_up" type="png" />
+    <file name="profiledelbutton_over" type="png" />
+    <file name="profiledelbutton_up" type="png" />
+    <file name="progress_widget_goo" type="png" />
+    <file name="statsubmit_down.de" type="png" />
+    <file name="statsubmit_down.es" type="png" />
+    <file name="statsubmit_down.fr" type="png" />
+    <file name="statsubmit_down.it" type="png" />
+    <file name="statsubmit_down" type="png" />
+    <file name="statsubmit_down_over.de" type="png" />
+    <file name="statsubmit_down_over.es" type="png" />
+    <file name="statsubmit_down_over.fr" type="png" />
+    <file name="statsubmit_down_over.it" type="png" />
+    <file name="statsubmit_down_over" type="png" />
+    <file name="statsubmit_over.de" type="png" />
+    <file name="statsubmit_over.es" type="png" />
+    <file name="statsubmit_over.fr" type="png" />
+    <file name="statsubmit_over.it" type="png" />
+    <file name="statsubmit_over" type="png" />
+    <file name="statsubmit_up.de" type="png" />
+    <file name="statsubmit_up.es" type="png" />
+    <file name="statsubmit_up.fr" type="png" />
+    <file name="statsubmit_up.it" type="png" />
+    <file name="statsubmit_up" type="png" />
+    <file name="superwidebutton_over" type="png" />
+    <file name="superwidebutton_up" type="png" />
+    <file name="Tank_bg" type="png" />
+    <file name="Tank_fg" type="png" />
+    <file name="Tank_goo" type="png" />
+    <file name="Tank_goo_top" type="png" />
+    <file name="third_over" type="png" />
+    <file name="third_up" type="png" />
+    <file name="transparentpixel" type="png" />
+    <file name="uiMenu_up" type="png" />
+    <file name="uiRetry_over" type="png" />
+    <file name="uiRetry_up_transparent" type="png" />
+    <file name="uishadow" type="png" />
+    <file name="whitesquare" type="png" />
+    <file name="whitesquare_translucent" type="png" />
+    <file name="widebutton_over" type="png" />
+    <file name="widebutton_up" type="png" />
+    <folder name="fx">
+      <file name="exclaimation" type="png" />
+      <file name="explodeStreak1" type="png" />
+      <file name="explodeStreak1_ish" type="png" />
+      <file name="fireParticleMain1" type="png" />
+      <file name="fireParticleMain1_bw" type="png" />
+      <file name="fireParticleMain1_ish" type="png" />
+      <file name="fireParticleMain2" type="png" />
+      <file name="fireParticleMain2_bw" type="png" />
+      <file name="flash" type="png" />
+      <file name="fx_bubble16" type="png" />
+      <file name="fx_bubble32" type="png" />
+      <file name="fx_dust1" type="png" />
+      <file name="fx_dust2" type="png" />
+      <file name="fx_dust3" type="png" />
+      <file name="fx_leaf1" type="png" />
+      <file name="fx_leaf2" type="png" />
+      <file name="fx_leaf3" type="png" />
+      <file name="fx_leaf4" type="png" />
+      <file name="fx_leaf5" type="png" />
+      <file name="fx_rainstreak" type="png" />
+      <file name="fx_rainstreak_white" type="png" />
+      <file name="fx_smokeBlack" type="png" />
+      <file name="fx_smokeGreen" type="png" />
+      <file name="fx_smokeWhite" type="png" />
+      <file name="fx_snowflake_black" type="png" />
+      <file name="fx_snowflake1" type="png" />
+      <file name="fx_snowflake2" type="png" />
+      <file name="fx_windBlack" type="png" />
+      <file name="fx_windIsh" type="png" />
+      <file name="fx_windSepia" type="png" />
+      <file name="fx_windWhite" type="png" />
+      <file name="goodrop1" type="png" />
+      <file name="goofall_gobsWide2" type="png" />
+      <file name="gooGlob" type="png" />
+      <file name="ish_char_0" type="png" />
+      <file name="ish_char_1" type="png" />
+      <file name="ish_sleepy_z1" type="png" />
+      <file name="ishr_char_0" type="png" />
+      <file name="ishr_char_1" type="png" />
+      <file name="ishr_sleepy_z1" type="png" />
+      <file name="mist1" type="png" />
+      <file name="note1" type="png" />
+      <file name="note2" type="png" />
+      <file name="note3" type="png" />
+      <file name="sleepy_z1" type="png" />
+      <file name="sparkle1" type="png" />
+      <file name="waterdrop1" type="png" />
+      <file name="waterdrop2" type="png" />
+    </folder>
+    <folder name="levelimages">
+      <file name="attachmentpoint1" type="png" />
+      <file name="bb" type="png" />
+      <file name="bg_hills_bleeding" type="png" />
+      <file name="bgVeggies" type="png" />
+      <file name="bgVeggiesWarm" type="png" />
+      <file name="blackBogTree" type="png" />
+      <file name="blueBogTree" type="png" />
+      <file name="burst" type="png" />
+      <file name="burstFaded" type="png" />
+      <file name="bush_fg1a" type="png" />
+      <file name="bush_leafy_1" type="png" />
+      <file name="bush_leafy_1b" type="png" />
+      <file name="bush_leafy_1b_black" type="png" />
+      <file name="canRed" type="png" />
+      <file name="cliff" type="png" />
+      <file name="dirArrow1" type="png" />
+      <file name="dirArrow1_ish" type="png" />
+      <file name="foggyEdges" type="png" />
+      <file name="gear1" type="png" />
+      <file name="gear1black" type="png" />
+      <file name="gear1blur" type="png" />
+      <file name="gear1blurBlack" type="png" />
+      <file name="gear1blurGray" type="png" />
+      <file name="gear2_256" type="png" />
+      <file name="gearBallbuster" type="png" />
+      <file name="gearDetach" type="png" />
+      <file name="gearDistant" type="png" />
+      <file name="goodripbase" type="png" />
+      <file name="gooSplatBig" type="png" />
+      <file name="grassBlack" type="png" />
+      <file name="hill_fg1a" type="png" />
+      <file name="ish_bush" type="png" />
+      <file name="ish_cloud" type="png" />
+      <file name="ish_gearblur" type="png" />
+      <file name="ish_scanlines" type="png" />
+      <file name="ish_tree" type="png" />
+      <file name="ishr_gearblur" type="png" />
+      <file name="leafbunch2_light" type="png" />
+      <file name="levelMarkerA_over" type="png" />
+      <file name="levelMarkerA_up" type="png" />
+      <file name="levelMarkerB_over" type="png" />
+      <file name="levelMarkerB_up" type="png" />
+      <file name="levelMarkerC_over" type="png" />
+      <file name="levelMarkerC_up" type="png" />
+      <file name="lf1" type="png" />
+      <file name="lf2" type="png" />
+      <file name="lf3" type="png" />
+      <file name="lf4" type="png" />
+      <file name="lf5" type="png" />
+      <file name="lightShaft_sepia" type="png" />
+      <file name="lightShaft1" type="png" />
+      <file name="MachineWheel1" type="png" />
+      <file name="MachineWheel1Small" type="png" />
+      <file name="momBbBlack" type="png" />
+      <file name="momBbOrng" type="png" />
+      <file name="momBbPolesBlack" type="png" />
+      <file name="momBbPolesOrng" type="png" />
+      <file name="moon_orange" type="png" />
+      <file name="OCD_flag1" type="png" />
+      <file name="OCD_flagIsh" type="png" />
+      <file name="physicsOfGoo" type="png" />
+      <file name="pipe_bend_bl" type="png" />
+      <file name="pipe_bend_bl_ISH" type="png" />
+      <file name="pipe_bend_br" type="png" />
+      <file name="pipe_bend_br_ISH" type="png" />
+      <file name="pipe_bend_tl" type="png" />
+      <file name="pipe_bend_tl_ISH" type="png" />
+      <file name="pipe_bend_tr" type="png" />
+      <file name="pipe_bend_tr_ISH" type="png" />
+      <file name="pipe_horiz" type="png" />
+      <file name="pipe_horiz_Beauty" type="png" />
+      <file name="pipe_horiz_Black" type="png" />
+      <file name="pipe_horiz_ISH" type="png" />
+      <file name="pipeCap" type="png" />
+      <file name="pipeCap_Beauty" type="png" />
+      <file name="pipeCap_Black" type="png" />
+      <file name="pipeCap_closed" type="png" />
+      <file name="pipeCap_closed_Beauty" type="png" />
+      <file name="pipeCap_closed_Black" type="png" />
+      <file name="pipeCap_closed_ISH" type="png" />
+      <file name="pipeCap_ISH" type="png" />
+      <file name="pterminalMonitor_over" type="png" />
+      <file name="pterminalMonitor_up" type="png" />
+      <file name="pterminalPole" type="png" />
+      <file name="screw1" type="png" />
+      <file name="sign_yield" type="png" />
+      <file name="signpost_brown" type="png" />
+      <file name="SignPost_dlg_pole" type="png" />
+      <file name="SignPost_dlg_sign" type="png" />
+      <file name="signpost_gray" type="png" />
+      <file name="signpost_ish" type="png" />
+      <file name="signpostPole_brown" type="png" />
+      <file name="signpostPole_gray" type="png" />
+      <file name="signpostPole_ish" type="png" />
+      <file name="sky_blue2a" type="png" />
+      <file name="sky_pissorangestripes" type="png" />
+      <file name="sky_pissyellowstripes" type="png" />
+      <file name="spikeBlack_group" type="png" />
+      <file name="spikeGray_group" type="png" />
+      <file name="stormCloud1" type="png" />
+      <file name="swirlClouds" type="png" />
+      <file name="swirlMist" type="png" />
+      <file name="tree_sil_1" type="png" />
+      <file name="tree_stripe1" type="png" />
+      <file name="usefulBlackSquare" type="png" />
+      <file name="wheel1black" type="png" />
+      <file name="wheel2black" type="png" />
+      <file name="windmillPropellerSmall" type="png" />
+      <file name="wogcCloud1" type="png" />
+      <file name="wogcCloud2" type="png" />
+    </folder>
+  </folder>
+  <folder name="levels">
+    <folder name="AB3">
+      <file name="Alice" type="png" />
+      <file name="AliceBg" type="png" />
+      <file name="bg" type="png" />
+      <file name="Bob" type="png" />
+      <file name="BobBg" type="png" />
+      <file name="c1" type="png" />
+      <file name="c2" type="png" />
+      <file name="c3" type="png" />
+      <file name="c4" type="png" />
+      <file name="cliffL" type="png" />
+      <file name="cliffR" type="png" />
+      <file name="cSupport1" type="png" />
+      <file name="cSupport2" type="png" />
+    </folder>
+    <folder name="BeautyAndTheTentacle">
+      <file name="bg" type="png" />
+      <file name="grnd" type="png" />
+      <file name="grndBackgrnd" type="png" />
+      <file name="mask" type="png" />
+      <file name="post1" type="png" />
+      <file name="post1_blur" type="png" />
+      <file name="post2" type="png" />
+      <file name="post2_blur" type="png" />
+      <file name="wires1" type="png" />
+      <file name="wires2" type="png" />
+    </folder>
+    <folder name="BeautySchool">
+      <file name="beautyStick" type="png" />
+      <file name="bg" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_06" type="png" />
+      <file name="main_09" type="png" />
+      <file name="main_10" type="png" />
+      <file name="main_12" type="png" />
+      <file name="main_14" type="png" />
+    </folder>
+    <folder name="BlusteryDay">
+      <file name="bg" type="png" />
+      <file name="bgHills" type="png" />
+      <file name="leaf1" type="png" />
+      <file name="main" type="png" />
+      <file name="treeStick" type="png" />
+      <file name="windmillBase" type="png" />
+      <file name="windmillBaseBlur" type="png" />
+      <file name="windmillPropeller" type="png" />
+      <file name="windmillPropellerBlur" type="png" />
+    </folder>
+    <folder name="BulletinBoardSystem">
+      <file name="bg" type="png" />
+      <file name="main_02" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_07" type="png" />
+      <file name="main_09" type="png" />
+      <file name="main_12" type="png" />
+      <file name="main_15" type="png" />
+      <file name="main_18" type="png" />
+      <file name="main_19" type="png" />
+      <file name="pupil" type="png" />
+    </folder>
+    <folder name="BurningMan">
+      <file name="bg" type="png" />
+      <file name="blockhead" type="png" />
+      <file name="eyeL" type="png" />
+      <file name="eyeR" type="png" />
+      <file name="main_02" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_06" type="png" />
+      <file name="main_07" type="png" />
+      <file name="main_09" type="png" />
+      <file name="main_12" type="png" />
+      <file name="main_15" type="png" />
+    </folder>
+    <folder name="Chain">
+      <file name="bg" type="png" />
+      <file name="cliffLeft" type="png" />
+      <file name="cliffRight" type="png" />
+      <file name="ground" type="png" />
+      <file name="head" type="png" />
+      <file name="post" type="png" />
+    </folder>
+    <folder name="Deliverance">
+      <file name="binBg" type="png" />
+      <file name="binL" type="png" />
+      <file name="binR" type="png" />
+      <file name="blocker" type="png" />
+      <file name="bone" type="png" />
+      <file name="boneBumped" type="png" />
+      <file name="bush_r" type="png" />
+      <file name="crate1" type="png" />
+      <file name="crate2" type="png" />
+      <file name="crate3" type="png" />
+      <file name="finger" type="png" />
+      <file name="pipe2" type="png" />
+      <file name="pipe3" type="png" />
+      <file name="shaftBg" type="png" />
+      <file name="shaftMainL" type="png" />
+      <file name="shaftMainR" type="png" />
+      <file name="skull" type="png" />
+      <file name="upperBg" type="png" />
+      <file name="upperGround" type="png" />
+      <file name="wiroot1" type="png" />
+      <file name="wiroot2" type="png" />
+    </folder>
+    <folder name="Drool">
+      <file name="bg" type="png" />
+      <file name="main_02" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_06" type="png" />
+    </folder>
+    <folder name="EconomicDivide">
+      <file name="cliff_left" type="png" />
+      <file name="cliff_right" type="png" />
+    </folder>
+    <folder name="FistyReachesOut">
+      <file name="bg" type="png" />
+      <file name="Fisty_arm" type="png" />
+      <file name="Fisty_arm_bg" type="png" />
+      <file name="Fisty_body" type="png" />
+      <file name="Fisty_body_bg" type="png" />
+      <file name="Fisty_eye" type="png" />
+      <file name="Fisty_eye_bg" type="png" />
+      <file name="Fisty_leg" type="png" />
+      <file name="Fisty_leg_bg" type="png" />
+      <file name="platform" type="png" />
+    </folder>
+    <folder name="FlyAwayLittleOnes">
+      <file name="bg" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_06" type="png" />
+      <file name="tongue" type="png" />
+    </folder>
+    <folder name="FlyingMachine">
+      <file name="barBig" type="png" />
+      <file name="barLittle" type="png" />
+      <file name="bg" type="png" />
+      <file name="main" type="png" />
+    </folder>
+    <folder name="GeneticSortingMachine">
+      <file name="actionArmArm" type="png" />
+      <file name="actionArmHand" type="png" />
+      <file name="bg" type="png" />
+      <file name="bg_lower" type="png" />
+      <file name="channel_03" type="png" />
+      <file name="channel_06" type="png" />
+      <file name="channel_09" type="png" />
+      <file name="channel_12" type="png" />
+      <file name="channel_16" type="png" />
+      <file name="hairSeg" type="png" />
+      <file name="jet" type="png" />
+      <file name="labelBeauty" type="png" />
+      <file name="labelUgly" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_06" type="png" />
+      <file name="main_08" type="png" />
+      <file name="main_10" type="png" />
+      <file name="main_13" type="png" />
+      <file name="main_14" type="png" />
+      <file name="main_15" type="png" />
+      <file name="main_17" type="png" />
+      <file name="main_21" type="png" />
+      <file name="main_24" type="png" />
+      <file name="main_27" type="png" />
+      <file name="main_30" type="png" />
+      <file name="main_35" type="png" />
+      <file name="main_38" type="png" />
+      <file name="main_41" type="png" />
+      <file name="main_44" type="png" />
+      <file name="main_47" type="png" />
+      <file name="main_52" type="png" />
+      <file name="main_53" type="png" />
+      <file name="main_55" type="png" />
+      <file name="post1" type="png" />
+      <file name="post2" type="png" />
+      <file name="powergurlBody" type="png" />
+      <file name="powergurlHead" type="png" />
+      <file name="staticArm" type="png" />
+      <file name="wires1" type="png" />
+      <file name="wires2" type="png" />
+    </folder>
+    <folder name="GoingUp">
+      <file name="tutorialPost.de" type="png" />
+      <file name="tutorialPost.es" type="png" />
+      <file name="tutorialPost.fr" type="png" />
+      <file name="tutorialPost.it" type="png" />
+      <file name="tutorialPost" type="png" />
+      <file name="tutorialPost.profanity" type="png" />
+    </folder>
+    <folder name="GracefulFailure">
+      <file name="bg" type="png" />
+      <file name="main1" type="png" />
+      <file name="main2" type="png" />
+      <file name="mainbg" type="png" />
+    </folder>
+    <folder name="GrapeVineVirus">
+      <file name="bg" type="png" />
+      <file name="lf_red" type="png" />
+      <file name="main_01" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_07" type="png" />
+      <file name="sign" type="png" />
+    </folder>
+    <folder name="GraphicProcessingUnit">
+      <file name="bg" type="png" />
+      <file name="boygirl" type="png" />
+      <file name="bushes" type="png" />
+      <file name="clouds" type="png" />
+      <file name="glass" type="png" />
+      <file name="layer" type="png" />
+      <file name="main" type="png" />
+      <file name="platform" type="png" />
+      <file name="swirlmist" type="png" />
+      <file name="trees" type="png" />
+    </folder>
+    <folder name="HangLow">
+      <file name="bg" type="png" />
+      <file name="icebridge1" type="png" />
+      <file name="iceplatform1" type="png" />
+      <file name="iceplatform2" type="png" />
+    </folder>
+    <folder name="HelloWorld">
+      <file name="bg" type="png" />
+      <file name="main1" type="png" />
+      <file name="main2" type="png" />
+    </folder>
+    <folder name="HTInnovationCommittee">
+      <file name="bg" type="png" />
+      <file name="p1" type="png" />
+      <file name="p2" type="png" />
+    </folder>
+    <folder name="ImmigrationNaturalizationUnit">
+      <file name="detachArm" type="png" />
+      <file name="gateArm" type="png" />
+      <file name="groundBelow" type="png" />
+      <file name="machineBg" type="png" />
+      <file name="main1" type="png" />
+      <file name="main2" type="png" />
+      <file name="main3" type="png" />
+      <file name="main4_01" type="png" />
+      <file name="main4_03" type="png" />
+      <file name="main5" type="png" />
+      <file name="wheel3Arm" type="png" />
+      <file name="wheelHolder" type="png" />
+    </folder>
+    <folder name="ImpaleSticky">
+      <file name="main_bottom" type="png" />
+      <file name="main_mid" type="png" />
+      <file name="main_top" type="png" />
+      <file name="tutorialSign.de" type="png" />
+      <file name="tutorialSign.es" type="png" />
+      <file name="tutorialSign.fr" type="png" />
+      <file name="tutorialSign.it" type="png" />
+      <file name="tutorialSign" type="png" />
+    </folder>
+    <folder name="IncinerationDestination">
+      <file name="bg" type="png" />
+      <file name="blockBuddy" type="png" />
+      <file name="garbage1" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_07" type="png" />
+      <file name="main_09" type="png" />
+      <file name="main_10" type="png" />
+      <file name="main_12" type="png" />
+      <file name="mainbg_1" type="png" />
+    </folder>
+    <folder name="InfestyTheWorm">
+      <file name="bg" type="png" />
+      <file name="p1" type="png" />
+      <file name="p2" type="png" />
+      <file name="p3" type="png" />
+      <file name="p4" type="png" />
+    </folder>
+    <folder name="island1">
+      <file name="bg" type="png" />
+      <file name="fireBg" type="png" />
+      <file name="fireRafter" type="png" />
+      <file name="main" type="png" />
+      <file name="pipecon1" type="png" />
+      <file name="pipecon10" type="png" />
+      <file name="pipecon11" type="png" />
+      <file name="pipecon12" type="png" />
+      <file name="pipecon2" type="png" />
+      <file name="pipecon3" type="png" />
+      <file name="pipecon5" type="png" />
+      <file name="pipecon6" type="png" />
+      <file name="pipecon7" type="png" />
+      <file name="pipecon8" type="png" />
+      <file name="pipecon9" type="png" />
+      <file name="title.de" type="png" />
+      <file name="title.es" type="png" />
+      <file name="title.fr" type="png" />
+      <file name="title.it" type="png" />
+      <file name="title" type="png" />
+    </folder>
+    <folder name="island2">
+      <file name="bg" type="png" />
+      <file name="hair" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_06" type="png" />
+      <file name="main_08" type="png" />
+      <file name="mainbg" type="png" />
+      <file name="pipecon0" type="png" />
+      <file name="pipecon1" type="png" />
+      <file name="pipecon10" type="png" />
+      <file name="pipecon11" type="png" />
+      <file name="pipecon2" type="png" />
+      <file name="pipecon4" type="png" />
+      <file name="pipecon5" type="png" />
+      <file name="pipecon7" type="png" />
+      <file name="pipecon8" type="png" />
+      <file name="pipecon9" type="png" />
+      <file name="title.de" type="png" />
+      <file name="title.es" type="png" />
+      <file name="title.fr" type="png" />
+      <file name="title.it" type="png" />
+      <file name="title" type="png" />
+    </folder>
+    <folder name="island3">
+      <file name="bg" type="png" />
+      <file name="distance" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_06" type="png" />
+      <file name="main_09" type="png" />
+      <file name="pipecon_01" type="png" />
+      <file name="pipecon_02" type="png" />
+      <file name="pipecon_03" type="png" />
+      <file name="pipecon_04" type="png" />
+      <file name="pipecon_05" type="png" />
+      <file name="pipecon_06" type="png" />
+      <file name="pipecon_07" type="png" />
+      <file name="pipecon_08" type="png" />
+      <file name="pipecon_09" type="png" />
+      <file name="smoke1" type="png" />
+      <file name="supports" type="png" />
+      <file name="title.de" type="png" />
+      <file name="title.en" type="png" />
+      <file name="title.es" type="png" />
+      <file name="title.fr" type="png" />
+      <file name="title.it" type="png" />
+      <file name="title" type="png" />
+    </folder>
+    <folder name="island4">
+      <file name="bg" type="png" />
+      <file name="bgstuff" type="png" />
+      <file name="binDebris" type="png" />
+      <file name="consolecursor" type="png" />
+      <file name="levelMarker_ish_A_over" type="png" />
+      <file name="levelMarker_ish_A_up" type="png" />
+      <file name="levelMarker_ish_B_over" type="png" />
+      <file name="levelMarker_ish_B_up" type="png" />
+      <file name="main_02" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_07" type="png" />
+      <file name="main_08" type="png" />
+      <file name="main_09" type="png" />
+      <file name="title.de" type="png" />
+      <file name="title.es" type="png" />
+      <file name="title.fr" type="png" />
+      <file name="title.it" type="png" />
+      <file name="title" type="png" />
+    </folder>
+    <folder name="island5">
+      <file name="bg" type="png" />
+      <file name="chapter" type="png" />
+      <file name="p0" type="png" />
+      <file name="p1" type="png" />
+      <file name="p2" type="png" />
+      <file name="p3" type="png" />
+      <file name="telescope" type="png" />
+      <file name="title.de" type="png" />
+      <file name="title.es" type="png" />
+      <file name="title.fr" type="png" />
+      <file name="title.it" type="png" />
+      <file name="title" type="png" />
+      <file name="wires1" type="png" />
+      <file name="wires2" type="png" />
+    </folder>
+    <folder name="IvyTower">
+      <file name="bg" type="png" />
+      <file name="ground" type="png" />
+      <file name="TowerLeft" type="png" />
+      <file name="TowerRight" type="png" />
+    </folder>
+    <folder name="MapWorldView">
+      <file name="bg" type="png" />
+      <file name="globe_shadow" type="png" />
+      <file name="ii_c1_over" type="png" />
+      <file name="ii_c1_up" type="png" />
+      <file name="ii_c2_disabled" type="png" />
+      <file name="ii_c2_over" type="png" />
+      <file name="ii_c2_up" type="png" />
+      <file name="ii_c3_disabled" type="png" />
+      <file name="ii_c3_over" type="png" />
+      <file name="ii_c3_up" type="png" />
+      <file name="ii_c4_disabled" type="png" />
+      <file name="ii_c4_over" type="png" />
+      <file name="ii_c4_up" type="png" />
+      <file name="ii_c5_disabled" type="png" />
+      <file name="ii_c5_over" type="png" />
+      <file name="ii_c5_up" type="png" />
+      <file name="ii_c6_disabled" type="png" />
+      <file name="ii_c6_over" type="png" />
+      <file name="ii_c6_up" type="png" />
+      <file name="ii_wogc_disabled" type="png" />
+      <file name="ii_wogc_over" type="png" />
+      <file name="ii_wogc_up" type="png" />
+      <file name="ii_wogc3d_over" type="png" />
+      <file name="ii_wogc3d_up" type="png" />
+      <file name="ii_wogcd_over" type="png" />
+      <file name="ii_wogcd_up" type="png" />
+      <file name="letterbox_bottom" type="png" />
+      <file name="letterbox_top" type="png" />
+      <file name="mm_credits_over" type="png" />
+      <file name="mm_credits_up" type="png" />
+      <file name="mm_exit_over" type="png" />
+      <file name="mm_exit_up" type="png" />
+      <file name="mm_profiles_over" type="png" />
+      <file name="mm_profiles_up" type="png" />
+      <file name="title_GOO" type="png" />
+      <file name="title_OF" type="png" />
+      <file name="title_WORLD" type="png" />
+    </folder>
+    <folder name="MistysLongBonyRoad">
+      <file name="bg" type="png" />
+      <file name="bgFisty" type="png" />
+      <file name="main_02" type="png" />
+      <file name="main_05" type="png" />
+      <file name="main_07" type="png" />
+      <file name="Misty_arm" type="png" />
+      <file name="Misty_body" type="png" />
+      <file name="Misty_leg" type="png" />
+      <file name="mistyBg" type="png" />
+    </folder>
+    <folder name="MOM">
+      <file name="askbutton" type="png" />
+      <file name="bg" type="png" />
+      <file name="brand" type="png" />
+      <file name="gameWindow" type="png" />
+      <file name="loading" type="png" />
+      <file name="mom" type="png" />
+      <file name="MOM_eyelid" type="png" />
+      <file name="MOM_icon_over" type="png" />
+      <file name="MOM_icon_up" type="png" />
+      <file name="momSplash" type="png" />
+      <file name="momStartup" type="ogg" />
+      <file name="textBar_cursor" type="png" />
+      <file name="textBar_over" type="png" />
+      <file name="textBar_up" type="png" />
+      <file name="uiBar" type="png" />
+      <file name="uiConsole" type="png" />
+      <file name="wallpaper" type="png" />
+      <file name="xbutton_over" type="png" />
+      <file name="xbutton_up" type="png" />
+    </folder>
+    <folder name="ObservatoryObservationStation">
+      <file name="bg" type="png" />
+      <file name="is_f1" type="png" />
+      <file name="is_f2" type="png" />
+      <file name="is_f3" type="png" />
+      <file name="is_head" type="png" />
+      <file name="is_mid" type="png" />
+      <file name="tcl" type="png" />
+      <file name="tscp" type="png" />
+    </folder>
+    <folder name="ProductLauncher">
+      <file name="bg" type="png" />
+      <file name="buildingLeft" type="png" />
+      <file name="container" type="png" />
+      <file name="distance" type="png" />
+      <file name="fireHolder" type="png" />
+      <file name="fuelLine1" type="png" />
+      <file name="fuelLine2" type="png" />
+      <file name="fuelLineBg" type="png" />
+      <file name="stacks" type="png" />
+      <file name="supportLeft" type="png" />
+      <file name="z01" type="png" />
+      <file name="z02" type="png" />
+      <file name="z03" type="png" />
+      <file name="z04" type="png" />
+      <file name="z05" type="png" />
+      <file name="z06" type="png" />
+      <file name="z07" type="png" />
+      <file name="z08" type="png" />
+      <file name="z09" type="png" />
+      <file name="z10" type="png" />
+      <file name="z11" type="png" />
+      <file name="z12" type="png" />
+      <file name="z13" type="png" />
+      <file name="z14" type="png" />
+      <file name="z15" type="png" />
+      <file name="z16" type="png" />
+      <file name="zbg" type="png" />
+      <file name="zlauncher" type="png" />
+    </folder>
+    <folder name="RedCarpet">
+      <file name="bg" type="png" />
+      <file name="geomFinger" type="png" />
+      <file name="lever" type="png" />
+      <file name="lf" type="png" />
+      <file name="main_02" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_05" type="png" />
+      <file name="main_09" type="png" />
+      <file name="main_12" type="png" />
+      <file name="main_15" type="png" />
+      <file name="main_19" type="png" />
+      <file name="main_22" type="png" />
+      <file name="main_25" type="png" />
+      <file name="main_27" type="png" />
+      <file name="mainBg1" type="png" />
+      <file name="mainBg2" type="png" />
+      <file name="platform" type="png" />
+      <file name="redCarpet" type="png" />
+    </folder>
+    <folder name="RegurgitationPumpingStation">
+      <file name="billboard1" type="png" />
+      <file name="distantStack" type="png" />
+      <file name="lip_l" type="png" />
+      <file name="lip_r" type="png" />
+      <file name="main_l" type="png" />
+      <file name="main_r" type="png" />
+      <file name="rafter_bg" type="png" />
+      <file name="sky" type="png" />
+      <file name="ssBg" type="png" />
+      <file name="stomach_bottom" type="png" />
+      <file name="stomach_left" type="png" />
+      <file name="stomach_right" type="png" />
+      <file name="stomachBg" type="png" />
+      <file name="throatSeg" type="png" />
+      <file name="throatTop" type="png" />
+      <file name="wheel" type="png" />
+    </folder>
+    <folder name="RoadBlocks">
+      <file name="bg" type="png" />
+      <file name="lf1" type="png" />
+      <file name="pl" type="png" />
+      <file name="pm" type="png" />
+      <file name="pr" type="png" />
+    </folder>
+    <folder name="SecondHandSmoke">
+      <file name="bg" type="png" />
+      <file name="hbg2" type="png" />
+      <file name="hfg2" type="png" />
+      <file name="match" type="png" />
+      <file name="stacks" type="png" />
+    </folder>
+    <folder name="SuperFuseChallengeTime">
+      <file name="bg" type="png" />
+      <file name="bone" type="png" />
+      <file name="main" type="png" />
+      <file name="mainBg" type="png" />
+      <file name="wheel" type="png" />
+    </folder>
+    <folder name="TheServer">
+      <file name="bg" type="png" />
+      <file name="bg_hills" type="png" />
+      <file name="platform" type="png" />
+      <file name="row1" type="png" />
+      <file name="server" type="png" />
+    </folder>
+    <folder name="ThirdWheel">
+      <file name="bg" type="png" />
+      <file name="lever" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_05" type="png" />
+      <file name="main_07" type="png" />
+      <file name="main_09" type="png" />
+      <file name="main_10" type="png" />
+      <file name="main_12" type="png" />
+      <file name="mainbg" type="png" />
+      <file name="wheel1" type="png" />
+      <file name="wheel2" type="png" />
+      <file name="wheel3" type="png" />
+      <file name="wires1" type="png" />
+      <file name="wires2" type="png" />
+    </folder>
+    <folder name="ThrusterTest">
+      <file name="tutorialPost" type="png" />
+    </folder>
+    <folder name="Tumbler">
+      <file name="bg" type="png" />
+      <file name="Wheel00" type="png" />
+      <file name="Wheel01" type="png" />
+    </folder>
+    <folder name="UpperShaft">
+      <file name="bg" type="png" />
+      <file name="blackCover" type="png" />
+      <file name="blastwall" type="png" />
+      <file name="car" type="png" />
+      <file name="main_01" type="png" />
+      <file name="main_03" type="png" />
+      <file name="main_04" type="png" />
+      <file name="main_06" type="png" />
+      <file name="main_07" type="png" />
+      <file name="main_09" type="png" />
+      <file name="main_10" type="png" />
+      <file name="rafter" type="png" />
+    </folder>
+    <folder name="VolcanicPercolatorDaySpa">
+      <file name="main_l" type="png" />
+      <file name="main_r" type="png" />
+      <file name="miniPipeBg" type="png" />
+      <file name="mixer" type="png" />
+      <file name="pipe" type="png" />
+      <file name="prettyFlower" type="png" />
+      <file name="weed" type="png" />
+    </folder>
+    <folder name="WaterLock">
+      <file name="fakewater" type="png" />
+      <file name="main" type="png" />
+      <file name="mombb" type="png" />
+      <file name="pipe" type="png" />
+    </folder>
+    <folder name="WeatherVane">
+      <file name="arrow" type="png" />
+      <file name="bg" type="png" />
+      <file name="cHead" type="png" />
+      <file name="cLeg1" type="png" />
+      <file name="cLeg2" type="png" />
+      <file name="main" type="png" />
+      <file name="vaneMain" type="png" />
+    </folder>
+    <folder name="Whistler">
+      <file name="pipe" type="png" />
+      <file name="platform" type="png" />
+      <file name="upper" type="png" />
+    </folder>
+    <folder name="wogc">
+      <file name="bb_delicious" type="png" />
+      <file name="bb_tastesogood" type="png" />
+      <file name="bb_whatyouwannagoo" type="png" />
+      <file name="bbpost" type="png" />
+      <file name="buttonConnect_over.de" type="png" />
+      <file name="buttonConnect_over.es" type="png" />
+      <file name="buttonConnect_over.fr" type="png" />
+      <file name="buttonConnect_over.it" type="png" />
+      <file name="buttonConnect_over" type="png" />
+      <file name="buttonConnect_up.de" type="png" />
+      <file name="buttonConnect_up.es" type="png" />
+      <file name="buttonConnect_up.fr" type="png" />
+      <file name="buttonConnect_up.it" type="png" />
+      <file name="buttonConnect_up" type="png" />
+      <file name="ConnectBB_blank" type="png" />
+      <file name="ConnectBB_content_connected.de" type="png" />
+      <file name="ConnectBB_content_connected.es" type="png" />
+      <file name="ConnectBB_content_connected.fr" type="png" />
+      <file name="ConnectBB_content_connected.it" type="png" />
+      <file name="ConnectBB_content_connected" type="png" />
+      <file name="ConnectBB_content_connectfail.de" type="png" />
+      <file name="ConnectBB_content_connectfail.es" type="png" />
+      <file name="ConnectBB_content_connectfail.fr" type="png" />
+      <file name="ConnectBB_content_connectfail.it" type="png" />
+      <file name="ConnectBB_content_connectfail" type="png" />
+      <file name="ConnectBB_content_connecting.de" type="png" />
+      <file name="ConnectBB_content_connecting.es" type="png" />
+      <file name="ConnectBB_content_connecting.fr" type="png" />
+      <file name="ConnectBB_content_connecting.it" type="png" />
+      <file name="ConnectBB_content_connecting" type="png" />
+      <file name="ConnectBB_content_disconnected" type="png" />
+      <file name="consolecursor" type="png" />
+      <file name="DistantBuildings1" type="png" />
+      <file name="DistantBuildings2" type="png" />
+      <file name="DistantWogCorp" type="png" />
+      <file name="groundTile_before" type="png" />
+      <file name="haze" type="png" />
+      <file name="junktile" type="png" />
+      <file name="nukem_bg.de" type="png" />
+      <file name="nukem_bg.es" type="png" />
+      <file name="nukem_bg.fr" type="png" />
+      <file name="nukem_bg.it" type="png" />
+      <file name="nukem_bg" type="png" />
+      <file name="quit_over" type="png" />
+      <file name="quit_up" type="png" />
+      <file name="skytile" type="png" />
+    </folder>
+    <folder name="wogc3d">
+      <file name="bldngs" type="png" />
+      <file name="ConnectBB_blank" type="png" />
+      <file name="ground" type="png" />
+      <file name="happyArm" type="png" />
+      <file name="happyTree" type="png" />
+      <file name="haze" type="png" />
+      <file name="wireBg" type="png" />
+      <file name="wogc" type="png" />
+    </folder>
+    <folder name="wogcd">
+      <file name="distantHills" type="png" />
+      <file name="DistantWogCorp" type="png" />
+      <file name="gaarbagePiles" type="png" />
+      <file name="groundTile" type="png" />
+      <file name="haze" type="png" />
+      <file name="skytile" type="png" />
+      <file name="veggiLoop" type="png" />
+    </folder>
+    <folder name="YouHaveToExplodeTheHead">
+      <file name="b1" type="png" />
+      <file name="b2" type="png" />
+      <file name="bg" type="png" />
+      <file name="body" type="png" />
+      <file name="head" type="png" />
+      <file name="main" type="png" />
+    </folder>
+  </folder>
+  <folder name="movie">
+    <folder name="_generic">
+      <file name="arm" type="png" />
+      <file name="black32" type="png" />
+      <file name="consoleBeep1" type="ogg" />
+      <file name="convertWorld" type="ogg" />
+      <file name="fader" type="png" />
+      <file name="girl0" type="png" />
+      <file name="girl1" type="png" />
+      <file name="girl2" type="png" />
+      <file name="girl3" type="png" />
+      <file name="lightson" type="ogg" />
+      <file name="middleFinger" type="png" />
+      <file name="pinky" type="png" />
+      <file name="placeholderSign" type="png" />
+      <file name="s1_beam" type="png" />
+      <file name="s2_bg" type="png" />
+      <file name="s2_cursor" type="png" />
+      <file name="s2_sign" type="png" />
+      <file name="s2_veggies" type="png" />
+      <file name="s2bg" type="png" />
+      <file name="s3_beam" type="png" />
+      <file name="s4_bg" type="png" />
+      <file name="s4_cube" type="png" />
+      <file name="s4_globe" type="png" />
+      <file name="s4_mist" type="png" />
+      <file name="s4_squareBig" type="png" />
+      <file name="s4_wireframe" type="png" />
+      <file name="signpostIsh" type="png" />
+      <file name="thumb" type="png" />
+      <file name="white32" type="png" />
+      <file name="wogLogo01" type="png" />
+      <file name="woosh" type="png" />
+    </folder>
+    <folder name="2dboyLogo">
+      <file name="logo_2" type="png" />
+      <file name="logo_B" type="png" />
+      <file name="logo_D" type="png" />
+      <file name="logo_O" type="png" />
+      <file name="logo_Y" type="png" />
+      <file name="presents.de" type="png" />
+      <file name="presents.es" type="png" />
+      <file name="presents.fr" type="png" />
+      <file name="presents.it" type="png" />
+      <file name="presents" type="png" />
+      <file name="smear" type="png" />
+      <file name="splat1" type="png" />
+    </folder>
+    <folder name="Chapter1End">
+      <file name="creature" type="png" />
+      <file name="sky" type="png" />
+      <file name="world" type="png" />
+    </folder>
+    <folder name="Chapter2End">
+      <file name="bg" type="png" />
+      <file name="eyeL" type="png" />
+      <file name="eyeR" type="png" />
+      <file name="hairSeg" type="png" />
+      <file name="head" type="png" />
+      <file name="lf" type="png" />
+    </folder>
+    <folder name="Chapter2Mid">
+      <file name="bg" type="png" />
+      <file name="c2midSfx" type="ogg" />
+      <file name="container" type="png" />
+      <file name="finger" type="png" />
+      <file name="goop" type="png" />
+      <file name="gurl" type="png" />
+      <file name="handl" type="png" />
+      <file name="handr" type="png" />
+    </folder>
+    <folder name="Chapter3End">
+      <file name="dl_itsfalling" type="ogg" />
+      <file name="dl_whatisit" type="ogg" />
+      <file name="part1bg" type="ogg" />
+      <file name="s1_bg" type="png" />
+      <file name="s1_gun" type="png" />
+      <file name="s2_crowd" type="png" />
+      <file name="s2_g0b" type="png" />
+      <file name="s2_g0c" type="png" />
+      <file name="s2_g1a" type="png" />
+      <file name="s2_g1c" type="png" />
+      <file name="s2_g2a" type="png" />
+      <file name="s2_g2c" type="png" />
+      <file name="s2_g3a" type="png" />
+      <file name="s2_g3c" type="png" />
+      <file name="s2_hill" type="png" />
+      <file name="s3_veggiesL" type="png" />
+      <file name="s3_veggiesR" type="png" />
+      <file name="s4_squareSmall" type="png" />
+    </folder>
+    <folder name="Chapter3Mid">
+      <file name="bb1" type="png" />
+      <file name="dlg_1" type="ogg" />
+      <file name="dlg_2" type="ogg" />
+      <file name="run" type="ogg" />
+    </folder>
+    <folder name="Chapter4End">
+      <file name="globeNoWogc" type="png" />
+      <file name="sfx_p1" type="ogg" />
+      <file name="sfx_p2" type="ogg" />
+      <file name="smokewave" type="png" />
+      <file name="wave" type="png" />
+      <file name="wogc_bg" type="png" />
+      <file name="wogc_wogc" type="png" />
+      <file name="wogc_wogce" type="png" />
+      <file name="wogcd_debris" type="png" />
+      <file name="wogcd_veggies" type="png" />
+      <file name="wogcd_wogcd" type="png" />
+      <file name="wogcDistant" type="png" />
+    </folder>
+    <folder name="Chapter5End">
+      <file name="bigsil_gb" type="png" />
+      <file name="bigsil_m1" type="png" />
+      <file name="bigsil_m2" type="png" />
+      <file name="bigsil_telescope" type="png" />
+      <file name="body" type="png" />
+      <file name="distantTower" type="png" />
+      <file name="exc1" type="png" />
+      <file name="exc2" type="png" />
+      <file name="exc3" type="png" />
+      <file name="eyesL" type="png" />
+      <file name="eyesR" type="png" />
+      <file name="giantGooBall" type="png" />
+      <file name="gooBallOnLens" type="png" />
+      <file name="gooBallOnLensBlank" type="png" />
+      <file name="isLand" type="ogg" />
+      <file name="s1_bg" type="png" />
+      <file name="s1_ground" type="png" />
+      <file name="s1_island" type="png" />
+      <file name="s1_telescope" type="png" />
+      <file name="scrapescrapescrape" type="ogg" />
+      <file name="shake1" type="ogg" />
+      <file name="shake2" type="ogg" />
+      <file name="shake3" type="ogg" />
+      <file name="space_bg" type="png" />
+      <file name="space_disteyes1" type="png" />
+      <file name="space_disteyes2" type="png" />
+      <file name="space_disteyes3" type="png" />
+      <file name="space_disteyes4" type="png" />
+      <file name="space_disteyes5" type="png" />
+      <file name="space_globe" type="png" />
+      <file name="space_sun" type="png" />
+      <file name="space_travel" type="png" />
+      <file name="telemask" type="png" />
+      <file name="telescopeBig" type="png" />
+      <file name="tv_brngmn" type="png" />
+      <file name="tv_chn" type="png" />
+      <file name="tv_flyawy" type="png" />
+      <file name="tv_gsm" type="png" />
+      <file name="tv_hnglw" type="png" />
+      <file name="tv_vpds" type="png" />
+      <file name="upperWind" type="ogg" />
+    </folder>
+    <folder name="credits">
+      <file name="2dboy" type="png" />
+      <file name="allanblomquist" type="png" />
+      <file name="and" type="png" />
+      <file name="gear" type="png" />
+      <file name="girl0" type="png" />
+      <file name="girl1" type="png" />
+      <file name="girl2" type="png" />
+      <file name="girl3" type="png" />
+      <file name="kylegabler" type="png" />
+      <file name="paulhubans" type="png" />
+      <file name="roncarmel" type="png" />
+      <file name="run1" type="ogg" />
+      <file name="run2" type="ogg" />
+      <file name="tree" type="png" />
+    </folder>
+    <folder name="eol_1_in">
+      <file name="blurStar" type="png" />
+      <file name="cheer1" type="ogg" />
+      <file name="collectionTank_fg" type="png" />
+      <file name="collectionTankHandle.de" type="png" />
+      <file name="collectionTankHandle.es" type="png" />
+      <file name="collectionTankHandle.fr" type="png" />
+      <file name="collectionTankHandle.it" type="png" />
+      <file name="collectionTankHandle" type="png" />
+      <file name="handleUp" type="ogg" />
+      <file name="pipeSeg" type="png" />
+      <file name="pipeTravelBg" type="png" />
+      <file name="pipeTravelSeg0" type="png" />
+      <file name="statlabel_collected.de" type="png" />
+      <file name="statlabel_collected.es" type="png" />
+      <file name="statlabel_collected.fr" type="png" />
+      <file name="statlabel_collected.it" type="png" />
+      <file name="statlabel_collected" type="png" />
+      <file name="statlabel_extracredit.de" type="png" />
+      <file name="statlabel_extracredit.es" type="png" />
+      <file name="statlabel_extracredit.fr" type="png" />
+      <file name="statlabel_extracredit.it" type="png" />
+      <file name="statlabel_extracredit" type="png" />
+      <file name="statlabel_goal.de" type="png" />
+      <file name="statlabel_goal.es" type="png" />
+      <file name="statlabel_goal.fr" type="png" />
+      <file name="statlabel_goal.it" type="png" />
+      <file name="statlabel_goal" type="png" />
+      <file name="statlabel_moves.de" type="png" />
+      <file name="statlabel_moves.es" type="png" />
+      <file name="statlabel_moves.fr" type="png" />
+      <file name="statlabel_moves.it" type="png" />
+      <file name="statlabel_moves" type="png" />
+      <file name="statlabel_time.de" type="png" />
+      <file name="statlabel_time.es" type="png" />
+      <file name="statlabel_time.fr" type="png" />
+      <file name="statlabel_time.it" type="png" />
+      <file name="statlabel_time" type="png" />
+      <file name="statPop" type="ogg" />
+      <file name="swish" type="ogg" />
+      <file name="tankEmpty" type="ogg" />
+      <file name="tankFill" type="ogg" />
+      <file name="tankIn" type="ogg" />
+      <file name="transwoosh2" type="ogg" />
+    </folder>
+    <folder name="levelinfotransition_in">
+      <file name="leafbunch" type="png" />
+    </folder>
+    <folder name="MomTextSwap_displayloop">
+      <file name="flip" type="ogg" />
+    </folder>
+    <folder name="whistleUnlock">
+      <file name="whistle" type="png" />
+    </folder>
+    <folder name="wogcdestroy">
+      <file name="arm" type="png" />
+      <file name="logo_2" type="png" />
+      <file name="logo_B" type="png" />
+      <file name="logo_D" type="png" />
+      <file name="logo_O" type="png" />
+      <file name="logo_Y" type="png" />
+      <file name="middleFinger" type="png" />
+      <file name="pinky" type="png" />
+      <file name="presents" type="png" />
+      <file name="smear" type="png" />
+      <file name="splat1" type="png" />
+      <file name="thumb" type="png" />
+    </folder>
+    <folder name="wogcunlock">
+      <file name="bbUnlocked" type="png" />
+      <file name="beauty1" type="png" />
+      <file name="beauty2" type="png" />
+      <file name="city" type="png" />
+      <file name="glow" type="png" />
+      <file name="opensign_off.de" type="png" />
+      <file name="opensign_off.es" type="png" />
+      <file name="opensign_off.fr" type="png" />
+      <file name="opensign_off.it" type="png" />
+      <file name="opensign_off" type="png" />
+      <file name="opensign_on.de" type="png" />
+      <file name="opensign_on.es" type="png" />
+      <file name="opensign_on.fr" type="png" />
+      <file name="opensign_on.it" type="png" />
+      <file name="opensign_on" type="png" />
+      <file name="title_CORPORATION" type="png" />
+      <file name="title_GOO" type="png" />
+      <file name="title_OF" type="png" />
+      <file name="title_WORLD" type="png" />
+    </folder>
+  </folder>
+  <folder name="music">
+    <file name="alwaysdestroythethingsilove(excerpt)" type="ogg" />
+    <file name="bigcomputer1" type="ogg" />
+    <file name="bigcomputer2" type="ogg" />
+    <file name="bot_excerpt1" type="ogg" />
+    <file name="bot_excerpt1_rprs" type="ogg" />
+    <file name="DikkiPainguinLoop(rev-1)" type="ogg" />
+    <file name="kaptainpolka" type="ogg" />
+    <file name="n2" type="ogg" />
+    <file name="notld_anthem_excerpt1" type="ogg" />
+    <file name="OdeToTheBridgeBuilder" type="ogg" />
+    <file name="Overture98Excerpt1" type="ogg" />
+    <file name="RainRainWindyWindy" type="ogg" />
+    <file name="ReveilleDNT" type="ogg" />
+    <file name="screamer" type="ogg" />
+    <file name="stratloop" type="ogg" />
+    <file name="temp_CarnivalLoop" type="ogg" />
+    <file name="temp_DWtD1" type="ogg" />
+    <file name="temp_DWtD2" type="ogg" />
+    <file name="temp_islandam" type="ogg" />
+    <file name="temp_jelly" type="ogg" />
+    <file name="temp_main" type="ogg" />
+    <file name="temp_miniottbb" type="ogg" />
+    <file name="threadcutter" type="ogg" />
+    <file name="WogThemeEnding" type="ogg" />
+    <file name="WogThemeLoop" type="ogg" />
+    <file name="YearsOfWork" type="ogg" />
+  </folder>
+  <folder name="sounds">
+    <file name="anticipation" type="ogg" />
+    <file name="cheer2" type="ogg" />
+    <file name="discovery1" type="ogg" />
+    <file name="discovery2" type="ogg" />
+    <file name="discovery3" type="ogg" />
+    <file name="discovery4" type="ogg" />
+    <file name="earthquake" type="ogg" />
+    <file name="extracredit" type="ogg" />
+    <file name="fling01" type="ogg" />
+    <file name="fling02" type="ogg" />
+    <file name="fling03" type="ogg" />
+    <file name="fling04" type="ogg" />
+    <file name="fling05" type="ogg" />
+    <file name="fling06" type="ogg" />
+    <file name="fling07" type="ogg" />
+    <file name="fling08" type="ogg" />
+    <file name="fling09" type="ogg" />
+    <file name="fling10" type="ogg" />
+    <file name="geyser" type="ogg" />
+    <file name="geyser2" type="ogg" />
+    <file name="gootrail" type="ogg" />
+    <file name="loop_beforeItRains" type="ogg" />
+    <file name="loop_bubbles" type="ogg" />
+    <file name="loop_celebrityCrowd" type="ogg" />
+    <file name="loop_eveningWater" type="ogg" />
+    <file name="loop_fire" type="ogg" />
+    <file name="loop_firewater" type="ogg" />
+    <file name="loop_rainLite" type="ogg" />
+    <file name="loop_readyToNuke" type="ogg" />
+    <file name="loop_shore" type="ogg" />
+    <file name="loop_squeaksInTheWind" type="ogg" />
+    <file name="loop_strongwind" type="ogg" />
+    <file name="loop_superbirds" type="ogg" />
+    <file name="loop_waterPond" type="ogg" />
+    <file name="nuke" type="ogg" />
+    <file name="nuke_cover_close" type="ogg" />
+    <file name="nuke_cover_open" type="ogg" />
+    <file name="pipeHit_00" type="ogg" />
+    <file name="pipeHit_01" type="ogg" />
+    <file name="pipeHit_02" type="ogg" />
+    <file name="pipeHit_03" type="ogg" />
+    <file name="pipeHit_04" type="ogg" />
+    <file name="pipeHit_05" type="ogg" />
+    <file name="pipeHit_06" type="ogg" />
+    <file name="pipeHit_07" type="ogg" />
+    <file name="pipeHit_08" type="ogg" />
+    <file name="pipeHit_09" type="ogg" />
+    <file name="pipeHit_10" type="ogg" />
+    <file name="pipeHit_11" type="ogg" />
+    <file name="pipeHit_12" type="ogg" />
+    <file name="popup" type="ogg" />
+    <file name="shatter" type="ogg" />
+    <file name="splash" type="ogg" />
+    <file name="strand_break" type="ogg" />
+    <file name="suck_begin" type="ogg" />
+    <file name="suck_end" type="ogg" />
+    <file name="suck_loop" type="ogg" />
+    <file name="timebugspawn1" type="ogg" />
+    <file name="timebugspawn2" type="ogg" />
+    <file name="undo" type="ogg" />
+    <file name="whistle1" type="ogg" />
+    <file name="whistle2" type="ogg" />
+    <file name="whistle3" type="ogg" />
+    <file name="whistle4" type="ogg" />
+    <file name="WoGCUnlocks" type="ogg" />
+  </folder>
+</folder>

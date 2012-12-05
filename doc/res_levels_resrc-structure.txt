@@ -1,0 +1,31 @@
+This document describes the structure of res/levels/<level-id>.resrc.xml:
+
+This file describes the image, and sound/music resources that are specific to the level:
+
+Structure overview: 
+  <ResourceManifest>
+    <Resources>
+      <Image>*
+      <SetDefaults>*
+      <Sound>*
+    </Resources>
+  </ResourceManifest>
+
+Nodes' details:
+<Image id="string" path="string">
+  Declares an image/texture that can be used in the level (sign-post or scene)
+  attributes:  
+  - id: name of the image
+  - path: path the image, relative to the executable directory in unix format (e.g. res/mysound/myimg). All image are in PNG format. The '.png' suffix must be ommitted from the path.
+  
+<SetDefaults path="string" idprefix="string">
+  ???
+  attributes:  
+  - path: always "./"
+  - idprefix: always empty string ""
+
+<Sound id="string" path="string">
+  Declares a sound or music resource in OGG format that can be used in the level.
+  attributes:  
+  - id: name of the sound/music. Referenced by level.
+  - path: path of the sound/music, relative to the executable directory in unix format (e.g. res/mysound/mysound.ogg). All musics and sound are in ogg format.

@@ -1,0 +1,26 @@
+WooGLE is based around a model that represent all the data in the game, and the GUI that reacts to change in the model and trigger them.
+
+* The model
+
+Some data have identifiers, such as image or text. Some identifiers are globals: visible to all levels, balls... But some identifiers have a restricted scope, for example ball's resource identifiers are only visible for the associated.
+
+The model keep track of what can be referenced at a given scope: what resource the ball or a level can reference.
+
+The model is explains in more details in documentation of metaworld.py module. For short: XML nodes are Element attached a Tree (XML file). Trees are attached to a World (level, ball, islands, an identifier visibility scope). World may be attached to other Worlds or the Universe.
+
+The model also has a static description (e.g. the meta model). This is used for example to describe what are the balls attributes, their type, if they are mandatory... The descriptions of all WOG files is in the module metawog.py.
+
+* Model publish/subscribe events (a.k.a. signals)
+
+The model provides a publish/subscribe mecanism to signal insertion/removal/update of element.
+
+"louie" (http://louie.berlios.de/) is used as a publish/subscribe mecanism.
+
+* GUI
+
+The GUI subscribe to the model signals and update itself accordingly: adding/removing a node in a tree view, updating the property list or the graphic view.
+
+The main buildling block of the GUI are:
+- a tree view that represents a metaworld.Tree (XML file), with metaworld.Element as node (XML node)
+- a property list view that represents the attributes of a metaworld.Element selected in a tree view. Notes that there may be some slight transformation compared to the raw XML (the two attributes "x" and "y" or an element are usually transformed into a single "center" attribute).
+- a graphic view, for each level, that provides a visual representation of all elements of a given level.

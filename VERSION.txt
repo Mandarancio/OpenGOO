@@ -1,0 +1,817 @@
+- version 0.77 Final
+*Added : Filter for Edit Level list.. All, Original Only, Custom Only
+*Fix : Incomplete processing of Set Defaults on global resource reload.
+
+
+- version 0.77 RC3
+*Added : Cut, Copy, Paste, Delete... works with multiple selections
+- Some issues with position when copying CompGeom children then pasting "Here"
+*Added : Show/Hide buttons for particles and labels
+*New : Update Resources button now also refreshes the image cache.
+*Change : Now loads animation names from files in anim folder
+*Fix : Geometry images don't move when dragged in multiple mode
+*Fix : Glitchy positioning while dragging a CompGeom and some of it's own children.
+
+- version 0.77 RC2
+*New : First attempt at multiple selection
+- Use CTRL to add / remove items from the selection
+- Release CTRL then Click and Drag... Changes Position Only
+
+*New : pulse attribute on signposts
+*New : tilecountx and tilecounty attributes for scenelayer (require tilex,tiley to be true)
+
+*Change: Several LinearForceField attributes can now be removed / emptied
+*Change: Improved ARGB format message
+
+*Fix: Problem on "Save and Play" attempting to rewrite Global Text File
+*Fix: Problem creating goomod, not creating res/balls/{ballname} folder
+
+
+- version 0.77 RC1
+* New: Tabbed Windows with Dirty Status icon
+-- Blue = Clean / All Changes Saved
+-- Orange = There are unsaved Changes 
+-- Red = The level is "Read-Only" and has changes
+
+* New: Recent Levels List
+
+*Improved: Advice, Warnings and Critical errors better formatted
+- Also a new "more info" link  to the new Errors and Warnings page in the reference guide
+
+* Improved Tree and Property List Handling
+- Auto-Select Ball Root on window open
+- Clears Trees and List when no windows are open
+
+* New discoveries!!
+- Slider joint ... a bit like a hinge... but different
+- New attributes for hinges  stopcfm and stoperp  not fully understood.. for "investigation"
+
+* Resource Path / File validation
+- Files not found will cause Resource Tree issues
+- Verification on entry... you cannot set a path to a file that does not exist
+- CaSe correction on entry (Windows only) 
+- Warns if resource file extension (png or ogg) is not lower case (Windows Only) 
+
+* New Clone method
+- Modifies all resource and text Ids to new level name
+- Leaves the addin.id blank
+
+* New checks to ensure dependancy files actually exist. 
+- More descriptive "not found" errors in depends tree
+- Dependancy Calculation Progress window now "hourglass" cursor
+- custom image resources for custom particle effects go in resource.xml.xsl
+- ball xml files now transferred "unmolested" from .bin to goomod xml
+
+* New: Tree Refreshing on load and make goomod
+- Checks if any of the global xml (bin) files have changed since they were loaded
+- Checks if any of the custom Ball xml (bin) files have changed since they were loaded
+ 
+Fix: DirtyTracker and UndoTracker not checking if value has actually changed
+Fix: Circular objects having to high a selection priority and getting picked when they shouldn't
+New Icon includes 256x256 image... (esp for Grant... who drew it in the first place btw.)
+
+
+- version 0.7.6 Final
+- Bug Fixed: geometry 'tag' and pipe 'filter' no longer accepting changes properly
+- Bug Fixed: crashes if an unknown ball type is present in the pipe filter attribute
+
+- version 0.7.6 Beta 2:
+- On "Save and Play" Reloads global text.xml before writing any level text
+-- Prevents conflicts if GooTool has changed that file while WooGLE was running.
+
+- Property Tree / List should now change correctly when switching level
+-- They still remain displayed when last window is closed... but hey!
+
+- Bug Fixed: Import resources copies all files to the level folder
+- Bug Fixed: files.xml.xml contained entries for some "non-original" files
+
+
+- version 0.7.6 Beta:
+- Progress Dialogs added for "long" tasks
+  - Mac file conversions
+  - Dependancy calculations
+- Addin Names and Level Folders must now be at least 2 characters
+- Lines will display in RED if they are facing the "wrong" way.
+- Geometry Items are now filled in light blue (@25% alpha)
+- Added Add Line to Toolbar
+- Remove the word "child" from all the Add Item Context menus
+- Additional Status Bar messages during load / startup
+- Files.xml.xml now used un-encrypted.
+  - Removes requirement for 2 files one AES and one XOR
+- Bug Fixed: Crashed on startup trying to report Duplicate Ball Names
+
+- Version 0.7.5 (Beta):
+- "Mac Friendly" updates
+  - Change Dir now expects "World of Goo.app" to be selected
+  - Automatic scanning for un-converted PNG.BINLTL every time WooGLE starts
+    - Will convert only files that do not already exist as PNG
+  - Save and Play now directly adds a Button into Chapter 1
+    - Then launches the game
+
+- Version 0.7.5 (alpha 2):
+- "Mac Friendly" updates
+  - Converts any custom png to .png.binltl on save
+
+- Version 0.7.5 (alpha):
+- "Mac Friendly" updates
+  - Detect Platform and on MAC make the following differences
+  - Wog_dir is ../Resources/game (relative to Wog.app/Contents/MacOS)
+  - Convert all .png.binltl to .png after changing WoG Directory
+  - Use XOR En/Decryption on .bin files
+  - Quite a bit of diagnostic output added
+
+- Version 0.7.4 (Final):
+- Companion Addin "WooGLE - Fish Ball Fix"
+  - Only required if you want to use the Fish ball in your custom levels
+  - Replaces the ball.xml.bin, changing the resources used for the wings
+  - Original resource.xml declares IMAGE_BALL_FISH_WINGLEFT/RIGHT
+  - but Original ball.xml uses IMAGE_BALL_TIMEBUG_WINGLEFT/RIGHT
+
+- Bilinear filtering added to all images
+  - Improves quality of images when stretched
+
+- Reorganized the additional languages for text resources
+  - Added 'pl' as a default option
+
+- Reinstated Scenelayer id attribute (optional)
+  - used for local aminations and OCD Flag identification on islands
+
+- RadialForceFields
+  - Removed several non-functional attributes
+  - enabled did nothing, depth added by mistake, type has no effect rff as always "gravity"
+  - Added check for Dynamic Geometry "Dead" centre of RFF (causes trouble)
+
+- Signs and Labels with no Text resource assigned will no longer generate console output on load
+
+- Static attribute will now default to true, whichever way you add the object.
+- Corrected default value for missing static attribute during final checks
+
+
+- Version 0.7.4 (beta 2):
+- Fixed "can't add some end conditions" problem
+
+- Version 0.7.4 (beta):
+- Full Dependancy Checking and display (new Depends tab)
+  -- Done on Load and make Goomod
+  - Finds all custom dependancies of the level
+  - New Ball Types, custom images, sounds, particles, materials
+  - Fully Recursive so it will check...
+  -- dispensers and the balls they create, and the images and particles they use
+  -- Mom Balls and whatever comes out of them, and whatever comes out of the children etc
+  - Depends Tab shows all custom dependancies
+  -- Also shows "issues" (like the other trees) when something is required but is missing.
+  -- Missing items prevent you making the goomod
+
+- Dependancy Localization into goomod
+  - Option when making a goomod to include ALL custom dependancies
+  - Includes all custom ball data (ball folders, xml files, images, sounds)
+  - Automatically creates and includes fx.xml.xsl for custom particle effects (level or ball)
+  - Automatically creates and includes materials.xml.xsl for custom materials
+
+- Allows Custom Pipes
+  - You can specify your new pipe name in the pipe type attribute
+  - Will warn if any resources required for the pipe are missing
+  - displays custom pipes in bright red on the level view
+
+- Level Names (folders) that are just a number, cause untold problems (with GooTool and the game)
+  - New level names must now START with a letter, but can contain numbers elsewhere
+
+- Now processes SetDefaults entries in level resource files
+  - Resolves id and path on all entries and resets SetDefaults to "","./"
+  - Also Normalizes all paths to "/" separators
+
+Visual Changes
+- Labels are now correctly positioned according to their align attribute.
+- Images applied to compgeom now show centred on compgeom if no imagepos attribute is specified.
+- re-"grouped" most of the items so they have new / different tree icons
+
+Property / MetaModel Changes
+- Labels
+  - the misleadingly named "center" attribute is now called "position"
+  - overlay and screenspace are now optional
+- most level root attributes are now optional (autobounds, strandgeom etc)
+- geomonly tag removed from radialforcefields (doesn't work)
+- material is now optional
+  - The game uses "rock" when material attribute is omitted.
+  - so default material ("rock") removed from new geometry items.
+- Music and Loopsound attribute is now called sound - rather than id
+
+- Lots of revisions to Ball Meta info (for the purposes of dependancy checking)
+  - Many, Many "unknown" attributes changed to reference or enum 
+  - Many also now flagged as "is_list"
+  - created/added lists of known ball "events" and "states"
+  - removed quite a few incorrect "max occurances"
+
+- discovered how to create fully recursive meta info
+  - Applied to Folders for original resource info (files.xml.bin)
+  - and new Dependancy meta info
+
+- enum_attributes now have an "allow_any" keyword..
+  - this gives the completer box, but also accepts anything else the user types
+  - Used only on pipe type to allow custom types (for now)
+
+- Changed Back 
+  - Fully loads global resources.xml tree
+  - new completer functions to give just World Identifiers, rather then World+Parent
+  - Prevents all the global resources appearing in the image and sound completer lists.
+  - But allows full dependancy checking on original global resources.
+
+- Version 0.7.3:
+- Goos now look quite a lot like.. well.. Goos.
+ - Works with custom Goos because it used the <body> image
+ - Invisible Goos (with no body image) show with the "old-style" black circle.
+
+- Paste is now Paste HERE!
+  - Goos, Scenelayers, Geometry ... and most other stuff
+  - Ctrl+V (or standard paste shortcut) now pastes the object where the mouse pointer is.
+  - REALLY easy to add a load of Goos now (add one, copy it.. and paste paste paste)
+
+- Paste In Place (the old Paste) available on menus and toolbar and by ALT+V
+
+- Paste menus now show you what is on the clipboard 
+  - Shows object type .. BallInstance, SceneLayer rectangle etc
+  - Note - this is based on last item Cut/Copied (looking to change it to "live" checking)
+
+- Proto-context menus... Right-Click
+  - Shows selected item type (top row)
+  - Cut, Copy, "Paste Here" and Delete... for now... type specific options coming 'soon'
+  
+- tag and filter properties now display a dialog with a scrollable list of checkboxes.
+  - Just tick the ones you want.
+  - filter property only shows goo types that are "suckable", "visible" and not "static"
+
+- Orthogonal Moving
+  - Hold CTRL key when moving an object, to restrict movement to either Horz. or Vert.
+
+- Images have Aspect Preserving Resize (Scenelayers, Signposts and Geometry Images)
+  - Hold CTRL key to maintain/revert to the ORIGINAL Aspect Ratio of the Image while resizing
+  - Hold ALT key to maintain whatever the Aspect Ratio was already
+
+- New Clean Resources button / menu
+  - Removes any unused resources from the level (images, sounds and text)
+
+Checks and Advice
+- Some XML Parse Error checking (Checks Level and Ball xml's)
+- Will alert you to duplicate balls (2 folders, two balls.xml.bin's... same name="{ballname}")
+
+Visual Changes
+- Lines, ForceFields, Geometry with Images 
+  are now only selected by clicking on a component, not "anywhere in bounding rectangle" 
+
+- Scenelayers and Signpost now display using any alpha value they have set
+
+- All but the last POI now show as "letterboxed"
+  - They show pretty close to what you will see
+  - and they're 50% transparent so you can see what's behind them when you're moving them.
+
+- Camera's and Poi's are now hidden by default (you'll see why....)
+
+Property and MetaModel Changes
+- New End Condition - endonnogeom  
+ - This has been known about for some time (apparently)
+ - But was never used in the original levels, and never investigated... till now.
+ - Simply.. the level ends when there are no Dynamic Geometry objects left.
+ - See the online reference guide for more details
+
+- depth attribute removed from BallInstance (error in original WoG Editor)
+- discovered now removed when empty
+- levelexit/filter now removed when empty
+- depth and id removed from pipes (neither attribute was required or did anything)
+- levelexit id now entirely optional
+
+- Version 0.7.2:
+* New Text Edit Dialog for Text Resources and Addin Description
+  - Automatically replaces line breaks {enter} with '|'
+  - Converts '|'  back to line break for editting
+
+* Undo stack extended to 100 actions (accidentally set to 10 in v0.71)
+* Added REDO!
+  - Just in case you Undo too many times.. It will redo the last Undone action
+
+* Lines now show their normal and have a drag handle to change their direction
+
+* Anim property now has completer list of all the global animations
+  - Most of them won't be a lot of use, but at least you can see what they are called
+  - blink, ocdFlagWave, happyTreeDance are probably most useful after rot_1fps
+
+* Rudimentary Dependancy checking - Warns when creating a goomod
+  - Checks for Custom Balls, Materials and Particle Effects
+
+* Visual and Layout Changes
+- New icons for quite a few things
+- New Edit Toolbar (Cut Copy Paste Undo etc)
+- New Resource Menu (same options as Resource Toolbar)
+- Moved Add Text Resource from item bar to Resource bar / menu
+- Now stores and restores the toolbar layout if you change it
+- Tree Tabs (Scene,Level,Resource etc) and Properties Pane locked in place
+  - They can all still be resized, but not moved, floated or closed.
+
+* More checks and advice
+  - Now checks for Ambient Particle Effects used on Fire or SignPost Objects
+  - Checks for Single Poi with large traveltime (causes delay starting level)
+  - Warning on hinges applied to composite geometry children, 'cos they don't work right.
+    - hinges must be applied to the compositegeom parent item.
+  - Now handles missing ball types. Shows the Missing Goos in Red, and flags a tree issue.
+
+* Property / MetaModel Changes
+  - New CHILD_RECT and CHILD_CIRCLE elements
+  - - They have been slimmed right down to include only attributes which can have any effect 
+  - - Removed.. image stuff, material, tag, rotspeed, contacts, nogeomcollisions and STATIC
+  - - These were all either unnecessary, non-functional or only inherited from the compgeom
+  - - Also id on children is entirely optional, use it for a "meaningful" name if you want
+
+  - CompGeom now has contacts attribute 
+  - - Although it suffers from the same "sticky" bug as tags do.
+
+  - Normalized the order of the attributes on Rect,Circle and CompGeom
+
+  - Reordered the attributes on quite a few other items...
+  - Approx new order
+  -- Name / ID
+  -- Position, Size, Rotation, Depth
+  -- Type, material, tags, other useful and item-specific options like force or text
+  -- Image
+  -- Other options you might need, but won't use a lot
+
+  -- Label Id now starts empty.. and you can leave it like that if you want.
+
+  - UtilGooGlobberMom and UtilGooGlobberMomQuiet removed from "No Strands" list
+  - List added of Original Balltypes, Materials, Ambient and Local Particles
+    - For dependancy checking
+  - Scenebounds (min/max x/y) are now allowed to be empty.
+  - Multiple endoncollision items are now allowed.
+  - - level ends if any one of them happens
+
+* Bug Fixes
+Fixed: unknown Balltype if ball folder name is not case-sensitive match to name=".." in balls.xml
+Fixed: Infinite Loop on Save (cleaning tree), if there was a properly Missing Ball
+
+- Version 0.7.1:
+* Fixed the Addin Id bug
+* Fixed Typo in the About box
+* Downgraded "Multiple End Conditions" from Warning to Advice
+* imagerot, rotspeed and a couple others I missed can now be unset (set blank)
+
+oh.. and..
+* Added UNDO!
+  - Works on Adding, Deleting Items and changing attributes, including graphically.
+  - A few "Actions" need more than one UNDO to undo.
+    - Auto-Pipe : Undoes 1 vertex at a time if there was a pipe already
+    - Import Image(s) : 1 Undo per image imported
+    - Set Music / LoopSound : Varies
+	2x if this was the first time it was set
+	   (Remove music item, remove imported sound resource)
+	3x if you were replacing existing music.
+	   (Add old sound resource back, swap music id back, remove new resource)
+
+
+- Version 0.7.0 (Final):
+* TEXT Resource handling added!
+  - New Text Tab where you can add the text resources for your signposts and labels
+  - Saves Text entries in the level folder {levelname}.text.xml
+  - Automatically creates text.xml in your goomod (if it's needed)
+  - Adds the text into the global text.xml.bin when you click Play
+  --- So that you can check it in the game, straight away!
+  - Only lists "Local" Text Resources in the completer boxes
+
+* Automatic Localization of Existing Global Text Resources  (err...what?...)
+  - If you clone an original Level...
+  --- You get local COPIES of all the sign and label text
+  --- You can change these without affecting the original level
+  - If you open an "old" / existing custom level, which has signs or labels...
+  --- Any text will be transferred from the Global text file to the new Local file.
+  --- Meaning you can edit it in WoG editor, and it'll saved with the level and put in the goomod
+  --- NB: Level must be currently installed and enabled with GooTool to transfer the text
+
+* Text Resource, Sign and Label added to Item bar
+  - Also rearranged a few of the other items into vague groups
+
+* Now supports the "thB JPG fiddle" for reducing image file size
+  - WoG Editor will display images that use this "feature"
+  - NB: You can still only import *.png as resources
+
+* New issue severity level : ADVICE
+  - This is for non-critical but helpful or "good practice" things
+  -- eg. Unused Resources, non-static but rotated compgeom objects
+  - You will be alerted to Advice issues, when you play or goomod
+  -- In BOTH cases you can continue or cancel.
+
+* "Linux Friendly" - well.. "Friendly"-er
+  - Select WoG Directory now looks for WorldOfGoo.*  (rather than specifically .exe or .bin)
+  - Automatic conversion of \ to / in resource paths (on load)
+
+* Tree Tabs (Scene and Level)
+  - Signs now show their name in the tree
+  - Cameras show their aspect setting in the tree
+  - "Only one allowed" applied to pipe,levelexit,targetheight,endoncollision,endonmessage
+
+* Addin Tab 
+  - now shows the values in the tree.
+  - validates the OCD and won't accept invalid settings
+  - validates Addin Id, which has some particularly tight rules in GooTool
+  - - It pretty much has to look like a domain name  (com.goofans.YourName.LevelName)
+  - - Can only contain letters, numbers and '.' (dots)
+  - - Must contain at least one dot
+  - - Must not start or end with a dot, and cannot contain '..' (2 dots together)
+
+* New final checks on...
+  - Goos and Strands - in case you changed the goo type to something that can't have a strand.
+  - multiple different End Conditions (warns if you have a levelexit and a targetheight for example)
+  - Targetheight - Warns if any Goos start above the target, so your level will finish immediately
+  - Image and Sound Resources to confirm / ensure that file paths are correct
+  - Spinning geometry objects without hinges to hold them in place (interesting if you ignore the warning)
+
+* Visual Changes
+  - Signs now appear as a Red Square until they have an image.
+  - Strands are now coloured in increasing shades of red when they get too long (bright red means they will probably break straight away)
+  - Widescreen POIs and endcamera now represent "worst-case" 16:9 ratio
+
+* Fixes
+  - Fatal Exception on Exit (Bug in PyQT 4.7.2 fixed in 4.7.3)
+  - GFX and Sound files from the original balls folder added to files.xml
+  --- Stops it putting them in goomods because it thinks they are "custom" files.
+  - Labels now rotate correctly and text appears in the game where the center is.
+  - Ambient LinearForceFields can now be sized, without first giving them a center.
+  - Image depth when applied to circle objects
+  - Cloned levels now show in Level list without WoG Editor restart
+  - Pipe line now updates (immediately) when a vertex is deleted
+  - Create New level will now display an error if creating the level folder fails (usually a permissions problem)
+
+
+
+
+- Version 0.6.9:
+* Composite Geometry "WORKS"
+  - compositegeom elements and children can be added from the Toolbar
+    - to add a new child you must first select the compgeom object (or one of its children)
+    - children are automatically given a mass = 1 (prevents trouble, and has no ill effects if parent is static)
+  - Selecting Child Rectangles / Circles moves them around inside the CompGeom object
+  - To access the overall Compgeom Position, Rotation and other properties like material and static
+    - Click the green circle at the center point
+    - Can be moved with the central square handle, can be rotated with the green DOT
+  NB i) Images applied to compgeom do not follow the position and rotation of the main object
+        They must be positioned separately... this is just how the game works.
+ NB ii) The game has a proper BUG in the positioning of the object geometry when...
+        A compgeom element is not static and has non-zero rotation.
+
+* Linear Force Field can now have its force changed by dragging the yellow end of the force line.
+
+* More Error / Crash Checks
+  - Geometry has an image, but no imagerot value  (Critical)
+  - Linear force field has a size, but no center (Critical)
+  - Images set on compositegeom children do not display in the game (Warning)
+
+ * Failed Checks and Issues now have a "Severity"
+  - Each issue now has a severity rating of Warning or CRITICAL
+  - Metaworld Issues are always CRITICAL (Red X's shown in the trees)
+  - How this affects...
+  |--- Saving : It will ALWAYS save the level data, and warn you of any issues
+  |--- Playing: If the level has Warnings but no CRITICAL's, you get the option to Play or Cancel
+  |           : If the level has CRITICAL errors, you cannot play. It would crash WoG if you tried.
+  |--- GooMod : You cannot make a goomod if there are any unresolved issues.
+
+* Changed the way the installer adds the Decrypt option on the right click menu
+ - Installer now requires at least PowerUser rights.
+ - Win7 still overrides (and hides) the option if you set a different program to handle .bin's
+ |--- so don't do that!
+
+*Visual Changes
+  - Balls with no type show in red
+  - Labels will show "!Set_Text!" until you do
+  - particles will show "!Set_Effect!" until you do.
+  - Rect / Circle with images shows image in correct place when there is no imagepos value
+
+* Property changes
+* New remove_when_empty flag applied to...
+  - Rect / Circle image, imagepos, imagescale and tag
+  - Compgeom on image, imagescale and tag but NOT imagepos, because it's not as predticable as rect or circle
+  - Line Tag
+  - LinearForceField Size and Center (allows you to convert a sized force field back into an ambient one)
+  - Pipe Type - allows you to go back to default grey pipe, after you've specified another type.
+
+* New read_only flag applied to...
+- Elements (Cannot be cut or deleted, or additional items of that type added by right-click)
+|--- Resources Element, Set Defaults Element, All "required" Addin elements
+
+- Attributes (Cannot be edited or removed)
+|--- Addin attributes spec-version, type, level->dir
+|--- Resource id, Set Defaults path and idprefix
+
+* Tooltips (Hover on attribute name in property list)
+- Added to most Addin attributes
+- And quite a few others in Scene and Level Tabs
+
+* Other property changes
+  - Removed (pointless) static attribute from lines
+  - Radial Force Field no longer REQUIRES an id
+  - Mandatory attributes with no Init value, are not added to the item
+  |--- this gives the new element an Issue.. to ensure it is fixed before play / goomod
+  - Level autobounds now defaults to false
+  - Added OCD entry to addin template (blank entry - no ocd)
+
+- Version 0.6.8 : DaB
+* Installer has option to add En/Decrypt functions on Windows Right-Click menu
+  - Optional in Installer - since it's a bit experimental.
+  - Right-Click a .bin file, choose Decrypt for WOG (.xml created/overwritten in same folder)
+  - Right-Click a .xml file, choose Encrypt for WOG (.bin created/overwritten in same folder)
+  - Works on multiple file selections too!
+
+* Rectangles and Circles with Images Work! (I think)
+  - Geometry can be sized, moved, rotated as normal (outline handles)
+  - Images can be sized and rotated as normal (Solid handles)
+  - Image can (only) be moved using CENTER solid handle
+
+* Make .goomod now asks for save location and filename
+  - also remembers last location ({Level_folder} / Elsewhere)
+
+* Closing Window (or App) warns about unsaved changes.
+
+* Linear and Radial Forcefields can be moved and resized
+  - Still working on setting the force!
+
+* Lines can be selected and moved
+ - Still working on rotating them.
+
+* Lots of new checks/warnings added on save / play / make goomod
+  - Mainly things that might look OK to you, me and WoG Editor
+    -  but will crash WoG or seriously affect playability
+
+  - Static=False and Mass=0  aka. the "Mass Crash"
+  - Missing Cameras : must have 1 normal and 1 widescreen
+  - Compgeom set to static=false, but has child with no Mass
+  - Strands declared before balls (Fix: Strands moved to end of file on save)
+  - Hinges and Motors declared before Geometry (Fix Hinges and Motors moved to end)
+  - Motors attached to static geometry
+  - Pipe Vertexes that are too close together.
+  - Pipes with vertexes that go straight on, or turn 180deg (Wog crash)
+    - Moving Pipe Vertexes now only allows a valid direction.
+  - Level Exit outside scene bounds (Playability - can never reach pipe)
+  - Has levelexit but no pipe (Wog crash on pipe open)
+  - Pipe "Mouth" outside levelexit (Playability)
+
+* Fixed: Mouse Coordinates should now display / update always.
+* Fixed: Level cannot be re-opened after level window is closed
+
+- Version 0.6.7 (Beta) : DaB
+* !!Experimental!! "Make .goomod" feature
+  - First, go to the new "Addin" tab (over with the Scene, Level, Resources ones)
+    - fill in all the required fields (you'll see X's in the tree)
+    - you can also right-click to add optional entries like ocd or "depends"
+    - NB: There's no validity/error checking of these fields yet.. so try to get them right!
+    - The info is stored in a new {LevelName}.addin.xml file
+
+  - Then click the goomod button on the toolbar.
+    - creates a subfolder called goomod inside the level folder
+    - creates the addin.xml file
+    - creates the "compile" folder structure and puts the level,scene and resrc XML files in it.
+    - if needed, creates an "override" folder and puts copies of images and sound files in there.
+      - will only copy "custom" images and sounds.. original WoG files will not be included
+    - creates an {addin-id}.goomod file with everything in...
+    - leaves all the xml and copied resource files in the goomod folder
+      - just in case you want to tweak anything manually, and repack the .goomod yourself.
+  - Finally TEST your new .goomod in GooTool - BEFORE YOU UPLOAD!
+
+* New Goo-lbar! Add even more Goo!
+  - Added BombSticky, Anchor, AnchorFriendly and AnchorSticky to the Goo-lbar
+
+* Add more "other stuff"
+  - Added Fire, Force Fields, Particles, Hinges and Pipe vertex's to the Item bar
+  - and New "Auto Pipe" feature. Quick way to get a valid pipe.
+     - Adds a pipe, if there isn't one, and adds 2 vertexes
+        - one dead-on the levelexit
+        - the other just outside the nearest scene edge.
+     - NB: Will reset / override any existing pipe with the new one.
+
+* Changes to Import Resources
+  - Import "Resources" is now Import Images (only allows pngs)... because...
+
+* New "Set Music" and "Set LoopSound" buttons
+    - No need to add a resource then a "music" and then assign the id
+    - Click the button, select the file.. WoG Editor does the rest.
+    - If the level already had music / loopsound it will also remove the old file from resources.
+
+* Clone Level now Works!!
+    - It also automatically saves the files for the new level.
+
+* Pipe colour now matches the pipe 'type' {blank}=grey, BLACK=black, BEAUTY=pink, ISH=green
+
+- Version 0.6.6: DaB
+* Add More Goo! Faster!
+  - Added a load of common / useful goo types to the Toolbar
+
+* Show / Hide
+  - New toolbar allows you to show/hide different "layers" of the level
+  - So far.. Cameras and Pois, ForceFields, Graphics, Geometry, Goos
+  - NB: Geometry with Images
+    - Hiding Graphics will hide the image but not the geometry
+    - Hiding Geometry will hide both the geometry and the image.
+
+* Scene Bounds
+  - Now show as a dotted black rectangle
+  - Will be RED if there's a problem... like max is less than min
+
+* Camera now has a visual item for EndPos
+  - Like POI's only darker
+
+* File extension CAPITALIZATION checks (For Linux and mac compatability)
+  - Automatically changes extensions to lower case when copying from external folder
+  - Will WARN about non-lower extensions on Import.. tells you to rename it, and skips the file.
+
+* Fix: Imported Resources converts \ to / in the res path
+* Fixed: New Pipe is stuck with an "issue", even after adding 2 vertexes
+
+
+
+- Version 0.6.5: DaB
+* Goos are now the correct Size and Shape!
+ - BlockHead and RectHead (and other Square Goos) can be drag-rotated
+
+* Saving Levels
+  - Save and "Save and Play" Buttons / Menus now ONLY save the Current Level (The active window)
+    - This fixes the incorrect "Original WoG level" warning, it was trying to save ALL open levels.
+  - Warns if the level has "Issues" that will cause WoG to crash, but still saves it.
+  - Will NOT play a level with "Issues"
+
+* WoG Directory handling
+  - Removed Toolbar button for Change Directory (Still available as Menu)
+  - Detects "First Run" and automatically displays "Choose Directory" dialog
+  - Checks on startup that WoG Directory is still valid.. displays Choose dialog if not.
+
+* Coordinate Rounding
+  - Positions, Centers, Sizes, Radii and Angles round to nearest 2dp (0.01)
+  - Scales round to 3dp (0.001)
+  - These apply only when the value is set with the mouse, not if you type it in.
+
+* Strand Mode changes
+  - Now displays warnings is you try to add a duplicate or invalid strand
+  - Knows what Ball types can't have strands connected (Beauty's, BlockHead's etc)
+    - and won't let you start a strand on them, and will warn if you try to end on one.
+  - Understands that you can't have strands from an anchor to another anchor
+
+* Now displays Camera Path (thin black line) and POI's
+  - POI's display as rectangles showing how much of the scene will be visible (Approximate, but close!)
+  - POI's display different colours for widescreen and normal cameras
+  - POI's can be selected /  moved with the mouse
+  - POI's cannot (yet) be resized / zoomed with the mouse, but changing zoom property will update rectangle size.
+
+* Property Changes
+  - Resource Paths now convert \ to / automatically (when enter is pressed)
+
+
+
+- Version 0.6.4: DaB (Mostly fixes and tweaks this time)
+* ogg files now import to res/music/{level_name} so Volume Control works
+* Fixed: Geometry added from toolbar has duplicate ids.
+* Fixed: Rects demanding images!
+* Items Added from toolbar now appear in the middle of the current view (not at 0,0)
+* SceneLayer elements without images now appear as red rectangle, easier to see and select.
+* Balls with strands should be easier to select and move
+* WoG Editor now has an icon  (Tnx Grant!)
+
+*Property Changes
+- Rects and Circles
+   - If added from the toolbar will default to static=true and material=rock
+   - If added by Right-Click on the tree will NOT have default attributes.
+   - material can now be set to nothing (after it's been set to something)
+
+
+
+- Version 0.6.3: DaB
+* Import Resources direct from files
+- Standard File dialog allows resources to be added directly from png or ogg files.
+- Select One or Multiple files
+- Files can be imported from anywhere
+  :   Files imported from OUTSIDE the WorldofGoo/res folder are automatically copied into the level folder
+  :   Files that are already in the WorldofGoo/res folder are not copied.
+
+* proto-Toolbar (left) for Adding Items
+- So far Rectangle, Circle, SceneLayer and Goo (defaults to 'common' for now)
+
+* Select then Move
+- Items must now be selected with a click, then Press on the item and Drag to move
+
+* Strand Mode
+- Rubber-Band Line while adding
+- Mouse now ignores existing Strand Items (they were causing Ball selection difficulties)
+- Understands Anchors, Pokeys and Bombs
+
+* SignPosts
+- Now appear as images, and can be moved, scaled and rotated as normal images.
+
+* Pipe Vertexes now "snap"
+- First Vertex (Pipe Mouth) is free to move
+- All other vertexes will snap to vertical or horizontal (whichever is closer)
+
+* GUI Changes
+- Property Boxes now wider (seemed to be an issue with changing QT Versions)
+- Properties can now be editted with a Single-click or Tab / arrow keys from box to box
+- Removed all the "useless" Global IMAGE and SOUND resources from the auto-complete lists
+- Main Window now remembers if it was Maximized last time.
+
+* Property Changes
+- Rectangles and Circles material defaults to rock
+- Corrected several default values in signpost and poi which were invalid
+
+
+
+- Version 0.6.2: DaB
+* SceneLayer and Rectangles now Movable, Resizable and Rotatable
+- Resize using Square Handles (Top Left and Bottom Right)
+- Rotate using either Circle Handle
+- Move by clicking anywhere on object and dragging
+
+* Added Movable Visual Element for Hinges (Yellow Diamond)
+
+* Copy / Paste now correctly handles "x,y" properties (Center, Pos, Scale etc)
+- Pasted item will appear exactly as, and on top of, the original.
+
+* Property Changes
+- id removed from SceneLayer items
+- static attribute now defaults to True on Circles and Rectangles
+
+* Strand Mode
+- Now "understands" balloons need to be gb2
+
+- Version 0.6.1: DaB
+* Improved Selection routines - No "Alt" required to select things "behind"
+	- Finds the "smallest" item at the point clicked and selects that.
+
+* Improved Wheel Zoom - Now more "natural"
+	- Keeps the zoomed point in the same place on the screen
+ 	- Zooming near the edge of the window brings that part of the scene towards the middle. (a bit)
+
+* Combined Move and Select Mode
+	- Click to select
+	- Press, hold, drag , release to move an item
+
+* Pan Mode is now Pan and Zoom
+	- Click Left Button to Zoom In
+	- Click Right Button to Zoom out
+	- Click (either) and drag to Pan
+
+* Strand Mode (New!!)
+	- Press and hold on a Goo
+	- Move to another Goo, Release.. adds strand
+
+* Fixed - Circle and Rectangle with Image displays nothing. Now shows image and Physics item (purple).
+	- LevelExit and Fire items displayed the wrong size (was displaying circle 50% of actual size)
+	- Rotation of simple Rectangles and Pixmaps now works properly (and only 1 rotation handle)
+	- Tool Handles now move with object when moved or rotated
+	- Update Coordinate display on Zoom or Pan
+
+
+
+- Version 0.5.1: (Uploaded Source designated as 0.6)
+* Added zoom in/out buttons (useful for laptop with mouse wheel) [contributed by Ian (cacafuego2)]
+* Fixed circle image display bug. This fixes the warning like (Chain level):
+  "Warning: invalid image reference: "('IMAGE_SCENE_CHAIN_HEAD',)"
+  [contributed by Ian (cacafuego2)]
+* The level exit is now represented as a pink circle (still can not be moved with mouse)
+* The pipe vertex are now displayed as pink dots (still can not be moved with mouse)
+
+- Version 0.5.0:
+
+* Level view selection is now a tool.
+* Selection tool in level view can cycle through item under mouse if Alt key is pressed
+* Added pan tool, also available in selection tool by middle clicking or holding left & right buttons
+* Added move/rotate tool for most elements, and resize tool for circle.
+* Geometry tag and levelExit filter now provides auto-completion
+* All angles are now displayed in degrees
+* 'scalex', 'scaley' attributes are now displayed as a single 'scale' attribute
+* 'x', 'y' attributes are now displayed as a single 'pos' or 'center' attribute
+* 'width', 'height' attributes are now displayed as a single 'size' attribute
+
+- Version 0.4.0:
+
+* Add child now only propose child that are valid to add to the selected item.
+* Added unique identifier generation when adding child
+* Added support for cut/copy/paste of node and composite. The element XML is stored in the clipboard and can be used to mess around. Pasting automatically generate unique id.
+* Keyboard shortcut for cut/copy/paste/delete works in all views.
+* Completion is provided for ball type
+* Completion list is now sorted in non case-sensitive order
+* Can unset a mandatory attribute by inputing an empty string
+* Added id/name column in tree view
+* Added 'group' icon for each element in tree view
+* Added issue detection system:
+  - invalid attribute value (reference to non existing id)
+  - missing children (for example a camera must have at least one 'poi')
+  In the tree view, issues are shown in the tree view as a red symbol overlay on top of the group icon.
+  In the property list, property name turn red when there is an issue
+  In both case, a tooltip will provide information about the issue(s) on the element/attribute
+
+Fixed bugs:
+* In property list, property name does not change to bold once the property is set
+* many metawog model bugs, major blocking one was the missing water attribute on linearforcefield
+
+
+- Version 0.3.1:
+* Fixed bug that prevented adding/editing a new pipe in a level
+
+
+- Version 0.3.0:
+
+* Added support for adding/removing object in level, scene and resourc file
+* Added support for editing objects' properties in level, scene and resource file
+* Validation based on properties type (including reference to other object)
+* New level, clone level tool, update level resource tool added
+* Save tool, and test level tool added

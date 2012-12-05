@@ -1,0 +1,11 @@
+Following third-parties are useful to compile and develop on WooGLE (on linux):
+
+python2.6 from http://www.python.org or repository better (depends on linux-distro)
+pycrypto-2.0.1 from http://www.amk.ca/python/code/crypto.html or repository better (depends on linux-distro)
+PyQt 4.7.3 from http://www.riverbankcomputing.co.uk/software/pyqt/download 
+pyinstaller-1.4  from http://www.pyinstaller.org/
+GCC 4.1 (at least) http://gcc.gnu.org/ or often in repository (depends on linux-distro)
+
+Maybe you found a missing dependency, report it on goofans.com
+
+0pac <goofans.com>

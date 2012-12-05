@@ -1,0 +1,89 @@
+This document describes the structure of res/islands/<island-id>.xml:
+
+This file describes the level an island is composed of.
+
+Structure overview:
+ <island>
+   <level />+
+ </island>
+
+ <island name="string" map="dir" name="ICON_REF">
+  attributes:
+  - name: ? name of the island ? translated ?
+  - map: directory name in directory levels/ that contains the main screen of the island
+         where the player can choose level.
+  - icon: id of the icon declared in properties\resources.xml
+
+ <level id="dir" name="text" text="text" ocd?="string" cutscene?="string" oncomplete?="string">
+ attributes:
+ - id: directory name in directory levels/ that contains the level description
+ - name: name of the level
+ - text: comment about the level
+ - ocd: OCD condition (optional). It has the form "condition,value", were condition may be one of:
+   "balls": number of balls to collect
+   "time": maximum number of second to complete the level
+   "moves": maximum number of moves to complete the level
+ - cutscene: ?
+ - oncomplete: ?
+
+
+ <island name="The Goo Filled Hills" map="island1" icon="IMAGE_GLOBAL_ISLAND_1_ICON">
+ 
+ => levels/island1
+ => IMAGE_GLOBAL_ISLAND_1_ICON is declared in properties\resources.xml
+
+* Levels are declared in:
+  levels/<level-id>/
+  Has 3 xml files:
+  <level-id>.level.xml
+  <level-id>.resrc.xml
+  <level-id>.scene.xml
+ 
+  * <level-id>.level.xml
+    This file describes the initial set up of the level:
+    - balls position
+    - camera position
+    - completion requirement
+    - sign post
+    - music
+
+    Structure overview: 
+      <level>
+        <camera>
+          <poi>+
+        <camera>+
+        <music />?
+        <loopsound />?
+        <signpost />*
+        <pipe>
+          <Vertex />+
+        </pipe>?
+        <BallInstance />*
+        <Strand />*
+        <levelexit />?
+        <endoncollision ???>?
+        <endonmessage ???>?
+        <fire ???>*
+        <targetheight ???>?
+      </level>
+
+    Node detail:
+    <level ballsrequired="string" letterboxed="boolean" visualdebug="boolean" autobounds="boolean" textcolor="rgb_color" texteffects="boolean" timebugprobability="real" strandgeom?="boolean" allowskip?="boolean" texteffects?="boolean" cursor1color?="rgb_color" cursor2color?="rgb_color" cursor3color?="rgb_color" cursor4color?="rgb_color">
+      attributes:  
+      - ballsrequired: an integer that represents the minimum number of balls to collect to complete
+        the level, or an empty string if there is no such requirement (for example, in island maps)
+      - letterboxed: "true" in level map, "false" in island map. Letter box display ~(16/9).
+      - visualdebug: ?
+      - autobounds: ? "true" to indicate that the player camera is bounded to a 'visited' area. That is the player need to move its construct to extend the bound. "false" indicates that the player can visit all the level with the camera.
+      - textcolor: color of displayed text
+      - timebugprobability: ? Probably of occurrences of a time bug (based on what? Move ?). 
+                            Notes: There is also some level with value "false" or "".
+      - strandgeom: ? I wonder if this indicates the presence of existing non deformable geometry (e.g. the grey cubes)
+      - texteffects: ? Only a few level have it.  
+      - cursor1color: ? Set to green in HelloWorld, GravePineVirus.  
+      - cursor2color: ? Set to cyan in HelloWorld, GravePineVirus.  
+      - cursor3color: ? Set to blue in HelloWorld, GravePineVirus.  
+      - cursor4color: ? Set to red in HelloWorld, GravePineVirus.  
+      
+      
+      

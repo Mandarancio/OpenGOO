@@ -1,0 +1,26 @@
+- THOUGHTS AND SUGGESTIONS FOR FUTURE DEVELOPMENT - 
+
+Drag-Drop Items
+ - Rather just having Toolbar Click
+ - Allow Drag-Start on Toolbar, Drag-Drop in Level View
+
+Resource Library
+ - Based on file.xml.xml
+ - Keyword Tags are added to all the file elements (Background, Tree, Green etc..)
+ - UI allows keyword entry and displays thumbnails of the matching files.
+ - Click to load as resource
+ - Maybe Drag-Drop as Scenelayer
+
+Make the Goos REALLY look like the Goos
+ - Displaying the <body> file is "OK", and allows visual distinction of most types
+ - Possibility of just static png, located by Goo type.. if not found, revert to <body> image
+ - Really needs a proper "Builder" which pulls in all the graphic elements
+ - and Builds the image (on-the-fly) based on the ball.xml
+ - Note to self: This would form an excellent basis for the "Ball Editor"
+
+Full Dependancy Checking / Incorporation when making a .goomod
+ - Check for any custom balls, particles or materials used in a level
+ - Can add all these things to the goomod file automatically
+ - And any subsequent dependancies those things might have
+
+HTML-capable editor for Addin Description

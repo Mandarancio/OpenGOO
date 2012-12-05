@@ -1,0 +1,233 @@
+This document describes the structure of res/levels/<level-id>.scene.xml:
+
+This file describes the visual aspect and physical aspect of the level:
+- balls position
+- camera position
+- completion requirement
+- sign post
+- music
+
+Structure overview: 
+  <scene>
+    <SceneLayer>+
+    </SceneLayer>
+    <button />?
+    <buttongroup>*
+      <button />+
+    </buttongroup>
+    <circle />*
+    <compositegeom>*
+      <circle>*
+      <rectangle>*
+    </compositegeom>
+    <hinge />*
+    <label />*
+    <line />*
+    <linearforcefield />*
+    <motor />?
+    <particles />*
+    <radialforcefield />*
+    <rectangle>*
+  </scene>
+
+Nodes' details:
+
+<scene backgroundcolor="rgb_color" minx?="real" miny?="real" maxx?="real" maxy?="real">
+  Represents a screen displayed to the user: menu, level selection on island, game level.
+  attributes:
+  - backgroundcolor: always (0,0,0)
+  - minx: ? minimum X coordinate. Usually in range [-3000,-500]
+  - miny: ? minimum Y coordinate. Usually 0.
+  - maxx: ? maximum X coordinate. Usually in range [500,3000]
+  - maxy: ? maximum Y coordinate. Usually in range [500,10000]
+
+  
+<SceneLayer x="real" y="real" depth="real" image="string" alpha?="real" anim?="string" animdelay?="real" animspeed?="real" colorize?="rgb_color" context?="string" name?="string" rotation?="real" scalex?="real" scaley?="real" tilex?="boolean" tiley?="boolean" >
+  Specify the position, scale, transparency and angle of an image to display
+  attributes:
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - depth: ?Z position in camera space. Usually in range [-24,0]
+  - image: id of a resource defined in res/levels/<level-id>-resrc.xml (may be global?)
+  - alpha: opacity factor of the image in range [0,1]. Usually 1 (opaque).
+  - anim: reference to an animation sequence (couldn't find where it is defined. Hard-coded in executable?)
+  - animdelay: ?
+  - animspeed: ?
+  - rotation: ? rotation around the Z axis ? Usually 0.
+  - name: name for editor. Does not need to be unique.
+  - context: ??? Only known value is "screen"
+  - scalex: Horizontal scale factor. Usually between [0.5,30]
+  - scaley: Vertical scale factor. Usually between [0.5,30]
+  - tilex: ?
+  - tiley: ?
+  
+<button id="string" x="real" y="real" depth="real" alpha="real" rotation="real" scalex="real" scaley="real" colorize="rgb_color" up="string" over="string" context?="string" disabled?="string" font?="string" onclick?="string" onmouseenter?="string" onmouseexit?="string" overlay?="boolean" screenspace?="boolean" text?="text" textcolorup?="argb_color" textcolorupover?="argb_color" tooltip?="text" >  
+  ?
+  attributes:
+  - id: ?unique id of the button.
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - depth: ?Z position in camera space. Usually in range [-24,0]
+  - rotation: ? rotation around the Z axis ? Usually 0.
+  - scalex: Horizontal scale factor. Usually between [0.5,30]
+  - scaley: Vertical scale factor. Usually between [0.5,30]
+  - colorize: ?
+  - up: id of the image resource displayed when the button is not pressed
+  - over: id of the image resource displayed when the moused is over the button 
+  - context: ??? Only known value is "screen"
+  - disabled: id of the image resource displayed when the button is disabled
+  - font: id of the font declared in res/properties.xml.
+  - onclick: ?
+  - onmouseenter: ?
+  - onmouseexit: ?
+  - overlay: ?
+  - screenspace: ? (usually not set, "true" if set).
+  - text: text displayed inside the button
+  - textcolorup: Color of button text when the button is not pressed
+  - textcolorupover: Color of button text when the button is not pressed and the mouse is over the button.
+  - tooltip: Tooltip text associated to the button.
+
+<buttongroup id="string" osx="2d_vector">  
+  ?
+  attributes:
+  - id: id of the button group. Does not need to be unique.
+  - osx: ??? Don't think this is camera space. Usually in range (50-100),(1-1.2).
+  
+
+<circle id="string" x="real" y="real" radius="real" image?="string" imagepos?="2d_pos" imagerot?="real" imagescale?="2d_vector" rotspeed?="real" static?="boolean" tag?="string" contacts?="boolean" mass?="real" material?="string" nogeomcollisions?="boolean" >
+  attributes:
+  - id: id of the circle. Does not need to be unique.
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - radius: radius of the circle
+  - image: reference to the id of the image resource used to display the circle
+  - imagepos: position of the image
+  - imagerot: rotation of the image on the Z axis. Usually 0.
+  - imagescale: scale factor applied to the image along its X and Y axis.
+  - rotspeed: rotation speed around the Z axis. Usually in range [-.004,-.03]
+  - static: ?
+  - tag: comma separated list of enumerated value. Known value: "ballbuster", "break=1", "mostlydeadly", "deadly", "detaching", "walkable", "stopsign", "unwalkable"
+  - contacts: ? Only set to "false" when defined (rarely)
+  - mass: Mass of the disc for physics simulation...
+  - material: reference to a material id defined in properties/material.xml
+  - nogeomcollisions: ? Only set to "true" when defined (rarely) 
+  
+<compositegeom id="" x="real" y="real" rotation="real" material="string" static="boolean" tag?="string" image?="string" imagepos?="2d_pos" imagerot?="real" imagescale?="2d_vector" rotspeed?="real" nogeomcollisions?="boolean">
+  ? A composite of circle and rectangle
+  attributes:
+  - id: identifier for editor. Does not need to be unique
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - rotation: ? rotation around the Z axis ? Usually 0.
+  - material: reference to a material id defined in properties/material.xml
+  - rotspeed: rotation speed around the Z axis. Usually in range [-.004,-.03]
+  - static: ?
+  - tag: comma separated list of enumerated value. Known value: "ballbuster", "break=1", "mostlydeadly", "deadly", "detaching", "walkable", "stopsign", "unwalkable"
+  - image: reference to the id of the image resource used to display the circle
+  - imagepos: position of the image
+  - imagerot: rotation of the image on the Z axis. Usually 0.
+  - imagescale: scale factor applied to the image along its X and Y axis.
+  - nogeomcollisions: ? Only set to "true" when defined (rarely) 
+
+<hinge anchor="2d_pos" body1="string" body2="string" bounce?="real"
+  ? Physic link (hinge) between to body [Notes: WOG used ODE. More details may be found there]
+  attributes:
+  - anchor: anchor (non movable) position of the hinge in space
+  - body1: id of a circle, rectangle, compositegeom (?...)
+  - body2: id of a circle, rectangle, compositegeom (?...)
+  - bounce: ?
+  - histop: ? Always set to "0" when defined
+  - lostop: ? Always set to "0" when defined
+
+<label id="string" x="real" y="real" text="text" rotation="real" scale="real" font="string" align="string" depth="real" overlay="boolean" screenspace="boolean">
+  ?
+  attributes:
+  - id: identifier of the label. Does not need to be unique.
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - rotation: ? rotation around the Z axis ? Usually 0.
+  - scale: scale factor. Usually in range [0.5-1]
+  - font: id of the font declared in res/properties.xml.
+  - align: ? Known value: "left", "cener", "right" (but get aligned with regards to what ???)
+  - depth: ?Z position in camera space.
+  - overlay: ?
+  - screenspace: ?
+
+<line id="string" anchor="2d_pos" normal="2d_vector" material="string" static="boolean" tag?="string">
+  ? Line is defined a point and a direction.
+  attributes:
+  - id: identifier of the line. Does not need to be unique.
+  - anchor: position of a point of the line
+  - normal: direction of the line 
+  - material: reference to a material id defined in properties/material.xml
+  - static: ? Set to "true" when defined. 
+  - tag: comma separated list of enumerated value. Known value: "ballbuster", "break=1", "mostlydeadly", "deadly", "detaching", "walkable", "stopsign", "unwalkable"
+
+<linearforcefield id="string" force="2d_vector" dampeningfactor="real" antigrav="boolean" type="string" center?="2d_pos" width?="real" height?="real" depth?="real" color?="argb_color" enabled?="boolean" geomonly?="boolean">
+  ? A force field for physic simulation.
+  attributes:
+  - id: identifier of the force field. Does not need to be unique.
+  - force: direction of the force in the field
+  - dampeningfactor: ? Usually 0, and in range [0-20]
+  - antigrav: ?
+  - type: ? Known values: "force", "gravity"
+  - center: ?
+  - width: ?
+  - height: ?
+  - depth: ?Z position in camera space. Usually in range [-24,0]
+  - color: ?
+  - enabled: ? Usually set to "true" when defined.
+  - geomonly: ? Usually set to "false" when defined.
+  - water: ?
+
+<motor body="string" maxforce="real" speed="real">
+  ?
+  attributes:
+  - body: id of a circle, rectangle, compositegeom (?...)
+  - maxforce: ?
+  - speed: ?
+
+<particles depth="real" effect="fx" pos?="2d_pos" pretick?="real">
+  ? A particle effect
+  attributes:
+  - depth: ?Z position in camera space.
+  - effect: id of the referenced particle effect
+  - pos: position of the effect
+  - pretick: ? Usually 0.
+
+
+<radialforcefield id="string" forceatcenter="real" forceatedge="real" dampeningfactor="real" antigrav="boolean" type="string" center="2d_pos" radius="real" depth?="real" enabled?="boolean" geomonly?="boolean">
+  ? A force field for physic simulation.
+  attributes:
+  - id: identifier of the force field. Does not need to be unique.
+  - forceatcenter: Force at the center of the field
+  - forceatedge: Force at the edge of the field
+  - dampeningfactor: ? Usually 0, and in range [0-20]
+  - antigrav: ?
+  - type: ? Known values: "gravity"
+  - center: position of the center of the force field
+  - radius: radius of the force field
+  - enabled: ? Usually set to "true" when defined.
+  - geomonly: ? Usually set to "false" when defined.
+
+
+<rectangle id="string" x="real" y="real" rotation="real" width="real" height="real" contacts?="boolean" image="string" imagepos?="2d_pos" imagerot?="real" imagescale?="2d_vector" rotspeed?="real" static?="boolean" mass?="real" material?="string" tag?="string">
+  ?
+  attributes:
+  - id: identifier of the rectangle. Does not need to be unique.
+  - x: ? X position in camera space
+  - y: ? Y position in camera space  
+  - width: Width of the rectangle
+  - height: Height of the rectangle
+  - rotation: ? rotation around the Z axis ? Usually 0.
+  - contacts: ? Only set to "false" when defined (rarely)
+  - image: id of a resource defined in res/levels/<level-id>-resrc.xml (may be global?)
+  - imagepos: position of the image
+  - imagerot: rotation of the image on the Z axis. Usually 0.
+  - imagescale: scale factor applied to the image along its X and Y axis.
+  - rotspeed: rotation speed around the Z axis. Usually in range [-.004,-.03]
+  - static: ?
+  - mass: Mass of the disc for physics simulation...
+  - material: reference to a material id defined in properties/material.xml
+  - nogeomcollisions: ? Only set to "true" when defined (rarely) 
+  - tag: comma separated list of enumerated value. Known value: "ballbuster", "break=1", "mostlydeadly", "deadly", "detaching", "walkable", "stopsign", "unwalkable"

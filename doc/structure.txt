@@ -1,0 +1,41 @@
+This documents presents how file structure are documented.
+
+First an overview of the XML structure is provided for each file type, followed by the detail of
+each node type, and for each node type, the detail of its attribute.
+
+For each node, the list of attributes with their type is provided:
+<tag att1="att1_type" att2?="att2_type">
+The '?' after att2 indicates that this attribute is optional.
+
+Attribute type are described using the following convention:
+attribute_name="attribute_type"
+Some common attribute_type are:
+"text": a UPPER_CASE_WORDS reference to a text declared in properties\text.xml (this allows translation into multiple language)
+"boolean": "true" or "false"
+"integer": an positive integer (>=0)
+"rgb_color": "integer,integer,integer" where each value is respectively the red, green and blue component in range [0-255]
+"argb_color": "integer,integer,integer,integer" where each value is respectively the alpha,red, green and blue component in range [0-255]
+"real": real number of the form "digits.digits", for example "123.456"
+"2d_pos": "real,real". Usually relate to screen coordinate in camera space.
+"2d_vector": "real,real".
+"fx": reference to a particule FX defined in properties/fx.xml.
+
+General file organization:
+
+res/levels/MapWorldView/:
+  => list all the available islands.
+  Notes: it is not possible to add new island. onclick action is hard-coded in executable
+  (or we need to patch the executable)
+
+res/islands/<island-id>.xml:
+  => describes the level an island is composed of
+  => the display of the island is describes in a level res/level/<island-id>/*
+  Notes: level described here do not seems to be dynamics
+
+res/levels/<level-id>.level.xml: describes the initial set up of the level (balls, exit...)
+
+Conclusion for now:
+- can only modify existing level
+  => game desc.
+  => scene design
+  => resources

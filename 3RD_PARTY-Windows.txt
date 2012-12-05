@@ -1,0 +1,35 @@
+Below is a list of all the third-parties useful to develop on World of Goo Level Editor (WooGLE)
+
+All binary are 32bits Windows executable for python 2.6
+
+This includes (listed in installation order):
+* Python 2.6.5
+  python-2.6.5.msi: from http://www.python.org
+
+* pycrypto libraries
+	 pycrypto-2.0.1.win32-py2.6.exe
+	 http://www.amk.ca/
+
+* PyQt v4.7.3
+  	PyQt-Py2.6-gpl-4.7.3-2.exe
+        from http://www.riverbankcomputing.co.uk/software/pyqt/download
+
+Running from source:
+cd src
+python wogeditor.py
+
+
+Compiling source to exe
+Also requires
+* py2exe  Windows Executable Maker
+	py2exe-0.6.8.win32-py2.6.exe, 
+	from http://sourceforge.net/projects/py2exe/
+
+* src\make-wogeditor-win.bat 
+Compiles World of Goo Level Editor (WooGLE) to wogeditor.exe
+Final .exe file and all the files required to run it are created in the src/dist folder
+
+src\make-util-win.bat : Compiles WogFile, scanbinfile and scanxml file to exe
+Final .exe files and all the files required to run them are created in the src/dist folder
+
+Daft as Brush

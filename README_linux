@@ -1,0 +1,98 @@
+* Overview
+World of Goo Level Editor (WooGLE) is a Gui tool for creating and editing levels for the puzzle game World of Goo.
+The "original" version (written by Nitrozark.. up to v0.5) was mostly functional, but very clunky and difficult to use for inexperienced users, and experienced ones.
+
+WooGLE aims to build on the good parts of original, and make it much easier to use.
+
+* Major Improvements and New Features (beyond v0.5)
+New Selection routines remove the need for separate Select Mode and Move Mode
+New Toolbars for adding objects and adding Goos
+Import Images directly from files held anywhere
+Strand Mode : For adding strands between Goos
+"One-Shot" Set Music and Set LoopSound buttons
+All visual elements can be moved, resized and rotated graphically.
+Handles TEXT resources for signs and labels
+Allows direct creation of goomod files (used to distribute levels to other users)
+Goos look like Goos
+Undo and Redo functions
+Many Many error checks added to warn / prevent WoG crashing when you run the level.
+
+Full version information is held in Version text.
+For help and information using WooGLE see the About Box
+
+* As Binary
+Often the simplest way to get WooGLE working on your system
+Linux Binaries are available pre-compiled from the WooGLE Download page
+http://goofans.com/download/utility/world-of-goo-level-editor
+
+
+*Running from source
+1) Check that you have installed PyQt
+on Ubuntu - the package is python-qt4 : "sudo apt-get install python-qt4"
+Available to download here : http://www.riverbankcomputing.co.uk/software/pyqt/download
+
+2) Make the launch script executable
+Go to the proprieties of "launch.sh"
+Go to the "Permissions" tab and check "Allow executing file as program".
+
+3) To Launch
+Simply double-click on "launch.sh" to run WooGLE 
+
+
+* Compiling the binaries
+- you need to install all packages listed in 3RD_PARTY_linux
+* Preparing pyinstaller-1.4 and source code
+- Make sure you work on an ext2/ext3/ext4 hard drive
+- extract the content of pyinstaller-1.4.tar.bz2 to a folder of your choice
+- copy the content from the src folder of WooGLE to the folder with pyinstaller-1.4
+- Configure pyinstaller and bootloaders as described in the manual in the doc directory of pyinstaller [VERY IMPORTANT !!!]
+
+* Generating the executable WooGLE from the source:
+cd /PATH/pyinstaller-1.4                    ## That is your working directory
+python Makespec.py -F wogeditor.py   
+sudo python Build.py /PATH/pyinstaller-1.4/wogeditor/wogeditor.spec
+==> Binary appears in /PATH/pyinstaller-1.4/wogeditor/dist
+
+* Completing binary folder
+- To finish you need the files.xml.bin, you can find it in the src folder
+- Copy the compiled binary from the dist folder and files.xml.bin to a folder of your choice.
+
+* Running your binaries on another system
+- To run your created files on another system, copy them on the system and open the binary folder in terminal there.
+- Then type chmod +x filename
+- now they're executable 
+
+
+* Three command-line tools are also provided
+wogfile: can pack/unpack a .bin from/to an .xml file.
+##Build
+python Makespec.py -F wogfile.py  
+sudo python Build.py /PATH/pyinstaller-1.4/wogfile/wogfile.spec
+==> Binary appears in /PATH/pyinstaller-1.4/wogfile/dist
+
+scanxmlfile: help understanding the structure and meaning of .xml by scanning through many at once.
+##Build
+python Makespec.py -F scanxmlfile.py  
+sudo python Build.py /PATH/pyinstaller-1.4/scanxmlfile/scanxmlfile.spec
+==> Binary appears in /PATH/pyinstaller-1.4/scanxmlfile/dist
+
+scanbinfile: converts all .bin file found in a directory into .xml in a target directory
+##Build
+python Makespec.py -F scanbinfile.py  
+sudo python Build.py /PATH/pyinstaller-1.4/scanbinfile/scanbinfile.spec
+==> Binary appears in /PATH/pyinstaller-1.4/scanbinfile/dist
+
+
+* Licensing
+The projects are under the GPLv3 licensing. See the file COPYING.
+
+* Contact Information
+WooGLE
+http://goofans.com/download/utility/world-of-goo-level-editor
+Daft as Brush  (via goofans.com)
+
+early linux port by 0pac <goofans.com>
+
+Original Version v0.5
+Sourceforge project: http://sourceforge.net/projects/wogedit
+NitroZark <nitrozark at users.sourceforget.net>
