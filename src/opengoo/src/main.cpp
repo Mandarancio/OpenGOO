@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QTime>
 #include <QXmlStreamWriter>
+#include <cstdio>
 
 #ifndef Q_OS_WIN32
 #include "backtracer.h"
@@ -45,7 +46,7 @@ struct OGGameConfig
     bool fullscreen;
 };
 
-void gooMessageOutput(QtMsgType type, const char *msg);
+void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 void ReadConfig(OGGameConfig* config);
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
                                    LoggerEngine::LevelException |
                                    LoggerEngine::LevelFatal,stdout,"%d - <%l> - %m [%f:%i]%n");
     LoggerEngine::addAppender(con_apd);
-    //qInstallMsgHandler(gooMessageOutput);
+    qInstallMessageHandler(gooMessageHandler);
 
     //intialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
@@ -128,20 +129,21 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-void gooMessageOutput(QtMsgType type, const char *msg)
+void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    QByteArray localMsg = msg.toLocal8Bit();
     switch (type) {
     case QtDebugMsg:
-        logDebug(QLatin1String(msg));
+        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         break;
     case QtWarningMsg:
-        logWarn(QLatin1String(msg));
+        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         break;
     case QtCriticalMsg:
-        logCritical(QLatin1String(msg));
+        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         break;
     case QtFatalMsg:
-        logException(QLatin1String(msg));
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         abort();
     }
 }
@@ -166,7 +168,7 @@ void ReadConfig(OGGameConfig* config)
 
             if (domElement.tagName() != "config")
             {
-                gooMessageOutput(QtWarningMsg, "File config.xml is corrupted");
+                logWarn("File config.xml is corrupted");
                 file.close();
 
                 return;
@@ -205,14 +207,14 @@ void ReadConfig(OGGameConfig* config)
         }
         else
         {
-            gooMessageOutput(QtWarningMsg, "File config.xml has incorrect xml format");
+            logWarn("File config.xml has incorrect xml format");
         }
 
         file.close();
     }
     else
     {
-        gooMessageOutput(QtWarningMsg, "File config.xml not found");
+        logWarn("File config.xml not found");
         file.open(QIODevice::WriteOnly);
         QString xmlData;
         QTextStream out(&file);
