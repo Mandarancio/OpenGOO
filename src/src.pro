@@ -8,6 +8,6 @@ CONFIG += ordered
 
 SUBDIRS = extlibs \
           libs/logger \
-          opengoo \
-          opengoodst
+          opengoo
+#          opengoodst
 

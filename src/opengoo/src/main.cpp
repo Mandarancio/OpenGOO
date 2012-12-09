@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
                                    LoggerEngine::LevelException |
                                    LoggerEngine::LevelFatal,stdout,"%d - <%l> - %m [%f:%i]%n");
     LoggerEngine::addAppender(con_apd);
-    qInstallMsgHandler(gooMessageOutput);
+    //qInstallMsgHandler(gooMessageOutput);
 
     //intialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     if (flag == STANDARD) logWarn("STD MODE");
     if (flag & OPENGL) {
         logWarn("OPENGL ACTIVATED");
-        QApplication::setGraphicsSystem("opengl");
+        //QApplication::setGraphicsSystem("opengl");
     }
 
 
