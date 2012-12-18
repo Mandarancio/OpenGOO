@@ -13,13 +13,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "opengoo.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QDir>
 #include <QRect>
 #include <QDebug>
 #include <QTime>
-#include <QXmlStreamWriter>
 #include <cstdio>
 
 #ifndef Q_OS_WIN32
@@ -38,20 +38,7 @@
 #include <logger.h>
 #include <consoleappender.h>
 
-struct OGGameConfig
-{
-    int screen_width;
-    int screen_height;
-    QString language;
-    bool fullscreen;
-};
-
-void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
-void ReadConfig(OGGameConfig* config);
-
-static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
-
-int main(int argc, char *argv[])
+bool GameInitialize(int argc, char **argv)
 {
     #ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
@@ -73,35 +60,25 @@ int main(int argc, char *argv[])
     LoggerEngine::addAppender(con_apd);
     qInstallMessageHandler(gooMessageHandler);
 
-    //intialize randseed
-    qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
-
     //Check for the run parameters
-    for (int i=1; i<argc; i++) {
+    for (int i=1; i<argc; i++)
+    {
         QString arg(argv[i]);
         //Check for debug Option
-        if (!arg.compare("-debug", Qt::CaseInsensitive)) {
+        if (!arg.compare("-debug", Qt::CaseInsensitive))
+        {
             flag |= DEBUG;
             logWarn("DEBUG MODE ON");
         }
-        else if (!arg.compare("-opengl", Qt::CaseInsensitive)) {
-            flag |= OPENGL | FPS;
-        }
-        else if (!arg.compare("-text", Qt::CaseInsensitive)) {
+        else if (!arg.compare("-text", Qt::CaseInsensitive))
+        {
             flag |= ONLYTEXT | DEBUG;
         }
-        else if (!arg.compare("-fps",Qt::CaseInsensitive)){
+        else if (!arg.compare("-fps",Qt::CaseInsensitive))
+        {
             flag |= FPS;
         }
     }
-    if (flag == STANDARD) logWarn("STD MODE");
-    if (flag & OPENGL) {
-        logWarn("OPENGL ACTIVATED");
-        //QApplication::setGraphicsSystem("opengl");
-    }
-
-
-    QApplication a(argc, argv);
 
     //CHECK FOR GAME DIR IN HOME DIRECTORY
     QDir dir(GAMEDIR);
@@ -119,14 +96,87 @@ int main(int argc, char *argv[])
 
     OGGameConfig config;
 
-    ReadConfig(&config);
+    readConfig(&config);
 
-    MainWidget w(QRect(50, 50, config.screen_width, config.screen_height));
+    _gameEngine = new OGGameEngine(config.screen_width, config.screen_height, config.fullscreen);
 
-    if (config.fullscreen) { w.setWindowState(Qt::WindowFullScreen); }
+    _gameEngine->setFrameRate(60);
 
-    w.show();
-    return a.exec();
+    return true;
+}
+
+void GameStart()
+{
+    //intialize randseed
+    qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
+    _gameEngine->getWindow()->setCursor(Qt::BlankCursor);
+}
+
+void GameEnd()
+{
+    delete _gameEngine;
+}
+
+void GameCycle()
+{
+
+}
+
+void GamePaint(QPainter *painter)
+{
+    // Test
+    OGWindow* window = _gameEngine->getWindow();
+    QString text("Press escape to exit  full screen mode");
+    painter->setPen(Qt::yellow);
+    painter->setFont(QFont("Arial", 30));
+    painter->drawText(QRect(QPoint(), window->size()),  Qt::AlignCenter, text);
+}
+
+void GameActivate()
+{
+
+}
+
+void GameDeactivate()
+{
+
+}
+
+void HandleKeys(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Left:
+        break;
+
+    case Qt::Key_Right:
+        break;
+
+    case Qt::Key_Up:
+            break;
+
+    case Qt::Key_Down:
+            break;
+
+    case Qt::Key_Escape:
+        _gameEngine->gameExit();
+        break;
+    }
+}
+
+void MouseButtonDown(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+}
+
+void MouseButtonUp(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+}
+
+void MouseMove(QMouseEvent* event)
+{
+    Q_UNUSED(event)
 }
 
 void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -148,7 +198,7 @@ void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
     }
 }
 
-void ReadConfig(OGGameConfig* config)
+void readConfig(OGGameConfig* config)
 {
     const int SCREEN_WIDTH = 800;
     const int SCREEN_HEIGTH = 600;
