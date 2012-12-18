@@ -5,7 +5,6 @@ QT       -= qt
 
 DESTDIR = ../libs
 TEMPLATE = lib
-CONFIG += dll
 
 DEFINES += WIN32
 
@@ -24,7 +23,7 @@ MOC_DIR = build/release
 LIBS += -logg
 }
 
-QMAKE_LFLAGS += /DEF:".\\libvorbis-1.3.3\\win32\\vorbis.def"
+DEF_FILE += libvorbis-1.3.3/win32/vorbis.def
 DEFINES += _CRT_SECURE_NO_WARNINGS
 
 INCLUDEPATH += ./libvorbis-1.3.3/include \
@@ -99,6 +98,9 @@ SOURCES += \
     libvorbis-1.3.3/lib/bitrate.c \
     libvorbis-1.3.3/lib/barkmel.c \
     libvorbis-1.3.3/lib/analysis.c
+
+OTHER_FILES += \
+    libvorbis-1.3.3/win32/vorbis.def
 
 
 
