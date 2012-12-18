@@ -5,7 +5,6 @@ QT       -= qt
 
 DESTDIR = ../../libs
 TEMPLATE = lib
-CONFIG += dll
 
 LIBS += -L../../libs
 
@@ -24,7 +23,7 @@ DEFINES += WIN32  NDEBUG _WINDOWS _USRDLL
 LIBS += -lvorbis -logg
 }
 
-QMAKE_LFLAGS += /DEF:"..\\libvorbis-1.3.3\\win32\\vorbisfile.def"
+DEF_FILE += ../libvorbis-1.3.3/win32/vorbisfile.def
 DEFINES += _CRT_SECURE_NO_WARNINGS LIBVORBISFILE_EXPORTS
 
 INCLUDEPATH += ../libvorbis-1.3.3/include \
@@ -35,6 +34,9 @@ HEADERS += \
 
 SOURCES += \
     ../libvorbis-1.3.3/lib/vorbisfile.c
+
+OTHER_FILES += \
+    ../libvorbis-1.3.3/win32/vorbisfile.def
 
 
 
