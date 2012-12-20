@@ -17,8 +17,12 @@ struct OGGameConfig
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 OGGameEngine* _gameEngine;
+QList <QPair <QString, QString> > images;
+bool _isMainMenu;
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 void readConfig(OGGameConfig* config);
+void readResources(const QString & filename, QList  <QPair <QString, QString> > & images);
+void mainMenu(QPainter* painter);
 
 #endif // OPENGOO_H
