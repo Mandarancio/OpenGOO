@@ -97,8 +97,10 @@ bool GameInitialize(int argc, char **argv)
     OGGameConfig config;
 
     readConfig(&config);
-
+    
     _gameEngine = new OGGameEngine(config.screen_width, config.screen_height, config.fullscreen);
+
+    if (_gameEngine == 0) { return false; }
 
     _gameEngine->setFrameRate(60);
 
@@ -110,6 +112,8 @@ void GameStart()
     //intialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
     _gameEngine->getWindow()->setCursor(Qt::BlankCursor);
+    readResources("./res/levels/MapWorldView/MapWorldView.resrc.xml", images);
+    _isMainMenu = true;
 }
 
 void GameEnd()
@@ -126,6 +130,10 @@ void GamePaint(QPainter *painter)
 {
     // Test
     OGWindow* window = _gameEngine->getWindow();
+    if (_isMainMenu)
+    {
+        mainMenu(painter);
+    }
     QString text("Press escape to exit  full screen mode");
     painter->setPen(Qt::yellow);
     painter->setFont(QFont("Arial", 30));
@@ -297,4 +305,66 @@ void readConfig(OGGameConfig* config)
         out << xmlData;
         file.close();
     }
+}
+
+void mainMenu(QPainter* painter)
+{
+    OGWindow* window = _gameEngine->getWindow();
+
+    for (int i=0; i<images.size(); i++)
+    {
+        QImage image(images.at(0).second+".png");
+        painter->drawImage(QRect(QPoint(), window->size()) , image, image.rect());
+    }
+}
+
+void readResources(const QString & filename, QList  <QPair <QString, QString> > & images)
+{
+    QDomDocument domDoc;
+
+    QFile file(filename);
+
+    if (file.open(QIODevice::ReadOnly))
+    {
+        if (domDoc.setContent(&file))
+        {
+            QDomElement domElement = domDoc.documentElement();
+
+            if (domElement.tagName() != "ResourceManifest")
+            {
+                logWarn("File " + filename + " is corrupted");
+                file.close();
+
+                return;
+            }
+
+            QDomElement resources = domElement.firstChildElement("Resources");
+
+            for(QDomNode n = resources.firstChild(); !n.isNull(); n = n.nextSibling())
+            {
+                QDomElement domElement = n.toElement();
+
+                if (domElement.tagName() == "Image")
+                {
+                    QString attribute = domElement.attribute("id", "");
+                    QString path = domElement.attribute("path", "");
+
+                    images << QPair <QString, QString> (attribute, path);
+                }
+
+                if (domElement.tagName() == "Sound")
+                {
+                    QString attribute = domElement.attribute("id", "");
+                    QString path = domElement.attribute("path", "");
+                }
+            }
+        }
+        else
+        {
+            logWarn("File " + filename + " has incorrect xml format");
+        }
+
+        file.close();
+    }
+    else { logWarn("File " + filename + " not found"); }
 }
