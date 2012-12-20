@@ -1,0 +1,8 @@
+<!-- Created by WooGLE v0.77 Final -->
+<scene backgroundcolor="0,0,0" maxx="500" maxy="1000" minx="-500" miny="0">
+	<linearforcefield antigrav="true" dampeningfactor="0" force="0,-10" type="gravity" />
+<line anchor="500,300" id="right" normal="-1,0" tag="detaching" />
+<line anchor="-500,300" id="left" normal="1,0" tag="detaching" />
+<line anchor="0,20" id="ground" normal="0,1" />
+<SceneLayer alpha="1" animdelay="1" depth="0" image="IMAGE_MAPWORLDVIEW_BG" rotation="0" scalex="1" scaley="1" tilex="false" tiley="false" x="0.0" y="0.0" />
+</scene>
