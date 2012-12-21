@@ -4,25 +4,17 @@
 #include <og_gameengine.h>
 
 #include <QDir>
-#include <QXmlStreamWriter>
 
-struct OGGameConfig
-{
-    int screen_width;
-    int screen_height;
-    QString language;
-    bool fullscreen;
-};
+#include "og_gameconfig.h"
+#include "og_resourceconfig.h"
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 OGGameEngine* _gameEngine;
-QList <QPair <QString, QString> > images;
+QList <OGResource> _resources;
 bool _isMainMenu;
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
-void readConfig(OGGameConfig* config);
-void readResources(const QString & filename, QList  <QPair <QString, QString> > & images);
 void mainMenu(QPainter* painter);
 
 #endif // OPENGOO_H
