@@ -6,7 +6,8 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 
-SUBDIRS = extlibs \
+SUBDIRS = \
+          extlibs \
           libs/logger \
           opengoo
 #          opengoodst

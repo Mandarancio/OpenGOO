@@ -15,8 +15,6 @@
 
 #include "opengoo.h"
 
-#include <QApplication>
-#include <QDesktopWidget>
 #include <QRect>
 #include <QDebug>
 #include <QTime>
@@ -30,10 +28,8 @@
 #endif
 
 #include "flags.h"
-#include "mainwidget.h"
 
 #include "soundsystem.h"
-#include "publicclass.h"
 
 #include <logger.h>
 #include <consoleappender.h>
@@ -94,9 +90,29 @@ bool GameInitialize(int argc, char **argv)
     }
     else if (flag & DEBUG) logWarn("Game dir exist!");
 
-    OGGameConfig config;
+    OGConfig config;
+    // Default settings
+    config.fullscreen = true;
+    config.screen_width = 800;
+    config.screen_height = 600;
 
-    readConfig(&config);
+    // Read game configuration
+    QString filename("./resources/config.xml");
+    OGGameConfig gameConfig(filename);
+
+    if (gameConfig.Open())
+    {
+        if (gameConfig.Read())
+        {
+            gameConfig.Parser(config);
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else
+    {
+        logWarn("File " + filename +" not found");
+        gameConfig.Create(config);
+    }
     
     _gameEngine = new OGGameEngine(config.screen_width, config.screen_height, config.fullscreen);
 
@@ -112,7 +128,21 @@ void GameStart()
     //intialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
     _gameEngine->getWindow()->setCursor(Qt::BlankCursor);
-    readResources("./res/levels/MapWorldView/MapWorldView.resrc.xml", images);
+
+    // Read resources
+    QString filename("./res/levels/MapWorldView/MapWorldView.resrc.xml");
+    OGResourceConfig resConfig(filename);
+
+    if (resConfig.Open())
+    {
+        if (resConfig.Read())
+        {
+            resConfig.Parser(_resources);
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else { logWarn("File " + filename +" not found"); }
+
     _isMainMenu = true;
 }
 
@@ -206,165 +236,17 @@ void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
     }
 }
 
-void readConfig(OGGameConfig* config)
-{
-    const int SCREEN_WIDTH = 800;
-    const int SCREEN_HEIGTH = 600;
-    QDomDocument domDoc;
-// Default settings
-    config->screen_width = SCREEN_WIDTH;
-    config->screen_height = SCREEN_HEIGTH;
-    config->fullscreen = true;
-
-    QFile file("./resources/config.xml");
-
-    if (file.open(QIODevice::ReadOnly))
-    {
-        if (domDoc.setContent(&file))
-        {
-            QDomElement domElement = domDoc.documentElement();
-
-            if (domElement.tagName() != "config")
-            {
-                logWarn("File config.xml is corrupted");
-                file.close();
-
-                return;
-            }
-
-            for(QDomNode n = domElement.firstChild(); !n.isNull(); n = n.nextSibling())
-            {
-                QDomElement domElement = n.toElement();
-
-                if (domElement.tagName() == "param")
-                {
-                    QString attribute = domElement.attribute("name", "");
-
-                    if (attribute == "screen_width")
-                    {
-                        config->screen_width = domElement.attribute("value", "").toInt();
-                    }
-                    else if (attribute == "screen_height")
-                    {
-                        config->screen_height = domElement.attribute("value", "").toInt();
-                    }
-                    else if (attribute == "language")
-                    {
-                        config->language = domElement.attribute("value", "");
-                    }
-                    else if (attribute == "fullscreen")
-                    {
-                        if (domElement.attribute("value", "") == "true")
-                        {
-                            config->fullscreen = true;
-                        }
-                        else { config->fullscreen = false; }
-                    }
-                }
-            }
-        }
-        else
-        {
-            logWarn("File config.xml has incorrect xml format");
-        }
-
-        file.close();
-    }
-    else
-    {
-        logWarn("File config.xml not found");
-        file.open(QIODevice::WriteOnly);
-        QString xmlData;
-        QTextStream out(&file);
-        QXmlStreamWriter stream(&xmlData);
-        stream.setAutoFormatting(true);
-        stream.writeStartDocument();
-        stream.writeStartElement("config");
-
-        stream.writeStartElement("param");
-        stream.writeAttribute("name", "screen_width");
-        stream.writeAttribute("value",  QString::number(SCREEN_WIDTH));
-        stream.writeEndElement(); // end screen_width
-
-        stream.writeStartElement("param");
-        stream.writeAttribute("name", "screen_height");
-        stream.writeAttribute("value",  QString::number(SCREEN_HEIGTH));
-        stream.writeEndElement(); // end screen_height
-
-        stream.writeStartElement("param");
-        stream.writeAttribute("name", "fullscreen");
-
-        if (config->fullscreen) { stream.writeAttribute("value",  "true"); }
-        else { stream.writeAttribute("value",  "false"); }
-
-        stream.writeEndElement(); // end fullscreen
-
-        stream.writeEndElement(); // end config
-
-        stream.writeEndDocument();
-        out << xmlData;
-        file.close();
-    }
-}
-
 void mainMenu(QPainter* painter)
 {
     OGWindow* window = _gameEngine->getWindow();
 
-    for (int i=0; i<images.size(); i++)
+    for (int i=0; i<_resources.size(); i++)
     {
-        QImage image(images.at(0).second+".png");
-        painter->drawImage(QRect(QPoint(), window->size()) , image, image.rect());
+        if (_resources.at(i).type == OGResource::IMAGE)
+        {
+            QPixmap sprite(_resources.at(i).path +".png");
+            painter->drawPixmap(QRect(QPoint(), window->size()) , sprite, sprite.rect());
+        }
     }
 }
 
-void readResources(const QString & filename, QList  <QPair <QString, QString> > & images)
-{
-    QDomDocument domDoc;
-
-    QFile file(filename);
-
-    if (file.open(QIODevice::ReadOnly))
-    {
-        if (domDoc.setContent(&file))
-        {
-            QDomElement domElement = domDoc.documentElement();
-
-            if (domElement.tagName() != "ResourceManifest")
-            {
-                logWarn("File " + filename + " is corrupted");
-                file.close();
-
-                return;
-            }
-
-            QDomElement resources = domElement.firstChildElement("Resources");
-
-            for(QDomNode n = resources.firstChild(); !n.isNull(); n = n.nextSibling())
-            {
-                QDomElement domElement = n.toElement();
-
-                if (domElement.tagName() == "Image")
-                {
-                    QString attribute = domElement.attribute("id", "");
-                    QString path = domElement.attribute("path", "");
-
-                    images << QPair <QString, QString> (attribute, path);
-                }
-
-                if (domElement.tagName() == "Sound")
-                {
-                    QString attribute = domElement.attribute("id", "");
-                    QString path = domElement.attribute("path", "");
-                }
-            }
-        }
-        else
-        {
-            logWarn("File " + filename + " has incorrect xml format");
-        }
-
-        file.close();
-    }
-    else { logWarn("File " + filename + " not found"); }
-}
