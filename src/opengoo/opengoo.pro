@@ -27,7 +27,8 @@ INCLUDEPATH += ../extlibs/freealut/freealut-1.1.0-src/include
 INCLUDEPATH += ../opengoo/src
 #INCLUDEPATH += ../opengoodst/src
 INCLUDEPATH += ../libs/logger/src
-INCLUDEPATH += src/OGGameEngine
+INCLUDEPATH += src/GameEngine
+INCLUDEPATH += src/GameConfiguration
 
 CONFIG(debug, debug|release) {
 LIBS += -L../libs/lib -lloggerd
@@ -136,7 +137,6 @@ HEADERS += \
     src/og_wavfile.h \
     src/opengoo.h \
 
-
 SOURCES += \
     src/tools.cpp \
     src/thorn.cpp \
@@ -174,16 +174,27 @@ SOURCES += \
     src/og_oggfile.cpp \
     src/og_mplayer.cpp \
     src/og_alut.cpp \
-    src/opengoo.cpp \
+    src/opengoo.cpp \        
 
 # Game engine
 SOURCES += \
-    src/OGGameEngine/og_window.cpp \
-    src/OGGameEngine/og_gameengine.cpp \
+    src/GameEngine/og_window.cpp \
+    src/GameEngine/og_gameengine.cpp \
 
 HEADERS += \
-    src/OGGameEngine/og_window.h \
-    src/OGGameEngine/og_gameengine.h \
+    src/GameEngine/og_window.h \
+    src/GameEngine/og_gameengine.h \
+
+# Game configuration
+SOURCES += \
+    src/GameConfiguration/og_gameconfig.cpp \
+    src/GameConfiguration/og_xmlconfig.cpp \
+    src/GameConfiguration/og_resourceconfig.cpp
+
+HEADERS += \
+    src/GameConfiguration/og_gameconfig.h \
+    src/GameConfiguration/og_xmlconfig.h \
+    src/GameConfiguration/og_resourceconfig.h
 
 !win32{
 HEADERS += src/backtracer.h
