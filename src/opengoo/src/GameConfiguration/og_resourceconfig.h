@@ -5,9 +5,12 @@
 
 struct OGResource
 {    
-    enum Type {IMAGE, SOUND};
+    enum Type {IMAGE, SOUND, FONT};
 
-    int type;
+    OGResource(Type type, QString id, QString path)
+        : type(type), id(id), path(path) {}
+
+    Type type;
     QString id;
     QString path;
 };
