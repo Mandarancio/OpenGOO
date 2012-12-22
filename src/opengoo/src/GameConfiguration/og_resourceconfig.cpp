@@ -15,21 +15,25 @@ void OGResourceConfig::Parser(QList <OGResource > & resources)
         QDomElement domElement = n.toElement();
 
         if (domElement.tagName() == "Image")
-        {
-            OGResource resource;
-            resource.type = OGResource::IMAGE;
-            resource.id = domElement.attribute("id", "");
-            resource.path = domElement.attribute("path", "");
-            resources << resource;
-        }
+        {            
+            QString id = domElement.attribute("id", "");
+            QString path = domElement.attribute("path", "");
 
-        if (domElement.tagName() == "Sound")
+            resources << OGResource(OGResource::IMAGE, id, path);
+        }
+        else if (domElement.tagName() == "Sound")
         {
-            OGResource resource;
-            resource.type = OGResource::SOUND;
-            resource.id = domElement.attribute("id", "");
-            resource.path = domElement.attribute("path", "");
-            resources << resource;
+            QString id = domElement.attribute("id", "");
+            QString path = domElement.attribute("path", "");
+
+            resources << OGResource(OGResource::SOUND, id, path);
+        }
+        else if (domElement.tagName() == "font")
+        {
+            QString id = domElement.attribute("id", "");
+            QString path = domElement.attribute("path", "");
+
+            resources << OGResource(OGResource::FONT, id, path);
         }
     }
 }
