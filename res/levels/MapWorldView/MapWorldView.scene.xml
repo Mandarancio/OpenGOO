@@ -8,6 +8,10 @@
   
   <SceneLayer alpha="1" animdelay="1" depth="0" image="IMAGE_MAPWORLDVIEW_BG" name="bg" rotation="0" scalex="8.337" scaley="4.841" tilex="false" tiley="false" x="1.53" y="302.13" />
   
+  <SceneLayer alpha="1" animdelay="1" depth="0" image="IMAGE_MAPWORLDVIEW_AURORA" name="aurora" rotation="-0.0" scalex="2.36" scaley="2.018" tilex="false" tiley="false" x="1.47" y="129.17" />
+  
+  <SceneLayer alpha="1" animdelay="1" depth="0" image="IMAGE_MAPWORLDVIEW_GROUND" name="ground" rotation="0" scalex="2.072" scaley="1.773" tilex="false" tiley="false" x="5.77" y="131.94" />
+  
   <!-- Buttons -->
 
   <!-- Labels -->  	
