@@ -18,6 +18,7 @@
 #include <QRect>
 #include <QDebug>
 #include <QTime>
+#include <QTransform>
 #include <cstdio>
 
 #ifndef Q_OS_WIN32
@@ -113,8 +114,12 @@ bool GameInitialize(int argc, char **argv)
         logWarn("File " + filename +" not found");
         gameConfig.Create(config);
     }
-    
+
+#ifdef Q_OS_WIN32
     _gameEngine = new OGGameEngine(config.screen_width, config.screen_height, config.fullscreen);
+#else
+    _gameEngine = new OGGameEngine(config.screen_width, config.screen_height, false);
+#endif //   Q_OS_WIN32
 
     if (_gameEngine == 0) { return false; }
 
@@ -125,9 +130,19 @@ bool GameInitialize(int argc, char **argv)
 
 void GameStart()
 {
-    //intialize randseed
+    //initialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
     _gameEngine->getWindow()->setCursor(Qt::BlankCursor);
+
+    //initialize video mode
+#ifdef Q_OS_WIN32
+        _vm = OGVideoMode::getCurrentMode();
+        _isVideoModeSupported = OGVideoMode::testVideoMode(_gameEngine->getWidth(), _gameEngine->getHeight());
+        if (_isVideoModeSupported)
+        {
+            OGVideoMode::setVideoMode(_gameEngine->getWidth(), _gameEngine->getHeight());
+        }
+#endif // Q_OS_WIN32
 
     // Read resources
     QString filename("./res/levels/MapWorldView/MapWorldView.resrc.xml");
@@ -143,41 +158,82 @@ void GameStart()
     }
     else { logWarn("File " + filename +" not found"); }
 
+    // Read text
+    filename = "./properties/text.xml";
+    OGTextConfig textConfig(filename);
+
+    if (textConfig.Open())
+    {
+        if (textConfig.Read())
+        {
+            textConfig.Parser(_strings);
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else { logWarn("File " + filename +" not found"); }
+
+    // Read scene
+    filename = "./res/levels/MapWorldView/MapWorldView.scene.xml";
+    OGSceneConfig sceneConfig(filename);
+
+    if (sceneConfig.Open())
+    {
+        if (sceneConfig.Read())
+        {
+            sceneConfig.Parser(_scene);
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else { logWarn("File " + filename +" not found"); }
+
     _isMainMenu = true;
+    _isMainMenuInitialize = false;
+
+    //initialize camera
+    float posY = _scene.maxy - 300.0 - 600.0 * 0.5;
+    float posX = -(qAbs(_scene.minx) + -64.5 - 800.0 * 0.5);
+
+    _camera.setX(posX);
+    _camera.setY(posY);
+    _camera.setSize(QSize(_gameEngine->getWidth(), _gameEngine->getHeight()));
 }
 
 void GameEnd()
 {
+#ifdef Q_OS_WIN32
+    if (_isVideoModeSupported)
+    {
+        OGVideoMode::setVideoMode(_vm.width(), _vm.height());
+    }
+#endif // Q_OS_WIN32
     delete _gameEngine;
 }
 
 void GameCycle()
 {
-
+    _gameEngine->getWindow()->render();
 }
 
 void GamePaint(QPainter *painter)
 {
     // Test
-    OGWindow* window = _gameEngine->getWindow();
+    QTransform transform;
+    transform.translate(_camera.x(), _camera.y());
+
+    painter->setWorldTransform(transform);
+
     if (_isMainMenu)
     {
         mainMenu(painter);
     }
-    QString text("Press escape to exit  full screen mode");
-    painter->setPen(Qt::yellow);
-    painter->setFont(QFont("Arial", 30));
-    painter->drawText(QRect(QPoint(), window->size()),  Qt::AlignCenter, text);
 }
 
 void GameActivate()
 {
-
 }
 
 void GameDeactivate()
 {
-
 }
 
 void HandleKeys(QKeyEvent *event)
@@ -185,16 +241,20 @@ void HandleKeys(QKeyEvent *event)
     switch(event->key())
     {
     case Qt::Key_Left:
+        _camera.setX(_camera.x()-1);
         break;
 
     case Qt::Key_Right:
+        _camera.setX(_camera.x()+1);
         break;
 
     case Qt::Key_Up:
-            break;
+        _camera.setY(_camera.y()-1);
+        break;
 
     case Qt::Key_Down:
-            break;
+        _camera.setY(_camera.y()+1);
+        break;
 
     case Qt::Key_Escape:
         _gameEngine->gameExit();
@@ -240,13 +300,63 @@ void mainMenu(QPainter* painter)
 {
     OGWindow* window = _gameEngine->getWindow();
 
-    for (int i=0; i<_resources.size(); i++)
+    glClearColor(_scene.backgroundcolor.red()
+                 , _scene.backgroundcolor.green()
+                 , _scene.backgroundcolor.blue(), 1);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (!_isMainMenuInitialize)
     {
-        if (_resources.at(i).type == OGResource::IMAGE)
+        for (int i=0; i<_scene.sceneLayers.size(); i++)
         {
-            QPixmap sprite(_resources.at(i).path +".png");
-            painter->drawPixmap(QRect(QPoint(), window->size()) , sprite, sprite.rect());
+            QString image(_scene.sceneLayers.at(i).image);
+            qreal sx = _scene.sceneLayers.at(i).scalex;
+            qreal sy = _scene.sceneLayers.at(i).scaley;
+
+            QImage sprite(GetResource(OGResource::IMAGE, image) +".png");
+
+            QTransform t;
+            t.scale(sx, sy);
+
+            _resImages << QPixmap::fromImage(sprite.transformed(t));
         }
+
+        _isMainMenuInitialize = true;
+    }
+
+    for (int i=0; i<_scene.sceneLayers.size(); i++)
+    {
+        qreal x = _scene.sceneLayers.at(i).x;
+        qreal y = _scene.sceneLayers.at(i).y;
+
+        qreal offX= (qAbs(_scene.minx) + x) - _resImages.at(i).width() * 0.5;
+        qreal offY= (_scene.maxy - y) - _resImages.at(i).height() * 0.5;
+
+        painter->drawPixmap(QPointF(offX, offY), _resImages.at(i));
+    }
+
+    for (int i=0; i<_strings.size(); i++)
+    {
+        QString text = _strings.at(i).text;
+        painter->setPen(Qt::yellow);
+        painter->setFont(QFont("Arial", 30));
+        painter->drawText(QRect(QPoint(0,0), window->size()),  Qt::AlignCenter, text);
     }
 }
 
+QString GetResource(OGResource::Type type, QString id)
+{
+    for (int i=0; i<_resources.size(); i++)
+    {
+        if (_resources.at(i).type == type)
+        {
+            if (_resources.at(i).id == id)
+            {
+                return _resources.at(i).path;
+            }
+        }
+    }
+
+    return QString();
+}
