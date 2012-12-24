@@ -1,4 +1,3 @@
-<!-- Created by WooGLE v0.77 Final -->
 <ResourceManifest>
 
 	<Resources id="scene_MapWorldView">
@@ -6,6 +5,10 @@
 		<SetDefaults idprefix="" path="./" />
 		
     <Image id="IMAGE_MAPWORLDVIEW_BG" path="res/levels/MapWorldView/bg" />
+    
+    <SetDefaults path="./" idprefix="" />
+    
+    <Sound id="" path="" />
     
   </Resources>
   
