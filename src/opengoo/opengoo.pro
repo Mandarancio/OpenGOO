@@ -135,7 +135,7 @@ HEADERS += \
     src/og_ifile.h \
     src/og_alut.h \
     src/og_wavfile.h \
-    src/opengoo.h \
+    src/opengoo.h \    
 
 SOURCES += \
     src/tools.cpp \
@@ -174,27 +174,31 @@ SOURCES += \
     src/og_oggfile.cpp \
     src/og_mplayer.cpp \
     src/og_alut.cpp \
-    src/opengoo.cpp \        
+    src/opengoo.cpp \            
 
 # Game engine
 SOURCES += \
     src/GameEngine/og_window.cpp \
     src/GameEngine/og_gameengine.cpp \
+    src/GameEngine/og_videomode.cpp \
 
 HEADERS += \
     src/GameEngine/og_window.h \
     src/GameEngine/og_gameengine.h \
+    src/GameEngine/og_videomode.h \
 
 # Game configuration
 SOURCES += \
     src/GameConfiguration/og_gameconfig.cpp \
     src/GameConfiguration/og_xmlconfig.cpp \
-    src/GameConfiguration/og_resourceconfig.cpp
+    src/GameConfiguration/og_resourceconfig.cpp \
+    src/GameConfiguration/og_textconfig.cpp \
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
     src/GameConfiguration/og_xmlconfig.h \
-    src/GameConfiguration/og_resourceconfig.h
+    src/GameConfiguration/og_resourceconfig.h \
+    src/GameConfiguration/og_textconfig.h \
 
 !win32{
 HEADERS += src/backtracer.h
