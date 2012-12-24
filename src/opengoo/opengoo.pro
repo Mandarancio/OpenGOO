@@ -194,6 +194,7 @@ SOURCES += \
     src/GameConfiguration/og_resourceconfig.cpp \
     src/GameConfiguration/og_textconfig.cpp \
     src/GameConfiguration/og_sceneconfig.cpp \
+    src/GameEngine/og_videomode_native.cpp
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
@@ -201,6 +202,7 @@ HEADERS += \
     src/GameConfiguration/og_resourceconfig.h \
     src/GameConfiguration/og_textconfig.h \
     src/GameConfiguration/og_sceneconfig.h \
+    src/GameEngine/og_videomode_native.h
 
 !win32{
 HEADERS += src/backtracer.h
@@ -218,3 +220,6 @@ SOURCES += src/backtracer.cpp
 #LIBS += -Wl,-rpath,"'\$$ORIGIN/qt'" -L/opt/PalmPDK/device/lib -lpdl -lSDL
 #INCLUDEPATH += /opt/PalmPDK/include/SDL
 #}
+
+
+
