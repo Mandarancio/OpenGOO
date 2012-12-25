@@ -142,6 +142,7 @@ void GameStart()
         {
             OGVideoMode::setVideoMode(_gameEngine->getWidth(), _gameEngine->getHeight());
         }
+        else { logWarn("Video mode not supported"); }
 #endif // Q_OS_WIN32
 
     // Read resources
@@ -186,12 +187,29 @@ void GameStart()
     }
     else { logWarn("File " + filename +" not found"); }
 
+
+    // Read level
+    filename = "./res/levels/MapWorldView/MapWorldView.level.xml";
+    OGLevelConfig levelConfig(filename);
+
+    if (levelConfig.Open())
+    {
+        if (levelConfig.Read())
+        {
+            levelConfig.Parser(_level);
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else { logWarn("File " + filename +" not found"); }
+
     _isMainMenu = true;
     _isMainMenuInitialize = false;
 
     //initialize camera
-    float posY = _scene.maxy - 300.0 - 600.0 * 0.5;
-    float posX = -(qAbs(_scene.minx) + -64.5 - 800.0 * 0.5);
+    qreal camX = _level.cameras.at(0).pos.x();
+    qreal camY = _level.cameras.at(0).pos.y();  
+    qreal posX = -(qAbs(_scene.minx) + camX - _gameEngine->getWidth() * 0.5);
+    qreal posY = _scene.maxy - camY - _gameEngine->getHeight() * 0.5;
 
     _camera.setX(posX);
     _camera.setY(posY);

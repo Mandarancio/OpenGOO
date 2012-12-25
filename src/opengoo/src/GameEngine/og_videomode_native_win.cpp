@@ -21,7 +21,7 @@ OGVideoMode native_getCurrentMode()
                            , DevMode.dmDisplayFrequency);
 }
 
-bool native_setVideoMode(int width, int height)
+bool native_testVideoMode(int width, int height)
 {
     DEVMODE DevMode;
     DevMode.dmSize = sizeof(DevMode);
@@ -39,7 +39,7 @@ bool native_setVideoMode(int width, int height)
     else { return false; }
 }
 
-bool native_testVideoMode(int width, int height)
+bool native_setVideoMode(int width, int height)
 {
     DEVMODE DevMode;
     DevMode.dmSize = sizeof(DevMode);
