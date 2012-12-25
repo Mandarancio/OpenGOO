@@ -315,29 +315,40 @@ void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
 }
 
 void mainMenu(QPainter* painter)
-{
-    OGWindow* window = _gameEngine->getWindow();
-
-    glClearColor(_scene.backgroundcolor.red()
-                 , _scene.backgroundcolor.green()
-                 , _scene.backgroundcolor.blue(), 1);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
+{    
     if (!_isMainMenuInitialize)
     {
+        glClearColor(_scene.backgroundcolor.red()
+                     , _scene.backgroundcolor.green()
+                     , _scene.backgroundcolor.blue(), 1);
+
+        glClear(GL_COLOR_BUFFER_BIT);
         for (int i=0; i<_scene.sceneLayers.size(); i++)
         {
-            QString image(_scene.sceneLayers.at(i).image);
+            // Create image
+            QString imageID(_scene.sceneLayers.at(i).image);
+            QImage image(GetResource(OGResource::IMAGE, imageID) +".png");
+
+            // Scale image
+            QTransform transform;
             qreal sx = _scene.sceneLayers.at(i).scalex;
             qreal sy = _scene.sceneLayers.at(i).scaley;
+            transform.scale(sx, sy);
 
-            QImage sprite(GetResource(OGResource::IMAGE, image) +".png");
+            // Create sprite
+            OGSprite sprite;
+            sprite.sprite = QPixmap::fromImage(image.transformed(transform, Qt::SmoothTransformation));
 
-            QTransform t;
-            t.scale(sx, sy);
+            // Set sprite position
+            qreal sceneX = _scene.sceneLayers.at(i).x;
+            qreal sceneY = _scene.sceneLayers.at(i).y;
+            qreal posX= (qAbs(_scene.minx) + sceneX) - sprite.sprite.width() * 0.5;
+            qreal posY= (_scene.maxy - sceneY) - sprite.sprite.height() * 0.5;
+            sprite.pos.setX(posX);
+            sprite.pos.setY(posY);
 
-            _resImages << QPixmap::fromImage(sprite.transformed(t));
+            // Put sprite into list
+            _resSprites << sprite;
         }
 
         _isMainMenuInitialize = true;
@@ -345,21 +356,7 @@ void mainMenu(QPainter* painter)
 
     for (int i=0; i<_scene.sceneLayers.size(); i++)
     {
-        qreal x = _scene.sceneLayers.at(i).x;
-        qreal y = _scene.sceneLayers.at(i).y;
-
-        qreal offX= (qAbs(_scene.minx) + x) - _resImages.at(i).width() * 0.5;
-        qreal offY= (_scene.maxy - y) - _resImages.at(i).height() * 0.5;
-
-        painter->drawPixmap(QPointF(offX, offY), _resImages.at(i));
-    }
-
-    for (int i=0; i<_strings.size(); i++)
-    {
-        QString text = _strings.at(i).text;
-        painter->setPen(Qt::yellow);
-        painter->setFont(QFont("Arial", 30));
-        painter->drawText(QRect(QPoint(0,0), window->size()),  Qt::AlignCenter, text);
+        painter->drawPixmap(_resSprites.at(i).pos, _resSprites.at(i).sprite);
     }
 }
 
