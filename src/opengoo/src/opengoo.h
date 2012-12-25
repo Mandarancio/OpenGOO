@@ -10,6 +10,7 @@
 #include "og_videomode.h"
 #include "og_textconfig.h"
 #include "og_sceneconfig.h"
+#include "og_levelconfig.h"
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
@@ -23,6 +24,7 @@ bool _isVideoModeSupported;
 QRectF _camera;
 OGVideoMode _vm;
 OGScene _scene;
+OGLevel _level;
 
 
 

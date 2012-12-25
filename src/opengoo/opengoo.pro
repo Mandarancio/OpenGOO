@@ -174,27 +174,32 @@ SOURCES += \
     src/og_oggfile.cpp \
     src/og_mplayer.cpp \
     src/og_alut.cpp \
-    src/opengoo.cpp \
+    src/opengoo.cpp \    
 
 # Game engine
 SOURCES += \
     src/GameEngine/og_window.cpp \
     src/GameEngine/og_gameengine.cpp \
     src/GameEngine/og_videomode.cpp \
+    src/GameEngine/og_videomode_native.cpp \
 
 HEADERS += \
     src/GameEngine/og_window.h \
     src/GameEngine/og_gameengine.h \
     src/GameEngine/og_videomode.h \
+    src/GameEngine/og_videomode_native.h \
 
 # Game configuration
+# TODO
+# fx.xml
+# materials.xml
 SOURCES += \
     src/GameConfiguration/og_gameconfig.cpp \
     src/GameConfiguration/og_xmlconfig.cpp \
     src/GameConfiguration/og_resourceconfig.cpp \
     src/GameConfiguration/og_textconfig.cpp \
     src/GameConfiguration/og_sceneconfig.cpp \
-    src/GameEngine/og_videomode_native.cpp
+    src/GameConfiguration/og_levelconfig.cpp
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
@@ -202,7 +207,7 @@ HEADERS += \
     src/GameConfiguration/og_resourceconfig.h \
     src/GameConfiguration/og_textconfig.h \
     src/GameConfiguration/og_sceneconfig.h \
-    src/GameEngine/og_videomode_native.h
+    src/GameConfiguration/og_levelconfig.h
 
 !win32{
 HEADERS += src/backtracer.h
