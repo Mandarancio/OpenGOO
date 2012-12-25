@@ -12,12 +12,18 @@
 #include "og_sceneconfig.h"
 #include "og_levelconfig.h"
 
+struct OGSprite
+{
+    QPointF pos;
+    QPixmap sprite;
+};
+
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 OGGameEngine* _gameEngine;
 QList <OGResource> _resources;
 QList <OGText> _strings;
-QList <QPixmap> _resImages;
+QList <OGSprite> _resSprites;
 bool _isMainMenu;
 bool _isMainMenuInitialize;
 bool _isVideoModeSupported;
