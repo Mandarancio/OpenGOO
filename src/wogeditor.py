@@ -25,7 +25,7 @@ import glob
 import subprocess
 import louie
 import wogfile
-import metaworld
+#import metaworld
 import metawog
 import metaworldui
 import metatreeui
@@ -367,20 +367,20 @@ class GameModel(QtCore.QObject):
         window.statusBar().showMessage(self.tr("Game Model : Loading Properties XMLs"))
 
         self._loadTree( self.global_world, metawog.TREE_GLOBAL_FX,
-                                             self._properties_dir, 'fx.xml' )
+                                             self._properties_dir, 'fx.xml.bin' )
 
         self._loadTree( self.global_world, metawog.TREE_GLOBAL_MATERIALS,
-                                               self._properties_dir, 'materials.xml' )
+                                               self._properties_dir, 'materials.xml.bin' )
 
         self._loadUnPackedTree( self.global_world, metawog.TREE_GLOBAL_FILES,
                                                app_path(), 'files.xml.xml' ,'')
     
 	self._loadTree( self.global_world, metawog.TREE_GLOBAL_RESOURCE,
-                                               self._properties_dir, 'resources.xml' )
+                                               self._properties_dir, 'resources.xml.bin' )
         
         self._readonly_resources = set()    # resources in resources.xml that have expanded defaults idprefix & path
         self._loadTree( self.global_world, metawog.TREE_GLOBAL_TEXT,
-                                           self._properties_dir, 'text.xml' )
+                                           self._properties_dir, 'text.xml.bin' )
 
         self._levels = self._loadDirList( os.path.join( self._res_dir, 'levels' ),
                                           filename_filter = '%s.scene.bin' )
@@ -445,8 +445,7 @@ class GameModel(QtCore.QObject):
         if not os.path.isfile( path ):
             raise GameModelException( tr( 'LoadData',
                 'File "%1" does not exist. You likely provided an incorrect World of Goo directory.' ).arg( path ) )
-#        xml_data = wogfile.decrypt_file_data( path )
-        xml_data = open( path, 'rb' ).read()
+        xml_data = file( path, 'rb' ).read()
         try:
             new_tree =  world.make_tree_from_xml( meta_tree, xml_data )
         except IOError,e:
@@ -479,7 +478,7 @@ class GameModel(QtCore.QObject):
             os.makedirs( directory )
         path = os.path.join( directory, file_name )
         xml_data = xml_data.replace('><','>\n<')
-        wogfile.encrypt_file_data( path, xml_data )
+        file( path, 'wb' ).write( xml_data )
 
     def _saveUnPackedData(self,directory,file_name,tree):
         if not os.path.isdir( directory ):
@@ -496,7 +495,7 @@ class GameModel(QtCore.QObject):
         path = os.path.join( directory, file_name )
         xml_data = tree.to_xml()
         xml_data = xml_data.replace('><','>\n<')
-        wogfile.encrypt_file_data( path, xml_data )
+        file( path, 'wb' ).write( xml_data )
         tree.setFilename(path)
 
     def _loadDirList( self, directory, filename_filter ):
@@ -535,7 +534,7 @@ class GameModel(QtCore.QObject):
     def _loadBalls( self ):
         """Loads all ball models and initialize related identifiers/references."""
         ball_names = self._loadDirList( os.path.join( self._res_dir, 'balls' ),
-                                        filename_filter = 'balls.xml.bin' )
+                                        filename_filter = 'balls.xml' )
         ball_dir = os.path.join( self._res_dir, 'balls' )
         ball_name_map = {}
         for ball_name in ball_names:
@@ -544,27 +543,27 @@ class GameModel(QtCore.QObject):
             #but WOG was fine with it, even on Linux.
 
             #read in the ball_tree (balls.xml) first...
-            #get name attribute out of it, and use that to create the Ball World
-            xml_data = wogfile.decrypt_file_data( os.path.join(ball_dir, ball_name, 'balls.xml.bin') )
+            #get name attribute out of it, and use that to create the Ball World            
+            xml_data = file( os.path.join(ball_dir, ball_name, 'balls.xml'), 'rb' ).read()
             try:
                 ball_tree = self._universe.make_unattached_tree_from_xml( metawog.TREE_BALL_MAIN, xml_data )
             except IOError,e:
-                raise GameModelException(unicode(e)+u' in '+ball_name+u'/balls.xml.bin')
+                raise GameModelException(unicode(e)+u' in '+ball_name+u'/balls.xml')
             
             real_ball_name = ball_tree.root.get('name')
             if real_ball_name not in self.global_world.list_world_keys(metawog.WORLD_BALL):
                 ball_world = self.global_world.make_world( metawog.WORLD_BALL, real_ball_name, BallModel, self )
                 #then append the ball_tree to the ball world... rather than loading the file again.
-                ball_tree.setFilename(os.path.join(ball_dir, ball_name, 'balls.xml.bin'))
+                ball_tree.setFilename(os.path.join(ball_dir, ball_name, 'balls.xml'))
                 ball_world.add_tree([ball_tree])
                 #ball_tree = self._loadTree( ball_world, metawog.TREE_BALL_MAIN,
                      #                       os.path.join(ball_dir, ball_name), 'balls.xml.bin' )
                 try:
                     ball_res_tree = self._loadTree( ball_world, metawog.TREE_BALL_RESOURCE,
-                            os.path.join(ball_dir, ball_name), 'resources.xml.bin' )
+                            os.path.join(ball_dir, ball_name), 'resources.xml' )
                     self._processSetDefaults(ball_res_tree)
                 except IOError,e:
-                    raise GameModelException(unicode(e)+u' in '+ball_name+u'/resources.xml.bin')
+                    raise GameModelException(unicode(e)+u' in '+ball_name+u'/resources.xml')
         #        print ball_name,real_ball_name,ball_res_tree.root.find('Resources').get('id')
                 assert ball_tree.world == ball_world
                 assert ball_tree.root.world == ball_world, ball_tree.root.world
@@ -673,11 +672,11 @@ class GameModel(QtCore.QObject):
                             dir, name + '.text.xml', metawog.LEVEL_TEXT_TEMPLATE)
 
             self._loadTree( world, metawog.TREE_LEVEL_GAME,
-                            dir, name + '.level.bin' )
+                            dir, name + '.level.xml' )
             self._loadTree( world, metawog.TREE_LEVEL_SCENE,
-                            dir, name + '.scene.bin' )
+                            dir, name + '.scene.xml' )
             self._loadTree( world, metawog.TREE_LEVEL_RESOURCE,
-                            dir, name + '.resrc.bin' )
+                            dir, name + '.resrc.xml' )
 
             self._processSetDefaults(world.find_tree(metawog.TREE_LEVEL_RESOURCE))
 
@@ -787,7 +786,7 @@ class GameModel(QtCore.QObject):
             local_attrib={'id':'WOOGLE_TEST_TEXT','text':'(testing 1 2 3)'}
             _appendChildTag(root,rootmbt,local_attrib,keepid=True)
         # Save it
-        self._savePackedData(self._properties_dir, 'text.xml.bin', self._texts_tree )
+        self._savePackedData(self._properties_dir, 'text.xml.xml', self._texts_tree )
 
         #On Mac
         if ON_PLATFORM==PLATFORM_MAC:
@@ -816,13 +815,13 @@ class GameModel(QtCore.QObject):
         label_x,label_y = button_x+30,button_y
         scenelayer_x,scenelayer_y=button_x,button_y+20
         #load res/islands/island1.xml.bin
-        path = os.path.join( self._res_dir,u'islands',u'island1.xml.bin' )
+        path = os.path.join( self._res_dir,u'islands',u'island1.xml' )
         if not os.path.isfile( path ):
             print "File not found:",path
             return false
         else:
         #    print "Doing",path
-            xml_data = wogfile.decrypt_file_data( path )
+            xml_data = file( path, 'rb' ).read()
             tree = self._universe.make_unattached_tree_from_xml( metawog.TREE_ISLAND, xml_data )
             root = tree.root
             rootmbt = root.meta.find_immediate_child_by_tag('level')
@@ -842,17 +841,17 @@ class GameModel(QtCore.QObject):
             #save file
             xml_data = tree.to_xml()
             xml_data = xml_data.replace('><','>\n<')
-            wogfile.encrypt_file_data( path, xml_data )
+            file( path, 'wb' ).write( xml_data )
          #   print "Done",path
 
         #load res/levels/island1/island1.scene.bin
-        path = os.path.join( self._res_dir,u'levels',u'island1',u'island1.scene.bin' )
+        path = os.path.join( self._res_dir,u'levels',u'island1',u'island1.scene.xml' )
         if not os.path.isfile( path ):
             print "File not found:",path
             return false
         else:
-          #  print "Doing",path
-            xml_data = wogfile.decrypt_file_data( path )
+          #  print "Doing",path            
+            xml_data = file( path, 'rb' ).read()
             tree = self._universe.make_unattached_tree_from_xml( metawog.TREE_LEVEL_SCENE, xml_data )
             root = tree.root
             # seek WooGLE_Test Label element
@@ -915,7 +914,7 @@ class GameModel(QtCore.QObject):
             #save file
             xml_data = tree.to_xml()
             xml_data = xml_data.replace('><','>\n<')
-            wogfile.encrypt_file_data( path, xml_data )
+            file( path, 'wb' ).write( xml_data )
            # print "Done",path
         return True
 
@@ -1003,9 +1002,9 @@ class GameModel(QtCore.QObject):
             #save out new trees
            self._saveUnPackedData( dir, new_name + '.addin.xml', new_addin_tree )
            self._saveUnPackedData( dir, new_name + '.text.xml', new_text_tree )
-           self._savePackedData( dir, new_name+'.level.bin', new_level_tree )
-           self._savePackedData( dir, new_name+'.scene.bin', new_scene_tree )
-           self._savePackedData( dir, new_name+'.resrc.bin', new_res_tree )
+           self._savePackedData( dir, new_name+'.level.xml', new_level_tree )
+           self._savePackedData( dir, new_name+'.scene.xml', new_scene_tree )
+           self._savePackedData( dir, new_name+'.resrc.xml', new_res_tree )
 
            self._levels.append( unicode(new_name) )
            self._levels.sort(key=unicode.lower)
@@ -1110,14 +1109,14 @@ class GameModel(QtCore.QObject):
                    os.makedirs( ball_dir )
 
                 filename =os.path.join(ball_dir,'balls.xml.xml')
-                files_to_goomod.append(filename)
-                xml_data = wogfile.decrypt_file_data( ball_world.find_tree(metawog.TREE_BALL_MAIN).filename )
+                files_to_goomod.append(filename)               
+                xml_data = file( ball_world.find_tree(metawog.TREE_BALL_MAIN).filename, 'rb' ).read()
                 file( filename, 'wb' ).write( xml_data )
                 #self._saveUnPackedData( ball_dir, 'balls.xml.xml', ball_tree)
 
                 filename =os.path.join(ball_dir,'resources.xml.xml')
-                files_to_goomod.append(filename)
-                xml_data = wogfile.decrypt_file_data( ball_world.find_tree(metawog.TREE_BALL_RESOURCE).filename )
+                files_to_goomod.append(filename)                
+                xml_data = file( ball_world.find_tree(metawog.TREE_BALL_RESOURCE).filename, 'rb' ).read()
                 file( filename, 'wb' ).write( xml_data )
 #                self._saveUnPackedData( ball_dir, 'resources.xml.xml', ball_tree)
 
@@ -2144,10 +2143,10 @@ class LevelWorld(ThingWorld):
                   # so only clean trees with no issues
                   self._cleanleveltree()
                 
-                self.game_model._saveUnPackedData( dir, name + '.level.xml',
+                self.game_model._savePackedData( dir, name + '.level.xml',
                                                  self.level_root.tree )
             if self.__dirty_tracker.is_dirty_tree( metawog.TREE_LEVEL_RESOURCE):
-                self.game_model._saveUnPackedData( dir, name + '.resrc.xml',
+                self.game_model._savePackedData( dir, name + '.resrc.xml',
                                                  self.resource_root.tree )
 
             # ON Mac
@@ -2166,7 +2165,7 @@ class LevelWorld(ThingWorld):
                 if not self.element_issue_level(self.scene_root):
                     # so only clean trees with no issues
                     self._cleanscenetree()
-                self.game_model._saveUnPackedData( dir, name + '.scene.xml',
+                self.game_model._savePackedData( dir, name + '.scene.xml',
                                                  self.scene_root.tree )
 
         self.__dirty_tracker.clean()
@@ -2348,7 +2347,7 @@ class MainWindow(QtGui.QMainWindow):
         wog_path =  QtGui.QFileDialog.getOpenFileName( self,
              self.tr( 'Select WorldOfGoo program in the folder you want to edit' ),
              r'',
-             self.tr( 'OpenGOO (OpenGOO*)' ) )
+             self.tr( 'World Of Goo (World*Goo*)' ) )
         if wog_path.isEmpty(): # user canceled action
             #wog_path="D:\World of Goo.app"
             return
