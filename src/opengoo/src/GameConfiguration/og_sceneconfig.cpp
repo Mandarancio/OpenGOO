@@ -12,24 +12,54 @@ void OGSceneConfig::Parser(OGScene & scene)
     scene.miny = rootElement.attribute("miny", "").toDouble();
     scene.maxx = rootElement.attribute("maxx", "").toDouble();
     scene.maxy = rootElement.attribute("maxy", "").toDouble();
-    QString backgroundcolor = rootElement.attribute("backgroundcolor", "");
-    QStringList bgList = backgroundcolor.split(",");
-    QColor bg(bgList.at(0).toInt(), bgList.at(1).toInt(), bgList.at(2).toInt());
-    scene.backgroundcolor = bg;
+    QStringList list = rootElement.attribute("backgroundcolor", "").split(",");
 
-    for(QDomNode n = rootElement.firstChild(); !n.isNull(); n = n.nextSibling())
+    scene.backgroundcolor = QColor(
+                list.at(0).toInt()
+                , list.at(1).toInt()
+                , list.at(2).toInt()
+                );
+
+    for(QDomNode n=rootElement.firstChild(); !n.isNull(); n=n.nextSibling())
     {
         QDomElement domElement = n.toElement();
 
         if (domElement.tagName() == "SceneLayer")
         {
-            QString image = domElement.attribute("image", "");
-            float scalex = domElement.attribute("scalex", "").toDouble();
-            float scaley = domElement.attribute("scaley", "").toDouble();
-            float x = domElement.attribute("x", "").toDouble();
-            float y = domElement.attribute("y", "").toDouble();
+            OGSceneLayer sceneLayer;
 
-            scene.sceneLayers << OGSceneLayer(image, scalex, scaley, x, y);
+            sceneLayer.id = domElement.attribute("id", "");
+            sceneLayer.name = domElement.attribute("name", "");
+            sceneLayer.depth = domElement.attribute("depth", "").toDouble();
+            sceneLayer.x = domElement.attribute("x", "").toDouble();
+            sceneLayer.y = domElement.attribute("y", "").toDouble();
+            sceneLayer.scalex = domElement.attribute("scalex", "").toDouble();
+            sceneLayer.scaley = domElement.attribute("scaley", "").toDouble();
+
+            sceneLayer.rotation = domElement.attribute(
+                        "rotation"
+                        , ""
+                        ).toDouble();
+
+            sceneLayer.alpha = domElement.attribute("alpha", "").toDouble();
+
+            QStringList list = domElement.attribute("colorize", "").split(",");
+
+            sceneLayer.colorize = QColor(
+                        list.at(0).toInt()
+                        , list.at(1).toInt()
+                        , list.at(2).toInt()
+                        );
+
+            sceneLayer.image = domElement.attribute("image", "");           
+            sceneLayer.anim = domElement.attribute("anim", "");
+
+            sceneLayer.animspeed = domElement.attribute(
+                        "animspeed"
+                        , ""
+                        ).toDouble();
+
+            scene.sceneLayers << sceneLayer;
         }
     }
 }
