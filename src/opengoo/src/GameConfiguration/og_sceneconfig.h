@@ -7,18 +7,19 @@
 
 struct OGSceneLayer
 {
-    OGSceneLayer(QString image, float scalex, float scaley, float x, float y)
-        : image(image)
-        , scalex(scalex)
-        , scaley(scaley)
-        , x(x)
-        , y(y) {}
-
-    QString image;
-    qreal scalex;
-    qreal scaley;
+    QString id;
+    QString name;
+    qreal depth;
     qreal x;
     qreal y;
+    qreal scalex;
+    qreal scaley;
+    qreal rotation;
+    qreal alpha;
+    QColor colorize;
+    QString image;
+    QString anim;
+    qreal animspeed;
 };
 
 struct OGScene

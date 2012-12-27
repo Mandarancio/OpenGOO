@@ -19,6 +19,7 @@
 #include <QDebug>
 #include <QTime>
 #include <QTransform>
+#include <QtAlgorithms>
 #include <cstdio>
 
 #ifndef Q_OS_WIN32
@@ -145,22 +146,9 @@ void GameStart()
         else { logWarn("Video mode not supported"); }
 #endif // Q_OS_WIN32
 
-    // Read resources
-    QString filename("./res/levels/MapWorldView/MapWorldView.resrc.xml");
-    OGResourceConfig resConfig(filename);
-
-    if (resConfig.Open())
-    {
-        if (resConfig.Read())
-        {
-            resConfig.Parser(_resources);
-        }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else { logWarn("File " + filename +" not found"); }
 
     // Read text
-    filename = "./properties/text.xml";
+    QString filename = "./properties/text.xml";
     OGTextConfig textConfig(filename);
 
     if (textConfig.Open())
@@ -171,49 +159,15 @@ void GameStart()
         }
         else {logWarn("File " + filename + " is corrupted"); }
     }
-    else { logWarn("File " + filename +" not found"); }
-
-    // Read scene
-    filename = "./res/levels/MapWorldView/MapWorldView.scene.xml";
-    OGSceneConfig sceneConfig(filename);
-
-    if (sceneConfig.Open())
-    {
-        if (sceneConfig.Read())
-        {
-            sceneConfig.Parser(_scene);
-        }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else { logWarn("File " + filename +" not found"); }
-
-
-    // Read level
-    filename = "./res/levels/MapWorldView/MapWorldView.level.xml";
-    OGLevelConfig levelConfig(filename);
-
-    if (levelConfig.Open())
-    {
-        if (levelConfig.Read())
-        {
-            levelConfig.Parser(_level);
-        }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else { logWarn("File " + filename +" not found"); }
+    else { logWarn("File " + filename +" not found"); }  
 
     _isMainMenu = true;
     _isMainMenuInitialize = false;
 
-    //initialize camera
-    qreal camX = _level.cameras.at(0).pos.x();
-    qreal camY = _level.cameras.at(0).pos.y();  
-    qreal posX = -(qAbs(_scene.minx) + camX - _gameEngine->getWidth() * 0.5);
-    qreal posY = _scene.maxy - camY - _gameEngine->getHeight() * 0.5;
-
-    _camera.setX(posX);
-    _camera.setY(posY);
-    _camera.setSize(QSize(_gameEngine->getWidth(), _gameEngine->getHeight()));
+    _camera.setX(0);
+    _camera.setY(0);
+    _camera.setSize(QSize(_gameEngine->getWidth()
+                          , _gameEngine->getHeight()));
 }
 
 void GameEnd()
@@ -233,13 +187,14 @@ void GameCycle()
 }
 
 void GamePaint(QPainter *painter)
-{
-    // Test
+{    
     QTransform transform;
     transform.translate(_camera.x(), _camera.y());
-
     painter->setWorldTransform(transform);
 
+    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+
+    // Test
     if (_isMainMenu)
     {
         mainMenu(painter);
@@ -318,32 +273,69 @@ void mainMenu(QPainter* painter)
 {    
     if (!_isMainMenuInitialize)
     {
-        glClearColor(_scene.backgroundcolor.red()
-                     , _scene.backgroundcolor.green()
-                     , _scene.backgroundcolor.blue(), 1);
+        // Read resources
+        QString filename("./res/levels/MapWorldView/MapWorldView.resrc.xml");
+        OGResourceConfig resConfig(filename);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        if (resConfig.Open())
+        {
+            if (resConfig.Read())
+            {
+                resConfig.Parser(_resources);
+            }
+            else {logWarn("File " + filename + " is corrupted"); }
+        }
+        else { logWarn("File " + filename +" not found"); }
+
+        // Read level
+        filename = "./res/levels/MapWorldView/MapWorldView.level.xml";
+        OGLevelConfig levelConfig(filename);
+
+        if (levelConfig.Open())
+        {
+            if (levelConfig.Read())
+            {
+                levelConfig.Parser(_level);
+            }
+            else {logWarn("File " + filename + " is corrupted"); }
+        }
+        else { logWarn("File " + filename +" not found"); }
+
+        // Read scene
+        filename = "./res/levels/MapWorldView/MapWorldView.scene.xml";
+        OGSceneConfig sceneConfig(filename);
+
+        if (sceneConfig.Open())
+        {
+            if (sceneConfig.Read())
+            {
+                sceneConfig.Parser(_scene);
+            }
+            else {logWarn("File " + filename + " is corrupted"); }
+        }
+        else { logWarn("File " + filename +" not found"); }
+
         for (int i=0; i<_scene.sceneLayers.size(); i++)
         {
-            // Create image
-            QString imageID(_scene.sceneLayers.at(i).image);
-            QImage image(GetResource(OGResource::IMAGE, imageID) +".png");
-
-            // Scale image
-            QTransform transform;
-            qreal sx = _scene.sceneLayers.at(i).scalex;
-            qreal sy = _scene.sceneLayers.at(i).scaley;
-            transform.scale(sx, sy);
-
             // Create sprite
             OGSprite sprite;
-            sprite.sprite = QPixmap::fromImage(image.transformed(transform, Qt::SmoothTransformation));
+
+            sprite.color = _scene.sceneLayers.at(i).colorize;
+            sprite.scale.setX(_scene.sceneLayers.at(i).scalex);
+            sprite.scale.setY(_scene.sceneLayers.at(i).scaley);
+            sprite.opacity = _scene.sceneLayers.at(i).alpha;
+            sprite.rotation = _scene.sceneLayers.at(i).rotation;
+            sprite.depth = _scene.sceneLayers.at(i).depth;
+
+            createSprite(&sprite, _scene.sceneLayers.at(i).image);
 
             // Set sprite position
             qreal sceneX = _scene.sceneLayers.at(i).x;
             qreal sceneY = _scene.sceneLayers.at(i).y;
-            qreal posX= (qAbs(_scene.minx) + sceneX) - sprite.sprite.width() * 0.5;
-            qreal posY= (_scene.maxy - sceneY) - sprite.sprite.height() * 0.5;
+            qreal width = sprite.sprite.width();
+            qreal height = sprite.sprite.height();
+            qreal posX= (qAbs(_scene.minx) + sceneX) - width * 0.5;
+            qreal posY= (_scene.maxy - sceneY) - height * 0.5;
             sprite.pos.setX(posX);
             sprite.pos.setY(posY);
 
@@ -351,16 +343,55 @@ void mainMenu(QPainter* painter)
             _resSprites << sprite;
         }
 
+        // Create Z-order
+        QList <OGSprite>::iterator first = _resSprites.begin();
+        QList <OGSprite>::iterator last = _resSprites.end();
+        QList <OGSprite>::iterator i;
+
+        while(first < --last)
+        {
+            for(i=_resSprites.begin(); i < _resSprites.end(); ++i)
+            {
+               if ( (i+1)->depth < i->depth)
+               {
+                   qSwap(i, i+1);
+               }
+            }
+        }
+
+        //initialize camera
+        qreal camX = _level.cameras.at(0).pos.x();
+        qreal camY = _level.cameras.at(0).pos.y();
+        qreal width = _gameEngine->getWidth();
+        qreal height = _gameEngine->getHeight();
+        qreal posX = -(qAbs(_scene.minx) + camX - width * 0.5);
+        qreal posY = _scene.maxy - camY - height * 0.5;
+
+        _camera.setX(posX);
+        _camera.setY(posY);
+        _camera.setSize(QSize(width, height));
+
         _isMainMenuInitialize = true;
     }
 
-    for (int i=0; i<_scene.sceneLayers.size(); i++)
+    glClearColor(
+                _scene.backgroundcolor.red()
+                , _scene.backgroundcolor.green()
+                , _scene.backgroundcolor.blue()
+                , 1
+                );
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+
+    for (int i = _scene.sceneLayers.size()-1; i >= 0; i--)
     {
+        painter->setOpacity(_resSprites.at(i).opacity);
         painter->drawPixmap(_resSprites.at(i).pos, _resSprites.at(i).sprite);
     }
 }
 
-QString GetResource(OGResource::Type type, QString id)
+QString getResource(OGResource::Type type, const QString & id)
 {
     for (int i=0; i<_resources.size(); i++)
     {
@@ -375,3 +406,45 @@ QString GetResource(OGResource::Type type, QString id)
 
     return QString();
 }
+
+void createSprite(OGSprite* sprite, const QString & image)
+{
+    QImage source(getResource(OGResource::IMAGE, image) +".png");
+
+    QTransform transform;
+    transform.scale(sprite->scale.x(), sprite->scale.y());
+    transform.rotate(-sprite->rotation);
+
+    QImage tmpImage(
+                source.transformed(transform, Qt::SmoothTransformation)
+                );
+
+    QImage target(tmpImage.size(), QImage::Format_ARGB32_Premultiplied);
+
+    // Colorize sprite
+    QPainter painter(&target);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
+    painter.fillRect(target.rect(), Qt::transparent);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    painter.drawImage(target.rect(), tmpImage, tmpImage.rect());
+
+    if (!source.hasAlphaChannel())
+    {
+
+        painter.setCompositionMode(QPainter::CompositionMode_Multiply);
+        painter.fillRect(target.rect(), sprite->color);
+    }
+    else
+    {
+        painter.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+        painter.fillRect(target.rect(), sprite->color);
+        painter.setCompositionMode(QPainter::CompositionMode_Multiply);
+        painter.drawImage(target.rect(), tmpImage, tmpImage.rect());
+    }
+
+    painter.end();
+
+    sprite->sprite = QPixmap::fromImage(target);
+}
+
