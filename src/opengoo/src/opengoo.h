@@ -15,7 +15,12 @@
 struct OGSprite
 {
     QPointF pos;
+    QPointF scale;
+    qreal rotation;
     QPixmap sprite;
+    qreal depth;
+    QColor color;
+    qreal opacity;
 };
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
@@ -36,6 +41,7 @@ OGLevel _level;
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 void mainMenu(QPainter* painter);
-QString GetResource(OGResource::Type type, QString id);
+QString gGetResource(OGResource::Type type, const QString & id);
+void createSprite(OGSprite* sprite, const QString & image);
 
 #endif // OPENGOO_H
