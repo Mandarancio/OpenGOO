@@ -354,7 +354,7 @@ void mainMenu(QPainter* painter)
             {
                if ( (i+1)->depth < i->depth)
                {
-                   qSwap(i, i+1);
+                   std::iter_swap( i, i+1 );
                }
             }
         }
