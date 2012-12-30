@@ -6,35 +6,70 @@ OGResourceConfig::OGResourceConfig(const QString & filename)
     SetRootTag("ResourceManifest");
 }
 
-void OGResourceConfig::Parser(QList <OGResource > & resources)
+OGResources OGResourceConfig::Parser(QString groupid)
 {
-    QDomElement res = rootElement .firstChildElement("Resources");
+    QString defaultPath("./");
+    QString defaultIdPrefix("");
 
-    for(QDomNode n = res.firstChild(); !n.isNull(); n = n.nextSibling())
+    OGResources resources;
+
+    for(QDomNode n=rootElement.firstChild(); !n.isNull(); n=n.nextSibling())
     {
-        QDomElement domElement = n.toElement();
+        QDomElement element = n.toElement();
 
-        if (domElement.tagName() == "Image")
-        {            
-            QString id = domElement.attribute("id", "");
-            QString path = domElement.attribute("path", "");
+        if (element.tagName() == "Resources")
+        {                        
+            if (groupid.isEmpty() || element.attribute("id") == groupid)
+            {               
+                OGResourceGroup group;
+                group.id = element.attribute("id");
+                QDomNode node = element.firstChild();
 
-            resources << OGResource(OGResource::IMAGE, id, path);
-        }
-        else if (domElement.tagName() == "Sound")
-        {
-            QString id = domElement.attribute("id", "");
-            QString path = domElement.attribute("path", "");
+                for(; !node.isNull(); node=node.nextSibling())
+                {
+                    QDomElement resElement = node.toElement();
 
-            resources << OGResource(OGResource::SOUND, id, path);
-        }
-        else if (domElement.tagName() == "font")
-        {
-            QString id = domElement.attribute("id", "");
-            QString path = domElement.attribute("path", "");
+                    if (resElement.tagName() == "SetDefaults")
+                    {
+                        defaultPath = resElement.attribute("path");
+                        defaultIdPrefix = resElement.attribute("idprefix");
+                    }
+                    else if (resElement.tagName() == "Image")
+                    {
+                        OGResource res = {
+                            OGResource::IMAGE,
+                            defaultIdPrefix + resElement.attribute("id"),
+                            defaultPath + resElement.attribute("path")
+                        };
 
-            resources << OGResource(OGResource::FONT, id, path);
+                        group.resource << res;
+                    }
+                    else if (resElement.tagName() == "Sound")
+                    {
+                        OGResource res = {
+                            OGResource::SOUND,
+                            defaultIdPrefix + resElement.attribute("id"),
+                            defaultPath + resElement.attribute("path")
+                        };
+
+                        group.resource << res;
+                    }
+                    else if (resElement.tagName() == "font")
+                    {
+                        OGResource res = {
+                            OGResource::FONT,
+                            defaultIdPrefix + resElement.attribute("id"),
+                            defaultPath + resElement.attribute("path")
+                        };
+
+                        group.resource << res;
+                    }
+                }
+
+                resources.group << group;
+            }            
         }
     }
-}
 
+    return resources;
+}

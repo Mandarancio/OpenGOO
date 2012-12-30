@@ -8,8 +8,10 @@ OGGameConfig::OGGameConfig(const QString & filename)
     SetRootTag("config");
 }
 
-void OGGameConfig::Parser(OGConfig & config)
+OGConfig OGGameConfig::Parser()
 {
+    OGConfig config;
+
     for(QDomNode n = rootElement.firstChild(); !n.isNull(); n = n.nextSibling())
     {
         QDomElement domElement = n.toElement();
@@ -20,11 +22,13 @@ void OGGameConfig::Parser(OGConfig & config)
 
             if (attribute == "screen_width")
             {
-                config.screen_width = domElement.attribute("value", "").toInt();
+                config.screen_width =
+                        domElement.attribute("value", "").toInt();
             }
             else if (attribute == "screen_height")
             {
-                config.screen_height = domElement.attribute("value", "").toInt();
+                config.screen_height =
+                        domElement.attribute("value", "").toInt();
             }
             else if (attribute == "language")
             {
@@ -40,6 +44,8 @@ void OGGameConfig::Parser(OGConfig & config)
             }
         }
     }
+
+    return config;
 }
 
 void OGGameConfig::Create(OGConfig & config)

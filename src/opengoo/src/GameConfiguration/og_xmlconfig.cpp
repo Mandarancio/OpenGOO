@@ -46,3 +46,38 @@ bool OGXmlConfig::Read()
     return false;
 }
 
+QPointF OGXmlConfig::StringToPoint(const QString & position)
+{
+    QStringList pos(position.split(","));
+
+    if (pos.size() == 2)
+    {
+        return QPointF(pos.at(0).toDouble(), pos.at(1).toDouble());
+    }
+    else { return QPointF(); }
+}
+
+QPointF OGXmlConfig::StringToPoint(const QString & x, const QString & y)
+{
+    return QPointF(x.toDouble(), y.toDouble());
+}
+
+QColor OGXmlConfig::StringToColor(const QString & color)
+{
+    QStringList list = color.split(",");
+    if (list.size() == 3)
+    {
+        return QColor(
+                    list.at(0).toInt(),
+                    list.at(1).toInt(),
+                    list.at(2).toInt()
+                    );
+    }
+    else { return QColor(); }
+}
+
+bool OGXmlConfig::StringToBool(const QString & value)
+{
+    if (value == "true") { return true; }
+    else { return false; }
+}

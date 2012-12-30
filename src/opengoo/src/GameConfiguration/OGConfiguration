@@ -1,0 +1,11 @@
+#ifndef OGCONFIGURATION
+#define OGCONFIGURATION
+
+#include "og_gameconfig.h"
+#include "og_resourceconfig.h"
+#include "og_videomode.h"
+#include "og_textconfig.h"
+#include "og_sceneconfig.h"
+#include "og_levelconfig.h"
+
+#endif // OGCONFIGURATION

@@ -92,12 +92,6 @@ bool GameInitialize(int argc, char **argv)
     }
     else if (flag & DEBUG) logWarn("Game dir exist!");
 
-    OGConfig config;
-    // Default settings
-    config.fullscreen = true;
-    config.screen_width = 800;
-    config.screen_height = 600;
-
     // Read game configuration
     QString filename("./resources/config.xml");
     OGGameConfig gameConfig(filename);
@@ -106,20 +100,30 @@ bool GameInitialize(int argc, char **argv)
     {
         if (gameConfig.Read())
         {
-            gameConfig.Parser(config);
+            _config = gameConfig.Parser();
         }
         else {logWarn("File " + filename + " is corrupted"); }
     }
     else
     {
         logWarn("File " + filename +" not found");
-        gameConfig.Create(config);
+        gameConfig.Create(_config);
     }
 
 #ifdef Q_OS_WIN32
-    _gameEngine = new OGGameEngine(config.screen_width, config.screen_height, config.fullscreen);
+    _gameEngine =
+            new OGGameEngine(
+                _config.screen_width,
+                _config.screen_height,
+                _config.fullscreen
+                );
 #else
-    _gameEngine = new OGGameEngine(config.screen_width, config.screen_height, false);
+    _gameEngine =
+            new OGGameEngine(
+                config.screen_width,
+                _config.screen_height,
+                false
+                );
 #endif //   Q_OS_WIN32
 
     if (_gameEngine == 0) { return false; }
@@ -138,14 +142,22 @@ void GameStart()
     //initialize video mode
 #ifdef Q_OS_WIN32
         _vm = OGVideoMode::getCurrentMode();
-        _isVideoModeSupported = OGVideoMode::testVideoMode(_gameEngine->getWidth(), _gameEngine->getHeight());
+
+        _isVideoModeSupported =
+                OGVideoMode::testVideoMode(
+                    _gameEngine->getWidth(),
+                    _gameEngine->getHeight()
+                    );
+
         if (_isVideoModeSupported)
         {
-            OGVideoMode::setVideoMode(_gameEngine->getWidth(), _gameEngine->getHeight());
+            OGVideoMode::setVideoMode(
+                        _gameEngine->getWidth(),
+                        _gameEngine->getHeight()
+                        );
         }
         else { logWarn("Video mode not supported"); }
 #endif // Q_OS_WIN32
-
 
     // Read text
     QString filename = "./properties/text.xml";
@@ -155,7 +167,7 @@ void GameStart()
     {
         if (textConfig.Read())
         {
-            textConfig.Parser(_strings);
+            _strings = textConfig.Parser();
         }
         else {logWarn("File " + filename + " is corrupted"); }
     }
@@ -164,10 +176,13 @@ void GameStart()
     _isMainMenu = true;
     _isMainMenuInitialize = false;
 
+    // Default camera settings
     _camera.setX(0);
     _camera.setY(0);
-    _camera.setSize(QSize(_gameEngine->getWidth()
-                          , _gameEngine->getHeight()));
+
+    _camera.setSize(
+                QSize(_gameEngine->getWidth(), _gameEngine->getHeight())
+                );
 }
 
 void GameEnd()
@@ -187,11 +202,10 @@ void GameCycle()
 }
 
 void GamePaint(QPainter *painter)
-{    
+{
     QTransform transform;
     transform.translate(_camera.x(), _camera.y());
     painter->setWorldTransform(transform);
-
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
     // Test
@@ -273,56 +287,17 @@ void mainMenu(QPainter* painter)
 {    
     if (!_isMainMenuInitialize)
     {
-        // Read resources
-        QString filename("./res/levels/MapWorldView/MapWorldView.resrc.xml");
-        OGResourceConfig resConfig(filename);
+        readGameConfiguration();
 
-        if (resConfig.Open())
-        {
-            if (resConfig.Read())
-            {
-                resConfig.Parser(_resources);
-            }
-            else {logWarn("File " + filename + " is corrupted"); }
-        }
-        else { logWarn("File " + filename +" not found"); }
-
-        // Read level
-        filename = "./res/levels/MapWorldView/MapWorldView.level.xml";
-        OGLevelConfig levelConfig(filename);
-
-        if (levelConfig.Open())
-        {
-            if (levelConfig.Read())
-            {
-                levelConfig.Parser(_level);
-            }
-            else {logWarn("File " + filename + " is corrupted"); }
-        }
-        else { logWarn("File " + filename +" not found"); }
-
-        // Read scene
-        filename = "./res/levels/MapWorldView/MapWorldView.scene.xml";
-        OGSceneConfig sceneConfig(filename);
-
-        if (sceneConfig.Open())
-        {
-            if (sceneConfig.Read())
-            {
-                sceneConfig.Parser(_scene);
-            }
-            else {logWarn("File " + filename + " is corrupted"); }
-        }
-        else { logWarn("File " + filename +" not found"); }
-
+        // Create scene
         for (int i=0; i<_scene.sceneLayers.size(); i++)
         {
             // Create sprite
             OGSprite sprite;
 
             sprite.color = _scene.sceneLayers.at(i).colorize;
-            sprite.scale.setX(_scene.sceneLayers.at(i).scalex);
-            sprite.scale.setY(_scene.sceneLayers.at(i).scaley);
+            sprite.scale.setX(_scene.sceneLayers.at(i).scale.x);
+            sprite.scale.setY(_scene.sceneLayers.at(i).scale.y);
             sprite.opacity = _scene.sceneLayers.at(i).alpha;
             sprite.rotation = _scene.sceneLayers.at(i).rotation;
             sprite.depth = _scene.sceneLayers.at(i).depth;
@@ -330,8 +305,8 @@ void mainMenu(QPainter* painter)
             createSprite(&sprite, _scene.sceneLayers.at(i).image);
 
             // Set sprite position
-            qreal sceneX = _scene.sceneLayers.at(i).x;
-            qreal sceneY = _scene.sceneLayers.at(i).y;
+            qreal sceneX = _scene.sceneLayers.at(i).position.x();
+            qreal sceneY = _scene.sceneLayers.at(i).position.y();
             qreal width = sprite.sprite.width();
             qreal height = sprite.sprite.height();
             qreal posX= (qAbs(_scene.minx) + sceneX) - width * 0.5;
@@ -350,7 +325,7 @@ void mainMenu(QPainter* painter)
 
         while(first < --last)
         {
-            for(i=_resSprites.begin(); i < _resSprites.end(); ++i)
+            for(i=first; i < last; ++i)
             {
                if ( (i+1)->depth < i->depth)
                {
@@ -360,13 +335,12 @@ void mainMenu(QPainter* painter)
         }
 
         //initialize camera
-        qreal camX = _level.cameras.at(0).pos.x();
-        qreal camY = _level.cameras.at(0).pos.y();
+        qreal camX = _level.camera.at(0).poi.at(0).position.x();
+        qreal camY = _level.camera.at(0).poi.at(0).position.y();
         qreal width = _gameEngine->getWidth();
         qreal height = _gameEngine->getHeight();
         qreal posX = -(qAbs(_scene.minx) + camX - width * 0.5);
         qreal posY = _scene.maxy - camY - height * 0.5;
-
         _camera.setX(posX);
         _camera.setY(posY);
         _camera.setSize(QSize(width, height));
@@ -374,42 +348,27 @@ void mainMenu(QPainter* painter)
         _isMainMenuInitialize = true;
     }
 
+    // Set background
     glClearColor(
-                _scene.backgroundcolor.red()
-                , _scene.backgroundcolor.green()
-                , _scene.backgroundcolor.blue()
-                , 1
+                _scene.backgroundcolor.red(),
+                _scene.backgroundcolor.green(),
+                _scene.backgroundcolor.blue(),
+                1
                 );
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-
-    for (int i = _scene.sceneLayers.size()-1; i >= 0; i--)
+    // Draw scene
+    for (int i=0; i< _scene.sceneLayers.size(); i++)
     {
         painter->setOpacity(_resSprites.at(i).opacity);
         painter->drawPixmap(_resSprites.at(i).pos, _resSprites.at(i).sprite);
     }
 }
 
-QString getResource(OGResource::Type type, const QString & id)
-{
-    for (int i=0; i<_resources.size(); i++)
-    {
-        if (_resources.at(i).type == type)
-        {
-            if (_resources.at(i).id == id)
-            {
-                return _resources.at(i).path;
-            }
-        }
-    }
-
-    return QString();
-}
-
 void createSprite(OGSprite* sprite, const QString & image)
 {
-    QImage source(getResource(OGResource::IMAGE, image) +".png");
+    QImage source(_resources.GetResource(OGResource::IMAGE, image) +".png");
 
     QTransform transform;
     transform.scale(sprite->scale.x(), sprite->scale.y());
@@ -431,7 +390,6 @@ void createSprite(OGSprite* sprite, const QString & image)
 
     if (!source.hasAlphaChannel())
     {
-
         painter.setCompositionMode(QPainter::CompositionMode_Multiply);
         painter.fillRect(target.rect(), sprite->color);
     }
@@ -448,3 +406,47 @@ void createSprite(OGSprite* sprite, const QString & image)
     sprite->sprite = QPixmap::fromImage(target);
 }
 
+void readGameConfiguration()
+{
+    // Read resources
+    QString filename("./res/levels/MapWorldView/MapWorldView.resrc.xml");
+    OGResourceConfig resConfig(filename);
+
+    if (resConfig.Open())
+    {
+        if (resConfig.Read())
+        {            
+            _resources = resConfig.Parser();
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else { logWarn("File " + filename +" not found"); }
+
+    // Read level
+    filename = "./res/levels/MapWorldView/MapWorldView.level.xml";
+    OGLevelConfig levelConfig(filename);
+
+    if (levelConfig.Open())
+    {
+        if (levelConfig.Read())
+        {
+            _level = levelConfig.Parser();
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else { logWarn("File " + filename +" not found"); }
+
+    // Read scene
+    filename = "./res/levels/MapWorldView/MapWorldView.scene.xml";
+    OGSceneConfig sceneConfig(filename);
+
+    if (sceneConfig.Open())
+    {
+        if (sceneConfig.Read())
+        {
+            _scene = sceneConfig.Parser();
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else { logWarn("File " + filename +" not found"); }
+}

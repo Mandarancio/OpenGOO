@@ -6,18 +6,28 @@ OGTextConfig::OGTextConfig(const QString & filename)
     SetRootTag("strings");
 }
 
-void OGTextConfig::Parser(QList <OGText > & strings)
+OGStringList OGTextConfig::Parser()
 {
-    for(QDomNode n = rootElement.firstChild(); !n.isNull(); n = n.nextSibling())
+    OGStringList strings;
+
+    for(QDomNode n=rootElement.firstChild(); !n.isNull(); n=n.nextSibling())
     {
         QDomElement domElement = n.toElement();
 
         if (domElement.tagName() == "string")
         {
-            QString id = domElement.attribute("id", "");
-            QString text = domElement.attribute("text", "");
+            OGString str = {
+                domElement.attribute("id", ""),
+                domElement.attribute("text", ""),
+                domElement.attribute("es", ""),
+                domElement.attribute("fr", ""),
+                domElement.attribute("de", ""),
+                domElement.attribute("it", "")
+            };
 
-            strings << OGText(id, text);
+            strings << str;
         }
     }
+
+    return strings;
 }

@@ -84,10 +84,8 @@ void OGWindow::swapBuffers()
 
 bool OGWindow::initOpenGL_()
 {
-    QSurfaceFormat format;
-    format.setProfile(QSurfaceFormat::CompatibilityProfile);
     context_ = new QOpenGLContext(this);
-    context_->setFormat(format);
+    context_->setFormat(requestedFormat());
     context_->create();
     context_->makeCurrent(this);
 

@@ -7,15 +7,15 @@ struct OGConfig
 {
     int screen_width;
     int screen_height;
-    QString language;
     bool fullscreen;
+    QString language;    
 };
 
 class OGGameConfig : public OGXmlConfig
 {
 public:
     OGGameConfig(const QString & filename);
-    void Parser(OGConfig & config);
+    OGConfig Parser();
     void Create(OGConfig & config); // Create new game configuration file
 };
 

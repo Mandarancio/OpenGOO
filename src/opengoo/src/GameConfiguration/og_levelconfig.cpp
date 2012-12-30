@@ -6,9 +6,23 @@ OGLevelConfig::OGLevelConfig(const QString & filename)
     SetRootTag("level");
 }
 
-void OGLevelConfig::Parser(OGLevel & level)
+OGLevel OGLevelConfig::Parser()
 {
-    for(QDomNode n = rootElement.firstChild(); !n.isNull(); n = n.nextSibling())
+    OGLevel level;
+
+    level.ballsrequired = rootElement.attribute("ballsrequired").toInt();    
+    level.letterboxed = StringToBool(rootElement.attribute("letterboxed"));
+    level.visualdebug = StringToBool(rootElement.attribute("visualdebug"));
+    level.autobounds = StringToBool(rootElement.attribute("autobounds"));
+    level.textcolor = StringToColor(rootElement.attribute("textcolor"));
+    level.texteffects = StringToBool(rootElement.attribute("texteffects"));
+    level.timebugprobability =
+            rootElement.attribute("timebugprobability").toDouble();
+
+    level.strandgeom = StringToBool(rootElement.attribute("strandgeom"));
+    level.allowskip = StringToBool(rootElement.attribute("allowskip"));
+
+    for(QDomNode n=rootElement.firstChild(); !n.isNull(); n=n.nextSibling())
     {
         QDomElement domElement = n.toElement();
 
@@ -16,26 +30,49 @@ void OGLevelConfig::Parser(OGLevel & level)
         {
             OGCamera camera;
 
-            camera.aspect = domElement.attribute("aspect", "");
+            camera.aspect = domElement.attribute("aspect");            
+            camera.endpos = StringToPoint(domElement.attribute("endpos"));
+            camera.endzoom = domElement.attribute("endzoom").toDouble();
 
             QDomNode node = domElement.firstChild();
-
             QDomElement element = node.toElement();
 
             if (element.tagName() == "poi")
             {
-                QStringList posList(element.attribute("pos", "").split(","));
-                camera.pos.setX(posList.at(0).toDouble());
-                camera.pos.setY(posList.at(1).toDouble());
+                OGPoi poi;
+
+                poi.position = StringToPoint(element.attribute("pos"));
+                poi.traveltime = element.attribute("traveltime").toDouble();
+                poi.pause = element.attribute("pause").toDouble();
+                poi.zoom = element.attribute("zoom").toDouble();
+
+                camera.poi << poi;
             }
 
-            level.cameras << camera;
+            level.camera << camera;
         }
         else if (domElement.tagName() == "music")
         {
-            level.music = domElement.attribute("music", "");
+            level.music.id = domElement.attribute("music");
+        }
+        else if (domElement.tagName() == "BallInstance")
+        {
+            OGBallInstance ball;
+
+            ball.type = domElement.attribute("type");
+            ball.position =
+                    StringToPoint(
+                        domElement.attribute("x"),
+                        domElement.attribute("y")
+                        );
+
+            ball.id = domElement.attribute("id");
+            ball.angle = domElement.attribute("angle").toDouble();
+            ball.discovered = StringToBool(domElement.attribute("discovered"));
+
+            level.ball << ball;
         }
     }
+
+    return level;
 }
-
-

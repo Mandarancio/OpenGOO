@@ -8,7 +8,7 @@ OGVideoMode OGVideoMode::getCurrentMode()
 
 bool OGVideoMode::testVideoMode(int width, int height)
 {
-    return native_setVideoMode(width, height);
+    return native_testVideoMode(width, height);
 }
 
 bool OGVideoMode::setVideoMode(int width, int height)

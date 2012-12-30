@@ -5,12 +5,7 @@
 
 #include <QDir>
 
-#include "og_gameconfig.h"
-#include "og_resourceconfig.h"
-#include "og_videomode.h"
-#include "og_textconfig.h"
-#include "og_sceneconfig.h"
-#include "og_levelconfig.h"
+#include <OGConfiguration>
 
 struct OGSprite
 {
@@ -26,8 +21,8 @@ struct OGSprite
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 OGGameEngine* _gameEngine;
-QList <OGResource> _resources;
-QList <OGText> _strings;
+OGResources _resources;
+OGStringList _strings;
 QList <OGSprite> _resSprites;
 bool _isMainMenu;
 bool _isMainMenuInitialize;
@@ -37,11 +32,19 @@ OGVideoMode _vm;
 OGScene _scene;
 OGLevel _level;
 
-
+// Default settings
+OGConfig _config = {
+    800,    // width
+    600,    // height
+    true,   // fullscreen
+    ""      // language
+};
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 void mainMenu(QPainter* painter);
-QString gGetResource(OGResource::Type type, const QString & id);
 void createSprite(OGSprite* sprite, const QString & image);
+void readGameConfiguration();
+
+#define UNIMPLEMENTED qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
 
 #endif // OPENGOO_H

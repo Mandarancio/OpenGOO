@@ -3,20 +3,24 @@
 
 #include "og_xmlconfig.h"
 
-struct OGText
+struct OGString
 {
-    OGText(QString id, QString text) : id(id), text(text) {}
-
     QString id;
     QString text;
+    QString es;
+    QString fr;
+    QString de;
+    QString it;
 };
+
+typedef  QList<OGString> OGStringList;
 
 class OGTextConfig : public OGXmlConfig
 {
 public:
     OGTextConfig(const QString & filename);
 
-    void Parser(QList <OGText > & strings);
+    OGStringList Parser();
 };
 
 #endif // OG_TEXTCONFIG_H
