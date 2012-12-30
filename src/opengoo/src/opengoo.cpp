@@ -120,7 +120,7 @@ bool GameInitialize(int argc, char **argv)
 #else
     _gameEngine =
             new OGGameEngine(
-                config.screen_width,
+                _config.screen_width,
                 _config.screen_height,
                 false
                 );
