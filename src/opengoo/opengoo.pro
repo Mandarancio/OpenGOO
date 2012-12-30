@@ -199,7 +199,8 @@ SOURCES += \
     src/GameConfiguration/og_resourceconfig.cpp \
     src/GameConfiguration/og_textconfig.cpp \
     src/GameConfiguration/og_sceneconfig.cpp \
-    src/GameConfiguration/og_levelconfig.cpp
+    src/GameConfiguration/og_levelconfig.cpp \
+    src/GameConfiguration/og_resources.cpp
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
@@ -207,7 +208,8 @@ HEADERS += \
     src/GameConfiguration/og_resourceconfig.h \
     src/GameConfiguration/og_textconfig.h \
     src/GameConfiguration/og_sceneconfig.h \
-    src/GameConfiguration/og_levelconfig.h
+    src/GameConfiguration/og_levelconfig.h \
+    src/GameConfiguration/og_resources.h
 
 !win32{
 HEADERS += src/backtracer.h
