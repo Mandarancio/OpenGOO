@@ -12,6 +12,5 @@ win32:{
 SUBDIRS += libogg \
           libvorbis \
           openal \
-#          freealut
 }
 

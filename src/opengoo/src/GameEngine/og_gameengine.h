@@ -23,6 +23,8 @@ class OGGameEngine : public QObject
 {
     Q_OBJECT
 
+    bool isVideoModeSupported_;
+
 protected:
     static OGGameEngine* gameEngine_;
     int width_, height_;
@@ -42,9 +44,9 @@ public:
 
     OGWindow* getWindow() const { return window_; }
 
-    int getWidth() { return width_; }
-    int getHeight() { return height_; }
-    int getFrameDelay() { return frameDelay_; }
+    int getWidth() const { return width_; }
+    int getHeight() const { return height_; }
+    int getFrameDelay() const { return frameDelay_; }
 
 public slots:
     void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 /framerate); }

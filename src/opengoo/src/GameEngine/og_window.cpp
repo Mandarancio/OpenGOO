@@ -11,6 +11,14 @@ OGWindow::OGWindow(QWindow* parent)
     isGameStarted_ = false;
     isVideoInit_ = false;    
     setSurfaceType(QWindow::OpenGLSurface);
+
+    Qt::WindowFlags flags = Qt::Window;
+    flags |= Qt::WindowTitleHint;
+    flags |= Qt::WindowSystemMenuHint;
+    flags |= Qt::WindowMinimizeButtonHint;
+    flags |= Qt::WindowCloseButtonHint;
+
+    setFlags(flags);
 }
 
 OGWindow::~OGWindow()

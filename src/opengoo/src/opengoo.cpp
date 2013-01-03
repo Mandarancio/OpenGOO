@@ -139,26 +139,6 @@ void GameStart()
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
     _gameEngine->getWindow()->setCursor(Qt::BlankCursor);
 
-    //initialize video mode
-#ifdef Q_OS_WIN32
-        _vm = OGVideoMode::getCurrentMode();
-
-        _isVideoModeSupported =
-                OGVideoMode::testVideoMode(
-                    _gameEngine->getWidth(),
-                    _gameEngine->getHeight()
-                    );
-
-        if (_isVideoModeSupported)
-        {
-            OGVideoMode::setVideoMode(
-                        _gameEngine->getWidth(),
-                        _gameEngine->getHeight()
-                        );
-        }
-        else { logWarn("Video mode not supported"); }
-#endif // Q_OS_WIN32
-
     // Read text
     QString filename = "./properties/text.xml";
     OGTextConfig textConfig(filename);
@@ -187,12 +167,6 @@ void GameStart()
 
 void GameEnd()
 {
-#ifdef Q_OS_WIN32
-    if (_isVideoModeSupported)
-    {
-        OGVideoMode::setVideoMode(_vm.width(), _vm.height());
-    }
-#endif // Q_OS_WIN32
     delete _gameEngine;
 }
 

@@ -16,7 +16,9 @@ public:
         , frequency_(frequency) {}
 
     static OGVideoMode getCurrentMode();
+    static bool returnDefaultMode();
     static bool setVideoMode(int width, int height);
+    static bool setVideoMode(const OGVideoMode & mode);
     static bool testVideoMode(int width, int height);
 
     int width() const { return width_; }

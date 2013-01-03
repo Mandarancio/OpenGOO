@@ -26,9 +26,7 @@ OGStringList _strings;
 QList <OGSprite> _resSprites;
 bool _isMainMenu;
 bool _isMainMenuInitialize;
-bool _isVideoModeSupported;
 QRectF _camera;
-OGVideoMode _vm;
 OGScene _scene;
 OGLevel _level;
 
