@@ -21,54 +21,134 @@ OGScene OGSceneConfig::Parser()
         QDomElement domElement = n.toElement();
 
         if (domElement.tagName() == "SceneLayer")
-        {
-            OGSceneLayer sceneLayer;
-
-            sceneLayer.id = domElement.attribute("id");
-            sceneLayer.name = domElement.attribute("name");
-            sceneLayer.depth = domElement.attribute("depth").toDouble();
-            sceneLayer.position.setX(domElement.attribute("x").toDouble());
-            sceneLayer.position.setY(domElement.attribute("y").toDouble());
-            sceneLayer.scale.x = domElement.attribute("scalex").toDouble();
-            sceneLayer.scale.y = domElement.attribute("scaley").toDouble();
-            sceneLayer.rotation =
-                    domElement.attribute("rotation").toDouble();
-
-            sceneLayer.alpha = domElement.attribute("alpha").toDouble();
-            sceneLayer.colorize =
-                    StringToColor(domElement.attribute("colorize"));
-
-            sceneLayer.image = domElement.attribute("image");
-            sceneLayer.anim = domElement.attribute("anim");
-            sceneLayer.animspeed =
-                    domElement.attribute("animspeed").toDouble();
-
-            scene.sceneLayers << sceneLayer;
+        {            
+            scene.sceneLayer << CreateSceneLayer(domElement);
         }
         else if (domElement.tagName() == "label")
+        {            
+            scene.label << CreateLabel(domElement);
+        }
+        else if (domElement.tagName() == "buttongroup")
         {
-            OGLabel label;
+            OGButtonGroup btnGroup;
 
-            label.id = domElement.attribute("id");
-            label.depth = domElement.attribute("depth").toDouble();
-            label.position =
-                    StringToPoint(
-                        domElement.attribute("x"),
-                        domElement.attribute("y"));
+            btnGroup.id = domElement.attribute("id");
+            btnGroup.osx = StringToPoint(domElement.attribute("osx"));
 
-            label.align = domElement.attribute("align");
-            label.rotation = domElement.attribute("rotation").toDouble();
-            label.scale = domElement.attribute("scale").toDouble();
-            label.overlay = StringToBool(domElement.attribute("overlay"));
-            label.screenspace =
-                    StringToBool(domElement.attribute("screenspace"));
+            QDomNode btnNode = domElement.firstChild();
 
-            label.font = domElement.attribute("font");
-            label.text = domElement.attribute("text");
+            for(; !btnNode.isNull(); btnNode=btnNode.nextSibling())
+            {
+                btnGroup.button << CreateButton(btnNode.toElement());
+            }
 
-            scene.labels << label;
+            scene.buttongroup << btnGroup;
+        }
+        else if (domElement.tagName() == "button")
+        {
+            scene.button << CreateButton(domElement);
+        }
+        else if (domElement.tagName() == "radialforcefield")
+        {
+
+        }
+        else if (domElement.tagName() == "linearforcefield")
+        {
+
+        }
+        else if (domElement.tagName() == "particles")
+        {
+
+        }
+        else if (domElement.tagName() == "circle")
+        {
+
+        }
+        else if (domElement.tagName() == "line")
+        {
+
         }
     }
 
     return scene;
+}
+
+OGButton OGSceneConfig::CreateButton(const QDomElement & element)
+{
+    OGButton button = {
+        element.attribute("id"),
+        element.attribute("depth").toDouble(),
+        StringToPoint(
+        element.attribute("x"),
+        element.attribute("y")
+        ),
+
+        StringToPoint(
+        element.attribute("scalex"),
+        element.attribute("scaley")
+        ),
+
+        element.attribute("rotation").toDouble(),
+        element.attribute("alpha").toDouble(),
+        StringToColor(element.attribute("colorize")),
+        element.attribute("up"),
+        element.attribute("over"),
+        element.attribute("disabled"),
+        element.attribute("onclick"),
+        element.attribute("onmouseenter"),
+        element.attribute("onmouseexit")
+    };
+
+    return button;
+}
+
+OGLabel OGSceneConfig::CreateLabel(const QDomElement & element)
+{
+    OGLabel label = {
+        element.attribute("id"),
+        element.attribute("depth").toDouble(),
+        // position
+        StringToPoint(
+        element.attribute("x"),
+        element.attribute("y")
+        ),
+
+        element.attribute("align"),
+        element.attribute("rotation").toDouble(),
+        element.attribute("scale").toDouble(),
+        StringToBool(element.attribute("overlay")),
+        StringToBool(element.attribute("screenspace")),
+        element.attribute("font"),
+        element.attribute("text")
+    };
+
+    return label;
+}
+
+OGSceneLayer OGSceneConfig::CreateSceneLayer(const QDomElement & element)
+{
+    OGSceneLayer sceneLayer = {
+        element.attribute("id"),
+        element.attribute("name"),
+        element.attribute("depth").toDouble(),
+        // position;
+        StringToPoint(
+        element.attribute("x"),
+        element.attribute("y")
+        ),
+        // scale
+        StringToPoint(
+        element.attribute("scalex"),
+        element.attribute("scaley")
+        ),
+
+        element.attribute("rotation").toDouble(),
+        element.attribute("alpha").toDouble(),
+        StringToColor(element.attribute("colorize")),
+        element.attribute("image"),
+        element.attribute("anim"),
+        element.attribute("animspeed").toDouble()
+    };
+
+    return sceneLayer;
 }

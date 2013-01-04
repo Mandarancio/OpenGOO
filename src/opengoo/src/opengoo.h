@@ -9,8 +9,8 @@
 
 struct OGSprite
 {
-    QPointF pos;
-    QPointF scale;
+    OGPosition pos;
+    OGScale scale;
     qreal rotation;
     QPixmap sprite;
     qreal depth;

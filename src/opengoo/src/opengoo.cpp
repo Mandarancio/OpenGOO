@@ -264,35 +264,34 @@ void mainMenu(QPainter* painter)
         readGameConfiguration();
 
         // Create scene
-        for (int i=0; i<_scene.sceneLayers.size(); i++)
+        for (int i=0; i<_scene.sceneLayer.size(); i++)
         {
             // Create sprite
             OGSprite sprite;
 
-            sprite.color = _scene.sceneLayers.at(i).colorize;
-            sprite.scale.setX(_scene.sceneLayers.at(i).scale.x);
-            sprite.scale.setY(_scene.sceneLayers.at(i).scale.y);
-            sprite.opacity = _scene.sceneLayers.at(i).alpha;
-            sprite.rotation = _scene.sceneLayers.at(i).rotation;
-            sprite.depth = _scene.sceneLayers.at(i).depth;
+            sprite.color = _scene.sceneLayer.at(i).colorize;
+            sprite.scale= _scene.sceneLayer.at(i).scale;
 
-            createSprite(&sprite, _scene.sceneLayers.at(i).image);
+            sprite.opacity = _scene.sceneLayer.at(i).alpha;
+            sprite.rotation = _scene.sceneLayer.at(i).rotation;
+            sprite.depth = _scene.sceneLayer.at(i).depth;
+
+            createSprite(&sprite, _scene.sceneLayer.at(i).image);
 
             // Set sprite position
-            qreal sceneX = _scene.sceneLayers.at(i).position.x();
-            qreal sceneY = _scene.sceneLayers.at(i).position.y();
+            OGPosition pos = _scene.sceneLayer.at(i).position;
             qreal width = sprite.sprite.width();
-            qreal height = sprite.sprite.height();
-            qreal posX= (qAbs(_scene.minx) + sceneX) - width * 0.5;
-            qreal posY= (_scene.maxy - sceneY) - height * 0.5;
-            sprite.pos.setX(posX);
-            sprite.pos.setY(posY);
+            qreal height = sprite.sprite.height();            
+            sprite.pos.setX((qAbs(_scene.minx) + pos.x()) - width * 0.5);
+            sprite.pos.setY((_scene.maxy - pos.y()) - height * 0.5);
 
             // Put sprite into list
             _resSprites << sprite;
         }
 
         // Create Z-order
+        // Bubble sort
+        // Source http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Bubble_sort#C.2B.2B
         QList <OGSprite>::iterator first = _resSprites.begin();
         QList <OGSprite>::iterator last = _resSprites.end();
         QList <OGSprite>::iterator i;
@@ -333,7 +332,7 @@ void mainMenu(QPainter* painter)
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Draw scene
-    for (int i=0; i< _scene.sceneLayers.size(); i++)
+    for (int i=0; i< _scene.sceneLayer.size(); i++)
     {
         painter->setOpacity(_resSprites.at(i).opacity);
         painter->drawPixmap(_resSprites.at(i).pos, _resSprites.at(i).sprite);

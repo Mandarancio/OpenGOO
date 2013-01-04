@@ -6,18 +6,15 @@
 #include <QColor>
 #include <QPointF>
 
-struct OGScale
-{
-    qreal x;
-    qreal y;
-};
+typedef QPointF OGScale;
+typedef QPointF OGPosition;
 
 struct OGSceneLayer
 {
     QString id;
     QString name;
     qreal depth;
-    QPoint position;
+    OGPosition position;
     OGScale scale;
     qreal rotation;
     qreal alpha;
@@ -31,7 +28,7 @@ struct OGLabel
 {
     QString id;
     qreal depth;
-    QPointF position;
+    OGPosition position;
     QString align;
     qreal rotation;
     qreal scale;
@@ -47,7 +44,7 @@ struct OGRadialForceField
 {
     QString id;
     QString type;
-    QPointF center;
+    OGPosition center;
     qreal radius;
     qreal forceatcenter;
     qreal forceatedge;
@@ -70,23 +67,17 @@ struct OGParticle
 {
     QString effect;
     qreal depth;
-    QPointF position;
+    OGPosition position;
     qreal pretick;
 };
 
 // Buttons
 
-struct OGButtonGroup
-{
-    QString id;
-    QPointF osx;
-};
-
 struct OGButton
 {
     QString id;
     qreal depth;
-    QPointF position;
+    OGPosition position;
     OGScale scale;
     qreal rotation;
     qreal alpha;
@@ -99,6 +90,13 @@ struct OGButton
     QString onmouseexit;
 };
 
+struct OGButtonGroup
+{
+    QString id;
+    OGPosition osx;
+    QList<OGButton> button;
+};
+
 // Static Geometry
 
 struct OGCircle
@@ -107,7 +105,7 @@ struct OGCircle
     bool stat; // static
     QString tag;
     QString material;
-    QPointF position;
+    OGPosition position;
     qreal radius;
 };
 
@@ -117,8 +115,8 @@ struct OGLine
     bool stat; // static
     QString tag;
     QString material;
-    QPointF anchor;
-    QPointF normal;
+    OGPosition anchor;
+    OGPosition normal;
 };
 
 struct OGScene
@@ -128,8 +126,10 @@ struct OGScene
     qreal maxx;
     qreal maxy;
     QColor backgroundcolor;
-    QList <OGSceneLayer> sceneLayers;
-    QList <OGLabel> labels;
+    QList<OGButton> button;
+    QList<OGSceneLayer> sceneLayer;
+    QList<OGLabel> label;
+    QList<OGButtonGroup> buttongroup;
 };
 
 class OGSceneConfig : public OGXmlConfig
@@ -138,6 +138,11 @@ public:
     OGSceneConfig(const QString & filename);
 
     OGScene Parser();
+
+private:
+    OGButton CreateButton(const QDomElement & element);
+    OGLabel CreateLabel(const QDomElement & element);
+    OGSceneLayer CreateSceneLayer(const QDomElement & element);
 };
 
 #endif // OG_SCENECONFIG_H
