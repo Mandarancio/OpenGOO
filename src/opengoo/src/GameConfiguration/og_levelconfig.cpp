@@ -35,18 +35,22 @@ OGLevel OGLevelConfig::Parser()
             camera.endzoom = domElement.attribute("endzoom").toDouble();
 
             QDomNode node = domElement.firstChild();
-            QDomElement element = node.toElement();
 
-            if (element.tagName() == "poi")
+            for (; !node.isNull(); node=node.nextSibling())
             {
-                OGPoi poi;
+                QDomElement element = node.toElement();
 
-                poi.position = StringToPoint(element.attribute("pos"));
-                poi.traveltime = element.attribute("traveltime").toDouble();
-                poi.pause = element.attribute("pause").toDouble();
-                poi.zoom = element.attribute("zoom").toDouble();
+                if (element.tagName() == "poi")
+                {
+                    OGPoi poi = {
+                        StringToPoint(element.attribute("pos")),
+                        element.attribute("traveltime").toDouble(),
+                        element.attribute("pause").toDouble(),
+                        element.attribute("zoom").toDouble()
+                    };
 
-                camera.poi << poi;
+                    camera.poi << poi;
+                }
             }
 
             level.camera << camera;

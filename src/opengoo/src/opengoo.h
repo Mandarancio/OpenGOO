@@ -7,28 +7,52 @@
 
 #include <OGConfiguration>
 
+typedef QList<OGButton> OGButtonList;
+
+enum OGAction {UP, OVER, DISABLED};
+
 struct OGSprite
 {
-    OGPosition pos;
+    OGPosition position;
     OGScale scale;
     qreal rotation;
     QPixmap sprite;
     qreal depth;
     QColor color;
     qreal opacity;
+    QSize size;
 };
+
+struct Camera
+{
+    OGPosition position;
+    qreal zoom;
+    OGPosition logPosition;
+};
+
+struct Scroll
+{
+    bool up;
+    bool down;
+    bool left;
+    bool right;
+};
+
+typedef QList<OGSprite> OGSpriteList;
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 OGGameEngine* _gameEngine;
 OGResources _resources;
 OGStringList _strings;
-QList <OGSprite> _resSprites;
-bool _isMainMenu;
-bool _isMainMenuInitialize;
-QRectF _camera;
+OGSpriteList _resSprites;
+OGButtonList _buttons;
+bool _isLevelInitialize;
+Camera _camera;
 OGScene _scene;
 OGLevel _level;
+QString _levelname;
+Scroll _scroll;
 
 // Default settings
 OGConfig _config = {
@@ -39,9 +63,12 @@ OGConfig _config = {
 };
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
-void mainMenu(QPainter* painter);
+void createScene(const QString & levelname);
 void createSprite(OGSprite* sprite, const QString & image);
-void readGameConfiguration();
+void readGameConfiguration(const QString & level);
+void createButton(const OGButton & button, OGAction action);
+void scroll();
+void zoom(int direct);
 
 #define UNIMPLEMENTED qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
 

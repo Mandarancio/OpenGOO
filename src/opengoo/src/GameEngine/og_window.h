@@ -8,6 +8,7 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QWheelEvent>
 
 class OGWindow : public QWindow
 {
@@ -32,6 +33,7 @@ protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
+    void wheelEvent(QWheelEvent * event);
 
 private:
     bool isGameStarted_;

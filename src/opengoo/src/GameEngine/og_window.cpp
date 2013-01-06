@@ -74,12 +74,12 @@ QPainter* OGWindow::getPainter()
     if (isVideoInit_)
     {
         context_->makeCurrent(this);
-        paintDevice_->setSize(QSize(width(), height()));
-        QPainter* painter = new QPainter(paintDevice_);
+        paintDevice_->setSize(QSize(width(), height()));        
 
-        return painter;
+        return new QPainter(paintDevice_);
     }
     else { return 0; }
+
 }
 
 void OGWindow::swapBuffers()
@@ -148,4 +148,9 @@ void OGWindow::mouseReleaseEvent(QMouseEvent* event)
 void OGWindow::mouseMoveEvent(QMouseEvent* event)
 {
     MouseMove(event);
+}
+
+void OGWindow::wheelEvent(QWheelEvent * event)
+{
+    MouseWheel(event);
 }

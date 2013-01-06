@@ -18,6 +18,7 @@ void HandleKeys(QKeyEvent *event);
 void MouseButtonDown(QMouseEvent *event);
 void MouseButtonUp(QMouseEvent *event);
 void MouseMove(QMouseEvent* event);
+void MouseWheel(QWheelEvent* event);
 
 class OGGameEngine : public QObject
 {
