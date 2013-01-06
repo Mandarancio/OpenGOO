@@ -27,7 +27,6 @@ struct Camera
 {
     OGPosition position;
     qreal zoom;
-    OGPosition logPosition;
 };
 
 struct Scroll
@@ -38,6 +37,13 @@ struct Scroll
     bool right;
 };
 
+struct Button
+{
+    OGPosition position;
+    QSize size;
+    QString action;
+};
+
 typedef QList<OGSprite> OGSpriteList;
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
@@ -46,7 +52,7 @@ OGGameEngine* _gameEngine;
 OGResources _resources;
 OGStringList _strings;
 OGSpriteList _resSprites;
-OGButtonList _buttons;
+QList<Button> _buttons;
 bool _isLevelInitialize;
 Camera _camera;
 OGScene _scene;
@@ -69,6 +75,7 @@ void readGameConfiguration(const QString & level);
 void createButton(const OGButton & button, OGAction action);
 void scroll();
 void zoom(int direct);
+void visualDebug(QPainter * painter);
 
 #define UNIMPLEMENTED qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
 

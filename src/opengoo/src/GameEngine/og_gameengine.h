@@ -53,6 +53,8 @@ public slots:
     void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 /framerate); }
     void changeFrameRate();
     void gameLoop();
+
+private slots:
     void gameExit();
 };
 

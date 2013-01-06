@@ -176,7 +176,7 @@ void GameCycle()
     _gameEngine->getWindow()->render();
 }
 
-void GamePaint(QPainter *painter)
+void GamePaint(QPainter * painter)
 {
     // Test
 
@@ -220,8 +220,10 @@ void GamePaint(QPainter *painter)
                     );
     }
 
-    painter->setOpacity(1);
-
+    if (_level.visualdebug)
+    {
+        visualDebug(painter);
+    }
 }
 
 void GameActivate()
@@ -232,7 +234,7 @@ void GameDeactivate()
 {
 }
 
-void HandleKeys(QKeyEvent *event)
+void HandleKeys(QKeyEvent * event)
 {
     switch(event->key())
     {
@@ -249,22 +251,40 @@ void HandleKeys(QKeyEvent *event)
         break;
 
     case Qt::Key_Escape:
-        _gameEngine->gameExit();
+        _gameEngine->getWindow()->close();
         break;
     }
 }
 
-void MouseButtonDown(QMouseEvent *event)
+void MouseButtonDown(QMouseEvent * event)
+{
+    for(int i=0; i < _buttons.size(); i++)
+    {
+        Button btn = _buttons.at(i);
+        qreal w = _gameEngine->getWidth()*0.5/_camera.zoom;
+        qreal h = _gameEngine->getHeight()*0.5/_camera.zoom;
+        qreal deltaX = (_camera.position.x() - w)*(-1);
+        qreal deltaY = (_camera.position.y() + h);
+        qreal btnX = btn.position.x() + deltaX - btn.size.width()*0.5;
+        qreal btnY = btn.position.y() - deltaY + btn.size.height()*0.5;
+        QRectF button(btnX , btnY*(-1.0), btn.size.width(), btn.size.height());
+
+        if(button.contains(event->pos()))
+        {
+            if (btn.action == "quit")
+            {
+             _gameEngine->getWindow()->close();
+            }
+        }
+    }
+}
+
+void MouseButtonUp(QMouseEvent * event)
 {
     Q_UNUSED(event)
 }
 
-void MouseButtonUp(QMouseEvent *event)
-{
-    Q_UNUSED(event)
-}
-
-void MouseMove(QMouseEvent* event)
+void MouseMove(QMouseEvent * event)
 {
     Q_UNUSED(event)
 
@@ -293,13 +313,11 @@ void MouseMove(QMouseEvent* event)
     }
 }
 
-void MouseWheel(QWheelEvent* event)
+void MouseWheel(QWheelEvent * event)
 {
     QPoint numDegrees = event->angleDelta() / 8;
 
-    if (numDegrees.y() > 0) {
-        zoom(-1);
-    }
+    if (numDegrees.y() > 0) { zoom(-1); }
     else { zoom(1); }
 
     event->accept();
@@ -308,7 +326,9 @@ void MouseWheel(QWheelEvent* event)
 void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
-    switch (type) {
+
+    switch (type)
+    {
     case QtDebugMsg:
         fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
         break;
@@ -455,10 +475,7 @@ void readGameConfiguration(const QString & level)
 
     if (resConfig.Open())
     {
-        if (resConfig.Read())
-        {            
-            _resources = resConfig.Parser();
-        }
+        if (resConfig.Read()) { _resources = resConfig.Parser(); }
         else {logWarn("File " + filename + " is corrupted"); }
     }
     else { logWarn("File " + filename +" not found"); }
@@ -469,11 +486,8 @@ void readGameConfiguration(const QString & level)
 
     if (levelConfig.Open())
     {
-        if (levelConfig.Read())
-        {
-            _level = levelConfig.Parser();
-        }
-        else {logWarn("File " + filename + " is corrupted"); }
+        if (levelConfig.Read()) { _level = levelConfig.Parser(); }
+        else { logWarn("File " + filename + " is corrupted"); }
     }
     else { logWarn("File " + filename +" not found"); }
 
@@ -483,10 +497,7 @@ void readGameConfiguration(const QString & level)
 
     if (sceneConfig.Open())
     {
-        if (sceneConfig.Read())
-        {
-            _scene = sceneConfig.Parser();
-        }
+        if (sceneConfig.Read()) { _scene = sceneConfig.Parser(); }
         else {logWarn("File " + filename + " is corrupted"); }
     }
     else { logWarn("File " + filename +" not found"); }
@@ -530,19 +541,25 @@ void createButton(const OGButton & button, OGAction action )
     qreal y = (pos.y() + sprite.size.height() * 0.5)*(-1);
     sprite.position = OGPosition(x, y);
 
+    Button btn = {
+        button.position
+        , sprite.size
+        , button.onclick
+    };
+
     _resSprites << sprite;
+    _buttons << btn;
 }
 
 void scroll()
 {
     const qreal SHIFT = 10;
-
-    qreal w = _gameEngine->getWidth() / _camera.zoom;
-    qreal h = _gameEngine->getHeight() / _camera.zoom;
+    qreal w = _gameEngine->getWidth()/_camera.zoom;
+    qreal h = _gameEngine->getHeight()/_camera.zoom;
 
     if (_scroll.up)
     {
-        qreal pos = _camera.position.y()+SHIFT;
+        qreal pos = _camera.position.y() + SHIFT;
 
         if (pos <= _scene.maxy - h*0.5)
         {
@@ -551,7 +568,7 @@ void scroll()
     }
     else if (_scroll.down)
     {
-        qreal pos = _camera.position.y()-SHIFT;
+        qreal pos = _camera.position.y() - SHIFT;
 
         if (pos >= _scene.miny + h*0.5)
         {
@@ -561,7 +578,7 @@ void scroll()
 
     if (_scroll.left)
     {
-        qreal pos = _camera.position.x()-SHIFT;
+        qreal pos = _camera.position.x() - SHIFT;
 
         if (pos >= _scene.minx + w*0.5)
         {
@@ -570,7 +587,7 @@ void scroll()
     }
     else if (_scroll.right)
     {
-        qreal pos = (_camera.position.x()+SHIFT);
+        qreal pos = (_camera.position.x() + SHIFT);
 
         if (pos <= _scene.maxx - w*0.5)
         {
@@ -581,7 +598,7 @@ void scroll()
 
 void zoom(int direct)
 {
-    qreal zoom = _camera.zoom  + (0.1 * direct);
+    qreal zoom = _camera.zoom  + (0.1*direct);
 
     if (
             (_scene.maxx+qAbs(_scene.minx))*zoom >= _gameEngine->getWidth()
@@ -591,4 +608,24 @@ void zoom(int direct)
     {
         _camera.zoom = zoom;
     }
+}
+
+void visualDebug(QPainter * painter)
+{
+    painter->setOpacity(1);
+    painter->setPen(Qt::yellow);
+
+    qreal w = _gameEngine->getWidth()/_camera.zoom;
+    qreal h = _gameEngine->getHeight()/_camera.zoom;
+    qreal x = (_camera.position.x() - w*0.5);
+    qreal y = (_camera.position.y() + h*0.5)*(-1);
+
+    painter->drawEllipse(QPoint(x, y), 10, 10);
+    painter->drawEllipse(QPoint(), 10, 10); // center
+    painter->drawRect(
+                x + 50.0/_camera.zoom
+                , y + 50.0/_camera.zoom
+                , w-100/_camera.zoom
+                , h-100/_camera.zoom
+                );
 }
