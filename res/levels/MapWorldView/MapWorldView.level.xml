@@ -1,33 +1,15 @@
-<level allowskip="true" autobounds="false" ballsrequired="" letterboxed="false" strandgeom="false" textcolor="255,255,255" timebugprobability="" visualdebug="false">
+<!-- Created by WooGLE v0.77 Final -->
+<level allowskip="true" autobounds="false" ballsrequired="" letterboxed="false" strandgeom="false" textcolor="255,255,255" timebugprobability="" visualdebug="true">
 
-  <!-- Camera -->
+  
   	
 	<camera aspect="normal">
 	
     <poi pause="0" pos="-64.5,300" traveltime="0" zoom="1" />
-
-  </camera>
-  
-  <camera aspect="widescreen">
+</camera>
+<camera aspect="widescreen">
   
     <poi pause="0" pos="0,300" traveltime="0" zoom="1" />
-    
-  </camera>
-  
-  <!-- Music -->
-
-	<music id="" />
-	
-	<!-- Fire -->
-
-	<!-- Signposts -->
-
-	<!-- Pipes -->
-
-	<!-- Balls -->
-	
-	<!-- Arms -->
-
-	<!-- Level Exit -->
-
+</camera>
+<music id="" />
 </level>
