@@ -163,6 +163,7 @@ void GameStart()
 
     // Default camera settings
     _camera.position = OGPosition(); // (0,0)
+    _E404 = false;
 }
 
 void GameEnd()
@@ -247,7 +248,7 @@ void KeyDown(QKeyEvent* event)
     switch(event->key())
     {
     case Qt::Key_Escape:
-        _gameEngine->getWindow()->close();
+        _E404 = false;
         break;
     }
 }
@@ -271,11 +272,14 @@ void MouseButtonDown(QMouseEvent* event)
 
         if(button.contains(event->pos()))
         {
+            _E404 = false;
+
             if (btn.action == "quit")
             {
              _gameEngine->getWindow()->close();
 
             }
+            else { _E404 = true; }
         }
     }    
 }
@@ -635,4 +639,14 @@ void visualDebug(QPainter* painter)
                 , w-100/_camera.zoom
                 , h-100/_camera.zoom
                 );
+
+    if (_E404)
+    {
+        painter->setOpacity(0.25);
+        painter->fillRect(painter->window(), Qt::black);
+        painter->setOpacity(1);
+        painter->setPen(Qt::white);
+        painter->setFont(QFont("Times", 36, QFont::Bold));
+        painter->drawText(painter->window(), Qt::AlignCenter, "UNIMPLEMENTED!!!\nEsc to return");
+    }
 }

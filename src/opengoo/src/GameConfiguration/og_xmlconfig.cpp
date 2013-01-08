@@ -1,4 +1,5 @@
 #include "og_xmlconfig.h"
+#include <QDebug>
 
 OGXmlConfig::OGXmlConfig(const QString & filename)
 {
@@ -67,11 +68,10 @@ QColor OGXmlConfig::StringToColor(const QString & color)
     QStringList list = color.split(",");
     if (list.size() == 3)
     {
-        return QColor(
-                    list.at(0).toInt(),
-                    list.at(1).toInt(),
-                    list.at(2).toInt()
-                    );
+        return QColor(list.at(0).toInt()
+                      , list.at(1).toInt()
+                      , list.at(2).toInt()
+                      );
     }
     else { return QColor(); }
 }

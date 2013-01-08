@@ -8,9 +8,12 @@
 <Image id="IMAGE_MAPWORLDVIEW_AURORA" path="res/levels/MapWorldView/aurora" />
 <Image id="IMAGE_MAPWORLDVIEW_GROUND" path="res/levels/MapWorldView/ground" />
 <Image id="IMAGE_MAPWORLDVIEW_HOUSE" path="res/levels/MapWorldView/house" />
-<Image id="IMAGE_MAPWORLDVIEW_MENU" path="res/levels/MapWorldView/menu" />
 <SetDefaults idprefix="" path="./" />
 <Sound id="" path="" />
 <Image id="IMAGE_MAPWORLDVIEW_EXIT_UP" path="res/levels/MapWorldView/exit_up" />
+<Image id="IMAGE_MAPWORLDVIEW_POST" path="res/levels/MapWorldView/post" />
+<Image id="IMAGE_MAPWORLDVIEW_LEVELS_UP" path="res/levels/MapWorldView/levels_up" />
+<Image id="IMAGE_MAPWORLDVIEW_CREDIT_UP" path="res/levels/MapWorldView/credit_up" />
+<Image id="IMAGE_MAPWORLDVIEW_CONFIG_UP" path="res/levels/MapWorldView/config_up" />
 </Resources>
 </ResourceManifest>

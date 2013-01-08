@@ -89,8 +89,8 @@ OGButton OGSceneConfig::CreateButton(const QDomElement & element)
         ),
 
         element.attribute("rotation").toDouble(),
-        element.attribute("alpha").toDouble(),
-        StringToColor(element.attribute("colorize")),
+        element.attribute("alpha", "1").toDouble(),
+        StringToColor(element.attribute("colorize", "255,255,255")),
         element.attribute("up"),
         element.attribute("over"),
         element.attribute("disabled"),
@@ -143,8 +143,8 @@ OGSceneLayer OGSceneConfig::CreateSceneLayer(const QDomElement & element)
         ),
 
         element.attribute("rotation").toDouble(),
-        element.attribute("alpha").toDouble(),
-        StringToColor(element.attribute("colorize")),
+        element.attribute("alpha", "1").toDouble(),
+        StringToColor(element.attribute("colorize", "255,255,255")),
         element.attribute("image"),
         element.attribute("anim"),
         element.attribute("animspeed").toDouble()

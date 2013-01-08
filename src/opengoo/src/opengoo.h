@@ -56,6 +56,7 @@ OGSpriteList _resSprites;
 QList<Button> _buttons;
 bool _isLevelInitialize;
 bool _isPause;
+bool _E404;
 Camera _camera;
 OGScene _scene;
 OGLevel _level;
