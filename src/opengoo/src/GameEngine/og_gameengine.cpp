@@ -22,7 +22,8 @@ int main(int argc, char **argv)
             return false;
         }
 
-        QObject::connect(&app, SIGNAL(aboutToQuit()), OGGameEngine::getEngine(), SLOT(gameExit()));
+        QObject::connect(&app, SIGNAL(aboutToQuit())
+                         , OGGameEngine::getEngine(), SLOT(gameExit()));
 
         return app.exec();
     }
@@ -63,29 +64,23 @@ bool OGGameEngine::initialize()
     window_->setMinimumSize(QSize(getWidth(), getHeight()));
 
     // Center window on screen
-    int x = qRound((screen->geometry().width() - getWidth()) / 2.);
-    int y = qRound((screen->geometry().height() - getHeight()) /2.);
+    int x = qRound((screen->geometry().width() - getWidth()) / 2.0);
+    int y = qRound((screen->geometry().height() - getHeight()) /2.0);
     window_->setGeometry(x, y, getWidth(), getHeight());
 
-    window_->setKeyboardGrabEnabled(true);
     connect(&gameCycle_, SIGNAL(timeout()), this, SLOT(gameLoop()));
 
     if (fullscreen_)
     {
     //initialize video mode
 #ifdef Q_OS_WIN32
-        isVideoModeSupported_ =
-                OGVideoMode::testVideoMode(
-                    getWidth(),
-                    getHeight()
-                    );
+        isVideoModeSupported_ = OGVideoMode::testVideoMode(getWidth()
+                                                           , getHeight()
+                                                           );
 
         if (isVideoModeSupported_)
         {
-            OGVideoMode::setVideoMode(
-                        getWidth(),
-                        getHeight()
-                        );
+            OGVideoMode::setVideoMode(getWidth(), getHeight());
 
             window_->showFullScreen();
         }
@@ -99,19 +94,23 @@ bool OGGameEngine::initialize()
     return true;
 }
 
-bool OGGameEngine::eventFilter(QObject *obj, QEvent *event)
+bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
 {
     switch (event->type())
     {
     case QEvent::ApplicationActivate:
         GameActivate();
+        window_->render();
         gameCycle_.start(frameDelay_);
+        window_->setKeyboardGrabEnabled(true);
 
         return true;
 
     case QEvent::ApplicationDeactivate:
         gameCycle_.stop();
         GameDeactivate();
+        window_->render();
+        window_->setKeyboardGrabEnabled(false);        
 
         return true;
     }

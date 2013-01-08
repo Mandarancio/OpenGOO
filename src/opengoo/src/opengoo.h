@@ -21,6 +21,7 @@ struct OGSprite
     QColor color;
     qreal opacity;
     QSize size;
+    bool visible;
 };
 
 struct Camera
@@ -54,6 +55,7 @@ OGStringList _strings;
 OGSpriteList _resSprites;
 QList<Button> _buttons;
 bool _isLevelInitialize;
+bool _isPause;
 Camera _camera;
 OGScene _scene;
 OGLevel _level;

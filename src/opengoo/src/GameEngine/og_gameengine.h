@@ -14,9 +14,10 @@ void GameActivate();
 void GameDeactivate();
 void GamePaint(QPainter* painter);
 void GameCycle();
-void HandleKeys(QKeyEvent *event);
-void MouseButtonDown(QMouseEvent *event);
-void MouseButtonUp(QMouseEvent *event);
+void KeyDown(QKeyEvent* event);
+void KeyUp(QKeyEvent* event);
+void MouseButtonDown(QMouseEvent* event);
+void MouseButtonUp(QMouseEvent* event);
 void MouseMove(QMouseEvent* event);
 void MouseWheel(QWheelEvent* event);
 
@@ -34,7 +35,7 @@ protected:
     OGWindow* window_;
     QTimer gameCycle_;
 
-    bool eventFilter(QObject *obj, QEvent *event);
+    bool eventFilter(QObject* obj, QEvent* event);
 
 public:
     OGGameEngine(int width = 640, int height = 480, bool fullscreen=false);

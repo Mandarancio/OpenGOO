@@ -176,7 +176,7 @@ void GameCycle()
     _gameEngine->getWindow()->render();
 }
 
-void GamePaint(QPainter * painter)
+void GamePaint(QPainter* painter)
 {
     // Test
 
@@ -185,16 +185,6 @@ void GamePaint(QPainter * painter)
         createScene(_levelname);
         _isLevelInitialize = true;
     }
-
-    // Set background
-    glClearColor(
-                _scene.backgroundcolor.red(),
-                _scene.backgroundcolor.green(),
-                _scene.backgroundcolor.blue(),
-                1
-                );
-
-    glClear(GL_COLOR_BUFFER_BIT);
 
     qreal w = _gameEngine->getWidth() / _camera.zoom;
     qreal h = _gameEngine->getHeight() / _camera.zoom;
@@ -205,19 +195,35 @@ void GamePaint(QPainter * painter)
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
+    // Set background
+    painter->fillRect(painter->window(), _scene.backgroundcolor);
+
     // Draw scene
     for (int i=0; i< _resSprites.size(); i++)
     {
-        painter->setOpacity(_resSprites.at(i).opacity);
-        qreal x = _resSprites.at(i).position.x();
-        qreal y = _resSprites.at(i).position.y();
-        qreal w = _resSprites.at(i).size.width();
-        qreal h = _resSprites.at(i).size.height();
-        painter->drawPixmap(
-                    QRectF(x, y, w, h)
-                    , _resSprites.at(i).sprite
-                    , _resSprites.at(i).sprite.rect()
-                    );
+        if (_resSprites.at(i).visible)
+        {
+            painter->setOpacity(_resSprites.at(i).opacity);
+            qreal x = _resSprites.at(i).position.x();
+            qreal y = _resSprites.at(i).position.y();
+            qreal w = _resSprites.at(i).size.width();
+            qreal h = _resSprites.at(i).size.height();
+            painter->drawPixmap(
+                        QRectF(x, y, w, h)
+                        , _resSprites.at(i).sprite
+                        , _resSprites.at(i).sprite.rect()
+                        );
+        }
+    }
+
+    if (_isPause)
+    {
+        painter->setOpacity(0.25);
+        painter->fillRect(painter->window(), Qt::black);
+        painter->setOpacity(1);
+        painter->setPen(Qt::white);
+        painter->setFont(QFont("Times", 48, QFont::Bold));
+        painter->drawText(painter->window(), Qt::AlignCenter, "Pause");
     }
 
     if (_level.visualdebug)
@@ -228,35 +234,29 @@ void GamePaint(QPainter * painter)
 
 void GameActivate()
 {
+    _isPause = false;
 }
 
 void GameDeactivate()
 {
+    _isPause = true;
 }
 
-void HandleKeys(QKeyEvent * event)
+void KeyDown(QKeyEvent* event)
 {
     switch(event->key())
     {
-    case Qt::Key_Left:        
-        break;
-
-    case Qt::Key_Right:        
-        break;
-
-    case Qt::Key_Up:        
-        break;
-
-    case Qt::Key_Down:       
-        break;
-
     case Qt::Key_Escape:
         _gameEngine->getWindow()->close();
         break;
     }
 }
 
-void MouseButtonDown(QMouseEvent * event)
+void KeyUp(QKeyEvent* event)
+{
+    Q_UNUSED(event)
+}
+void MouseButtonDown(QMouseEvent* event)
 {
     for(int i=0; i < _buttons.size(); i++)
     {
@@ -274,22 +274,21 @@ void MouseButtonDown(QMouseEvent * event)
             if (btn.action == "quit")
             {
              _gameEngine->getWindow()->close();
+
             }
         }
-    }
+    }    
 }
 
-void MouseButtonUp(QMouseEvent * event)
+void MouseButtonUp(QMouseEvent* event)
 {
     Q_UNUSED(event)
 }
 
-void MouseMove(QMouseEvent * event)
+void MouseMove(QMouseEvent* event)
 {
-    Q_UNUSED(event)
-
-    qreal x = event->pos().x();
-    qreal y = event->pos().y();
+    qreal x = event->windowPos().x();
+    qreal y = event->windowPos().y();
     Scroll scroll = {false, false, false, false};
     _scroll = scroll;
     const qreal OFFSET = 50.0;
@@ -311,16 +310,16 @@ void MouseMove(QMouseEvent * event)
     {
         _scroll.down = true;
     }
+
+    event->accept();
 }
 
-void MouseWheel(QWheelEvent * event)
+void MouseWheel(QWheelEvent* event)
 {
     QPoint numDegrees = event->angleDelta() / 8;
 
     if (numDegrees.y() > 0) { zoom(-1); }
     else { zoom(1); }
-
-    event->accept();
 }
 
 void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -374,6 +373,8 @@ void createScene(const QString & levelname)
         qreal x = pos.x() - sprite.size.width() * 0.5;
         qreal y = (pos.y() + sprite.size.height() * 0.5)*(-1.0);
         sprite.position = OGPosition(x, y);
+
+        sprite.visible = true;
 
         // Put sprite into list
         _resSprites << sprite;
@@ -547,6 +548,12 @@ void createButton(const OGButton & button, OGAction action )
         , button.onclick
     };
 
+    if (button.disabled.isEmpty())
+    {
+        sprite.visible = true;
+    }
+    else { sprite.visible = false; }
+
     _resSprites << sprite;
     _buttons << btn;
 }
@@ -610,7 +617,7 @@ void zoom(int direct)
     }
 }
 
-void visualDebug(QPainter * painter)
+void visualDebug(QPainter* painter)
 {
     painter->setOpacity(1);
     painter->setPen(Qt::yellow);

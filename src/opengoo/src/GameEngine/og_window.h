@@ -3,7 +3,6 @@
 
 #include <QWindow>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions>
 #include <QOpenGLPaintDevice>
 #include <QPainter>
 #include <QKeyEvent>
@@ -15,14 +14,10 @@ class OGWindow : public QWindow
     Q_OBJECT
 
 public:
-    explicit OGWindow(QWindow* parent = 0);
+    explicit OGWindow(QWindow* parent=0);
     virtual ~OGWindow();
 
-    QPainter* getPainter();
-    void swapBuffers();
     void render();
-
-public slots:
 
 protected:
     void keyReleaseEvent(QKeyEvent* event);
@@ -33,17 +28,13 @@ protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
-    void wheelEvent(QWheelEvent * event);
+    void wheelEvent(QWheelEvent* event);
 
 private:
-    bool isGameStarted_;
-    bool isVideoInit_;
-
     QOpenGLContext* context_;
-    QOpenGLFunctions* gFunctions_;
     QOpenGLPaintDevice* paintDevice_;
 
-    bool initOpenGL_();    
+    bool initOpenGL_();
 };
 
 #endif // OG_WINDOW_H
