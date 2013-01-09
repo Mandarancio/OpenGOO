@@ -1,0 +1,29 @@
+<level allowskip="true" autobounds="false" ballsrequired="1" letterboxed="false" strandgeom="false" textcolor="255,255,255" timebugprobability="0" visualdebug="true">
+
+	
+	<camera aspect="normal" endpos="0,0" endzoom="1">
+		<poi pause="0" pos="0,0" traveltime="0" zoom="1" />
+</camera>
+<camera aspect="widescreen" endpos="0,0" endzoom="1">
+		<poi pause="0" pos="0,0" traveltime="0" zoom="1" />
+</camera>
+<levelexit filter="" id="theExit" pos="-0.0,607.6" radius="75">
+	</levelexit>
+<pipe>
+<Vertex x="-0.0" y="607.6" />
+<Vertex x="-0.0" y="1100.0" />
+</pipe>
+<BallInstance angle="0" id="goo1" type="common" x="21.27792384" y="416.10162176" />
+<BallInstance angle="0" id="goo2" type="common" x="21.27792384" y="416.10162176" />
+<BallInstance angle="0" id="goo3" type="common" x="21.27792384" y="416.10162176" />
+<BallInstance angle="0" id="goo4" type="common" x="21.27792384" y="416.10162176" />
+<BallInstance angle="0" id="goo5" type="common" x="21.27792384" y="416.10162176" />
+<BallInstance angle="0" id="goo6" type="common" x="21.27792384" y="416.10162176" />
+<BallInstance angle="0" id="goo7" type="common" x="21.27792384" y="416.10162176" />
+<BallInstance angle="0" id="goo8" type="common" x="-14.19" y="172.59" />
+<BallInstance angle="0" id="goo9" type="common" x="70.93" y="59.11" />
+<BallInstance angle="0" id="goo10" type="common" x="-108.75" y="56.74" />
+<Strand gb1="goo10" gb2="goo9" />
+<Strand gb1="goo8" gb2="goo9" />
+<Strand gb1="goo8" gb2="goo10" />
+</level>

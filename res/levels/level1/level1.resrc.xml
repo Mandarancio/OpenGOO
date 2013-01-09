@@ -1,0 +1,8 @@
+<ResourceManifest>
+	<Resources id="scene_level1">
+		<SetDefaults idprefix="" path="./" />
+<Image id="IMAGE_LEVEL1_BG" path="res/levels/level1/bg" />
+<Image id="IMAGE_LEVEL1_GROUND" path="res/levels/level1/ground" />
+<Image id="IMAGE_LEVEL1_ROCK" path="res/levels/level1/rock" />
+</Resources>
+</ResourceManifest>
