@@ -1,19 +1,21 @@
 #ifndef OG_ISLANDCONFIG_H
 #define OG_ISLANDCONFIG_H
 
+#include <QList>
 #include "og_xmlconfig.h"
 
 namespace og_islandconfig
 {
+    struct OGLevel;
+    struct OGIsland;
     typedef QList<OGLevel> OGLevelList;
     typedef QList<QString> OGStringList;
-
     struct OGOcd
     {
-        enum Type {BALLS, TIME, MOVES};
-
+        enum Type {INVALID, BALLS, TIME, MOVES};
         Type type;
         int number;
+        OGOcd():type(INVALID),number(-1){}
     };
 
     struct OGLevel
@@ -42,9 +44,10 @@ namespace og_islandconfig
         OGIsland Parser();
 
     private:
-        OGStringList StringToList(const QString & attribute);
+        QStringList StringToList(const QString & attribute);
         OGOcd StringToOCD(const QString & attribute);
 
     };
+
 }
 #endif // OG_ISLANDCONFIG_H

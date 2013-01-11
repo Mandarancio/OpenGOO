@@ -1,3 +1,5 @@
+
+#include <QStringList>
 #include "og_island.h"
 
 using namespace og_islandconfig;
@@ -38,7 +40,7 @@ OGIsland OGIslandConfig::Parser()
     return island;
 }
 
-OGStringList OGIslandConfig::StringToList(const QString & attribute)
+QStringList OGIslandConfig::StringToList(const QString & attribute)
 {
     QStringList list = attribute.split(",");
 
@@ -47,7 +49,7 @@ OGStringList OGIslandConfig::StringToList(const QString & attribute)
         return list;
     }
 
-    return QStringList;
+    return QStringList();
 }
 
 OGOcd OGIslandConfig::StringToOCD(const QString & attribute)
@@ -71,13 +73,13 @@ OGOcd OGIslandConfig::StringToOCD(const QString & attribute)
             type = OGOcd::MOVES;
         }
 
-        OGOcd ocd = {
-            type,
-            list.at(1).toInt()
-        };
+        OGOcd ocd;
+        ocd.type   = type,
+        ocd.number = list.at(1).toInt();
+
 
         return ocd;
     }
 
-    return 0;
+    return OGOcd();
 }

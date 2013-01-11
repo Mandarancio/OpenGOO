@@ -211,7 +211,7 @@ HEADERS += \
     src/GameConfiguration/og_sceneconfig.h \
     src/GameConfiguration/og_levelconfig.h \
     src/GameConfiguration/og_resources.h \
-    src/GameConfiguration/og_island.h \
+    src/GameConfiguration/og_island.h
 
 !win32{
 HEADERS += src/backtracer.h
