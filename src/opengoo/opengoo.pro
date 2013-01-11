@@ -135,7 +135,7 @@ HEADERS += \
     src/og_ifile.h \
     src/og_alut.h \
     src/og_wavfile.h \
-    src/opengoo.h \    
+    src/opengoo.h \
 
 SOURCES += \
     src/tools.cpp \
@@ -200,7 +200,7 @@ SOURCES += \
     src/GameConfiguration/og_textconfig.cpp \
     src/GameConfiguration/og_sceneconfig.cpp \
     src/GameConfiguration/og_levelconfig.cpp \
-    src/GameConfiguration/og_resources.cpp
+    src/GameConfiguration/og_resources.cpp \
     src/GameConfiguration/og_island.cpp
 
 HEADERS += \
