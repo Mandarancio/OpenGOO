@@ -7,9 +7,8 @@
 namespace og_islandconfig
 {
     struct OGLevel;
-    struct OGIsland;
     typedef QList<OGLevel> OGLevelList;
-    typedef QList<QString> OGStringList;
+
     struct OGOcd
     {
         enum Type {INVALID, BALLS, TIME, MOVES};
@@ -25,7 +24,7 @@ namespace og_islandconfig
         QString text;
         OGOcd ocd;
         QString oncomplete;
-        OGStringList cutscene;
+        QStringList cutscene;
     };
 
     struct OGIsland
