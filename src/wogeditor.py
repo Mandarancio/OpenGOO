@@ -25,7 +25,7 @@ import glob
 import subprocess
 import louie
 import wogfile
-#import metaworld
+import metaworld
 import metawog
 import metaworldui
 import metatreeui
@@ -367,23 +367,23 @@ class GameModel(QtCore.QObject):
         window.statusBar().showMessage(self.tr("Game Model : Loading Properties XMLs"))
 
         self._loadTree( self.global_world, metawog.TREE_GLOBAL_FX,
-                                             self._properties_dir, 'fx.xml.bin' )
+                                             self._properties_dir, 'fx.xml' )
 
         self._loadTree( self.global_world, metawog.TREE_GLOBAL_MATERIALS,
-                                               self._properties_dir, 'materials.xml.bin' )
+                                               self._properties_dir, 'materials.xml' )
 
         self._loadUnPackedTree( self.global_world, metawog.TREE_GLOBAL_FILES,
                                                app_path(), 'files.xml.xml' ,'')
     
 	self._loadTree( self.global_world, metawog.TREE_GLOBAL_RESOURCE,
-                                               self._properties_dir, 'resources.xml.bin' )
+                                               self._properties_dir, 'resources.xml' )
         
         self._readonly_resources = set()    # resources in resources.xml that have expanded defaults idprefix & path
         self._loadTree( self.global_world, metawog.TREE_GLOBAL_TEXT,
-                                           self._properties_dir, 'text.xml.bin' )
+                                           self._properties_dir, 'text.xml' )
 
         self._levels = self._loadDirList( os.path.join( self._res_dir, 'levels' ),
-                                          filename_filter = '%s.scene.bin' )
+                                          filename_filter = '%s.scene.xml' )
 
         anims = self._loadFileList( os.path.join( self._res_dir, 'anim' ),
                                           filename_filter = '.anim.binltl' )
