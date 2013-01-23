@@ -1,4 +1,4 @@
-** - OpenGOO Game - **
+** - OpenGOO Game pre-Alpha1 - **
 
 A free and open clone of World of Goo, (www.worldofgoo.com).
 
@@ -6,47 +6,9 @@ A free and open clone of World of Goo, (www.worldofgoo.com).
 HOME-PAGE  mandarancio.github.com/OpenGOO
 WIKI 	   github.com/Mandarancio/OpenGOO/wiki
 LEVELS     opengoolevels.comeze.com
-ISSUES     github.com/Mandarancio/OpenGOO/issues
-CONTRIBUTE github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate
 ------------------------------------------------
 
 This software is released under the GPLv3 license (www.gnu.org/licenses/gpl-3.0.html).
-
-CREDITS
-----
-Adam 'Etam' Mizerski         (Coder)
-Ferrari Martino              (Founder and coder)
-Groppi Filippo*              (Musician)
-Batarov Dmitry*              (Coder)
-Marakasov Dmitry             (Coder)
-Signoretti Fabrizio*         (Coder)
-Slyshyk Oleksiy*             (Coder)
-Torsello Marco               (Coder)
-
-(*) Active.
-
-Let us write your name! We need sketchers for new artworks!
-
-
-NEWS
-----
-
-11/August/2012
-
-We are competing in the Liberated Pixel Cup (lpc.opengameart.org), check our entry at (http://opengameart.org/lpc-code-entries)!
-The results of the competition will be released at the end of August!
-
-Martino
-
-* * *
-
-09/August/2012
-
-Now I'm working at CERN (www.cern.ch) so I don't have all the time I'd like to have to work on this project.
-I hope that at the end of the summer I could be operative again.
-
-Martino
-
 
 DEPENDENCIES
 ----
@@ -68,14 +30,14 @@ then execute the game with:
 
     ./OpenGOO
 
-There are some flags that you can activate:
+There are some flags you can use:
   
-    -debug  (activates the debug output)
-    -fps    (shows the framerate per second)
-    -opengl (opengl mode)
-
+    -debug  (for more debug output)
+    -fps    (to show current fps)
+    -opengl (use opengl for a higher performance)  
+     
     example:
-    ./Opengoo -opengl -debug
+    ./OpenGOO -opengl -debug
     
     
 CUSTOM LEVELS
@@ -83,3 +45,13 @@ CUSTOM LEVELS
 
 Put your own levels in the 'Levels' folder and execute the game.
 
+CREDITS
+----
+Adam 'Etam' Mizerski         (Coder)
+Ferrari Martino              (Founder and coder)
+Groppi Filippo               (Musician)
+Batarov Dmitry               (Coder)
+Marakasov Dmitry             (Coder)
+Signoretti Fabrizio          (Coder)
+Slyshyk Oleksiy              (Coder)
+Torsello Marco               (Coder)
