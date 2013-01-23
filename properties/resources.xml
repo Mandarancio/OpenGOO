@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ResourceManifest>
+
+  <Resources id="init">
+  
+    <SetDefaults path="" idprefix="" />
+  
+    <Image id="" path=""/>
+    
+    <font  id=""  path=""/>
+    
+  </Resources>
+  
+  <Resources id="common">
+    
+    <SetDefaults path="" idprefix="" />
+  
+    <Image id="" path=""/>
+    
+    <Sound id="" path=""/>
+    
+  </Resources>  
+  
+</ResourceManifest>

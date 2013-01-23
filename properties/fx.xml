@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<effects>
+
+  <particleeffect name="">
+  
+    <particle image="" />
+  
+  </particleeffect>
+  
+  <ambientparticleeffect name="">
+  
+    <particle image="" />
+  
+  </ambientparticleeffect>
+  
+</effects>

@@ -25,19 +25,22 @@ INCLUDEPATH += ../extlibs/libvorbis/libvorbis-1.3.3/include
 INCLUDEPATH += ../extlibs/libogg/libogg-1.3.0/include
 INCLUDEPATH += ../extlibs/freealut/freealut-1.1.0-src/include
 INCLUDEPATH += ../opengoo/src
-INCLUDEPATH += ../opengoodst/src
+#INCLUDEPATH += ../opengoodst/src
 INCLUDEPATH += ../libs/logger/src
-LIBS += -L../extlibs/libs -L../libs/lib
+INCLUDEPATH += src/GameEngine
+INCLUDEPATH += src/GameConfiguration
 
 CONFIG(debug, debug|release) {
-LIBS += -lloggerd
+LIBS += -L../libs/lib -lloggerd
 }
 else {
-LIBS += -llogger
+LIBS += -L../libs/lib -llogger
 }
 
+LIBS += -L../extlibs/libs
+
 !win32{
-LIBS +=-lopenal -lalut  -lvorbisfile -lvorbis -logg -lBox2D
+LIBS += -lopenal -lvorbisfile -lvorbis -logg -lBox2D
 freebsd-g++|freebsd-clang {
 LIBS += -lexecinfo
 }
@@ -65,14 +68,14 @@ INCLUDEPATH += $$(VORBIS_DIR)/include
 
 CONFIG(debug, debug|release) {
 #LIBS += -lopenal32 -lalut -llibogg -llibvorbis -llibvorbisfile
-LIBS += -lopenald -lalutd  -lvorbisfiled -lvorbisd -loggd -lBox2dd
+LIBS += -lopenald -lvorbisfiled -lvorbisd -loggd -lBox2dd
 
 LIBS +=      -L$$(OGG_DIR)/win32/VS2010/Win32/Debug
 LIBS +=      -L$$(VORBIS_DIR)/win32/VS2010/Win32/Debug
 }
 else {
 #LIBS += -lopenal32 -lalut -llibogg -llibvorbis -llibvorbisfile
-LIBS += -lopenal -lalut  -lvorbisfile -lvorbis -logg -lBox2d
+LIBS += -lopenal -lvorbisfile -lvorbis -logg -lBox2d
 #DEFINES += _DEBUG
 QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
 QMAKE_LFLAGS   += /DEBUG
@@ -124,22 +127,21 @@ HEADERS += \
     src/soundsystem.h \
     src/publicclass.h \
     src/options.h \
-    src/crashxmlmodule.h \
-    ../opengoodst/src/xmlmodule.h \
+#    src/crashxmlmodule.h \
+#    ../opengoodst/src/xmlmodule.h \
     src/og_types.h \
     src/og_oggfile.h \
     src/og_mplayer.h \
     src/og_ifile.h \
     src/og_alut.h \
-    src/og_wavfile.h
-
+    src/og_wavfile.h \
+    src/opengoo.h \
 
 SOURCES += \
     src/tools.cpp \
     src/thorn.cpp \
     src/target.cpp \
     src/mainwidget.cpp \
-    src/main.cpp \
     src/level.cpp \
     src/joint.cpp \
     src/ground.cpp \
@@ -164,14 +166,52 @@ SOURCES += \
     src/soundsystem.cpp \
     src/publicclass.cpp \
     src/options.cpp \
-    src/crashxmlmodule.cpp \
-    ../opengoodst/src/xmlmodule.cpp \
-    ../opengoodst/src/architecture.cpp \
-    ../opengoodst/src/report.cpp \
+#    src/crashxmlmodule.cpp \
+#    ../opengoodst/src/xmlmodule.cpp \
+#    ../opengoodst/src/architecture.cpp \
+#    ../opengoodst/src/report.cpp \
     src/og_wavefile.cpp \
     src/og_oggfile.cpp \
     src/og_mplayer.cpp \
-    src/og_alut.cpp
+    src/og_alut.cpp \
+    src/opengoo.cpp \
+
+# Game engine
+SOURCES += \
+    src/GameEngine/og_window.cpp \
+    src/GameEngine/og_gameengine.cpp \
+    src/GameEngine/og_videomode.cpp \
+    src/GameEngine/og_videomode_native.cpp \
+
+HEADERS += \
+    src/GameEngine/og_window.h \
+    src/GameEngine/og_gameengine.h \
+    src/GameEngine/og_videomode.h \
+    src/GameEngine/og_videomode_native.h \
+
+# Game configuration
+# TODO
+# fx.xml
+# materials.xml
+SOURCES += \
+    src/GameConfiguration/og_gameconfig.cpp \
+    src/GameConfiguration/og_xmlconfig.cpp \
+    src/GameConfiguration/og_resourceconfig.cpp \
+    src/GameConfiguration/og_textconfig.cpp \
+    src/GameConfiguration/og_sceneconfig.cpp \
+    src/GameConfiguration/og_levelconfig.cpp \
+    src/GameConfiguration/og_resources.cpp \
+    src/GameConfiguration/og_island.cpp
+
+HEADERS += \
+    src/GameConfiguration/og_gameconfig.h \
+    src/GameConfiguration/og_xmlconfig.h \
+    src/GameConfiguration/og_resourceconfig.h \
+    src/GameConfiguration/og_textconfig.h \
+    src/GameConfiguration/og_sceneconfig.h \
+    src/GameConfiguration/og_levelconfig.h \
+    src/GameConfiguration/og_resources.h \
+    src/GameConfiguration/og_island.h
 
 !win32{
 HEADERS += src/backtracer.h
@@ -189,3 +229,6 @@ SOURCES += src/backtracer.cpp
 #LIBS += -Wl,-rpath,"'\$$ORIGIN/qt'" -L/opt/PalmPDK/device/lib -lpdl -lSDL
 #INCLUDEPATH += /opt/PalmPDK/include/SDL
 #}
+
+
+

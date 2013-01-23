@@ -40,22 +40,22 @@ static void SignalHandler(int32_t sig, siginfo_t *info, void *scp){
 
     //At crash the report is generated and OpenGooDst is launched.
 
-    CrashXmlModule *reportModule = new CrashXmlModule(backtraceText);
-    QUuid reportQUuid = reportModule->getUuid();
+    //CrashXmlModule *reportModule = new CrashXmlModule(backtraceText);
+    //QUuid reportQUuid = reportModule->getUuid();
 
-    logWarn(QString("back Report quuid %1").arg(reportQUuid.toString()));
+    //logWarn(QString("back Report quuid %1").arg(reportQUuid.toString()));
 
     QProcess *myProcess = new QProcess;
 
     QString program = "./OpenGooDst";
     QStringList arguments;
-    arguments << "-w" << "-Uuid=" + reportQUuid.toString();
+    //arguments << "-w" << "-Uuid=" + reportQUuid.toString();
 
     myProcess->start(program, arguments);
 
     myProcess->waitForFinished();
 
-    delete reportModule;
+    //delete reportModule;
 
     exit(sig);
 }
