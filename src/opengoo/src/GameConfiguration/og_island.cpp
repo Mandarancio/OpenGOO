@@ -56,7 +56,7 @@ OGOcd OGIslandConfig::StringToOCD(const QString & attribute)
 {
     QStringList list = attribute.split(",");
 
-    OGOcd::Type type;
+    OGOcd::Type type = OGOcd::INVALID;
 
     if (list.size() == 2)
     {
