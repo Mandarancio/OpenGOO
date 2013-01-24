@@ -1,3 +1,7 @@
+- version 0.77 patched
+*Patched for OpenGOO
+
+
 - version 0.77 Final
 *Added : Filter for Edit Level list.. All, Original Only, Custom Only
 *Fix : Incomplete processing of Set Defaults on global resource reload.
