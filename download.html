@@ -6,32 +6,80 @@
 
 <style type="text/css">
 
-@font-face {
-    font-family: "Bitstream Vera Sans";
-    src: url("./font/Vera.ttf") format("truetype");
-    /*src: url("./font/Vera-Bold.ttf") format("truetype");*/
-    }
-    .myfont {font-family:Bitstream Vera Sans, "Bitstream Vera Sans";}
+  @font-face {
+      font-family: "Bitstream Vera Sans";
+      src: url("./font/Vera.ttf") format("truetype");
+      /*src: url("./font/Vera-Bold.ttf") format("truetype");*/
+      }
+      .myfont {font-family:Bitstream Vera Sans, "Bitstream Vera Sans";}
 
-body {
-height:300px;
-font-family:Bitstream Vera Sans;
-}
+  body {
+    height:400px;
+    font-family:Bitstream Vera Sans;
+  }
 
-ul {
-position:absolute;
-left:25%;
-list-style-type:none;
-}
+  ul {
+    position:absolute;
+    left:25%;
+    list-style-type:none;
+  }
+
+  /*Table properties:*/
+
+  table {
+    width:80%;
+    border-collapse:collapse;
+  }
+
+  .downloadField {
+    width:15%;
+    text-align:center;
+  }
+
+  table, td, th {
+    border:1px solid black;
+    text-align:left;
+  }
+
+  td {
+    padding:2px;
+  }
 
 </style>
+
+<script>
+
+  function downCount(file)
+  {
+  
+    switch(file) {
+    
+    case "zip":
+    
+      window.open("https://github.com/Mandarancio/OpenGOO/zipball/preAlpha1");
+    
+    break;
+    
+    case "tar":
+    
+      window.open("https://github.com/Mandarancio/OpenGOO/tarball/preAlpha1");
+    
+    break;
+    
+    }
+    
+    writeToFile();
+    
+  }
+  
+</script>
 
 </head>
 
 <body id="downloadP">
 
 <p>
-We're just in pre-alpha so we don't distribute the game packages officially. Search in your distribution repository if someone has packed the game, or download the source code and follow the <a href="https://github.com/Mandarancio/OpenGOO/wiki/How-to-start" target="__blank" > wiki instructions!</a>
+We're just in pre-alpha so we don't distribute the game packages officially. Search in your distribution repository if someone has packed the game, or download the source code and follow the <a href="https://github.com/Mandarancio/OpenGOO/wiki/PreAlpha2" target="__blank" > wiki instructions!</a>
 </p>
 
 <div id="source">
@@ -48,9 +96,25 @@ We're just in pre-alpha so we don't distribute the game packages officially. Sea
 
 <br>
 
-<p>
-Download new levels or create and share yours on <a href="http://opengoolevels.comeze.com/" target="__blank" > opengoolevels.comeze.com</a>
-</p>
+<p>Older versions:</p>
+
+<table>
+
+  <tr>
+    <th>
+    Version
+    </th>
+    <th class="downloadField">
+    Download
+    </th>
+  </tr>
+  
+  <tr>
+  <td>Pre-Alpha 1</td> 
+  <td class="downloadField"> <input type="button" onclick="downCount('zip')" value="zip"> <input type="button" onclick="downCount('tar')" value="tar"> </td> 
+  </tr>
+  
+</table>
 
 <!--
 <ul>
