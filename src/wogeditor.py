@@ -786,7 +786,7 @@ class GameModel(QtCore.QObject):
             local_attrib={'id':'WOOGLE_TEST_TEXT','text':'(testing 1 2 3)'}
             _appendChildTag(root,rootmbt,local_attrib,keepid=True)
         # Save it
-        self._savePackedData(self._properties_dir, 'text.xml.xml', self._texts_tree )
+        self._savePackedData(self._properties_dir, 'text.xml', self._texts_tree )
 
         #On Mac
         if ON_PLATFORM==PLATFORM_MAC:
@@ -1108,13 +1108,13 @@ class GameModel(QtCore.QObject):
                 if not os.path.isdir( ball_dir ):
                    os.makedirs( ball_dir )
 
-                filename =os.path.join(ball_dir,'balls.xml.xml')
+                filename =os.path.join(ball_dir,'balls.xml')
                 files_to_goomod.append(filename)               
                 xml_data = file( ball_world.find_tree(metawog.TREE_BALL_MAIN).filename, 'rb' ).read()
                 file( filename, 'wb' ).write( xml_data )
                 #self._saveUnPackedData( ball_dir, 'balls.xml.xml', ball_tree)
 
-                filename =os.path.join(ball_dir,'resources.xml.xml')
+                filename =os.path.join(ball_dir,'resources.xml')
                 files_to_goomod.append(filename)                
                 xml_data = file( ball_world.find_tree(metawog.TREE_BALL_RESOURCE).filename, 'rb' ).read()
                 file( filename, 'wb' ).write( xml_data )
@@ -2347,7 +2347,7 @@ class MainWindow(QtGui.QMainWindow):
         wog_path =  QtGui.QFileDialog.getOpenFileName( self,
              self.tr( 'Select WorldOfGoo program in the folder you want to edit' ),
              r'',
-             self.tr( 'World Of Goo (World*Goo*)' ) )
+             self.tr( 'OpenGOO (OpenGOO*)' ) )
         if wog_path.isEmpty(): # user canceled action
             #wog_path="D:\World of Goo.app"
             return
