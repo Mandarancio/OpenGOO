@@ -25,7 +25,7 @@ import glob
 import subprocess
 import louie
 import wogfile
-#import metaworld
+import metaworld
 import metawog
 import metaworldui
 import metatreeui
