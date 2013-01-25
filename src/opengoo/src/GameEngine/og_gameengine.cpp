@@ -112,6 +112,9 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
         window_->setKeyboardGrabEnabled(false);        
 
         return true;
+    default:
+
+        break;
     }
 
     return QObject::eventFilter(obj, event);
