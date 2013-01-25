@@ -2344,10 +2344,12 @@ class MainWindow(QtGui.QMainWindow):
             self.changeWOGDir()
 
     def changeWOGDir(self):
-        wog_path =  QtGui.QFileDialog.getOpenFileName( self,
-             self.tr( 'Select WorldOfGoo program in the folder you want to edit' ),
-             r'',
-             self.tr( 'OpenGOO (OpenGOO*)' ) )
+        wog_path = QtGui.QFileDialog.getExistingDirectory(self,
+             self.tr( 'Select WorldOfGoo program in the folder you want to edit' ) )
+        #wog_path =  QtGui.QFileDialog.getOpenFileName( self,
+        #     self.tr( 'Select WorldOfGoo program in the folder you want to edit' ),
+        #     r'',
+        #     self.tr( 'OpenGOO (OpenGOO*)' ) )
         if wog_path.isEmpty(): # user canceled action
             #wog_path="D:\World of Goo.app"
             return
