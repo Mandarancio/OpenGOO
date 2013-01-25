@@ -31,13 +31,12 @@
 
 #include "flags.h"
 
-#include "soundsystem.h"
-
 #include <logger.h>
 #include <consoleappender.h>
 
+
 bool GameInitialize(int argc, char **argv)
-{
+{    
     #ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
     BackTracer(SIGFPE);
@@ -76,10 +75,7 @@ bool GameInitialize(int argc, char **argv)
         {
             flag |= FPS;
         }
-        else
-        {
-            _levelname = arg;
-        }
+        else { _levelname = arg; }
     }
 
     //CHECK FOR GAME DIR IN HOME DIRECTORY
@@ -96,43 +92,23 @@ bool GameInitialize(int argc, char **argv)
     }
     else if (flag & DEBUG) logWarn("Game dir exist!");
 
-    // Read game configuration
-    QString filename("./resources/config.xml");
-    OGGameConfig gameConfig(filename);
-
-    if (gameConfig.Open())
-    {
-        if (gameConfig.Read())
-        {
-            _config = gameConfig.Parser();
-        }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else
-    {
-        logWarn("File " + filename +" not found");
-        gameConfig.Create(_config);
-    }
+    readConfiguration();
 
 #ifdef Q_OS_WIN32
-    _gameEngine =
-            new OGGameEngine(
-                _config.screen_width,
-                _config.screen_height,
-                _config.fullscreen
-                );
+    _gameEngine = new OGGameEngine(_config.screen_width
+                                   , _config.screen_height
+                                   , _config.fullscreen
+                                   );
 #else
-    _gameEngine =
-            new OGGameEngine(
-                _config.screen_width,
-                _config.screen_height,
-                false
-                );
+    _gameEngine = new OGGameEngine(_config.screen_width
+                                   , _config.screen_height
+                                   , false
+                                   );
 #endif //   Q_OS_WIN32
 
     if (_gameEngine == 0) { return false; }
 
-    _gameEngine->setFrameRate(60);
+    _gameEngine->setFrameRate(60);     
 
     return true;
 }
@@ -142,77 +118,129 @@ void GameStart()
     //initialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
 
-    // Read text
-    QString filename = "./properties/text.xml";
-    OGTextConfig textConfig(filename);
-
-    if (textConfig.Open())
-    {
-        if (textConfig.Read())
-        {
-            _strings = textConfig.Parser();
-        }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else { logWarn("File " + filename +" not found"); }  
-
+    _width = _gameEngine->getWidth();
+    _height = _gameEngine->getHeight();
+    _E404 = false;
+    _isScrollLock = false;
+    _isZoomLock = false;
     _isLevelInitialize = false;
 
-    // Load main menu
+    // MapWorldView is the main menu
+
      if(_levelname.isEmpty()) { _levelname = "MapWorldView"; }
 
-    // Default camera settings
-    _camera.position = OGPosition(); // (0,0)
-    _E404 = false;
+    _world = new OGWorld(_levelname);
+
+    _world->language(_config.language);
+
+    if (!_world->Initialize()) { return; }
+
+    if (!_world->Load()) { return; }
+
+    _world->CreateScene();
+    _sprites = _world->sprites();
+    _buttons = _world->buttons();
+    _camera = _world->currentcamera();
+    _numberCameras = _world->GetNumberCameras();
+
+    if (!createPhysicsWorld()) { return; }
+
+    _isLevelInitialize = true;        
+
+    buttonMenu();
+
+    if (_numberCameras > 1) { _isMoveCamera = true; }
+    else { _isMoveCamera = false; }
+
+    if (_world->leveldata()->visualdebug)
+    {
+        _time.start();
+    }
 }
 
 void GameEnd()
 {
+    _isLevelInitialize = false;
+
     delete _gameEngine;
+
+    clearPhysicsWorld();
+
+    if (_world)
+    {
+        logDebug("Clear world");
+
+        delete _world;
+    }
 }
 
 void GameCycle()
 {
+    if(!_isLevelInitialize)
+    {
+        closeGame();
+
+        return;
+    }
+
+    _physicsEngine->Simulate();
+
+    if (_isMoveCamera)
+    {
+        _isZoomLock = true;
+        moveCamera();
+    }
+    else
+    {
+        scroll();
+
+        if (_scrolltime > 0)
+        {
+            _scrolltime--;
+        }
+        else if (_scrolltime == 0)
+        {
+            _scroll.up = false;
+            _scroll.down = false;
+            _scrolltime--;
+        }
+    }
     scroll();
+
     _gameEngine->getWindow()->render();
 }
 
 void GamePaint(QPainter* painter)
-{
+{    
     // Test
 
     if (!_isLevelInitialize)
     {
-        createScene(_levelname);
-        _isLevelInitialize = true;
+        return;
     }
 
-    qreal w = _gameEngine->getWidth() / _camera.zoom;
-    qreal h = _gameEngine->getHeight() / _camera.zoom;
-    qreal x = (_camera.position.x() - w * 0.5);
-    qreal y = (_camera.position.y() + h * 0.5)*(-1);
-
-    painter->setWindow(x, y, w, h);
+    painter->setWindow(_camera.window().toRect());
+    painter->setViewport(0, 0, _width, _height);
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
     // Set background
-    painter->fillRect(painter->window(), _scene.backgroundcolor);
+    painter->fillRect(_camera.window(), _world->scenedata()->backgroundcolor);
 
     // Draw scene
-    for (int i=0; i< _resSprites.size(); i++)
+    for (int i=0; i< _sprites->size(); i++)
     {
-        if (_resSprites.at(i).visible)
+        if (_sprites->at(i)->visible)
         {
-            painter->setOpacity(_resSprites.at(i).opacity);
-            qreal x = _resSprites.at(i).position.x();
-            qreal y = _resSprites.at(i).position.y();
-            qreal w = _resSprites.at(i).size.width();
-            qreal h = _resSprites.at(i).size.height();
+            painter->setOpacity(_sprites->at(i)->alpha);
+            qreal x = _sprites->at(i)->position.x();
+            qreal y = _sprites->at(i)->position.y();
+            qreal w = _sprites->at(i)->size.width();
+            qreal h = _sprites->at(i)->size.height();
             painter->drawPixmap(
                         QRectF(x, y, w, h)
-                        , _resSprites.at(i).sprite
-                        , _resSprites.at(i).sprite.rect()
+                        , _sprites->at(i)->image
+                        , _sprites->at(i)->image.rect()
                         );
         }
     }
@@ -220,28 +248,22 @@ void GamePaint(QPainter* painter)
     if (_isPause)
     {
         painter->setOpacity(0.25);
-        painter->fillRect(painter->window(), Qt::black);
+        painter->fillRect(_camera.window(), Qt::black);
         painter->setOpacity(1);
         painter->setPen(Qt::white);
         painter->setFont(QFont("Times", 48, QFont::Bold));
-        painter->drawText(painter->window(), Qt::AlignCenter, "Pause");
+        painter->drawText(_camera.window(), Qt::AlignCenter, "Pause");
     }
 
-    if (_level.visualdebug)
+    if (_world->leveldata()->visualdebug)
     {
-        visualDebug(painter);
+        visualDebug(painter, _world, _camera.zoom());
     }
 }
 
-void GameActivate()
-{
-    _isPause = false;
-}
+void GameActivate() { _isPause = false; }
 
-void GameDeactivate()
-{
-    _isPause = true;
-}
+void GameDeactivate() { _isPause = true; }
 
 void KeyDown(QKeyEvent* event)
 {
@@ -253,77 +275,109 @@ void KeyDown(QKeyEvent* event)
     }
 }
 
-void KeyUp(QKeyEvent* event)
-{
-    Q_UNUSED(event)
-}
+void KeyUp(QKeyEvent* event) { Q_UNUSED(event) }
+
 void MouseButtonDown(QMouseEvent* event)
 {
-    for(int i=0; i < _buttons.size(); i++)
-    {
-        Button btn = _buttons.at(i);
-        qreal w = _gameEngine->getWidth()*0.5/_camera.zoom;
-        qreal h = _gameEngine->getHeight()*0.5/_camera.zoom;
-        qreal deltaX = (_camera.position.x() - w)*(-1);
-        qreal deltaY = (_camera.position.y() + h);
-        qreal btnX = btn.position.x() + deltaX - btn.size.width()*0.5;
-        qreal btnY = btn.position.y() - deltaY + btn.size.height()*0.5;
-        QRectF button(btnX , btnY*(-1.0), btn.size.width(), btn.size.height());
+    QPoint mPos(event->pos());
 
-        if(button.contains(event->pos()))
+    QRectF menu(_buttonMenu.position(), _buttonMenu.size());
+
+    if (menu.contains(mPos)) { buttonMenuAction(); }
+
+    mPos = windowToLogical(mPos);
+
+    for(int i=0; i < _buttons->size(); i++)
+    {
+        QRectF button(QPointF(_buttons->at(i)->position().x()
+                              , _buttons->at(i)->position().y()
+                              )
+                      , _buttons->at(i)->size()
+                      );
+
+        button.moveCenter(_buttons->at(i)->position());
+
+        if(button.contains(mPos))
         {
             _E404 = false;
 
-            if (btn.action == "quit")
-            {
-             _gameEngine->getWindow()->close();
-
-            }
+            if (_buttons->at(i)->onclick() == "quit") { closeGame(); }
+            else if (_buttons->at(i)->onclick() == "credits") { }
+            else if (_buttons->at(i)->onclick() == "showselectprofile") { }
             else { _E404 = true; }
         }
-    }    
+    }
 }
 
-void MouseButtonUp(QMouseEvent* event)
-{
-    Q_UNUSED(event)
-}
+void MouseButtonUp(QMouseEvent* event) { Q_UNUSED(event) }
 
 void MouseMove(QMouseEvent* event)
 {
-    qreal x = event->windowPos().x();
-    qreal y = event->windowPos().y();
-    Scroll scroll = {false, false, false, false};
-    _scroll = scroll;
     const qreal OFFSET = 50.0;
 
-    if (x <= OFFSET)
+    qreal x, y;
+
+    QPoint mPos(event->pos());
+
+    x = mPos.x();
+    y = mPos.y();
+    Scroll scroll = {false, false, false, false};
+    _scroll = scroll;
+    mPos = windowToLogical(mPos);
+
+    for(int i=0; i < _buttons->size(); i++)
     {
-         _scroll.left = true;
-    }
-    else if (x >= _gameEngine->getWidth() - OFFSET)
-    {
-        _scroll.right = true;
+        QRectF button(QPointF(_buttons->at(i)->position().x()
+                              , _buttons->at(i)->position().y()
+                              )
+                      , _buttons->at(i)->size()
+                      );
+
+        button.moveCenter(_buttons->at(i)->position());
+
+        if(button.contains(mPos))
+        {
+            _buttons->at(i)->up()->visible = false;
+            _buttons->at(i)->over()->visible = true;
+        }
+        else
+        {
+            _buttons->at(i)->up()->visible = true;
+            _buttons->at(i)->over()->visible = false;
+        }
     }
 
-    if (y <= OFFSET)
-    {
-        _scroll.up = true;
-    }
-    else if (y >= _gameEngine->getHeight() - OFFSET)
-    {
-        _scroll.down = true;
-    }
+    if (x <= OFFSET) { _scroll.left = true; }
+    else if (x >= _width - OFFSET) { _scroll.right = true; }
 
-    event->accept();
+    if (y <= OFFSET) { _scroll.up = true; }
+    else if (y >= _height - OFFSET) { _scroll.down = true; }
 }
 
 void MouseWheel(QWheelEvent* event)
 {
+    if (_isMoveCamera) { return; }
+
     QPoint numDegrees = event->angleDelta() / 8;
 
-    if (numDegrees.y() > 0) { zoom(-1); }
-    else { zoom(1); }
+    if (_world->leveldata()->visualdebug)
+    {        
+        if (numDegrees.y() > 0) { zoom(1); }
+        else { zoom(-1); }
+    }
+    else
+    {
+        if (numDegrees.y() > 0)
+        {
+            _scroll.up = true;
+            _scrolltime = 30;
+        }
+        else
+        {
+            _scroll.down = true;
+            _scrolltime = 30;
+        }
+    }
 }
 
 void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -347,306 +401,316 @@ void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
     }
 }
 
-void createScene(const QString & levelname)
-{    
-    readGameConfiguration(levelname);
-
-    // Create scene
-    for (int i=0; i<_scene.sceneLayer.size(); i++)
-    {
-        OGSceneLayer scene = _scene.sceneLayer.at(i);
-        // Create sprite
-        OGSprite sprite;
-
-        sprite.color = scene.colorize;
-        sprite.scale= scene.scale;
-
-        sprite.opacity = scene.alpha;
-        sprite.rotation = scene.rotation;
-        sprite.depth = scene.depth;
-
-        createSprite(&sprite, scene.image);
-
-        // Set sprite size
-        qreal width = sprite.sprite.width() * sprite.scale.x();
-        qreal height = sprite.sprite.height() * sprite.scale.y();
-        sprite.size = QSize(width, height);
-
-        // Set sprite position
-        OGPosition pos = scene.position;
-        qreal x = pos.x() - sprite.size.width() * 0.5;
-        qreal y = (pos.y() + sprite.size.height() * 0.5)*(-1.0);
-        sprite.position = OGPosition(x, y);
-
-        sprite.visible = true;
-
-        // Put sprite into list
-        _resSprites << sprite;
-    }
-
-    // Create buttongroups
-    for (int i=0; i<_scene.buttongroup.size(); i++)
-    {
-        OGButtonGroup btnGroup = _scene.buttongroup.at(i);
-
-        // Create buttons
-        for (int j=0; j<btnGroup.button.size(); j++)
-        {
-            createButton(btnGroup.button.at(j), UP);
-        }
-    }
-
-    // Create buttons
-    for (int i=0; i<_scene.button.size(); i++)
-    {
-        createButton(_scene.button.at(i), UP);
-    }
-
-    // Create Z-order
-    // Bubble sort
-    // Source http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Bubble_sort#C.2B.2B
-    QList <OGSprite>::iterator first = _resSprites.begin();
-    QList <OGSprite>::iterator last = _resSprites.end();
-    QList <OGSprite>::iterator i;
-
-    while(first < --last)
-    {
-        for(i=first; i < last; ++i)
-        {
-           if ( (i+1)->depth < i->depth)
-           {
-               std::iter_swap( i, i+1 );
-           }
-        }
-    }
-
-    //initialize camera
-    for (int i=0; i < _level.camera.size(); i++)
-    {
-        if (_level.camera.at(i).aspect == "normal")
-        {
-            int last = _level.camera.at(i).poi.size()-1;
-            _camera.position = _level.camera.at(i).poi.at(last).position;
-            _camera.zoom = _level.camera.at(i).poi.at(last).zoom;
-            break;
-        }
-    }
-}
-
-void createSprite(OGSprite* sprite, const QString & image)
-{
-    QImage source(_resources.GetResource(OGResource::IMAGE, image) +".png");
-
-    QTransform transform;
-    transform.rotate(-sprite->rotation);
-
-    QImage tmpImage(
-                source.transformed(transform, Qt::SmoothTransformation)
-                );
-
-    QImage target(tmpImage.size(), QImage::Format_ARGB32_Premultiplied);
-
-    // Colorize sprite
-    QPainter painter(&target);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform);
-    painter.setCompositionMode(QPainter::CompositionMode_Source);
-    painter.fillRect(target.rect(), Qt::transparent);
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    painter.drawImage(target.rect(), tmpImage, tmpImage.rect());
-
-    if (!source.hasAlphaChannel())
-    {
-        painter.setCompositionMode(QPainter::CompositionMode_Multiply);
-        painter.fillRect(target.rect(), sprite->color);
-    }
-    else
-    {
-        painter.setCompositionMode(QPainter::CompositionMode_SourceAtop);
-        painter.fillRect(target.rect(), sprite->color);
-        painter.setCompositionMode(QPainter::CompositionMode_Multiply);
-        painter.drawImage(target.rect(), tmpImage, tmpImage.rect());
-    }
-
-    painter.end();
-
-    sprite->sprite = QPixmap::fromImage(target);
-}
-
-void readGameConfiguration(const QString & level)
-{
-    // Read resources
-    QString filename("./res/levels/" + level + "/" + level);
-    OGResourceConfig resConfig(filename + ".resrc.xml");
-
-    if (resConfig.Open())
-    {
-        if (resConfig.Read()) { _resources = resConfig.Parser(); }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else { logWarn("File " + filename +" not found"); }
-
-    // Read level
-//    filename = "./res/levels/MapWorldView/MapWorldView.level.xml";
-    OGLevelConfig levelConfig(filename + ".level.xml");
-
-    if (levelConfig.Open())
-    {
-        if (levelConfig.Read()) { _level = levelConfig.Parser(); }
-        else { logWarn("File " + filename + " is corrupted"); }
-    }
-    else { logWarn("File " + filename +" not found"); }
-
-    // Read scene
-//    filename = "./res/levels/MapWorldView/MapWorldView.scene.xml";
-    OGSceneConfig sceneConfig(filename + ".scene.xml");
-
-    if (sceneConfig.Open())
-    {
-        if (sceneConfig.Read()) { _scene = sceneConfig.Parser(); }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else { logWarn("File " + filename +" not found"); }
-}
-
-void createButton(const OGButton & button, OGAction action )
-{
-    // Create sprite
-    OGSprite sprite;
-
-    sprite.scale = button.scale;
-    sprite.rotation = button.rotation;
-    sprite.color = button.colorize;
-    sprite.opacity = button.alpha;
-    sprite.depth = button.depth;
-
-    QString img;
-    switch (action)
-    {
-    case UP:
-        img = button.up;
-        break;
-    case OVER:
-        img = button.over;
-        break;
-    case DISABLED:
-        img = button.disabled;
-        break;
-    }
-
-    createSprite(&sprite, img);
-
-    // Set sprite size
-    qreal width = sprite.sprite.width() * sprite.scale.x();
-    qreal height = sprite.sprite.height() * sprite.scale.y();
-    sprite.size = QSize(width, height);
-
-    // Set sprite position
-    OGPosition pos = button.position;
-    qreal x = pos.x() - sprite.size.width() * 0.5;
-    qreal y = (pos.y() + sprite.size.height() * 0.5)*(-1);
-    sprite.position = OGPosition(x, y);
-
-    Button btn = {
-        button.position
-        , sprite.size
-        , button.onclick
-    };
-
-    if (button.disabled.isEmpty())
-    {
-        sprite.visible = true;
-    }
-    else { sprite.visible = false; }
-
-    _resSprites << sprite;
-    _buttons << btn;
-}
-
 void scroll()
 {
+    if (_isScrollLock) { return; }
+
     const qreal SHIFT = 10;
-    qreal w = _gameEngine->getWidth()/_camera.zoom;
-    qreal h = _gameEngine->getHeight()/_camera.zoom;
+
+    qreal pos;
 
     if (_scroll.up)
-    {
-        qreal pos = _camera.position.y() + SHIFT;
+    {        
+        pos = qMin(_camera.center().y() + SHIFT,
+                 _world->scenedata()->maxy - _camera.height()*0.5);
 
-        if (pos <= _scene.maxy - h*0.5)
-        {
-            _camera.position.setY(pos);
-        }
+        _camera.SetY(pos);
     }
     else if (_scroll.down)
     {
-        qreal pos = _camera.position.y() - SHIFT;
+        pos = qMax(_camera.center().y() - SHIFT,
+                 _world->scenedata()->miny + _camera.height()*0.5);
 
-        if (pos >= _scene.miny + h*0.5)
-        {
-            _camera.position.setY(pos);
-        }
+        _camera.SetY(pos);
     }
 
     if (_scroll.left)
     {
-        qreal pos = _camera.position.x() - SHIFT;
+        pos = qMax(_camera.center().x() - SHIFT,
+                 _world->scenedata()->minx + _camera.width()*0.5);
 
-        if (pos >= _scene.minx + w*0.5)
-        {
-            _camera.position.setX(pos);
-        }
+        _camera.SetX(pos);
     }
     else if (_scroll.right)
     {
-        qreal pos = (_camera.position.x() + SHIFT);
+        pos = qMin(_camera.center().x() + SHIFT,
+                 _world->scenedata()->maxx - _camera.width()*0.5);
 
-        if (pos <= _scene.maxx - w*0.5)
-        {
-            _camera.position.setX(pos);
-        }
+        _camera.SetX(pos);
     }
 }
 
 void zoom(int direct)
 {
-    qreal zoom = _camera.zoom  + (0.1*direct);
+    if (_isZoomLock) { return; }
 
-    if (
-            (_scene.maxx+qAbs(_scene.minx))*zoom >= _gameEngine->getWidth()
-            &&
-            (_scene.maxy+qAbs(_scene.miny))*zoom >= _gameEngine->getHeight()
-            )
+    qreal zoom = _camera.zoom();
+
+    zoom += (0.1*direct);
+
+    if (_world->scenesize().width()*zoom >= _width
+            && _world->scenesize().height()*zoom >= _height
+       )
     {
-        _camera.zoom = zoom;
+        _camera.Scale(zoom);
     }
 }
 
-void visualDebug(QPainter* painter)
+QPointF logicalToWindow(const QRectF & rect, qreal zoom)
 {
-    painter->setOpacity(1);
-    painter->setPen(Qt::yellow);
+    qreal w = rect.width()/zoom;
+    qreal h = rect.height()/zoom;
+    qreal x = rect.x() - w*0.5;
+    qreal y = (rect.y() + h*0.5)*(-1.0);
 
-    qreal w = _gameEngine->getWidth()/_camera.zoom;
-    qreal h = _gameEngine->getHeight()/_camera.zoom;
-    qreal x = (_camera.position.x() - w*0.5);
-    qreal y = (_camera.position.y() + h*0.5)*(-1);
+    return QPointF(x, y);
+}
 
-    painter->drawEllipse(QPoint(x, y), 10, 10);
-    painter->drawEllipse(QPoint(), 10, 10); // center
-    painter->drawRect(
-                x + 50.0/_camera.zoom
-                , y + 50.0/_camera.zoom
-                , w-100/_camera.zoom
-                , h-100/_camera.zoom
-                );
+QPoint windowToLogical(const QPoint & position)
+{
+    qreal x, y, a, b;
 
-    if (_E404)
+    a = (position.x() - _width*0.5)/_camera.zoom();
+    b = (position.y() - _height*0.5)/_camera.zoom();
+    x = _camera.center().x() + a;
+    y = _camera.center().y() - b;
+
+    return QPoint(x, y);
+}
+
+void moveCamera()
+{
+    if (_numberCameras < 2)
     {
-        painter->setOpacity(0.25);
-        painter->fillRect(painter->window(), Qt::black);
-        painter->setOpacity(1);
-        painter->setPen(Qt::white);
-        painter->setFont(QFont("Times", 36, QFont::Bold));
-        painter->drawText(painter->window(), Qt::AlignCenter, "UNIMPLEMENTED!!!\nEsc to return");
+        _isMoveCamera = false;
+
+        if (_world->leveldata()->visualdebug) { _isZoomLock = false; }
+
+        return;
+    }
+
+    if (_frames <= 0)
+    {
+        OGCamera* endCam = &_world->GetCamera(_nextCamera);
+        qreal x = endCam->center().x() - _camera.center().x();
+        qreal y = endCam->center().y() - _camera.center().y();
+        qreal zoom = endCam->zoom() - _camera.zoom();
+
+        qreal fps =  1000.0/_gameEngine->getFrameDelay();
+        _pause = endCam->pause() * fps;
+
+        _frames = endCam->traveltime()*fps;
+
+        if (_frames > 0)
+        {
+            _dx = x/_frames;
+            _dy = y/_frames;
+            _dzoom = zoom/_frames;
+        }
+    }
+
+    if (_pause > 0)
+    {
+        _pause--;
+        return;
+    }
+
+    if (_frames > 0)
+    {
+        _camera.SetPosition(_camera.center().x() + _dx,
+                            _camera.center().y() + _dy);
+        _camera.Scale(_camera.zoom() + _dzoom);
+        _frames--;
+    }
+
+    if (_frames <= 0)
+    {
+        _world->SetNextCamera();
+        _numberCameras--;
+        _nextCamera++;
+    }
+}
+
+void closeGame() { _gameEngine->getWindow()->close(); }
+
+void buttonMenuAction() { closeGame(); }
+
+void buttonMenu()
+{
+    qreal offset, btnW, btnH, menuX, menuY;
+
+    _buttonMenu.onclick("menu");
+    _buttonMenu.size(QSize(50, 20));
+    offset = 10.0;
+    btnW = _buttonMenu.size().width();
+    btnH = _buttonMenu.size().height();
+    menuX = _width - (btnW + offset);
+    menuY = _height - (btnH + offset);
+    _buttonMenu.position(QPointF(menuX, menuY));
+}
+
+bool createPhysicsWorld()
+{
+    if (_physicsEngine)
+    {
+        return false;
+    }
+
+    QPointF gravity;
+
+    if (!_world->scenedata()->linearforcefield.isEmpty())
+    {
+        if (_world->scenedata()->linearforcefield.last()->type == "gravity")
+        {
+            gravity = _world->scenedata()->linearforcefield.last()->force;
+        }
+    }   
+
+
+    if (!initializePhysicsEngine(gravity, true))
+    {
+        return false;
+    }
+
+    _physicsEngine = OGPhysicsEngine::GetInstance();
+
+    for (int i=0; i < _world->scenedata()->circle.size(); i++)
+    {
+        if (!_world->scenedata()->circle.at(i)->dynamic)
+        {            
+            WOGMaterial material;
+
+            if (_world->scenedata()->circle.at(i)->material == "verysticky")
+            {
+                material.friction = 100.0;
+                material.bounce  = 0.0;
+                material.stickiness = 1000.0;
+            }
+            else if (_world->scenedata()->circle.at(i)->material == "rock")
+            {
+                material.friction = 4.0;
+                material.bounce  = 0.5;
+                material.stickiness = 0.0;
+            }
+
+            _staticCircles << createCircle(
+                                  _world->scenedata()->circle.at(i)->position
+                                  , _world->scenedata()->circle.at(i)->radius
+                                  , material, false, 0
+                                  );
+        }
+    }
+
+    for (int i=0; i < _world->scenedata()->line.size(); i++)
+    {
+        if (!_world->scenedata()->line.at(i)->dynamic)
+        {
+            WOGMaterial material;
+
+            if (_world->scenedata()->line.at(i)->material == "verysticky")
+            {
+                material.friction = 100.0;
+                material.bounce  = 0.0;
+                material.stickiness = 1000.0;
+            }
+            else if (_world->scenedata()->line.at(i)->material == "rock")
+            {
+                material.friction = 4.0;
+                material.bounce  = 0.5;
+                material.stickiness = 0.0;
+            }
+
+            _staticLines << createLine(_world->scenedata()->line.at(i)->anchor
+                                       , _world->scenedata()->line.at(i)->normal
+                                       , material, _world, false
+                                       );
+        }
+    }
+
+    for (int i=0; i < _world->scenedata()->rectangle.size(); i++)
+    {
+        if (_world->scenedata()->rectangle.at(i)->dynamic) { continue; }
+
+        const WOGRectangle* rect = _world->scenedata()->rectangle.at(i);
+
+        WOGMaterial material;
+
+        if (rect->material == "verysticky")
+        {
+            material.friction = 100.0;
+            material.bounce  = 0.0;
+            material.stickiness = 1000.0;
+        }
+        else if (rect->material == "rock")
+        {
+            material.friction = 4.0;
+            material.bounce  = 0.5;
+            material.stickiness = 0.0;
+        }
+        else {
+            material.friction = 0.0;
+            material.bounce  = 0.0;
+            material.stickiness = 0.0;
+        }
+
+        _staticRectangles << createRectangle(rect->position, rect->size
+                                             , rect->rotation , material
+                                             , rect->dynamic
+                                             );
+    }
+
+    for (int i=0; i < _world->leveldata()->ball.size(); i++)
+    {
+        WOGMaterial material = {QString(), 15.0, 0.1, 102, 30.0};
+
+        _balls << createCircle(
+                      _world->leveldata()->ball.at(i)->position
+                      , 15.0, material, true, 30
+                      );
+    }
+
+    _physicsEngine->SetSimulation(6, 2, 60.0);
+
+    return true;
+}
+
+void clearPhysicsWorld()
+{
+    if (!_physicsEngine) { return; }
+
+    OGPhysicsEngine::DestroyInstance();
+
+    _physicsEngine = 0;
+
+    while (!_balls.isEmpty()) { delete _balls.takeFirst(); }
+
+    while (!_staticCircles.isEmpty()) { delete _staticCircles.takeFirst(); }
+
+    while (!_staticLines.isEmpty()) { delete _staticLines.takeFirst(); }
+
+    while (!_staticRectangles.isEmpty())
+    {
+        delete _staticRectangles.takeFirst();
+    }
+}
+
+void readConfiguration()
+{
+    // Read game configuration
+    QString filename("./resources/config.xml");
+    OGGameConfig gameConfig(filename);
+
+    if (gameConfig.Open())
+    {
+        if (gameConfig.Read())
+        {
+            _config = gameConfig.Parser();
+        }
+        else {logWarn("File " + filename + " is corrupted"); }
+    }
+    else
+    {
+        logWarn("File " + filename +" not found");
+        gameConfig.Create(_config);
     }
 }

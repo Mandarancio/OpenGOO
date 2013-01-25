@@ -6,28 +6,47 @@ OGTextConfig::OGTextConfig(const QString & filename)
     SetRootTag("strings");
 }
 
-OGStringList OGTextConfig::Parser()
+WOGText* OGTextConfig::Parser(const QString & language)
 {
-    OGStringList strings;
+    WOGText* obj;
+    QDomNode node;
+    QDomElement element;
 
-    for(QDomNode n=rootElement.firstChild(); !n.isNull(); n=n.nextSibling())
+    obj = new WOGText;
+    obj->language = language;
+
+    node = rootElement.firstChild();
+
+    while(!node.isNull())
     {
-        QDomElement domElement = n.toElement();
+        element = node.toElement();
 
-        if (domElement.tagName() == "string")
-        {
-            OGString str = {
-                domElement.attribute("id", ""),
-                domElement.attribute("text", ""),
-                domElement.attribute("es", ""),
-                domElement.attribute("fr", ""),
-                domElement.attribute("de", ""),
-                domElement.attribute("it", "")
-            };
-
-            strings << str;
+        if (element.tagName() == "string")
+        {            
+            obj->string << CreateString(element, language);
         }
+
+        node = node.nextSibling();
     }
 
-    return strings;
+    return obj;
+}
+
+WOGString* OGTextConfig::CreateString(const QDomElement & elemen
+                                      , const QString & language
+                                      )
+{
+    WOGString* obj;
+
+    obj = new WOGString;
+    obj->id = elemen.attribute("id");
+
+    if (language == "en") { obj->text = elemen.attribute("text"); }
+    else if (language == "es") { obj->text = elemen.attribute("es"); }
+    else if (language == "fr") { obj->text = elemen.attribute("es"); }
+    else if (language == "de") { obj->text = elemen.attribute("es"); }
+    else if (language == "it") { obj->text = elemen.attribute("es"); }
+    else if (language == "ru") { obj->text = elemen.attribute("es"); }
+
+    return obj;
 }

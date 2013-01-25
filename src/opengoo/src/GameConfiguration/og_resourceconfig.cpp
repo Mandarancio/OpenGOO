@@ -6,70 +6,88 @@ OGResourceConfig::OGResourceConfig(const QString & filename)
     SetRootTag("ResourceManifest");
 }
 
-OGResources OGResourceConfig::Parser(QString groupid)
+WOGResources* OGResourceConfig::Parser(QString groupid)
 {
-    QString defaultPath("./");
-    QString defaultIdPrefix("");
+    WOGResources* resources;
+    QDomNode node;
+    QDomElement element;
 
-    OGResources resources;
+    defaultPath_ = "./";
+    defaultIdPrefix_ = "";
+    resources = new WOGResources;
+    node = rootElement.firstChild();
 
-    for(QDomNode n=rootElement.firstChild(); !n.isNull(); n=n.nextSibling())
+    while(!node.isNull())
     {
-        QDomElement element = n.toElement();
+        element = node.toElement();
 
         if (element.tagName() == "Resources")
         {                        
             if (groupid.isEmpty() || element.attribute("id") == groupid)
-            {               
-                OGResourceGroup group;
-                group.id = element.attribute("id");
-                QDomNode node = element.firstChild();
-
-                for(; !node.isNull(); node=node.nextSibling())
-                {
-                    QDomElement resElement = node.toElement();
-
-                    if (resElement.tagName() == "SetDefaults")
-                    {
-                        defaultPath = resElement.attribute("path");
-                        defaultIdPrefix = resElement.attribute("idprefix");
-                    }
-                    else if (resElement.tagName() == "Image")
-                    {
-                        OGResource res = {
-                            OGResource::IMAGE,
-                            defaultIdPrefix + resElement.attribute("id"),
-                            defaultPath + resElement.attribute("path")
-                        };
-
-                        group.resource << res;
-                    }
-                    else if (resElement.tagName() == "Sound")
-                    {
-                        OGResource res = {
-                            OGResource::SOUND,
-                            defaultIdPrefix + resElement.attribute("id"),
-                            defaultPath + resElement.attribute("path")
-                        };
-
-                        group.resource << res;
-                    }
-                    else if (resElement.tagName() == "font")
-                    {
-                        OGResource res = {
-                            OGResource::FONT,
-                            defaultIdPrefix + resElement.attribute("id"),
-                            defaultPath + resElement.attribute("path")
-                        };
-
-                        group.resource << res;
-                    }
-                }
-
-                resources.group << group;
+            {
+                resources->group << CreateResourceGroup(element);
             }            
         }
+
+        node = node.nextSibling();
     }
 
     return resources;
+}
+
+WOGResource* OGResourceConfig::CreateResource(const QDomElement & element
+                                              , WOGResource::Type type
+                                              )
+{
+    WOGResource* obj;
+
+    obj = new WOGResource;
+    obj->type = type;
+    obj->id = defaultIdPrefix_ + element.attribute("id");
+    obj->path = defaultPath_ + element.attribute("path");
+
+    return obj;
+}
+
+WOGResourceGroup* OGResourceConfig::CreateResourceGroup(
+        const QDomElement & element
+        )
+{
+    WOGResourceGroup*  obj;
+    QDomNode node;
+    QDomElement resElement;
+
+    obj = new WOGResourceGroup;
+    obj->id = element.attribute("id");
+    node = element.firstChild();
+
+    while(!node.isNull())
+    {
+        resElement = node.toElement();
+
+        if (resElement.tagName() == "SetDefaults")
+        {
+            defaultPath_ = resElement.attribute("path");
+            defaultIdPrefix_ = resElement.attribute("idprefix");
+        }
+        else if (resElement.tagName() == "Image")
+        {
+            obj->resource << CreateResource(resElement
+                                             , WOGResource::IMAGE);
+        }
+        else if (resElement.tagName() == "Sound")
+        {
+            obj->resource << CreateResource(resElement
+                                             , WOGResource::SOUND);
+        }
+        else if (resElement.tagName() == "font")
+        {
+            obj->resource << CreateResource(resElement
+                                             , WOGResource::FONT);
+        }
+
+        node = node.nextSibling();
+    }
+
+    return obj;
 }

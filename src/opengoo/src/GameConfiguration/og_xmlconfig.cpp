@@ -81,3 +81,8 @@ bool OGXmlConfig::StringToBool(const QString & value)
     if (value == "true") { return true; }
     else { return false; }
 }
+
+QSizeF OGXmlConfig::StringToSize(const QString width, const QString height)
+{
+    return QSizeF(width.toDouble(), height.toDouble());
+}

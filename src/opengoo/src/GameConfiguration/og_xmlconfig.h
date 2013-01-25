@@ -6,6 +6,7 @@
 #include <QResource>
 #include <QPoint>
 #include <QColor>
+#include <QSizeF>
 
 class OGXmlConfig
 {
@@ -24,6 +25,7 @@ public:
     QPointF StringToPoint(const QString & x, const QString & y);
     QColor StringToColor(const QString & color);
     bool StringToBool (const QString & value);
+    QSizeF StringToSize(const QString width, const QString height);
 
 protected:
     QDomElement rootElement;

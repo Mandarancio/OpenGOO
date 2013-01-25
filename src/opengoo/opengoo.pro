@@ -28,6 +28,7 @@ INCLUDEPATH += ../opengoo/src
 #INCLUDEPATH += ../opengoodst/src
 INCLUDEPATH += ../libs/logger/src
 INCLUDEPATH += src/GameEngine
+INCLUDEPATH += src/PhysicsEngine
 INCLUDEPATH += src/GameConfiguration
 
 CONFIG(debug, debug|release) {
@@ -135,7 +136,14 @@ HEADERS += \
     src/og_ifile.h \
     src/og_alut.h \
     src/og_wavfile.h \
-    src/opengoo.h \
+    src/opengoo.h \     
+    src/og_world.h \
+    src/og_camera.h \
+    src/og_button.h \
+    src/og_sprite.h \
+    src/og_windowcamera.h \        
+    src/physics.h \
+
 
 SOURCES += \
     src/tools.cpp \
@@ -175,6 +183,11 @@ SOURCES += \
     src/og_mplayer.cpp \
     src/og_alut.cpp \
     src/opengoo.cpp \
+    src/og_world.cpp \
+    src/visualdebug.cpp \
+    src/og_windowcamera.cpp \
+    src/physics.cpp \
+
 
 # Game engine
 SOURCES += \
@@ -183,16 +196,30 @@ SOURCES += \
     src/GameEngine/og_videomode.cpp \
     src/GameEngine/og_videomode_native.cpp \
 
+
 HEADERS += \
     src/GameEngine/og_window.h \
     src/GameEngine/og_gameengine.h \
     src/GameEngine/og_videomode.h \
     src/GameEngine/og_videomode_native.h \
 
+
+# Physic engine
+SOURCES += \
+    src/PhysicsEngine/og_physicsshape.cpp \
+    src/PhysicsEngine/og_physicsengine.cpp \
+    src/PhysicsEngine/og_physicsbody.cpp \
+
+
+HEADERS += \
+    src/PhysicsEngine/og_physicsshape.h \
+    src/PhysicsEngine/og_physicsengine.h \
+    src/PhysicsEngine/og_physicsbody.h \
+    src/PhysicsEngine/debug.h \
+    src/PhysicsEngine/common.h \
+
+
 # Game configuration
-# TODO
-# fx.xml
-# materials.xml
 SOURCES += \
     src/GameConfiguration/og_gameconfig.cpp \
     src/GameConfiguration/og_xmlconfig.cpp \
@@ -200,8 +227,14 @@ SOURCES += \
     src/GameConfiguration/og_textconfig.cpp \
     src/GameConfiguration/og_sceneconfig.cpp \
     src/GameConfiguration/og_levelconfig.cpp \
-    src/GameConfiguration/og_resources.cpp \
-    src/GameConfiguration/og_island.cpp
+    src/GameConfiguration/og_materialconfig.cpp \
+    src/GameConfiguration/og_effectconfig.cpp \
+    src/GameConfiguration/og_ballconfig.cpp \
+    src/GameConfiguration/og_islandconfig.cpp \
+    src/GameConfiguration/wog_level.cpp \
+    src/GameConfiguration/wog_scene.cpp \
+    src/GameConfiguration/wog_resources.cpp \
+
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
@@ -210,8 +243,21 @@ HEADERS += \
     src/GameConfiguration/og_textconfig.h \
     src/GameConfiguration/og_sceneconfig.h \
     src/GameConfiguration/og_levelconfig.h \
-    src/GameConfiguration/og_resources.h \
-    src/GameConfiguration/og_island.h
+    src/GameConfiguration/og_materialconfig.h \
+    src/GameConfiguration/og_effectconfig.h \
+    src/GameConfiguration/og_ballconfig.h \
+    src/GameConfiguration/og_islandconfig.h \
+    src/GameConfiguration/wog_vobject.h \
+    src/GameConfiguration/wog_scene.h \
+    src/GameConfiguration/wog_pobject.h \
+    src/GameConfiguration/wog_level.h \
+    src/GameConfiguration/wog_resources.h \
+    src/GameConfiguration/wog_text.h \
+    src/GameConfiguration/wog_material.h \
+    src/GameConfiguration/wog_effects.h \
+    src/GameConfiguration/wog_ball.h \
+    src/GameConfiguration/wog_island.h \
+
 
 !win32{
 HEADERS += src/backtracer.h

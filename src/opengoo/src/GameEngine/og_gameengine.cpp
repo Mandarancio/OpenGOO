@@ -2,7 +2,6 @@
 
 #include <QGuiApplication>
 #include <QScreen>
-#include <QDebug>
 
 #include "og_videomode.h"
 #include "logger.h"
@@ -126,6 +125,7 @@ void OGGameEngine::changeFrameRate()
 
 void OGGameEngine::gameExit()
 {
+    gameCycle_.stop();
     GameEnd();
     QGuiApplication::quit();
 }

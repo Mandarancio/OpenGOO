@@ -6,77 +6,150 @@ OGLevelConfig::OGLevelConfig(const QString & filename)
     SetRootTag("level");
 }
 
-OGLevel OGLevelConfig::Parser()
+WOGLevel* OGLevelConfig::Parser()
 {
-    OGLevel level;
+    WOGLevel* level = new WOGLevel;
 
-    level.ballsrequired = rootElement.attribute("ballsrequired").toInt();    
-    level.letterboxed = StringToBool(rootElement.attribute("letterboxed"));
-    level.visualdebug = StringToBool(rootElement.attribute("visualdebug"));
-    level.autobounds = StringToBool(rootElement.attribute("autobounds"));
-    level.textcolor = StringToColor(rootElement.attribute("textcolor"));
-    level.texteffects = StringToBool(rootElement.attribute("texteffects"));
-    level.timebugprobability =
+    level->ballsrequired = rootElement.attribute("ballsrequired").toInt();
+    level->letterboxed = StringToBool(rootElement.attribute("letterboxed"));
+    level->visualdebug = StringToBool(rootElement.attribute("visualdebug"));
+    level->autobounds = StringToBool(rootElement.attribute("autobounds"));
+    level->textcolor = StringToColor(rootElement.attribute("textcolor"));
+    level->texteffects = StringToBool(rootElement.attribute("texteffects"));
+    level->timebugprobability =
             rootElement.attribute("timebugprobability").toDouble();
 
-    level.strandgeom = StringToBool(rootElement.attribute("strandgeom"));
-    level.allowskip = StringToBool(rootElement.attribute("allowskip"));
+    level->strandgeom = StringToBool(rootElement.attribute("strandgeom"));
+    level->allowskip = StringToBool(rootElement.attribute("allowskip"));
 
-    for(QDomNode n=rootElement.firstChild(); !n.isNull(); n=n.nextSibling())
+    QDomNode node = rootElement.firstChild();
+
+    while (!node.isNull())
     {
-        QDomElement domElement = n.toElement();
+        QDomElement domElement = node.toElement();
 
         if (domElement.tagName() == "camera")
-        {
-            OGCamera camera;
-
-            camera.aspect = domElement.attribute("aspect");            
-            camera.endpos = StringToPoint(domElement.attribute("endpos"));
-            camera.endzoom = domElement.attribute("endzoom").toDouble();
-
-            QDomNode node = domElement.firstChild();
-
-            for (; !node.isNull(); node=node.nextSibling())
-            {
-                QDomElement element = node.toElement();
-
-                if (element.tagName() == "poi")
-                {
-                    OGPoi poi = {
-                        StringToPoint(element.attribute("pos")),
-                        element.attribute("traveltime").toDouble(),
-                        element.attribute("pause").toDouble(),
-                        element.attribute("zoom").toDouble()
-                    };
-
-                    camera.poi << poi;
-                }
-            }
-
-            level.camera << camera;
+        {           
+            level->camera << CreateCamera(domElement);
         }
         else if (domElement.tagName() == "music")
         {
-            level.music.id = domElement.attribute("music");
+            level->music.id = domElement.attribute("music");
         }
         else if (domElement.tagName() == "BallInstance")
-        {
-            OGBallInstance ball;
-
-            ball.type = domElement.attribute("type");
-            ball.position =
-                    StringToPoint(
-                        domElement.attribute("x"),
-                        domElement.attribute("y")
-                        );
-
-            ball.id = domElement.attribute("id");
-            ball.angle = domElement.attribute("angle").toDouble();
-            ball.discovered = StringToBool(domElement.attribute("discovered"));
-
-            level.ball << ball;
+        {            
+            level->ball << CreateBallInstance(domElement);
         }
+        else if (domElement.tagName() == "levelexit")
+        {
+            CreateLevelExit(&level->levelexit, domElement);
+        }
+        else if (domElement.tagName() == "pipe")
+        {
+            CreatePipe(&level->pipe, domElement);
+        }
+        else if (domElement.tagName() == "Strand")
+        {
+            level->strand << CreateStrand(domElement);
+        }
+
+        node = node.nextSibling();
     }
 
     return level;
+}
+
+void OGLevelConfig::CreateLevelExit(WOGLevelExit* levelexit
+                                    , const QDomElement & element
+                                    )
+{
+    levelexit->id = element.attribute("id");
+    levelexit->pos = StringToPoint(element.attribute("pos"));
+    levelexit->radius = element.attribute("radius", "0").toInt();
+    levelexit->filter = element.attribute("filter");
+}
+
+WOGPoi* OGLevelConfig::CreatePoi(const QDomElement & element)
+{
+    WOGPoi* obj = new WOGPoi;
+    obj->position = StringToPoint(element.attribute("pos"));
+    obj->traveltime = element.attribute("traveltime").toDouble();
+    obj->pause = element.attribute("pause").toDouble();
+    obj->zoom = element.attribute("zoom").toDouble();
+
+    return obj;
+}
+
+WOGCamera* OGLevelConfig::CreateCamera(const QDomElement & element)
+{
+    WOGCamera* obj = new WOGCamera;
+
+    obj->aspect = element.attribute("aspect");
+    obj->endpos = StringToPoint(element.attribute("endpos"));
+    obj->endzoom = element.attribute("endzoom").toDouble();
+
+    QDomNode node = element.firstChild();
+
+    while (!node.isNull())
+    {
+        obj->poi << CreatePoi(node.toElement());
+        node = node.nextSibling();
+    }
+
+    return obj;
+}
+
+WOGBallInstance* OGLevelConfig::CreateBallInstance(const QDomElement & element)
+{
+    WOGBallInstance* obj = new WOGBallInstance;
+    obj->type = StringToBallType(element.attribute("type"));
+    obj->position = StringToPoint(element.attribute("x")
+                                  , element.attribute("y"));
+
+    obj->id = element.attribute("id");
+    obj->angle = element.attribute("angle").toDouble();
+    obj->discovered = StringToBool(element.attribute("discovered"));
+
+    return obj;
+}
+
+void OGLevelConfig::CreateVertex(QList<QPointF>* vertex, QDomElement & element)
+{
+
+    qreal x = element.attribute("x").toDouble();
+    qreal y = element.attribute("y").toDouble();
+
+    vertex->push_back(QPointF(x, y));
+}
+
+void OGLevelConfig::CreatePipe(WOGPipe* pipe, const QDomElement & element)
+{    
+    pipe->id = element.attribute("id");
+    pipe->depth = element.attribute("depth").toDouble();
+
+    QDomNode node = element.firstChild();
+
+    while (!node.isNull())
+    {
+        CreateVertex(&pipe->vertex, node.toElement());
+        node = node.nextSibling();
+    }
+}
+
+WOGStrand* OGLevelConfig::CreateStrand(const QDomElement & element)
+{
+    WOGStrand* obj = new WOGStrand;
+    obj->bg1_ = element.attribute("bg1");
+    obj->bg2_ = element.attribute("bg2");
+
+    return obj;
+}
+
+WOGBallInstance::Type OGLevelConfig::StringToBallType(const QString & string)
+{
+    WOGBallInstance::Type type;
+    if (string == "common") { type = WOGBallInstance::COMMON; }
+    else if (string == "Distant") { type = WOGBallInstance::COMMON; }
+
+    return type;
 }

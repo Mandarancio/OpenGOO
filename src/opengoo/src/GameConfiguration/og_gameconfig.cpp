@@ -11,10 +11,11 @@ OGGameConfig::OGGameConfig(const QString & filename)
 OGConfig OGGameConfig::Parser()
 {
     OGConfig config;
+    QDomNode node = rootElement.firstChild();
 
-    for(QDomNode n = rootElement.firstChild(); !n.isNull(); n = n.nextSibling())
+    while (!node.isNull())
     {
-        QDomElement domElement = n.toElement();
+        QDomElement domElement = node.toElement();
 
         if (domElement.tagName() == "param")
         {
@@ -43,6 +44,8 @@ OGConfig OGGameConfig::Parser()
                 else { config.fullscreen = false; }
             }
         }
+
+        node = node.nextSibling();
     }
 
     return config;
@@ -58,6 +61,11 @@ void OGGameConfig::Create(OGConfig & config)
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("config");
+
+    stream.writeStartElement("param");
+    stream.writeAttribute("name", "language");
+    stream.writeAttribute("value",  "en");
+    stream.writeEndElement(); // end language
 
     stream.writeStartElement("param");
     stream.writeAttribute("name", "screen_width");
