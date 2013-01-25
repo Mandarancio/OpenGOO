@@ -18,7 +18,7 @@ private:
     WOGBallInstance* CreateBallInstance(const QDomElement & element);
     void CreatePipe(WOGPipe* pipe, const QDomElement & element);
     WOGStrand* CreateStrand(const QDomElement & element);
-    void CreateVertex(QList<QPointF>* vertex, QDomElement & element);
+    void CreateVertex(QList<QPointF>* vertex, const QDomElement &element);
 
     WOGBallInstance::Type StringToBallType(const QString & string);
 };

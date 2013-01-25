@@ -491,15 +491,15 @@ void moveCamera()
 
     if (_frames <= 0)
     {
-        OGCamera* endCam = &_world->GetCamera(_nextCamera);
-        qreal x = endCam->center().x() - _camera.center().x();
-        qreal y = endCam->center().y() - _camera.center().y();
-        qreal zoom = endCam->zoom() - _camera.zoom();
+        const OGCamera& endCam = _world->GetCamera(_nextCamera);
+        qreal x = endCam.center().x() - _camera.center().x();
+        qreal y = endCam.center().y() - _camera.center().y();
+        qreal zoom = endCam.zoom() - _camera.zoom();
 
         qreal fps =  1000.0/_gameEngine->getFrameDelay();
-        _pause = endCam->pause() * fps;
+        _pause = endCam.pause() * fps;
 
-        _frames = endCam->traveltime()*fps;
+        _frames = endCam.traveltime()*fps;
 
         if (_frames > 0)
         {
@@ -661,7 +661,7 @@ bool createPhysicsWorld()
 
     for (int i=0; i < _world->leveldata()->ball.size(); i++)
     {
-        WOGMaterial material = {QString(), 15.0, 0.1, 102, 30.0};
+        WOGMaterial material = {QString(), 15.0, 0.1, 102, 30};
 
         _balls << createCircle(
                       _world->leveldata()->ball.at(i)->position

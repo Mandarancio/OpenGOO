@@ -113,7 +113,7 @@ WOGBallInstance* OGLevelConfig::CreateBallInstance(const QDomElement & element)
     return obj;
 }
 
-void OGLevelConfig::CreateVertex(QList<QPointF>* vertex, QDomElement & element)
+void OGLevelConfig::CreateVertex(QList<QPointF>* vertex, const QDomElement & element)
 {
 
     qreal x = element.attribute("x").toDouble();

@@ -43,7 +43,7 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
     {
         circle->CreateFixture(0.0, material.friction*0.01, material.bounce);
         b2MassData m = {
-            mass
+            static_cast<float>(mass)
             , b2Vec2(0,0)
             , 0.0
         };
