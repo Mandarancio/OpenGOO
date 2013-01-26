@@ -3,8 +3,6 @@
 
 #include <queue>
 
-#include <vorbis/vorbisfile.h>
-
 #include <QMutex>
 #include <QWaitCondition>
 #include <QThread>

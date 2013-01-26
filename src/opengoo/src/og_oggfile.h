@@ -34,4 +34,12 @@ private:
 
 };
 
+namespace{
+//delete warning about unused variables.
+ov_callbacks un_1 = OV_CALLBACKS_DEFAULT;
+ov_callbacks un_2 = OV_CALLBACKS_NOCLOSE;
+ov_callbacks un_3 = OV_CALLBACKS_STREAMONLY;
+ov_callbacks un_4 = OV_CALLBACKS_STREAMONLY_NOCLOSE;
+}
+
 #endif // OG_OGGFILE_H
