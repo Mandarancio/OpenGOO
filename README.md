@@ -8,9 +8,13 @@ A free and open clone of [World of Goo](http://www.worldofgoo.com/)
 
 __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) license__
 
+***
+WARNING: The Pre-Alpha1 version is not developed anymore.
+***
+
 ## DEPENDENCIES
 
-* Qt4 and QT4 opengl module
+* Qt4 and Qt4 opengl module
 * Gcc
 * QMake
 * Make
