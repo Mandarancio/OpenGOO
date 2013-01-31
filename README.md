@@ -4,12 +4,17 @@ A free and open clone of [World of Goo](http://www.worldofgoo.com/)
 
 * [Home page](http://mandarancio.github.com/OpenGOO/)
 * [Wiki](https://github.com/Mandarancio/OpenGOO/wiki)
+* [Contribute](https://github.com/Mandarancio/OpenGOO/wiki/How-to-collaborate)
 
 __This software is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) license__
 
+***
+WARNING: The pre-Alpha2 version is under heavy development and it isn't playable yet.
+***
+
 ## DEPENDENCIES
 
-* Qt5 and QT5 opengl module
+* Qt5 and Qt5 opengl module
 * Gcc
 * QMake
 * Make
