@@ -23,7 +23,7 @@ bool initializePhysicsEngine(const QPointF gravity, bool sleep)
 }
 
 OGPhysicsBody* createCircle(const QPointF & position, float32 radius
-                            , const WOGMaterial & material, bool dynamic
+                            , WOGMaterial* material, bool dynamic
                             , qreal mass
                             )
 {
@@ -41,7 +41,7 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
 
     if (dynamic)
     {
-        circle->CreateFixture(0.0, material.friction*0.01, material.bounce);
+        circle->CreateFixture(0.0, material->friction*0.01, material->bounce);
         b2MassData m = {
             static_cast<float>(mass)
             , b2Vec2(0,0)
@@ -52,14 +52,14 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
     }
     else
     {
-        circle->CreateFixture(0.0, material.friction*0.01, material.bounce);
+        circle->CreateFixture(0.0, material->friction*0.01, material->bounce);
     }
 
     return circle;
 }
 
 OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
-                          , const WOGMaterial &material, OGWorld* world
+                          , WOGMaterial* material, OGWorld* world
                           , bool dynamic
                           )
 {
@@ -101,18 +101,18 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
 
     if (dynamic)
     {
-        line->CreateFixture(0.0, material.friction*0.01, material.bounce);
+        line->CreateFixture(0.0, material->friction*0.01, material->bounce);
     }
     else
     {
-        line->CreateFixture(0.0, material.friction*0.01, material.bounce);
+        line->CreateFixture(0.0, material->friction*0.01, material->bounce);
     }
 
     return line;
 }
 
 OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
-                               , qreal rotation, const WOGMaterial & material
+                               , qreal rotation, WOGMaterial* material
                                , bool dynamic
                           )
 {
@@ -131,11 +131,11 @@ OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
 
     if (dynamic)
     {
-        rect->CreateFixture(0.0, material.friction*0.01, material.bounce);
+        rect->CreateFixture(0.0, material->friction*0.01, material->bounce);
     }
     else
     {
-        rect->CreateFixture(0.0, material.friction*0.01, material.bounce);
+        rect->CreateFixture(0.0, material->friction*0.01, material->bounce);
     }
 
     return rect;

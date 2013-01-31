@@ -7,18 +7,18 @@
 bool initializePhysicsEngine(const QPointF gravity, bool sleep);
 
 OGPhysicsBody* createCircle(const QPointF & position, float32 radius
-                            , const WOGMaterial & material, bool dynamic
-                            , qreal mass
+                            , WOGMaterial* material, bool dynamic=false
+                            , qreal mass=0
                             );
 
 OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
-                          , const WOGMaterial & material, OGWorld* world
-                          , bool dynamic
+                          , WOGMaterial* material, OGWorld* world
+                          , bool dynamic=false
                           );
 
 OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
-                               , qreal rotation, const WOGMaterial & material
-                               , bool dynamic
+                               , qreal rotation, WOGMaterial* material
+                               , bool dynamic=false
                                );
 
 #endif // PHYSICS_H

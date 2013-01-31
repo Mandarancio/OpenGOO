@@ -237,6 +237,7 @@ SOURCES += \
     src/GameConfiguration/wog_level.cpp \
     src/GameConfiguration/wog_scene.cpp \
     src/GameConfiguration/wog_resources.cpp \
+    src/GameConfiguration/wog_material.cpp \
 
 
 HEADERS += \

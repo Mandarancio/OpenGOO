@@ -30,7 +30,7 @@ OGPhysicsEngine* _physicsEngine = 0;
 OGWorld* _world;
 
 QList<OGSprite*>* _sprites;
-QList<OGButton*>* _buttons;
+QList<OGButton*>* _buttons = 0;
 QList<OGPhysicsBody*> _staticCircles;
 QList<OGPhysicsBody*> _staticLines;
 QList<OGPhysicsBody*> _staticRectangles;
@@ -73,6 +73,9 @@ QPoint windowToLogical(const QPoint & position);
 
 bool createPhysicsWorld();
 void clearPhysicsWorld();
+
+void setBackgroundColor(const QColor & color);
+void drawOpenGLScene();
 
 // Animate camera
 int _nextCamera = 1;

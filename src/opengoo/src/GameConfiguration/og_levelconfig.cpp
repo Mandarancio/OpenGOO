@@ -42,7 +42,10 @@ WOGLevel* OGLevelConfig::Parser()
         }
         else if (domElement.tagName() == "levelexit")
         {
-            CreateLevelExit(&level->levelexit, domElement);
+            if (!level->levelexit)
+            {
+                level->levelexit = CreateLevelExit(domElement);
+            }
         }
         else if (domElement.tagName() == "pipe")
         {
@@ -59,14 +62,15 @@ WOGLevel* OGLevelConfig::Parser()
     return level;
 }
 
-void OGLevelConfig::CreateLevelExit(WOGLevelExit* levelexit
-                                    , const QDomElement & element
-                                    )
+WOGLevelExit* OGLevelConfig::CreateLevelExit(const QDomElement & element)
 {
-    levelexit->id = element.attribute("id");
-    levelexit->pos = StringToPoint(element.attribute("pos"));
-    levelexit->radius = element.attribute("radius", "0").toInt();
-    levelexit->filter = element.attribute("filter");
+    WOGLevelExit* obj = new WOGLevelExit;
+    obj->id = element.attribute("id");
+    obj->pos = StringToPoint(element.attribute("pos"));
+    obj->radius = element.attribute("radius").toInt();
+    obj->filter = element.attribute("filter");
+
+    return obj;
 }
 
 WOGPoi* OGLevelConfig::CreatePoi(const QDomElement & element)

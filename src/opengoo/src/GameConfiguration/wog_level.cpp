@@ -12,4 +12,6 @@ WOGLevel::~WOGLevel()
     while (!ball.isEmpty()) { delete ball.takeFirst(); }
 
     while (!strand.isEmpty()) { delete strand.takeFirst(); }
+
+    delete levelexit;
 }

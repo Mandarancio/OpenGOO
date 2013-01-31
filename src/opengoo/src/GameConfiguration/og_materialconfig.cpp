@@ -9,8 +9,36 @@ OGMaterialConfig::OGMaterialConfig(const QString & filename)
 }
 
 WOGMaterialList* OGMaterialConfig::Parser()
-{
-    qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
+{    
+    QDomNode node;
+    QDomElement element;
 
-    return 0;
+    WOGMaterialList* obj = new WOGMaterialList;
+    node = rootElement.firstChild();
+
+    while(!node.isNull())
+    {
+        element = node.toElement();
+
+        if (element.tagName() == "material")
+        {
+            obj->material << CreateMaterial(element);
+        }
+
+        node = node.nextSibling();
+    }
+
+    return obj;
+}
+
+WOGMaterial* OGMaterialConfig::CreateMaterial(const QDomElement & element)
+{
+    WOGMaterial* obj = new WOGMaterial;
+    obj->bounce = element.attribute("bounce").toDouble();
+    obj->friction = element.attribute("friction").toDouble();
+    obj->id = element.attribute("id");
+    obj->minbouncevel = element.attribute("minbouncevel").toDouble();
+    obj->stickiness = element.attribute("stickiness").toInt();
+
+    return obj;
 }

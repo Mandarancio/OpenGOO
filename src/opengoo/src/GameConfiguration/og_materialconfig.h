@@ -11,6 +11,8 @@ class OGMaterialConfig : public OGXmlConfig
 public:
     OGMaterialConfig(const QString & filename);
     WOGMaterialList* Parser();
+
+    WOGMaterial* CreateMaterial(const QDomElement & element);
 };
 
 #endif // OG_MATERIALCONFIG_H

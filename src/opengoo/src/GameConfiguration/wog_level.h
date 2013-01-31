@@ -75,10 +75,11 @@ struct WOGLevel
     QList<WOGCamera*> camera;
     WOGMusic music;
     QList<WOGBallInstance*> ball;
-    WOGLevelExit levelexit;
+    WOGLevelExit* levelexit;
     QList<WOGStrand*> strand;
     WOGPipe pipe;
 
+    WOGLevel() : levelexit(0) { }
     ~WOGLevel();
 };
 

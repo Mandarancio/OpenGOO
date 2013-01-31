@@ -12,7 +12,7 @@ public:
     WOGLevel* Parser();
 
 private:
-    void CreateLevelExit(WOGLevelExit* levelexit, const QDomElement & element);
+    WOGLevelExit* CreateLevelExit(const QDomElement & element);
     WOGCamera* CreateCamera(const QDomElement & element);
     WOGPoi* CreatePoi(const QDomElement & element);
     WOGBallInstance* CreateBallInstance(const QDomElement & element);

@@ -1,5 +1,6 @@
 #include "og_world.h"
 #include "og_physicsbody.h"
+#include "flags.h"
 
 #include <QPainter>
 #include <QTime>
@@ -9,17 +10,32 @@ extern QTime _time;
 extern OGButton _buttonMenu;
 extern QList<OGPhysicsBody*> _balls;
 
-int _n = 0;
-int _sumtime = 0;
-int _fps = 60;
+void calculateFPS(QPainter* painter, qreal zoom)
+{
+    int x, y;
 
-void visualDebug(QPainter* painter, OGWorld *world, qreal zoom)
+    static int fps = 0;
+    static int cur_fps = 0;
+
+    cur_fps++;
+
+    if (_time.elapsed() >= 1000)
+    {
+        fps = cur_fps;
+        cur_fps = 0;
+        _time.restart();
+    }
+
+    x = painter->window().x() + 20.0/zoom;
+    y = painter->window().y() + 20.0/zoom;
+    painter->setPen(Qt::white);
+    painter->setFont(QFont("Verdana", qRound(12.0/zoom), QFont::Bold));
+    painter->drawText(x, y, QString::number(fps));
+}
+
+void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
 {
     const qreal K = 10.0;
-
-    _sumtime += _time.elapsed();
-
-    _time.restart();
 
     qreal winX = painter->window().x();
     qreal winY = painter->window().y();
@@ -40,12 +56,12 @@ void visualDebug(QPainter* painter, OGWorld *world, qreal zoom)
     painter->drawEllipse(QPointF(0, 0), 10.0/zoom, 10.0/zoom); // center of word
 
     // level exit
-    if (world->leveldata()->levelexit.radius)
+    if (world->leveldata()->levelexit)
     {
         qreal x, y;
 
-        x = world->leveldata()->levelexit.pos.x();
-        y = world->leveldata()->levelexit.pos.y()*(-1.0);
+        x = world->leveldata()->levelexit->pos.x();
+        y = world->leveldata()->levelexit->pos.y()*(-1.0);
         QRectF rect(x, y, 10.0 , 10.0);
 
         rect.moveCenter(rect.topLeft());
@@ -101,23 +117,8 @@ void visualDebug(QPainter* painter, OGWorld *world, qreal zoom)
                           );
     }
 
-    if(_n++ > 60)
+    if (flag == FPS)
     {
-        if (_sumtime == 0)
-        {
-            _fps = 60;
-        }
-        else
-        {
-            _fps = qRound(60000.0/_sumtime);
-        }
-
-    _n = 0;
-    _sumtime = 0;
+        calculateFPS(painter, zoom);
     }
-
-    painter->setPen(Qt::white);
-
-    painter->setFont(QFont("Verdana", qRound(12.0/zoom), QFont::Bold));
-    painter->drawText(winX + 20.0/zoom, winY + 20.0/zoom, QString::number(_fps));
 }

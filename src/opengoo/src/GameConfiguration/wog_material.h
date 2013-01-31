@@ -30,6 +30,8 @@ struct WOGMaterialList
 
         qDebug("WOGMaterialList: End");
     }
+
+    WOGMaterial* GetMaterial(const QString & id);
 };
 
 #endif // WOG_MATERIAL_H

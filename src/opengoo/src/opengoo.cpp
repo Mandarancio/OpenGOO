@@ -123,7 +123,7 @@ void GameStart()
     _E404 = false;
     _isScrollLock = false;
     _isZoomLock = false;
-    _isLevelInitialize = false;
+    _isLevelInitialize = false;    
 
     // MapWorldView is the main menu
 
@@ -224,8 +224,8 @@ void GamePaint(QPainter* painter)
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
-    // Set background
-    painter->fillRect(_camera.window(), _world->scenedata()->backgroundcolor);
+    setBackgroundColor(_world->scenedata()->backgroundcolor);
+    drawOpenGLScene();
 
     // Draw scene
     for (int i=0; i< _sprites->size(); i++)
@@ -279,6 +279,8 @@ void KeyUp(QKeyEvent* event) { Q_UNUSED(event) }
 
 void MouseButtonDown(QMouseEvent* event)
 {
+    if (!_buttons) { return; }
+
     QPoint mPos(event->pos());
 
     QRectF menu(_buttonMenu.position(), _buttonMenu.size());
@@ -325,25 +327,28 @@ void MouseMove(QMouseEvent* event)
     _scroll = scroll;
     mPos = windowToLogical(mPos);
 
-    for(int i=0; i < _buttons->size(); i++)
+    if (_buttons)
     {
-        QRectF button(QPointF(_buttons->at(i)->position().x()
-                              , _buttons->at(i)->position().y()
-                              )
-                      , _buttons->at(i)->size()
-                      );
-
-        button.moveCenter(_buttons->at(i)->position());
-
-        if(button.contains(mPos))
+        for(int i=0; i < _buttons->size(); i++)
         {
-            _buttons->at(i)->up()->visible = false;
-            _buttons->at(i)->over()->visible = true;
-        }
-        else
-        {
-            _buttons->at(i)->up()->visible = true;
-            _buttons->at(i)->over()->visible = false;
+            QRectF button(QPointF(_buttons->at(i)->position().x()
+                                  , _buttons->at(i)->position().y()
+                                  )
+                          , _buttons->at(i)->size()
+                          );
+
+            button.moveCenter(_buttons->at(i)->position());
+
+            if(button.contains(mPos))
+            {
+                _buttons->at(i)->up()->visible = false;
+                _buttons->at(i)->over()->visible = true;
+            }
+            else
+            {
+                _buttons->at(i)->up()->visible = true;
+                _buttons->at(i)->over()->visible = false;
+            }
         }
     }
 
@@ -557,6 +562,8 @@ bool createPhysicsWorld()
     }
 
     QPointF gravity;
+    WOGMaterial* material;
+    QString id; // material name
 
     if (!_world->scenedata()->linearforcefield.isEmpty())
     {
@@ -564,8 +571,7 @@ bool createPhysicsWorld()
         {
             gravity = _world->scenedata()->linearforcefield.last()->force;
         }
-    }   
-
+    }
 
     if (!initializePhysicsEngine(gravity, true))
     {
@@ -577,27 +583,14 @@ bool createPhysicsWorld()
     for (int i=0; i < _world->scenedata()->circle.size(); i++)
     {
         if (!_world->scenedata()->circle.at(i)->dynamic)
-        {            
-            WOGMaterial material;
+        {
+            WOGCircle* circle = _world->scenedata()->circle.at(i);
+            id = circle->material;
+            material = _world->materialdata()->GetMaterial(id);
 
-            if (_world->scenedata()->circle.at(i)->material == "verysticky")
-            {
-                material.friction = 100.0;
-                material.bounce  = 0.0;
-                material.stickiness = 1000.0;
-            }
-            else if (_world->scenedata()->circle.at(i)->material == "rock")
-            {
-                material.friction = 4.0;
-                material.bounce  = 0.5;
-                material.stickiness = 0.0;
-            }
-
-            _staticCircles << createCircle(
-                                  _world->scenedata()->circle.at(i)->position
-                                  , _world->scenedata()->circle.at(i)->radius
-                                  , material, false, 0
-                                  );
+            _staticCircles << createCircle(circle->position, circle->radius
+                                           , material
+                                           );
         }
     }
 
@@ -605,68 +598,37 @@ bool createPhysicsWorld()
     {
         if (!_world->scenedata()->line.at(i)->dynamic)
         {
-            WOGMaterial material;
+            WOGLine* line = _world->scenedata()->line.at(i);
+            id = line->material;
+            material = _world->materialdata()->GetMaterial(id);
 
-            if (_world->scenedata()->line.at(i)->material == "verysticky")
-            {
-                material.friction = 100.0;
-                material.bounce  = 0.0;
-                material.stickiness = 1000.0;
-            }
-            else if (_world->scenedata()->line.at(i)->material == "rock")
-            {
-                material.friction = 4.0;
-                material.bounce  = 0.5;
-                material.stickiness = 0.0;
-            }
-
-            _staticLines << createLine(_world->scenedata()->line.at(i)->anchor
-                                       , _world->scenedata()->line.at(i)->normal
-                                       , material, _world, false
+            _staticLines << createLine(line->anchor, line->normal, material
+                                       , _world, line->dynamic
                                        );
         }
     }
 
     for (int i=0; i < _world->scenedata()->rectangle.size(); i++)
     {
-        if (_world->scenedata()->rectangle.at(i)->dynamic) { continue; }
-
-        const WOGRectangle* rect = _world->scenedata()->rectangle.at(i);
-
-        WOGMaterial material;
-
-        if (rect->material == "verysticky")
+        if (!_world->scenedata()->rectangle.at(i)->dynamic)
         {
-            material.friction = 100.0;
-            material.bounce  = 0.0;
-            material.stickiness = 1000.0;
-        }
-        else if (rect->material == "rock")
-        {
-            material.friction = 4.0;
-            material.bounce  = 0.5;
-            material.stickiness = 0.0;
-        }
-        else {
-            material.friction = 0.0;
-            material.bounce  = 0.0;
-            material.stickiness = 0.0;
-        }
+            WOGRectangle* rect = _world->scenedata()->rectangle.at(i);
 
-        _staticRectangles << createRectangle(rect->position, rect->size
-                                             , rect->rotation , material
-                                             , rect->dynamic
-                                             );
+            id = rect->material;
+            material = _world->materialdata()->GetMaterial(id);
+
+            _staticRectangles << createRectangle(rect->position, rect->size
+                                                 , rect->rotation , material
+                                                 );
+        }
     }
 
     for (int i=0; i < _world->leveldata()->ball.size(); i++)
     {
-        WOGMaterial material = {QString(), 15.0, 0.1, 102, 30};
+        WOGBallInstance* ball = _world->leveldata()->ball.at(i);
+        WOGMaterial ballmaterial = {QString(), 15.0, 0.1, 102, 30};
 
-        _balls << createCircle(
-                      _world->leveldata()->ball.at(i)->position
-                      , 15.0, material, true, 30
-                      );
+        _balls << createCircle(ball->position, 15.0, &ballmaterial, true, 30);
     }
 
     _physicsEngine->SetSimulation(6, 2, 60.0);
@@ -713,4 +675,16 @@ void readConfiguration()
         logWarn("File " + filename +" not found");
         gameConfig.Create(_config);
     }
+}
+
+void setBackgroundColor(const QColor & color)
+{    
+    glClearColor(color.redF(), color.greenF(), color.blueF(), 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+
+void drawOpenGLScene()
+{
+
 }

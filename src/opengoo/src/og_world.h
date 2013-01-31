@@ -74,6 +74,7 @@ public:
     QList<OGSprite*>* sprites() { return &sprites_; }
     OGCamera currentcamera() const { return currentCamera_; }
     WOGLevel* leveldata() { return levelData_; }
+    WOGMaterialList* materialdata() { return materialData_; }
     QString levelname() const { return levelName_; }
     WOGScene* scenedata() { return sceneData_; }
     QSizeF scenesize() const { return sceneSize_; }
