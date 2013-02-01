@@ -106,7 +106,7 @@ WOGCamera* OGLevelConfig::CreateCamera(const QDomElement & element)
 WOGBallInstance* OGLevelConfig::CreateBallInstance(const QDomElement & element)
 {
     WOGBallInstance* obj = new WOGBallInstance;
-    obj->type = StringToBallType(element.attribute("type"));
+    obj->type = element.attribute("type");
     obj->position = StringToPoint(element.attribute("x")
                                   , element.attribute("y"));
 
@@ -147,13 +147,4 @@ WOGStrand* OGLevelConfig::CreateStrand(const QDomElement & element)
     obj->bg2_ = element.attribute("bg2");
 
     return obj;
-}
-
-WOGBallInstance::Type OGLevelConfig::StringToBallType(const QString & string)
-{
-    WOGBallInstance::Type type;
-    if (string == "common") { type = WOGBallInstance::COMMON; }
-    else if (string == "Distant") { type = WOGBallInstance::COMMON; }
-
-    return type;
 }

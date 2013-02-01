@@ -33,7 +33,7 @@
 
 #include <logger.h>
 #include <consoleappender.h>
-
+#include "og_ballconfig.h"
 
 bool GameInitialize(int argc, char **argv)
 {    
@@ -624,11 +624,28 @@ bool createPhysicsWorld()
     }
 
     for (int i=0; i < _world->leveldata()->ball.size(); i++)
-    {
+    {        
         WOGBallInstance* ball = _world->leveldata()->ball.at(i);
-        WOGMaterial ballmaterial = {QString(), 15.0, 0.1, 102, 30};
+        WOGBall* wball = readBallConfiguration(ball->type);
 
-        _balls << createCircle(ball->position, 15.0, &ballmaterial, true, 30);
+        if (wball)
+        {
+
+            WOGMaterial ballmaterial = {QString(), 15.0, 0.1, 102, 30};
+
+            QStringList list = wball->attribute.core.shape.split(",");
+
+            if (list.at(0) == "circle")
+            {
+                float32 radius = list.at(1).toFloat()/2;
+
+                _balls << createCircle(ball->position, radius, &ballmaterial
+                                       , true, wball->attribute.core.mass
+                                       );
+            }
+
+            delete wball;
+        }
     }
 
     _physicsEngine->SetSimulation(6, 2, 60.0);
@@ -687,4 +704,25 @@ void setBackgroundColor(const QColor & color)
 void drawOpenGLScene()
 {
 
+}
+
+WOGBall* readBallConfiguration(const QString & dirname)
+{
+    QString path = "./res/balls/" + dirname + "/balls.xml";
+    OGBallConfig config(path);
+
+    if (config.Open())
+    {
+        if (config.Read())
+        {
+            return config.Parser();
+        }
+        else {logWarn("File " + path + " is corrupted"); }
+    }
+    else
+    {
+        logWarn("File " + path +" not found");
+    }
+
+    return 0;
 }

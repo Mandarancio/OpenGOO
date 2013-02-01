@@ -11,6 +11,14 @@ public:
     OGBallConfig(const QString & filename);
 
     WOGBall* Parser();
+
+private:
+    void CreateAttributes_(WOGBall* ball);
+    void CreateCoreAttributes_(WOGBall* ball);
+    void CreateBehaviourAttributes_(WOGBall* ball);
+    void CreateMovementAttributes_(WOGBall* ball);
+    void CreatePlayerInteraction_(WOGBall* ball);
+    void CreateCosmeticAttributes_(WOGBall* ball);
 };
 
 #endif // OG_BALLCONFIG_H

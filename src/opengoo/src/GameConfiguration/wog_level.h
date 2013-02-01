@@ -30,9 +30,7 @@ typedef WOGMusic WOGLoopSound;
 
 struct WOGBallInstance
 {
-    enum Type {COMMON, DISTANT};
-
-    Type type;
+    QString type;
     QPointF position;
     QString id;
     qreal angle;

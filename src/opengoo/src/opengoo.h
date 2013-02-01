@@ -87,6 +87,8 @@ qreal _pause = 0;
 qreal _frames = 0;
 void moveCamera();
 
+WOGBall* readBallConfiguration(const QString & dirname);
+
 #define UNIMPLEMENTED qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
 
 #endif // OPENGOO_H

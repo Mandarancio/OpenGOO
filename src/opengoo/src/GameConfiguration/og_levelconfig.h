@@ -19,8 +19,6 @@ private:
     void CreatePipe(WOGPipe* pipe, const QDomElement & element);
     WOGStrand* CreateStrand(const QDomElement & element);
     void CreateVertex(QList<QPointF>* vertex, const QDomElement &element);
-
-    WOGBallInstance::Type StringToBallType(const QString & string);
 };
 
 #endif // OG_LEVELCONFIG_H
