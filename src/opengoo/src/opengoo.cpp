@@ -639,6 +639,18 @@ bool createPhysicsWorld()
             {
                 float32 radius = list.at(1).toFloat()/2;
 
+                if (list.size() == 3)
+                {
+                    int n = list[2].toFloat()*100;
+
+                    if (n > 100) { n = 100; }
+
+                    if (n >= 1)
+                    {
+                        radius += radius*(qrand()%n)*0.01;
+                    }
+                }
+
                 _balls << createCircle(ball->position, radius, &ballmaterial
                                        , true, wball->attribute.core.mass
                                        );

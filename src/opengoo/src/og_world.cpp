@@ -134,8 +134,6 @@ bool OGWorld::LoadLevel_(const QString path)
 
 bool OGWorld::LoadMaterials_(const QString & path)
 {
-    Q_UNUSED(path)
-
     logDebug("material file");
 
     if (materialData_) { return false; }
