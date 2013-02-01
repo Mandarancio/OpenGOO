@@ -23,6 +23,23 @@ struct Scroll
     bool right;
 };
 
+struct OGBall
+{
+    OGPhysicsBody* ball;
+    QString id;
+
+    OGBall() : ball(0), id(QString()) {}
+    ~OGBall() { delete ball; }
+};
+
+struct OGStrand
+{
+    int gb1;
+    int gb2;
+
+    OGStrand() : gb1(-1), gb2(-1) { }
+};
+
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 
 OGGameEngine* _gameEngine = 0;
@@ -34,7 +51,8 @@ QList<OGButton*>* _buttons = 0;
 QList<OGPhysicsBody*> _staticCircles;
 QList<OGPhysicsBody*> _staticLines;
 QList<OGPhysicsBody*> _staticRectangles;
-QList<OGPhysicsBody*> _balls;
+QList<OGBall*> _balls;
+QList<OGStrand*> _strands;
 OGButton _buttonMenu;
 
 QString _levelname;
@@ -70,6 +88,9 @@ void buttonMenu();
 
 QPointF logicalToWindow(const QRectF & rect, qreal zoom);
 QPoint windowToLogical(const QPoint & position);
+
+OGBall* createBall(WOGBallInstance* data, WOGBall* configuration);
+OGStrand* createStrand(WOGStrand* strand);
 
 bool createPhysicsWorld();
 void clearPhysicsWorld();

@@ -5,10 +5,25 @@
 #include <QPainter>
 #include <QTime>
 
+struct OGBall
+{
+    OGPhysicsBody* ball;
+    QString id;
+};
+
+struct OGStrand
+{
+    int gb1;
+    int gb2;
+
+    OGStrand() : gb1(-1), gb2(-1) { }
+};
+
 extern bool _E404;
 extern QTime _time;
 extern OGButton _buttonMenu;
-extern QList<OGPhysicsBody*> _balls;
+extern QList<OGBall*> _balls;
+extern QList<OGStrand*> _strands;
 
 void calculateFPS(QPainter* painter, qreal zoom)
 {
@@ -31,6 +46,28 @@ void calculateFPS(QPainter* painter, qreal zoom)
     painter->setPen(Qt::white);
     painter->setFont(QFont("Verdana", qRound(12.0/zoom), QFont::Bold));
     painter->drawText(x, y, QString::number(fps));
+}
+
+void drawStrands(QPainter* painter)
+{
+    const qreal K = 10.0;
+
+    int x1, y1, x2, y2, b1, b2;
+
+    for (int i=0; i < _strands.size(); i++)
+    {
+        if (_strands.at(i)->gb1 != -1 && _strands.at(i)->gb2 != -1)
+        {
+            b1 = _strands.at(i)->gb1;
+            b2 = _strands.at(i)->gb2;
+            x1 = _balls.at(b1)->ball->body->GetPosition().x*K;
+            y1 = _balls.at(b1)->ball->body->GetPosition().y*K*(-1.0);
+            x2 = _balls.at(b2)->ball->body->GetPosition().x*K;
+            y2 = _balls.at(b2)->ball->body->GetPosition().y*K*(-1.0);
+
+            painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
+        }
+    }
 }
 
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
@@ -97,12 +134,14 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
     {
         qreal x, y, radius;
 
-        x = _balls.at(i)->body->GetPosition().x*K;
-        y = _balls.at(i)->body->GetPosition().y*K*(-1.0);
-        radius = _balls.at(i)->shape->GetRadius()*K;
+        x = _balls.at(i)->ball->body->GetPosition().x*K;
+        y = _balls.at(i)->ball->body->GetPosition().y*K*(-1.0);
+        radius = _balls.at(i)->ball->shape->GetRadius()*K;
 
         painter->drawEllipse(QPointF(x, y), radius, radius);
     }
+
+    drawStrands(painter);
 
     if (_E404)
     {

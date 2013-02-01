@@ -624,40 +624,21 @@ bool createPhysicsWorld()
     }
 
     for (int i=0; i < _world->leveldata()->ball.size(); i++)
-    {        
-        WOGBallInstance* ball = _world->leveldata()->ball.at(i);
-        WOGBall* wball = readBallConfiguration(ball->type);
+    {
+        WOGBallInstance* data = _world->leveldata()->ball.at(i);
+        WOGBall* configuration = readBallConfiguration(data->type);
 
-        if (wball)
+        if (configuration)
         {
+            _balls << createBall(data, configuration);
 
-            WOGMaterial ballmaterial = {QString(), 15.0, 0.1, 102, 30};
-
-            QStringList list = wball->attribute.core.shape.split(",");
-
-            if (list.at(0) == "circle")
-            {
-                float32 radius = list.at(1).toFloat()/2;
-
-                if (list.size() == 3)
-                {
-                    int n = list[2].toFloat()*100;
-
-                    if (n > 100) { n = 100; }
-
-                    if (n >= 1)
-                    {
-                        radius += radius*(qrand()%n)*0.01;
-                    }
-                }
-
-                _balls << createCircle(ball->position, radius, &ballmaterial
-                                       , true, wball->attribute.core.mass
-                                       );
-            }
-
-            delete wball;
+            delete configuration;
         }
+    }
+
+    for (int i=0; i < _world->leveldata()->strand.size(); i++)
+    {
+        _strands << createStrand(_world->leveldata()->strand.at(i));
     }
 
     _physicsEngine->SetSimulation(6, 2, 60.0);
@@ -683,6 +664,8 @@ void clearPhysicsWorld()
     {
         delete _staticRectangles.takeFirst();
     }
+
+    while (!_strands.isEmpty()) { delete _strands.takeFirst(); }
 }
 
 void readConfiguration()
@@ -737,4 +720,70 @@ WOGBall* readBallConfiguration(const QString & dirname)
     }
 
     return 0;
+}
+
+OGBall* createBall(WOGBallInstance* data, WOGBall* configuration)
+{
+    float32 radius;
+
+    OGBall* obj = new OGBall;
+    obj->id = data->id;
+    WOGMaterial ballmaterial = {QString(), 15.0, 0.1, 102, 30};
+    QStringList list = configuration->attribute.core.shape.split(",");
+
+    if (list.at(0) == "circle")
+    {
+        radius = list.at(1).toFloat()*0.5;
+
+        if (list.size() == 3)
+        {
+            int n = list[2].toFloat()*100;
+
+            if (n > 100) { n = 100; }
+
+            if (n >= 1)
+            {
+                radius += radius*(qrand()%n)*0.01;
+            }
+        }
+
+        obj->ball = createCircle(data->position, radius, &ballmaterial
+                               , true, configuration->attribute.core.mass
+                               );
+    }
+    else if (list.at(0) == "rectangle")
+    {
+
+    }
+
+    return obj;
+}
+
+OGStrand* createStrand(WOGStrand* strand)
+{
+    OGStrand* obj = new OGStrand;
+
+    bool isFound1 = false;
+    bool isFound2 = false;
+
+    for(int i=0; i < _balls.size(); i++)
+    {
+        if (_balls.at(i)->ball)
+        {
+            if (strand->gb1 == _balls.at(i)->id)
+            {
+                obj->gb1 = i;
+                isFound1 = true;
+            }
+            else if (strand->gb2 == _balls.at(i)->id)
+            {
+                obj->gb2 = i;
+                isFound2 = true;
+            }
+
+            if (isFound1 && isFound2) { break; }
+        }
+    }
+
+    return obj;
 }

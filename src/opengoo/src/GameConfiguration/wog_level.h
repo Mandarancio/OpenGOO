@@ -54,8 +54,8 @@ struct WOGPipe
 
 struct WOGStrand
 {
-    QString bg1_;
-    QString bg2_;
+    QString gb1;
+    QString gb2;
 };
 
 

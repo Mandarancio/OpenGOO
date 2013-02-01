@@ -143,8 +143,8 @@ void OGLevelConfig::CreatePipe(WOGPipe* pipe, const QDomElement & element)
 WOGStrand* OGLevelConfig::CreateStrand(const QDomElement & element)
 {
     WOGStrand* obj = new WOGStrand;
-    obj->bg1_ = element.attribute("bg1");
-    obj->bg2_ = element.attribute("bg2");
+    obj->gb1 = element.attribute("gb1");
+    obj->gb2 = element.attribute("gb2");
 
     return obj;
 }
