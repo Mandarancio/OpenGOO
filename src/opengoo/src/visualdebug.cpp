@@ -9,6 +9,8 @@ struct OGBall
 {
     OGPhysicsBody* ball;
     QString id;
+    bool active;
+    bool selected;
 };
 
 struct OGStrand
@@ -24,6 +26,13 @@ extern QTime _time;
 extern OGButton _buttonMenu;
 extern QList<OGBall*> _balls;
 extern QList<OGStrand*> _strands;
+
+namespace visual_debug
+{
+    const qreal K = 10.0;
+}
+
+using namespace visual_debug;
 
 void calculateFPS(QPainter* painter, qreal zoom)
 {
@@ -49,9 +58,7 @@ void calculateFPS(QPainter* painter, qreal zoom)
 }
 
 void drawStrands(QPainter* painter)
-{
-    const qreal K = 10.0;
-
+{    
     int x1, y1, x2, y2, b1, b2;
 
     for (int i=0; i < _strands.size(); i++)
@@ -70,10 +77,39 @@ void drawStrands(QPainter* painter)
     }
 }
 
+void drawBalls(QPainter* painter)
+{
+    QPen pen;
+    qreal x, y, radius;
+
+    pen.setWidthF(2.0);
+
+    for (int i=0; i < _balls.size(); i++)
+    {
+        x = _balls.at(i)->ball->body->GetPosition().x*K;
+        y = _balls.at(i)->ball->body->GetPosition().y*K*(-1.0);
+        radius = _balls.at(i)->ball->shape->GetRadius()*K;
+
+        painter->save();
+
+        if (_balls.at(i)->selected)
+        {
+            pen.setColor(Qt::red);
+        }
+        else
+        {
+            pen.setColor(Qt::yellow);
+        }
+
+        painter->setPen(pen);
+        painter->drawEllipse(QPointF(x, y), radius, radius);
+
+        painter->restore();
+    }
+}
+
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
 {
-    const qreal K = 10.0;
-
     qreal winX = painter->window().x();
     qreal winY = painter->window().y();
 
@@ -130,16 +166,7 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
         painter->drawEllipse(pos, radius, radius);
     }
 
-    for (int i=0; i < _balls.size(); i++)
-    {
-        qreal x, y, radius;
-
-        x = _balls.at(i)->ball->body->GetPosition().x*K;
-        y = _balls.at(i)->ball->body->GetPosition().y*K*(-1.0);
-        radius = _balls.at(i)->ball->shape->GetRadius()*K;
-
-        painter->drawEllipse(QPointF(x, y), radius, radius);
-    }
+    drawBalls(painter);
 
     drawStrands(painter);
 

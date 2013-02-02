@@ -309,9 +309,45 @@ void MouseButtonDown(QMouseEvent* event)
             else { _E404 = true; }
         }
     }
+
+    qreal x, y, diameter;
+    const qreal K = 10.0;
+
+    for (int i=0; i < _balls.size(); i++)
+    {
+        if (_balls.at(i)->active)
+        {
+            x = _balls.at(i)->ball->body->GetPosition().x*K;
+            y = _balls.at(i)->ball->body->GetPosition().y*K;
+            diameter = _balls.at(i)->ball->shape->GetRadius()*2*K;
+
+            QRectF ball(QPointF(x, y), QSizeF(diameter, diameter));
+
+            ball.moveCenter(QPointF(x, y));
+
+            if(ball.contains(mPos))
+            {
+                _balls.at(i)->selected = true;
+                _selectedBall = i;
+                _balls.at(i)->ball->body->SetAwake(false);
+                break;
+            }
+        }
+    }
 }
 
-void MouseButtonUp(QMouseEvent* event) { Q_UNUSED(event) }
+void MouseButtonUp(QMouseEvent* event)
+{
+    Q_UNUSED(event)
+
+    if (_selectedBall != -1)
+    {
+        _balls.at(_selectedBall)->selected = false;
+        _balls.at(_selectedBall)->ball->body->SetAwake(true);
+        _selectedBall = -1;
+    }
+
+}
 
 void MouseMove(QMouseEvent* event)
 {
@@ -350,6 +386,17 @@ void MouseMove(QMouseEvent* event)
                 _buttons->at(i)->over()->visible = false;
             }
         }
+    }
+
+    if (_selectedBall != -1)
+    {
+        qreal x, y;
+
+        x = mPos.x()*0.1;
+        y = mPos.y()*0.1;
+        b2Body* body = _balls.at(_selectedBall)->ball->body;
+
+        body->SetTransform(b2Vec2(x, y), body->GetAngle());
     }
 
     if (x <= OFFSET) { _scroll.left = true; }
@@ -749,6 +796,8 @@ OGBall* createBall(WOGBallInstance* data, WOGBall* configuration)
         obj->ball = createCircle(data->position, radius, &ballmaterial
                                , true, configuration->attribute.core.mass
                                );
+
+        obj->active = true;
     }
     else if (list.at(0) == "rectangle")
     {
@@ -784,6 +833,10 @@ OGStrand* createStrand(WOGStrand* strand)
             {
                 obj->strand = createJoint(_balls.at(obj->gb1)->ball
                                            , _balls.at(obj->gb2)->ball);
+
+                _balls.at(obj->gb1)->active = false;
+                _balls.at(obj->gb2)->active = false;
+
                 break;
             }
         }

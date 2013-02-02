@@ -27,8 +27,10 @@ struct OGBall
 {
     OGPhysicsBody* ball;
     QString id;
+    bool active;
+    bool selected;
 
-    OGBall() : ball(0), id(QString()) {}
+    OGBall() : ball(0), id(QString()), active(false), selected(false) {}
     ~OGBall() { delete ball; }
 };
 
@@ -53,6 +55,7 @@ QList<OGPhysicsBody*> _staticCircles;
 QList<OGPhysicsBody*> _staticLines;
 QList<OGPhysicsBody*> _staticRectangles;
 QList<OGBall*> _balls;
+int _selectedBall = -1;
 QList<OGStrand*> _strands;
 OGButton _buttonMenu;
 
