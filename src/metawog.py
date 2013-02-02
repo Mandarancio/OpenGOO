@@ -547,7 +547,7 @@ TREE_LEVEL_SCENE.add_elements( [
             dxdy_attribute( 'normal', mandatory = True, init = '1,0' ),
             reference_attribute( 'material', reference_family = 'material', reference_world = WORLD_GLOBAL,
                                  init = '', allow_empty=True,remove_empty=True ),
-           # bool_attribute( 'static', init = 'true' ),
+            bool_attribute( 'static', init = 'true' ),
             enum_attribute( 'tag', _TAG_VALUES, is_list = True , allow_empty=True, remove_empty=True )
             ] ),
         describe_element( 'linearforcefield', groups = 'physic', attributes = [
