@@ -1,11 +1,11 @@
 <level allowskip="true" autobounds="false" ballsrequired="1" letterboxed="false" strandgeom="false" textcolor="255,255,255" timebugprobability="0" visualdebug="true">
 
 	
-	<camera aspect="normal" endpos="0,0" endzoom="1">
-		<poi pause="0" pos="0,0" traveltime="0" zoom="1" />
+	<camera aspect="normal" endpos="0,300" endzoom="1">
+		<poi pause="0" pos="0,300" traveltime="0" zoom="1" />
 </camera>
-<camera aspect="widescreen" endpos="0,0" endzoom="1">
-		<poi pause="0" pos="0,0" traveltime="0" zoom="1" />
+<camera aspect="widescreen" endpos="0,300" endzoom="1">
+		<poi pause="0" pos="0,300" traveltime="0" zoom="1" />
 </camera>
 <levelexit filter="" id="theExit" pos="-0.0,607.6" radius="75">
 	</levelexit>
