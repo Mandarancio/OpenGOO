@@ -3373,7 +3373,7 @@ class MainWindow(QtGui.QMainWindow):
 		
         self.additem_actions = {
         'line':qthelper.action( self,
-                    handler = AddItemFactory(self, 'scene','line',{}),
+                    handler = AddItemFactory(self, 'scene','line',{'static':'true'}),
                     icon = ":/images/addline.png",
                     text = "&Add a Line" ),
 
