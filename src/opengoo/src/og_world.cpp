@@ -182,7 +182,6 @@ bool OGWorld::LoadText_(const QString & path, bool share)
     logDebug("text file");
 
     WOGText* data;
-    bool status;
 
     if (share) data = textData_[0];
     else data = textData_[1];
@@ -191,7 +190,7 @@ bool OGWorld::LoadText_(const QString & path, bool share)
 
     OGTextConfig config(path);
 
-    status = true;
+    bool status = true;
 
     if (config.Open())
     {
@@ -217,7 +216,7 @@ bool OGWorld::LoadText_(const QString & path, bool share)
         status = false;
     }
 
-    return true;
+    return status;
 }
 
 void OGWorld::Clear()

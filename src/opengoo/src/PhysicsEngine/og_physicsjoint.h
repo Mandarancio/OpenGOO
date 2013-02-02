@@ -8,7 +8,7 @@ struct OGPhysicsJoint
     b2JointDef* jointdef;
     b2Joint* joint;
 
-    OGPhysicsJoint() : joint(0), jointdef(0) { }
+    OGPhysicsJoint() : jointdef(0), joint(0) { }
     ~OGPhysicsJoint() { delete jointdef; }
 };
 
