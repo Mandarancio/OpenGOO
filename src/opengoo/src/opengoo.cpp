@@ -127,7 +127,10 @@ void GameStart()
 
     // MapWorldView is the main menu
 
-     if(_levelname.isEmpty()) { _levelname = "MapWorldView"; }
+     if(_levelname.isEmpty() || (!OGWorld::isExist(_levelname)) )
+         {
+             _levelname = "MapWorldView";
+         }
 
     _world = new OGWorld(_levelname);
 

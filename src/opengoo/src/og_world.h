@@ -93,6 +93,8 @@ public:
     OGWorld(const QString & levelname=QString(), bool widescreen=false);
     virtual ~OGWorld();
 
+    static bool isExist(const QString& path_level);
+
     // Get properties
     QList<OGButton*>* buttons() { return &buttons_; }
     QList<OGSprite*>* sprites() { return &sprites_; }

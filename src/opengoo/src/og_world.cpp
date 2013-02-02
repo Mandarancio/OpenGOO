@@ -2,6 +2,7 @@
 #include "logger.h"
 
 #include <QPainter>
+#include <QFile>
 
 OGWorld::OGWorld(const QString & levelname, bool widescreen)    
 {
@@ -44,6 +45,29 @@ OGWorld::~OGWorld()
     if (!effectsData_) { delete effectsData_; }
 }
 
+bool OGWorld::isExist(const QString &path_level)
+{
+    QString path;
+
+    path = "./res/levels/" + path_level + "/" + path_level + ".level.xml";
+
+    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
+
+    path = "./res/levels/" + path_level + "/" + path_level  + ".scene.xml";
+
+    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
+
+    path = "./res/levels/" + path_level + "/" + path_level  + ".resrc.xml";
+
+    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
+
+    path = "./res/levels/" + path_level + "/" + path_level  + ".text.xml";
+
+    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
+
+    return true;
+}
+
 bool OGWorld::Initialize()
 {
     logDebug("Loading share data...");
@@ -73,24 +97,30 @@ bool OGWorld::Load()
 {
     logDebug("Loading ...");
 
-    QString path;
+    if(isExist(levelName_))
+        {
+            QString path;
 
-    path = "./res/levels/" + levelName_ + "/" + levelName_ + ".level.xml";
+            path = "./res/levels/" + levelName_ + "/" + levelName_ + ".level.xml";
+            if (!LoadLevel_(path)) { return false; }
 
-    if (!LoadLevel_(path)) { return false; }
+            path = "./res/levels/" + levelName_ + "/" + levelName_  + ".scene.xml";
+            if (!LoadScene_(path)) { return false; }
 
-    path = "./res/levels/" + levelName_ + "/" + levelName_  + ".scene.xml";
+            path = "./res/levels/" + levelName_ + "/" + levelName_  + ".resrc.xml";
+            if (!LoadResources_(path, false)) { return false; }
 
-    if (!LoadScene_(path)) { return false; }
+            path = "./res/levels/" + levelName_ + "/" + levelName_  + ".text.xml";
+            if (!LoadText_(path, false)) { return false; }
+        }
+    else
+        {
+            logWarn(QString("Wrong level name: \"%1\"").arg(levelName_));
+            return false;
+        }
 
-    path = "./res/levels/" + levelName_ + "/" + levelName_  + ".resrc.xml";
 
-    if (!LoadResources_(path, false)) { return false; }
-
-    path = "./res/levels/" + levelName_ + "/" + levelName_  + ".text.xml";
-
-    if (!LoadText_(path, false)) { return false; }
-    else { return true; }
+    return true;
 }
 
 template<class Target, class Config>
