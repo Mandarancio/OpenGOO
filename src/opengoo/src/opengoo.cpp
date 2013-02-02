@@ -695,7 +695,6 @@ void setBackgroundColor(const QColor & color)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-
 void drawOpenGLScene()
 {
 
@@ -781,7 +780,12 @@ OGStrand* createStrand(WOGStrand* strand)
                 isFound2 = true;
             }
 
-            if (isFound1 && isFound2) { break; }
+            if (isFound1 && isFound2)
+            {
+                obj->strand = createJoint(_balls.at(obj->gb1)->ball
+                                           , _balls.at(obj->gb2)->ball);
+                break;
+            }
         }
     }
 

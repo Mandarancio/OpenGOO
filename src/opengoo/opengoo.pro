@@ -218,8 +218,9 @@ HEADERS += \
     src/PhysicsEngine/og_physicsshape.h \
     src/PhysicsEngine/og_physicsengine.h \
     src/PhysicsEngine/og_physicsbody.h \
+    src/PhysicsEngine/og_physicsjoint.h \
     src/PhysicsEngine/debug.h \
-    src/PhysicsEngine/common.h \
+    src/PhysicsEngine/common.h \   
 
 
 # Game configuration

@@ -36,8 +36,9 @@ struct OGStrand
 {
     int gb1;
     int gb2;
+    OGPhysicsJoint* strand;
 
-    OGStrand() : gb1(-1), gb2(-1) { }
+    OGStrand() : gb1(-1), gb2(-1), strand(0) { }
 };
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";

@@ -20,5 +20,6 @@ OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
                                , qreal rotation, WOGMaterial* material
                                , bool dynamic=false
                                );
+OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2);
 
 #endif // PHYSICS_H

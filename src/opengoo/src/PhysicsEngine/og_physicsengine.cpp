@@ -43,3 +43,8 @@ void OGPhysicsEngine::CreateBody(OGPhysicsBody* body)
 {   
     body->body = world_->CreateBody(&body->bodydef);
 }
+
+void OGPhysicsEngine::CreateJoint(OGPhysicsJoint* joint)
+{
+    joint->joint = world_->CreateJoint(joint->jointdef);
+}

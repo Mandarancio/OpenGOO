@@ -5,7 +5,6 @@
 namespace physics
 {
     const qreal K = 0.1;
-    bool status;
 }
 
 
@@ -31,7 +30,6 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
     OGPhysicsEngine* engine;
 
     engine = OGPhysicsEngine::GetInstance();
-
     circle = new OGPhysicsBody(position.x()*K, position.y()*K, dynamic);
 
     engine->CreateBody(circle);
@@ -68,8 +66,6 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
     OGPhysicsEngine* engine;
 
     engine = OGPhysicsEngine::GetInstance();
-
-
     x1 = anchor.x()*K*0.5;
     y1 = anchor.y()*K*0.5;
 
@@ -80,6 +76,7 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
 
     x2 = x1 + normal.x();
     y2 = y1 + normal.y();
+
     QLineF line1(x1, y1, x2, y2);
     QLineF line2(line1.normalVector());
 
@@ -120,14 +117,13 @@ OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
     OGPhysicsEngine* engine;
 
     engine = OGPhysicsEngine::GetInstance();
-
     rect = new OGPhysicsBody(position.x()*K, position.y()*K , dynamic);
 
     engine->CreateBody(rect);
     rect->CreateShape(OGPhysicsBody::POLYGON);
     rect->shape->SetAsBox(size.width()*K*0.5, size.height()*K*0.5
-                            , b2Vec2(0, 0)
-                            , rotation);
+                            , b2Vec2(0, 0), rotation
+                          );
 
     if (dynamic)
     {
@@ -139,4 +135,25 @@ OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
     }
 
     return rect;
+}
+
+OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2)
+{
+    OGPhysicsJoint* joint;
+    OGPhysicsEngine* engine;
+    b2DistanceJointDef* jointDef;
+
+    engine = OGPhysicsEngine::GetInstance();
+    joint = new OGPhysicsJoint();
+    jointDef = new b2DistanceJointDef;
+
+    jointDef->Initialize(b1->body, b2->body
+                         , b1->body->GetPosition(), b2->body->GetPosition()
+                         );
+
+    joint->jointdef = jointDef;
+
+    engine->CreateJoint(joint);
+
+    return joint;
 }

@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "og_physicsbody.h"
+#include "og_physicsjoint.h"
 
 class OGPhysicsEngine
 {
@@ -21,6 +22,7 @@ public:
     void Simulate();
 
     void CreateBody(OGPhysicsBody*  body);
+    void CreateJoint(OGPhysicsJoint* joint);
 
 private:
     static OGPhysicsEngine* instance_;
