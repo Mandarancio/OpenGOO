@@ -23,27 +23,8 @@ struct Scroll
     bool right;
 };
 
-struct OGBall
-{
-    OGPhysicsBody* ball;
-    QString id;
-    bool active;
-    bool selected;
-
-    OGBall() : ball(0), id(QString()), active(false), selected(false) {}
-    ~OGBall() { delete ball; }
-};
-
-struct OGStrand
-{
-    int gb1;
-    int gb2;
-    OGPhysicsJoint* strand;
-
-    OGStrand() : gb1(-1), gb2(-1), strand(0) { }
-};
-
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
+const qreal K = 10.0;
 
 OGGameEngine* _gameEngine = 0;
 OGPhysicsEngine* _physicsEngine = 0;
@@ -55,6 +36,7 @@ QList<OGPhysicsBody*> _staticCircles;
 QList<OGPhysicsBody*> _staticLines;
 QList<OGPhysicsBody*> _staticRectangles;
 QList<OGBall*> _balls;
+QList<OGStrand> _tmpStrands;
 int _selectedBall = -1;
 QList<OGStrand*> _strands;
 OGButton _buttonMenu;
@@ -95,6 +77,7 @@ QPoint windowToLogical(const QPoint & position);
 
 OGBall* createBall(WOGBallInstance* data, WOGBall* configuration);
 OGStrand* createStrand(WOGStrand* strand);
+OGStrand* createStrand(int b1, int b2);
 
 bool createPhysicsWorld();
 void clearPhysicsWorld();

@@ -1,31 +1,15 @@
 #include "og_world.h"
-#include "og_physicsbody.h"
 #include "flags.h"
 
 #include <QPainter>
 #include <QTime>
-
-struct OGBall
-{
-    OGPhysicsBody* ball;
-    QString id;
-    bool active;
-    bool selected;
-};
-
-struct OGStrand
-{
-    int gb1;
-    int gb2;
-
-    OGStrand() : gb1(-1), gb2(-1) { }
-};
 
 extern bool _E404;
 extern QTime _time;
 extern OGButton _buttonMenu;
 extern QList<OGBall*> _balls;
 extern QList<OGStrand*> _strands;
+extern QList<OGStrand> _tmpStrands;
 
 namespace visual_debug
 {
@@ -75,14 +59,16 @@ void drawStrands(QPainter* painter)
             painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
         }
     }
+
+    for (int i=0; i < _tmpStrands.size(); i++)
+    {
+        painter->drawLine(_tmpStrands.at(i).line);
+    }
 }
 
 void drawBalls(QPainter* painter)
 {
-    QPen pen;
     qreal x, y, radius;
-
-    pen.setWidthF(2.0);
 
     for (int i=0; i < _balls.size(); i++)
     {
@@ -90,21 +76,7 @@ void drawBalls(QPainter* painter)
         y = _balls.at(i)->ball->body->GetPosition().y*K*(-1.0);
         radius = _balls.at(i)->ball->shape->GetRadius()*K;
 
-        painter->save();
-
-        if (_balls.at(i)->selected)
-        {
-            pen.setColor(Qt::red);
-        }
-        else
-        {
-            pen.setColor(Qt::yellow);
-        }
-
-        painter->setPen(pen);
         painter->drawEllipse(QPointF(x, y), radius, radius);
-
-        painter->restore();
     }
 }
 
@@ -162,12 +134,10 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
         y = world->scenedata()->circle.at(i)->position.y()*(-1.0);
         radius = world->scenedata()->circle.at(i)->radius;
 
-        QPointF pos(x, y);
-        painter->drawEllipse(pos, radius, radius);
+        painter->drawEllipse(QPointF(x, y), radius, radius);
     }
 
     drawBalls(painter);
-
     drawStrands(painter);
 
     if (_E404)

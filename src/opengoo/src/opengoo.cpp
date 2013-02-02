@@ -310,22 +310,18 @@ void MouseButtonDown(QMouseEvent* event)
         }
     }
 
-    qreal x, y, diameter;
-    const qreal K = 10.0;
-
     for (int i=0; i < _balls.size(); i++)
     {
         if (_balls.at(i)->active)
         {
+            qreal x, y, radius;
             x = _balls.at(i)->ball->body->GetPosition().x*K;
             y = _balls.at(i)->ball->body->GetPosition().y*K;
-            diameter = _balls.at(i)->ball->shape->GetRadius()*2*K;
+            radius = _balls.at(i)->ball->shape->GetRadius()*K;
 
-            QRectF ball(QPointF(x, y), QSizeF(diameter, diameter));
+            QLineF ball(x, y, mPos.x(), mPos.y());
 
-            ball.moveCenter(QPointF(x, y));
-
-            if(ball.contains(mPos))
+            if(ball.length() <= radius)
             {
                 _balls.at(i)->selected = true;
                 _selectedBall = i;
@@ -344,9 +340,17 @@ void MouseButtonUp(QMouseEvent* event)
     {
         _balls.at(_selectedBall)->selected = false;
         _balls.at(_selectedBall)->ball->body->SetAwake(true);
-        _selectedBall = -1;
-    }
+        if (_tmpStrands.size()>1)
+        {
+            for (int i=0; i < _tmpStrands.size(); i++)
+            {
+                _strands << createStrand(_selectedBall, _tmpStrands.at(i).gb1);
+            }
+        }
 
+        _selectedBall = -1;
+        _tmpStrands.clear();
+    }
 }
 
 void MouseMove(QMouseEvent* event)
@@ -397,6 +401,27 @@ void MouseMove(QMouseEvent* event)
         b2Body* body = _balls.at(_selectedBall)->ball->body;
 
         body->SetTransform(b2Vec2(x, y), body->GetAngle());
+        _balls.at(_selectedBall)->ball->body->SetAwake(false);
+
+        _tmpStrands.clear();
+
+        for (int i=0; i < _balls.size(); i++)
+        {
+            if (!_balls.at(i)->active)
+            {
+                qreal x2, y1, y2;
+                x2 = _balls.at(i)->ball->body->GetPosition().x*K;
+                y2 = _balls.at(i)->ball->body->GetPosition().y*K;
+                QLineF line(mPos.x(), mPos.y(), x2, y2);
+
+                if (line.length() >= 100 && line.length() <= 200)
+                {
+                    y1  = mPos.y()*(-1.0);
+                    y2 *= -1.0;
+                    _tmpStrands << OGStrand(i, QLineF(mPos.x(), y1, x2, y2));
+                }
+            }
+        }
     }
 
     if (x <= OFFSET) { _scroll.left = true; }
@@ -841,6 +866,21 @@ OGStrand* createStrand(WOGStrand* strand)
             }
         }
     }
+
+    return obj;
+}
+
+OGStrand* createStrand(int b1, int b2)
+{
+    OGStrand* obj = new OGStrand;
+
+    obj->gb1 = b1;
+    obj->gb2 = b2;
+    obj->strand = createJoint(_balls.at(obj->gb1)->ball
+                                           , _balls.at(obj->gb2)->ball);
+
+    _balls.at(obj->gb1)->active = false;
+    _balls.at(obj->gb2)->active = false;
 
     return obj;
 }

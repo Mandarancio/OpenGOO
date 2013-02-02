@@ -5,6 +5,30 @@
 #include "og_camera.h"
 #include "og_button.h"
 #include "og_sprite.h"
+#include "og_physicsbody.h"
+#include "og_physicsjoint.h"
+
+struct OGBall
+{
+    OGPhysicsBody* ball;
+    QString id;
+    bool active;
+    bool selected;
+
+    OGBall() : ball(0), id(QString()), active(false), selected(false) { }
+    ~OGBall() { delete ball; }
+};
+
+struct OGStrand
+{
+    int gb1;
+    int gb2;
+    QLineF line;
+    OGPhysicsJoint* strand;
+
+    OGStrand() : gb1(-1), gb2(-1), strand(0) { }
+    OGStrand(int b, const QLineF & line) : gb1(b), line(line) { }
+};
 
 class OGWorld
 {               

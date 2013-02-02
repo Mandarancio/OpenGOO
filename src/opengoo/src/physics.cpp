@@ -146,6 +146,8 @@ OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2)
     engine = OGPhysicsEngine::GetInstance();
     joint = new OGPhysicsJoint();
     jointDef = new b2DistanceJointDef;
+    jointDef->frequencyHz = 1.5;
+    jointDef->dampingRatio = 0.9f;
 
     jointDef->Initialize(b1->body, b2->body
                          , b1->body->GetPosition(), b2->body->GetPosition()
