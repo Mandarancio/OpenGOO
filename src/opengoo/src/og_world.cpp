@@ -346,8 +346,7 @@ void OGWorld::CreateScene()
         {
             for (int j=0; j < leveldata()->camera.at(i)->poi.size(); j++)
             {
-                cameras_ << CreateCamera_(leveldata()->camera.at(i)->poi.at(j)
-                                          );
+                cameras_ << CreateCamera_(leveldata()->camera.at(i)->poi.at(j));
             }
         }
     }

@@ -632,9 +632,10 @@ void buttonMenu()
 bool createPhysicsWorld()
 {
     if (_physicsEngine)
-    {
-        return false;
-    }
+        {
+            logError("Invalid physics engine.");
+            return false;
+        }
 
     QPointF gravity;
     WOGMaterial* material;
@@ -649,9 +650,10 @@ bool createPhysicsWorld()
     }
 
     if (!initializePhysicsEngine(gravity, true))
-    {
-        return false;
-    }
+        {
+            logError("Unable init physics engine.");
+            return false;
+        }
 
     _physicsEngine = OGPhysicsEngine::GetInstance();
 
@@ -663,9 +665,11 @@ bool createPhysicsWorld()
             id = circle->material;
             material = _world->materialdata()->GetMaterial(id);
 
+            if(material)
             _staticCircles << createCircle(circle->position, circle->radius
-                                           , material
-                                           );
+                                           , material);
+            else
+                logError(QString("Wring material id: %1").arg(id));
         }
     }
 
@@ -677,9 +681,11 @@ bool createPhysicsWorld()
             id = line->material;
             material = _world->materialdata()->GetMaterial(id);
 
+            if(material)
             _staticLines << createLine(line->anchor, line->normal, material
-                                       , _world, line->dynamic
-                                       );
+                                       , _world, line->dynamic);
+            else
+                logError(QString("Wring material id: %1").arg(id));
         }
     }
 
@@ -692,9 +698,11 @@ bool createPhysicsWorld()
             id = rect->material;
             material = _world->materialdata()->GetMaterial(id);
 
+            if(material)
             _staticRectangles << createRectangle(rect->position, rect->size
-                                                 , rect->rotation , material
-                                                 );
+                                                 , rect->rotation , material);
+            else
+                logError(QString("Wring material id: %1").arg(id));
         }
     }
 
