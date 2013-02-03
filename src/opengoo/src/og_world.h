@@ -30,6 +30,14 @@ struct OGStrand
     OGStrand(int b, const QLineF & line) : gb1(b), line(line) { }
 };
 
+struct OGStaticBody
+{
+    OGPhysicsBody* body;
+    QString tag;
+
+    ~OGStaticBody() { delete body; }
+};
+
 class OGWorld
 {               
     WOGLevel* levelData_;

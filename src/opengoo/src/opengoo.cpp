@@ -21,6 +21,7 @@
 #include <QTransform>
 #include <QtAlgorithms>
 #include <cstdio>
+#include <QtCore/qmath.h>
 
 #ifndef Q_OS_WIN32
 #include "backtracer.h"
@@ -197,10 +198,7 @@ void GameCycle()
     {
         scroll();
 
-        if (_scrolltime > 0)
-        {
-            _scrolltime--;
-        }
+        if (_scrolltime > 0) { _scrolltime--; }
         else if (_scrolltime == 0)
         {
             _scroll.up = false;
@@ -208,7 +206,8 @@ void GameCycle()
             _scrolltime--;
         }
     }
-    scroll();
+
+    moveBall();
 
     _gameEngine->getWindow()->render();
 }
@@ -240,11 +239,8 @@ void GamePaint(QPainter* painter)
             qreal y = _sprites->at(i)->position.y();
             qreal w = _sprites->at(i)->size.width();
             qreal h = _sprites->at(i)->size.height();
-            painter->drawPixmap(
-                        QRectF(x, y, w, h)
-                        , _sprites->at(i)->image
-                        , _sprites->at(i)->image.rect()
-                        );
+            painter->drawPixmap(QRectF(x, y, w, h), _sprites->at(i)->image
+                                , _sprites->at(i)->image.rect());
         }
     }
 
@@ -295,10 +291,8 @@ void MouseButtonDown(QMouseEvent* event)
     for(int i=0; i < _buttons->size(); i++)
     {
         QRectF button(QPointF(_buttons->at(i)->position().x()
-                              , _buttons->at(i)->position().y()
-                              )
-                      , _buttons->at(i)->size()
-                      );
+                              , _buttons->at(i)->position().y())
+                      , _buttons->at(i)->size());
 
         button.moveCenter(_buttons->at(i)->position());
 
@@ -375,10 +369,8 @@ void MouseMove(QMouseEvent* event)
         for(int i=0; i < _buttons->size(); i++)
         {
             QRectF button(QPointF(_buttons->at(i)->position().x()
-                                  , _buttons->at(i)->position().y()
-                                  )
-                          , _buttons->at(i)->size()
-                          );
+                                  , _buttons->at(i)->position().y())
+                          , _buttons->at(i)->size());
 
             button.moveCenter(_buttons->at(i)->position());
 
@@ -412,12 +404,12 @@ void MouseMove(QMouseEvent* event)
         {
             if (!_balls.at(i)->active)
             {
-                qreal x2, y1, y2;
+                qreal x2, y1, y2, length;
                 x2 = _balls.at(i)->ball->body->GetPosition().x*K;
                 y2 = _balls.at(i)->ball->body->GetPosition().y*K;
-                QLineF line(mPos.x(), mPos.y(), x2, y2);
+                length = QLineF(mPos.x(), mPos.y(), x2, y2).length();
 
-                if (line.length() >= 100 && line.length() <= 200)
+                if (length >= 100 && length <= 200)
                 {
                     y1  = mPos.y()*(-1.0);
                     y2 *= -1.0;
@@ -578,7 +570,6 @@ void moveCamera()
 
         qreal fps =  1000.0/_gameEngine->getFrameDelay();
         _pause = endCam.pause() * fps;
-
         _frames = endCam.traveltime()*fps;
 
         if (_frames > 0)
@@ -631,10 +622,7 @@ void buttonMenu()
 
 bool createPhysicsWorld()
 {
-    if (_physicsEngine)
-    {
-        return false;
-    }
+    if (_physicsEngine) { return false; }
 
     QPointF gravity;
     WOGMaterial* material;
@@ -648,10 +636,7 @@ bool createPhysicsWorld()
         }
     }
 
-    if (!initializePhysicsEngine(gravity, true))
-    {
-        return false;
-    }
+    if (!initializePhysicsEngine(gravity, true)) { return false; }
 
     _physicsEngine = OGPhysicsEngine::GetInstance();
 
@@ -662,10 +647,13 @@ bool createPhysicsWorld()
             WOGCircle* circle = _world->scenedata()->circle.at(i);
             id = circle->material;
             material = _world->materialdata()->GetMaterial(id);
+            OGStaticBody* body = new OGStaticBody;
+            body->body = createCircle(circle->position, circle->radius
+                                      , material, false, 0, body);
 
-            _staticCircles << createCircle(circle->position, circle->radius
-                                           , material
-                                           );
+            body->tag = circle->tag;
+
+            _staticCircles << body;
         }
     }
 
@@ -675,11 +663,14 @@ bool createPhysicsWorld()
         {
             WOGLine* line = _world->scenedata()->line.at(i);
             id = line->material;
-            material = _world->materialdata()->GetMaterial(id);
+            material = _world->materialdata()->GetMaterial(id);                        
+            OGStaticBody* body = new OGStaticBody;
+            body->body = createLine(line->anchor, line->normal, material
+                                    , _world, false, body);
 
-            _staticLines << createLine(line->anchor, line->normal, material
-                                       , _world, line->dynamic
-                                       );
+            body->tag = line->tag;
+
+            _staticLines << body;
         }
     }
 
@@ -688,13 +679,16 @@ bool createPhysicsWorld()
         if (!_world->scenedata()->rectangle.at(i)->dynamic)
         {
             WOGRectangle* rect = _world->scenedata()->rectangle.at(i);
-
             id = rect->material;
             material = _world->materialdata()->GetMaterial(id);
+            OGStaticBody* body = new OGStaticBody;
+            body->body = createRectangle(rect->position, rect->size
+                                         , rect->rotation , material, false
+                                         , body);
 
-            _staticRectangles << createRectangle(rect->position, rect->size
-                                                 , rect->rotation , material
-                                                 );
+            body->tag = rect->tag;
+
+            _staticRectangles << body;
         }
     }
 
@@ -788,10 +782,7 @@ WOGBall* readBallConfiguration(const QString & dirname)
         }
         else {logWarn("File " + path + " is corrupted"); }
     }
-    else
-    {
-        logWarn("File " + path +" not found");
-    }
+    else { logWarn("File " + path +" not found"); }
 
     return 0;
 }
@@ -815,15 +806,11 @@ OGBall* createBall(WOGBallInstance* data, WOGBall* configuration)
 
             if (n > 100) { n = 100; }
 
-            if (n >= 1)
-            {
-                radius += radius*(qrand()%n)*0.01;
-            }
+            if (n >= 1) { radius += radius*(qrand()%n)*0.01; }
         }
 
         obj->ball = createCircle(data->position, radius, &ballmaterial
-                               , true, configuration->attribute.core.mass
-                               );
+                               , true, configuration->attribute.core.mass);
 
         obj->active = true;
     }
@@ -838,7 +825,6 @@ OGBall* createBall(WOGBallInstance* data, WOGBall* configuration)
 OGStrand* createStrand(WOGStrand* strand)
 {
     OGStrand* obj = new OGStrand;
-
     bool isFound1 = false;
     bool isFound2 = false;
 
@@ -860,7 +846,7 @@ OGStrand* createStrand(WOGStrand* strand)
             if (isFound1 && isFound2)
             {
                 obj->strand = createJoint(_balls.at(obj->gb1)->ball
-                                           , _balls.at(obj->gb2)->ball);
+                                          , _balls.at(obj->gb2)->ball);
 
                 _balls.at(obj->gb1)->active = false;
                 _balls.at(obj->gb2)->active = false;
@@ -876,14 +862,102 @@ OGStrand* createStrand(WOGStrand* strand)
 OGStrand* createStrand(int b1, int b2)
 {
     OGStrand* obj = new OGStrand;
-
     obj->gb1 = b1;
     obj->gb2 = b2;
     obj->strand = createJoint(_balls.at(obj->gb1)->ball
-                                           , _balls.at(obj->gb2)->ball);
+                              , _balls.at(obj->gb2)->ball);
 
     _balls.at(obj->gb1)->active = false;
     _balls.at(obj->gb2)->active = false;
 
     return obj;
+}
+
+void moveBall()
+{
+    qreal x, y;
+
+    const QPointF & pos = getNearestPosition();
+
+    for (int i=0; i < _balls.size(); i++)
+    {
+        if (_balls.at(i)->active && !_balls.at(i)->selected
+                && testWalkable(_balls.at(i)->ball))
+        {
+
+            b2Vec2 vel = _balls.at(i)->ball->body->GetLinearVelocity();
+            x = _balls.at(i)->ball->body->GetPosition().x;
+            y = _balls.at(i)->ball->body->GetPosition().y;
+
+            if ((pos.x() - x) >= 0)
+            {
+                vel.x = 5;
+            }
+            else
+            {
+                vel.x = -5;
+            }
+
+            _balls.at(i)->ball->body->SetLinearVelocity(vel);
+        }
+    }
+}
+
+QPointF getNearestPosition()
+{
+    qreal x, y, x1, y1, x2, y2, length, tmpLength;
+    bool isInitialize;
+
+    isInitialize = true;
+
+    for (int i=0; i < _balls.size(); i++)
+    {
+        if (!_balls.at(i)->active)
+        {
+            if (isInitialize)
+            {
+                x1 = _world->leveldata()->levelexit->pos.x()*0.1;
+                y1 = _world->leveldata()->levelexit->pos.y()*0.1;
+                x2 = _balls.at(i)->ball->body->GetPosition().x;
+                y2 = _balls.at(i)->ball->body->GetPosition().y;
+                x = x2;
+                y = y2;
+                length = QLineF(x1, y1, x2, y2).length();
+                isInitialize = false;
+            }
+            else
+            {
+                x2 = _balls.at(i)->ball->body->GetPosition().x;
+                y2 = _balls.at(i)->ball->body->GetPosition().y;
+                tmpLength = QLineF(x1, y1, x2, y2).length();
+
+                if (tmpLength < length)
+                {
+                    length = tmpLength;
+                    x = x2;
+                    y = y2;
+                }
+            }
+        }
+    }
+
+    return QPointF(x, y);
+}
+
+bool testWalkable(OGPhysicsBody* body)
+{
+    OGStaticBody* data;
+    b2ContactEdge* edge = body->body->GetContactList();
+
+    while (edge)
+    {
+        if (data = static_cast<OGStaticBody*>(edge->other->GetUserData()))
+        {
+            if (data->tag == "walkable") { return true; }
+        }
+
+        edge = edge->next;
+    }
+
+    return false;
 }

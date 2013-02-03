@@ -63,7 +63,7 @@ bool OGWorld::isExist(const QString &path_level)
 
     path = "./res/levels/" + path_level + "/" + path_level  + ".text.xml";
 
-    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
+    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path));}
 
     return true;
 }
@@ -111,14 +111,13 @@ bool OGWorld::Load()
             if (!LoadResources_(path, false)) { return false; }
 
             path = "./res/levels/" + levelName_ + "/" + levelName_  + ".text.xml";
-            if (!LoadText_(path, false)) { return false; }
+            LoadText_(path, false);
         }
     else
         {
             logWarn(QString("Wrong level name: \"%1\"").arg(levelName_));
             return false;
         }
-
 
     return true;
 }

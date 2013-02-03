@@ -32,9 +32,9 @@ OGWorld* _world;
 
 QList<OGSprite*>* _sprites;
 QList<OGButton*>* _buttons = 0;
-QList<OGPhysicsBody*> _staticCircles;
-QList<OGPhysicsBody*> _staticLines;
-QList<OGPhysicsBody*> _staticRectangles;
+QList<OGStaticBody*> _staticCircles;
+QList<OGStaticBody*> _staticLines;
+QList<OGStaticBody*> _staticRectangles;
 QList<OGBall*> _balls;
 QList<OGStrand> _tmpStrands;
 int _selectedBall = -1;
@@ -72,6 +72,8 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
 void buttonMenuAction();
 void buttonMenu();
 
+QPointF getNearestPosition();
+bool testWalkable(OGPhysicsBody* body);
 QPointF logicalToWindow(const QRectF & rect, qreal zoom);
 QPoint windowToLogical(const QPoint & position);
 
@@ -81,6 +83,8 @@ OGStrand* createStrand(int b1, int b2);
 
 bool createPhysicsWorld();
 void clearPhysicsWorld();
+
+void moveBall();
 
 void setBackgroundColor(const QColor & color);
 void drawOpenGLScene();
