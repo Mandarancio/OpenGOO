@@ -974,7 +974,8 @@ bool testWalkable(OGPhysicsBody* body)
 
     while (edge)
     {
-        if (data = static_cast<OGStaticBody*>(edge->other->GetUserData()))
+        data = static_cast<OGStaticBody*>(edge->other->GetUserData());
+        if (data)
         {
             if (data->tag == "walkable") { return true; }
         }
