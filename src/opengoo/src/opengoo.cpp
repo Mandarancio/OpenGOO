@@ -622,7 +622,11 @@ void buttonMenu()
 
 bool createPhysicsWorld()
 {
-    if (_physicsEngine) { return false; }
+    if (_physicsEngine)
+    {
+        logError("Invalid physics engine.");
+        return false;
+    }
 
     QPointF gravity;
     WOGMaterial* material;
@@ -636,7 +640,11 @@ bool createPhysicsWorld()
         }
     }
 
-    if (!initializePhysicsEngine(gravity, true)) { return false; }
+    if (!initializePhysicsEngine(gravity, true))
+    {
+        logError("Unable init physics engine.");
+        return false;
+    }
 
     _physicsEngine = OGPhysicsEngine::GetInstance();
 
@@ -647,13 +655,18 @@ bool createPhysicsWorld()
             WOGCircle* circle = _world->scenedata()->circle.at(i);
             id = circle->material;
             material = _world->materialdata()->GetMaterial(id);
-            OGStaticBody* body = new OGStaticBody;
-            body->body = createCircle(circle->position, circle->radius
-                                      , material, false, 0, body);
 
-            body->tag = circle->tag;
+            if(material)
+            {
+                OGStaticBody* body = new OGStaticBody;
+                body->body = createCircle(circle->position, circle->radius
+                                          , material, false, 0, body);
 
-            _staticCircles << body;
+                body->tag = circle->tag;
+
+                _staticCircles << body;
+            }
+            else { logError(QString("Wring material id: %1").arg(id)); }
         }
     }
 
@@ -664,13 +677,18 @@ bool createPhysicsWorld()
             WOGLine* line = _world->scenedata()->line.at(i);
             id = line->material;
             material = _world->materialdata()->GetMaterial(id);                        
-            OGStaticBody* body = new OGStaticBody;
-            body->body = createLine(line->anchor, line->normal, material
-                                    , _world, false, body);
 
-            body->tag = line->tag;
+            if(material)
+            {
+                OGStaticBody* body = new OGStaticBody;
+                body->body = createLine(line->anchor, line->normal, material
+                                        , _world, false, body);
 
-            _staticLines << body;
+                body->tag = line->tag;
+
+                _staticLines << body;
+            }
+            else { logError(QString("Wring material id: %1").arg(id)); }
         }
     }
 
@@ -681,14 +699,19 @@ bool createPhysicsWorld()
             WOGRectangle* rect = _world->scenedata()->rectangle.at(i);
             id = rect->material;
             material = _world->materialdata()->GetMaterial(id);
-            OGStaticBody* body = new OGStaticBody;
-            body->body = createRectangle(rect->position, rect->size
-                                         , rect->rotation , material, false
-                                         , body);
 
-            body->tag = rect->tag;
+            if(material)
+            {
+                OGStaticBody* body = new OGStaticBody;
+                body->body = createRectangle(rect->position, rect->size
+                                             , rect->rotation , material, false
+                                             , body);
 
-            _staticRectangles << body;
+                body->tag = rect->tag;
+
+                _staticRectangles << body;
+            }
+            else { logError(QString("Wring material id: %1").arg(id)); }
         }
     }
 
