@@ -674,7 +674,7 @@ bool createPhysicsWorld()
 
                 _staticLines << body;
             }
-            else { logError(QString("Wring material id: %1").arg(id)); }
+            else { logError(QString("Wrong material id: %1").arg(id)); }
         }
     }
 
