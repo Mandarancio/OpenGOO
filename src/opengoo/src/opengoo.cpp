@@ -18,10 +18,6 @@
 #include <QRect>
 #include <QDebug>
 #include <QTime>
-#include <QTransform>
-#include <QtAlgorithms>
-#include <cstdio>
-#include <QtCore/qmath.h>
 
 #ifndef Q_OS_WIN32
 #include "backtracer.h"
@@ -31,7 +27,6 @@
 #endif
 
 #include "flags.h"
-
 #include <logger.h>
 #include <consoleappender.h>
 #include "og_ballconfig.h"
@@ -72,10 +67,7 @@ bool GameInitialize(int argc, char **argv)
         {
             flag |= ONLYTEXT | DEBUG;
         }
-        else if (!arg.compare("-fps",Qt::CaseInsensitive))
-        {
-            flag |= FPS;
-        }
+        else if (!arg.compare("-fps",Qt::CaseInsensitive)) { flag |= FPS; }
         else { _levelname = arg; }
     }
 
@@ -128,10 +120,10 @@ void GameStart()
 
     // MapWorldView is the main menu
 
-     if(_levelname.isEmpty() || (!OGWorld::isExist(_levelname)) )
-         {
-             _levelname = "MapWorldView";
-         }
+    if(_levelname.isEmpty() || (!OGWorld::isExist(_levelname)) )
+    {
+     _levelname = "MapWorldView";
+    }
 
     _world = new OGWorld(_levelname);
 
@@ -156,10 +148,7 @@ void GameStart()
     if (_numberCameras > 1) { _isMoveCamera = true; }
     else { _isMoveCamera = false; }
 
-    if (_world->leveldata()->visualdebug)
-    {
-        _time.start();
-    }
+    if (_world->leveldata()->visualdebug) { _time.start(); }
 }
 
 void GameEnd()
@@ -180,7 +169,7 @@ void GameEnd()
 
 void GameCycle()
 {
-    if(!_isLevelInitialize)
+    if (!_isLevelInitialize)
     {
         closeGame();
 
@@ -214,33 +203,27 @@ void GameCycle()
 
 void GamePaint(QPainter* painter)
 {    
-    // Test
-
-    if (!_isLevelInitialize)
-    {
-        return;
-    }
+    if (!_isLevelInitialize) { return; }
 
     painter->setWindow(_camera.window().toRect());
     painter->setViewport(0, 0, _width, _height);
-
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
     setBackgroundColor(_world->scenedata()->backgroundcolor);
     drawOpenGLScene();
 
-    // Draw scene
-    for (int i=0; i< _sprites->size(); i++)
+    // Paint a scene
+    Q_FOREACH (OGSprite* sprite, *_sprites)
     {
-        if (_sprites->at(i)->visible)
+        if (sprite->visible)
         {
-            painter->setOpacity(_sprites->at(i)->alpha);
-            qreal x = _sprites->at(i)->position.x();
-            qreal y = _sprites->at(i)->position.y();
-            qreal w = _sprites->at(i)->size.width();
-            qreal h = _sprites->at(i)->size.height();
-            painter->drawPixmap(QRectF(x, y, w, h), _sprites->at(i)->image
-                                , _sprites->at(i)->image.rect());
+            painter->setOpacity(sprite->alpha);
+            qreal x = sprite->position.x();
+            qreal y = sprite->position.y();
+            qreal w = sprite->size.width();
+            qreal h = sprite->size.height();
+            painter->drawPixmap(QRectF(x, y, w, h), sprite->image
+                                , sprite->image.rect());
         }
     }
 
@@ -281,51 +264,52 @@ void MouseButtonDown(QMouseEvent* event)
     if (!_buttons) { return; }
 
     QPoint mPos(event->pos());
-
     QRectF menu(_buttonMenu.position(), _buttonMenu.size());
 
     if (menu.contains(mPos)) { buttonMenuAction(); }
 
     mPos = windowToLogical(mPos);
 
-    for(int i=0; i < _buttons->size(); i++)
+    Q_FOREACH (OGButton* button, *_buttons)
     {
-        QRectF button(QPointF(_buttons->at(i)->position().x()
-                              , _buttons->at(i)->position().y())
-                      , _buttons->at(i)->size());
+        QRectF rect(QPointF(button->position().x(), button->position().y())
+                    , button->size());
 
-        button.moveCenter(_buttons->at(i)->position());
+        rect.moveCenter(button->position());
 
-        if(button.contains(mPos))
+        if(rect.contains(mPos))
         {
             _E404 = false;
 
-            if (_buttons->at(i)->onclick() == "quit") { closeGame(); }
-            else if (_buttons->at(i)->onclick() == "credits") { }
-            else if (_buttons->at(i)->onclick() == "showselectprofile") { }
+            if (button->onclick() == "quit") { closeGame(); }
+            else if (button->onclick() == "credits") { }
+            else if (button->onclick() == "showselectprofile") { }
             else { _E404 = true; }
         }
     }
 
-    for (int i=0; i < _balls.size(); i++)
+    int i = 0;
+
+    Q_FOREACH (OGBall* ball, _balls)
     {
-        if (_balls.at(i)->active)
+        if (ball->active)
         {
             qreal x, y, radius;
-            x = _balls.at(i)->ball->body->GetPosition().x*K;
-            y = _balls.at(i)->ball->body->GetPosition().y*K;
-            radius = _balls.at(i)->ball->shape->GetRadius()*K;
+            x = ball->GetX()*K;
+            y = ball->GetY()*K;
+            radius = ball->body->shape->GetRadius()*K;
+            qreal length = QLineF(x, y, mPos.x(), mPos.y()).length();
 
-            QLineF ball(x, y, mPos.x(), mPos.y());
-
-            if(ball.length() <= radius)
+            if (length <= radius)
             {
-                _balls.at(i)->selected = true;
+                ball->selected = true;
                 _selectedBall = i;
-                _balls.at(i)->ball->body->SetAwake(false);
+                ball->body->body->SetAwake(false);
                 break;
             }
         }
+
+        i++;
     }
 }
 
@@ -336,12 +320,12 @@ void MouseButtonUp(QMouseEvent* event)
     if (_selectedBall != -1)
     {
         _balls.at(_selectedBall)->selected = false;
-        _balls.at(_selectedBall)->ball->body->SetAwake(true);
+        _balls.at(_selectedBall)->body->body->SetAwake(true);
         if (_tmpStrands.size()>1)
         {
-            for (int i=0; i < _tmpStrands.size(); i++)
+            Q_FOREACH (OGStrand strand, _tmpStrands)
             {
-                _strands << createStrand(_selectedBall, _tmpStrands.at(i).gb1);
+                _strands << createStrand(_selectedBall, strand.gb1);
             }
         }
 
@@ -366,23 +350,23 @@ void MouseMove(QMouseEvent* event)
 
     if (_buttons)
     {
-        for(int i=0; i < _buttons->size(); i++)
+        Q_FOREACH (OGButton* _button, *_buttons)
         {
-            QRectF button(QPointF(_buttons->at(i)->position().x()
-                                  , _buttons->at(i)->position().y())
-                          , _buttons->at(i)->size());
+            QRectF rect(QPointF(_button->position().x()
+                                , _button->position().y())
+                          , _button->size());
 
-            button.moveCenter(_buttons->at(i)->position());
+            rect.moveCenter(_button->position());
 
-            if(button.contains(mPos))
+            if(rect.contains(mPos))
             {
-                _buttons->at(i)->up()->visible = false;
-                _buttons->at(i)->over()->visible = true;
+                _button->up()->visible = false;
+                _button->over()->visible = true;
             }
             else
             {
-                _buttons->at(i)->up()->visible = true;
-                _buttons->at(i)->over()->visible = false;
+                _button->up()->visible = true;
+                _button->over()->visible = false;
             }
         }
     }
@@ -393,20 +377,22 @@ void MouseMove(QMouseEvent* event)
 
         x = mPos.x()*0.1;
         y = mPos.y()*0.1;
-        b2Body* body = _balls.at(_selectedBall)->ball->body;
+        b2Body* body = _balls.at(_selectedBall)->body->body;
 
         body->SetTransform(b2Vec2(x, y), body->GetAngle());
-        _balls.at(_selectedBall)->ball->body->SetAwake(false);
+        _balls.at(_selectedBall)->body->body->SetAwake(false);
 
         _tmpStrands.clear();
 
-        for (int i=0; i < _balls.size(); i++)
+        int i = 0;
+
+        Q_FOREACH (OGBall* ball, _balls)
         {
-            if (!_balls.at(i)->active)
+            if (!ball->active)
             {
                 qreal x2, y1, y2, length;
-                x2 = _balls.at(i)->ball->body->GetPosition().x*K;
-                y2 = _balls.at(i)->ball->body->GetPosition().y*K;
+                x2 = ball->GetX()*K;
+                y2 = ball->GetY()*K;
                 length = QLineF(mPos.x(), mPos.y(), x2, y2).length();
 
                 if (length >= 100 && length <= 200)
@@ -416,6 +402,8 @@ void MouseMove(QMouseEvent* event)
                     _tmpStrands << OGStrand(i, QLineF(mPos.x(), y1, x2, y2));
                 }
             }
+
+            i++;
         }
     }
 
@@ -648,15 +636,14 @@ bool createPhysicsWorld()
 
     _physicsEngine = OGPhysicsEngine::GetInstance();
 
-    for (int i=0; i < _world->scenedata()->circle.size(); i++)
+    Q_FOREACH (WOGCircle* circle, _world->scenedata()->circle)
     {
-        if (!_world->scenedata()->circle.at(i)->dynamic)
+        if (!circle->dynamic)
         {
-            WOGCircle* circle = _world->scenedata()->circle.at(i);
             id = circle->material;
             material = _world->materialdata()->GetMaterial(id);
 
-            if(material)
+            if (material)
             {
                 OGStaticBody* body = new OGStaticBody;
                 body->body = createCircle(circle->position, circle->radius
@@ -670,15 +657,14 @@ bool createPhysicsWorld()
         }
     }
 
-    for (int i=0; i < _world->scenedata()->line.size(); i++)
+    Q_FOREACH (WOGLine* line, _world->scenedata()->line)
     {
-        if (!_world->scenedata()->line.at(i)->dynamic)
+        if (!line->dynamic)
         {
-            WOGLine* line = _world->scenedata()->line.at(i);
             id = line->material;
             material = _world->materialdata()->GetMaterial(id);                        
 
-            if(material)
+            if (material)
             {
                 OGStaticBody* body = new OGStaticBody;
                 body->body = createLine(line->anchor, line->normal, material
@@ -692,15 +678,14 @@ bool createPhysicsWorld()
         }
     }
 
-    for (int i=0; i < _world->scenedata()->rectangle.size(); i++)
+    Q_FOREACH (WOGRectangle* rect, _world->scenedata()->rectangle)
     {
-        if (!_world->scenedata()->rectangle.at(i)->dynamic)
+        if (!rect->dynamic)
         {
-            WOGRectangle* rect = _world->scenedata()->rectangle.at(i);
             id = rect->material;
             material = _world->materialdata()->GetMaterial(id);
 
-            if(material)
+            if (material)
             {
                 OGStaticBody* body = new OGStaticBody;
                 body->body = createRectangle(rect->position, rect->size
@@ -715,9 +700,8 @@ bool createPhysicsWorld()
         }
     }
 
-    for (int i=0; i < _world->leveldata()->ball.size(); i++)
+    Q_FOREACH (WOGBallInstance* data, _world->leveldata()->ball)
     {
-        WOGBallInstance* data = _world->leveldata()->ball.at(i);
         WOGBall* configuration = readBallConfiguration(data->type);
 
         if (configuration)
@@ -728,9 +712,9 @@ bool createPhysicsWorld()
         }
     }
 
-    for (int i=0; i < _world->leveldata()->strand.size(); i++)
+    Q_FOREACH (WOGStrand* strand, _world->leveldata()->strand)
     {
-        _strands << createStrand(_world->leveldata()->strand.at(i));
+        _strands << createStrand(strand);
     }
 
     _physicsEngine->SetSimulation(6, 2, 60.0);
@@ -768,10 +752,7 @@ void readConfiguration()
 
     if (gameConfig.Open())
     {
-        if (gameConfig.Read())
-        {
-            _config = gameConfig.Parser();
-        }
+        if (gameConfig.Read()) { _config = gameConfig.Parser(); }
         else {logWarn("File " + filename + " is corrupted"); }
     }
     else
@@ -799,11 +780,8 @@ WOGBall* readBallConfiguration(const QString & dirname)
 
     if (config.Open())
     {
-        if (config.Read())
-        {
-            return config.Parser();
-        }
-        else {logWarn("File " + path + " is corrupted"); }
+        if (config.Read()) { return config.Parser(); }
+        else { logWarn("File " + path + " is corrupted"); }
     }
     else { logWarn("File " + path +" not found"); }
 
@@ -815,8 +793,7 @@ OGBall* createBall(WOGBallInstance* data, WOGBall* configuration)
     float32 radius;
 
     OGBall* obj = new OGBall;
-    obj->id = data->id;
-    WOGMaterial ballmaterial = {QString(), 15.0, 0.1, 102, 30};
+    obj->id = data->id;    
     QStringList list = configuration->attribute.core.shape.split(",");
 
     if (list.at(0) == "circle")
@@ -832,7 +809,7 @@ OGBall* createBall(WOGBallInstance* data, WOGBall* configuration)
             if (n >= 1) { radius += radius*(qrand()%n)*0.01; }
         }
 
-        obj->ball = createCircle(data->position, radius, &ballmaterial
+        obj->body = createCircle(data->position, radius, &_ballmaterial
                                , true, configuration->attribute.core.mass);
 
         obj->active = true;
@@ -850,10 +827,11 @@ OGStrand* createStrand(WOGStrand* strand)
     OGStrand* obj = new OGStrand;
     bool isFound1 = false;
     bool isFound2 = false;
+    int i = 0;
 
-    for(int i=0; i < _balls.size(); i++)
+    Q_FOREACH (OGBall* ball, _balls)
     {
-        if (_balls.at(i)->ball)
+        if (ball->IsValid())
         {
             if (strand->gb1 == _balls.at(i)->id)
             {
@@ -868,8 +846,8 @@ OGStrand* createStrand(WOGStrand* strand)
 
             if (isFound1 && isFound2)
             {
-                obj->strand = createJoint(_balls.at(obj->gb1)->ball
-                                          , _balls.at(obj->gb2)->ball);
+                obj->strand = createJoint(_balls.at(obj->gb1)->body
+                                          , _balls.at(obj->gb2)->body);
 
                 _balls.at(obj->gb1)->active = false;
                 _balls.at(obj->gb2)->active = false;
@@ -877,6 +855,8 @@ OGStrand* createStrand(WOGStrand* strand)
                 break;
             }
         }
+
+        i++;
     }
 
     return obj;
@@ -887,41 +867,28 @@ OGStrand* createStrand(int b1, int b2)
     OGStrand* obj = new OGStrand;
     obj->gb1 = b1;
     obj->gb2 = b2;
-    obj->strand = createJoint(_balls.at(obj->gb1)->ball
-                              , _balls.at(obj->gb2)->ball);
-
-    _balls.at(obj->gb1)->active = false;
-    _balls.at(obj->gb2)->active = false;
+    obj->strand = createJoint(_balls.at(b1)->body, _balls.at(b2)->body);
+    _balls.at(b1)->active = false;
+    _balls.at(b2)->active = false;
 
     return obj;
 }
 
 void moveBall()
 {
-    qreal x, y;
-
     const QPointF & pos = getNearestPosition();
 
-    for (int i=0; i < _balls.size(); i++)
+    Q_FOREACH (OGBall* ball, _balls)
     {
-        if (_balls.at(i)->active && !_balls.at(i)->selected
-                && testWalkable(_balls.at(i)->ball))
-        {
+        if (ball->active && !ball->selected && testWalkable(ball->body))
+        {         
+            b2Vec2 vel = ball->body->body->GetLinearVelocity();
+            qreal dx = pos.x() - ball->GetX();
 
-            b2Vec2 vel = _balls.at(i)->ball->body->GetLinearVelocity();
-            x = _balls.at(i)->ball->body->GetPosition().x;
-            y = _balls.at(i)->ball->body->GetPosition().y;
+            if (dx >= 0) { vel.x = 5; }
+            else { vel.x = -5; }
 
-            if ((pos.x() - x) >= 0)
-            {
-                vel.x = 5;
-            }
-            else
-            {
-                vel.x = -5;
-            }
-
-            _balls.at(i)->ball->body->SetLinearVelocity(vel);
+            ball->body->body->SetLinearVelocity(vel);
         }
     }
 }
@@ -933,16 +900,16 @@ QPointF getNearestPosition()
 
     isInitialize = true;
 
-    for (int i=0; i < _balls.size(); i++)
+    Q_FOREACH (OGBall* ball, _balls)
     {
-        if (!_balls.at(i)->active)
+        if (!ball->active)
         {
             if (isInitialize)
             {
                 x1 = _world->leveldata()->levelexit->pos.x()*0.1;
                 y1 = _world->leveldata()->levelexit->pos.y()*0.1;
-                x2 = _balls.at(i)->ball->body->GetPosition().x;
-                y2 = _balls.at(i)->ball->body->GetPosition().y;
+                x2 = ball->GetX();
+                y2 = ball->GetY();
                 x = x2;
                 y = y2;
                 length = QLineF(x1, y1, x2, y2).length();
@@ -950,8 +917,8 @@ QPointF getNearestPosition()
             }
             else
             {
-                x2 = _balls.at(i)->ball->body->GetPosition().x;
-                y2 = _balls.at(i)->ball->body->GetPosition().y;
+                x2 = ball->GetX();
+                y2 = ball->GetY();
                 tmpLength = QLineF(x1, y1, x2, y2).length();
 
                 if (tmpLength < length)
@@ -970,11 +937,13 @@ QPointF getNearestPosition()
 bool testWalkable(OGPhysicsBody* body)
 {
     OGStaticBody* data;
+
     b2ContactEdge* edge = body->body->GetContactList();
 
     while (edge)
     {
         data = static_cast<OGStaticBody*>(edge->other->GetUserData());
+
         if (data)
         {
             if (data->tag == "walkable") { return true; }

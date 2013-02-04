@@ -26,6 +26,8 @@ struct Scroll
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 const qreal K = 10.0;
 
+WOGMaterial _ballmaterial = {QString(), 15.0, 0.1, 102, 30};
+
 OGGameEngine* _gameEngine = 0;
 OGPhysicsEngine* _physicsEngine = 0;
 OGWorld* _world;

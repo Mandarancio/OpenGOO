@@ -10,13 +10,17 @@
 
 struct OGBall
 {
-    OGPhysicsBody* ball;
+    OGPhysicsBody* body;
     QString id;
     bool active;
     bool selected;
 
-    OGBall() : ball(0), id(QString()), active(false), selected(false) { }
-    ~OGBall() { delete ball; }
+    OGBall() : body(0), id(QString()), active(false), selected(false) { }
+    ~OGBall() { delete body; }
+
+    float32 GetX() const { return body->body->GetPosition().x; }
+    float32 GetY() const { return body->body->GetPosition().y; }
+    bool IsValid() { if (body) { return true; } else { return false; } }
 };
 
 struct OGStrand

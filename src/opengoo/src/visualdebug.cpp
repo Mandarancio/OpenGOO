@@ -51,10 +51,10 @@ void drawStrands(QPainter* painter)
         {
             b1 = _strands.at(i)->gb1;
             b2 = _strands.at(i)->gb2;
-            x1 = _balls.at(b1)->ball->body->GetPosition().x*K;
-            y1 = _balls.at(b1)->ball->body->GetPosition().y*K*(-1.0);
-            x2 = _balls.at(b2)->ball->body->GetPosition().x*K;
-            y2 = _balls.at(b2)->ball->body->GetPosition().y*K*(-1.0);
+            x1 = _balls.at(b1)->GetX()*K;
+            y1 = _balls.at(b1)->GetY()*K*(-1.0);
+            x2 = _balls.at(b2)->GetX()*K;
+            y2 = _balls.at(b2)->GetY()*K*(-1.0);
 
             painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
         }
@@ -70,11 +70,11 @@ void drawBalls(QPainter* painter)
 {
     qreal x, y, radius;
 
-    for (int i=0; i < _balls.size(); i++)
+    Q_FOREACH (OGBall* ball, _balls)
     {
-        x = _balls.at(i)->ball->body->GetPosition().x*K;
-        y = _balls.at(i)->ball->body->GetPosition().y*K*(-1.0);
-        radius = _balls.at(i)->ball->shape->GetRadius()*K;
+        x = ball->GetX()*K;
+        y = ball->GetY()*K*(-1.0);
+        radius = ball->body->shape->GetRadius()*K;
 
         painter->drawEllipse(QPointF(x, y), radius, radius);
     }
