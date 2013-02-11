@@ -5,78 +5,103 @@
 #include <QTime>
 
 extern bool _E404;
-extern QTime _time;
+extern int _fps;
+extern QPointF _nearestPosition;
 extern OGButton _buttonMenu;
-extern QList<OGBall*> _balls;
 extern QList<OGStrand*> _strands;
-extern QList<OGStrand> _tmpStrands;
+extern QList<OGBall*> _balls;
+extern OGBall* _selectedBall;
 
 namespace visual_debug
 {
     const qreal K = 10.0;
+    bool _initImages = true;
+    QList<QImage> _images;
+    const qreal DEGREE = 57.2957795;
 }
 
 using namespace visual_debug;
 
-void calculateFPS(QPainter* painter, qreal zoom)
+void showFPS(QPainter* painter, qreal zoom)
 {
     int x, y;
-
-    static int fps = 0;
-    static int cur_fps = 0;
-
-    cur_fps++;
-
-    if (_time.elapsed() >= 1000)
-    {
-        fps = cur_fps;
-        cur_fps = 0;
-        _time.restart();
-    }
 
     x = painter->window().x() + 20.0/zoom;
     y = painter->window().y() + 20.0/zoom;
     painter->setPen(Qt::white);
     painter->setFont(QFont("Verdana", qRound(12.0/zoom), QFont::Bold));
-    painter->drawText(x, y, QString::number(fps));
+    painter->drawText(x, y, QString::number(_fps));
 }
 
-void drawStrands(QPainter* painter)
-{    
-    int x1, y1, x2, y2, b1, b2;
-
-    for (int i=0; i < _strands.size(); i++)
-    {
-        if (_strands.at(i)->gb1 != -1 && _strands.at(i)->gb2 != -1)
-        {
-            b1 = _strands.at(i)->gb1;
-            b2 = _strands.at(i)->gb2;
-            x1 = _balls.at(b1)->GetX()*K;
-            y1 = _balls.at(b1)->GetY()*K*(-1.0);
-            x2 = _balls.at(b2)->GetX()*K;
-            y2 = _balls.at(b2)->GetY()*K*(-1.0);
-
-            painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
-        }
-    }
-
-    for (int i=0; i < _tmpStrands.size(); i++)
-    {
-        painter->drawLine(_tmpStrands.at(i).line);
-    }
-}
-
-void drawBalls(QPainter* painter)
+void drawStrands(OGBall* gb1, OGBall* gb2, QPainter* painter)
 {
-    qreal x, y, radius;
+    int x1, y1, x2, y2;
 
-    Q_FOREACH (OGBall* ball, _balls)
+    if (gb1 && gb2)
     {
-        x = ball->GetX()*K;
-        y = ball->GetY()*K*(-1.0);
-        radius = ball->body->shape->GetRadius()*K;
+        x1 = gb1->GetX()*K;
+        y1 = gb1->GetY()*K*(-1.0);
+        x2 = gb2->GetX()*K;
+        y2 = gb2->GetY()*K*(-1.0);
 
-        painter->drawEllipse(QPointF(x, y), radius, radius);
+        painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
+    }
+}
+
+void createImage(const QSizeF size, qreal angle)
+{
+    QTransform transform;
+    transform.rotate(angle*-DEGREE);
+    QColor color(0, 255, 0, 100);
+    QImage image(size.toSize(), QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&image);
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
+    painter.fillRect(image.rect(), Qt::transparent);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    painter.fillRect(image.rect(), color);
+    painter.end();
+
+    _images << image.transformed(transform);
+}
+
+void createImages(OGWorld* world)
+{
+    Q_FOREACH (WOGRectangle* rectangle, world->scenedata()->rectangle)
+    {
+            createImage(rectangle->size, rectangle->rotation);
+    }
+}
+
+QPointF getPosTarget(const QPointF & pos, const QSizeF & size)
+{
+    qreal y = pos.y()*(-1.0);
+    QPointF p(pos.x(), y);
+    QRectF rect(p, size);
+    rect.moveCenter(p);
+
+    return rect.topLeft();
+}
+
+void drawRect(QPainter *painter, OGWorld* world)
+{
+    int i = 0;
+
+    if (_initImages)
+    {
+        createImages(world);
+        _initImages = false;
+    }
+
+    QPointF pos;
+
+    Q_FOREACH (WOGRectangle* rectangle, world->scenedata()->rectangle)
+    {
+        pos = getPosTarget(rectangle->position
+                           , _images.at(i).size());
+
+        painter->drawImage(QRectF(pos, _images.at(i).size())
+                           , _images.at(i), _images.at(i).rect());
+        i++;
     }
 }
 
@@ -137,8 +162,20 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
         painter->drawEllipse(QPointF(x, y), radius, radius);
     }
 
-    drawBalls(painter);
-    drawStrands(painter);
+    drawRect(painter, world);   
+
+    Q_FOREACH (OGBall* ball, _balls)
+    {
+        drawStrands(_selectedBall, ball, painter);
+    }
+
+    qreal x, y;
+    x = _nearestPosition.x()*10.0;
+    y = _nearestPosition.y()*(-1.0)*10.0;
+
+    pen.setColor(Qt::green);
+    painter->setPen(pen);
+    painter->drawEllipse(QPointF(x, y), 10, 10);
 
     if (_E404)
     {
@@ -155,6 +192,6 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
 
     if (flag == FPS)
     {
-        calculateFPS(painter, zoom);
+        showFPS(painter, zoom);
     }
 }

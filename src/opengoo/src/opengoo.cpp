@@ -101,7 +101,7 @@ bool GameInitialize(int argc, char **argv)
 
     if (_gameEngine == 0) { return false; }
 
-    _gameEngine->setFrameRate(60);     
+    _gameEngine->setFrameRate(FRAMERATE);
 
     return true;
 }
@@ -116,7 +116,8 @@ void GameStart()
     _E404 = false;
     _isScrollLock = false;
     _isZoomLock = false;
-    _isLevelInitialize = false;    
+    _isLevelInitialize = false;
+    _timeScrollStep = _width/1000;
 
     // MapWorldView is the main menu
 
@@ -137,18 +138,21 @@ void GameStart()
     _sprites = _world->sprites();
     _buttons = _world->buttons();
     _camera = _world->currentcamera();
-    _numberCameras = _world->GetNumberCameras();
+    camera::numberCameras = _world->GetNumberCameras();
 
-    if (!createPhysicsWorld()) { return; }
+    _physicsEngine = OGPhysicsEngine::GetInstance();
+    _physicsEngine->SetSimulation(6, 2, STEPS);
 
-    _isLevelInitialize = true;        
+    _isLevelInitialize = true;
 
     buttonMenu();
 
-    if (_numberCameras > 1) { _isMoveCamera = true; }
+    if (camera::numberCameras > 1) { _isMoveCamera = true; }
     else { _isMoveCamera = false; }
 
     if (_world->leveldata()->visualdebug) { _time.start(); }
+
+    _timeStep = STEPS/1000.0;
 }
 
 void GameEnd()
@@ -156,8 +160,9 @@ void GameEnd()
     _isLevelInitialize = false;
 
     delete _gameEngine;
+    delete _gameTime;
 
-    clearPhysicsWorld();
+    _physicsEngine = 0;
 
     if (_world)
     {
@@ -176,12 +181,29 @@ void GameCycle()
         return;
     }
 
-    _physicsEngine->Simulate();
+    if (!_gameTime)
+    {
+        _gameTime = new QTime;
+
+        _gameTime->start();
+    }
+
+    _lastTime = _gameTime->restart();
+    _lastTime = 16;
+
+    calculateFPS();
+
+    int n = qRound(_lastTime*_timeStep);
+
+    for (int i=0; i < n; i++)
+    {
+        _physicsEngine->Simulate();
+    }
 
     if (_isMoveCamera)
     {
         _isZoomLock = true;
-        moveCamera();
+        updateCamera(_lastTime);
     }
     else
     {
@@ -195,6 +217,19 @@ void GameCycle()
             _scrolltime--;
         }
     }
+
+    // Receive position of nearest vertex from the exit (approximately once per second)
+
+    if (_nearestCounter == 0)
+    {
+        _nearestPosition = getNearestPosition();
+        _nearestCounter++;
+    }
+    else if (_nearestCounter >= _fps)
+    {
+        _nearestCounter = 0;
+    }
+    else { _nearestCounter++; }
 
     moveBall();
 
@@ -227,6 +262,16 @@ void GamePaint(QPainter* painter)
         }
     }
 
+    Q_FOREACH (OGBall* ball, *_world->balls())
+    {
+        ball->Paint(painter, _world->leveldata()->visualdebug);
+    }
+
+    Q_FOREACH (OGStrand* strand, *_world->strands())
+    {
+        strand->Paint(painter, _world->leveldata()->visualdebug);
+    }
+
     if (_isPause)
     {
         painter->setOpacity(0.25);
@@ -243,9 +288,16 @@ void GamePaint(QPainter* painter)
     }
 }
 
-void GameActivate() { _isPause = false; }
+void GameActivate()
+{
+    _isPause = false;
 
-void GameDeactivate() { _isPause = true; }
+}
+
+void GameDeactivate()
+{
+    _isPause = true;
+}
 
 void KeyDown(QKeyEvent* event)
 {
@@ -288,28 +340,9 @@ void MouseButtonDown(QMouseEvent* event)
         }
     }
 
-    int i = 0;
-
-    Q_FOREACH (OGBall* ball, _balls)
+    if (_selectedBall)
     {
-        if (ball->active)
-        {
-            qreal x, y, radius;
-            x = ball->GetX()*K;
-            y = ball->GetY()*K;
-            radius = ball->body->shape->GetRadius()*K;
-            qreal length = QLineF(x, y, mPos.x(), mPos.y()).length();
-
-            if (length <= radius)
-            {
-                ball->selected = true;
-                _selectedBall = i;
-                ball->body->body->SetAwake(false);
-                break;
-            }
-        }
-
-        i++;
+        _selectedBall->Event("pickup");
     }
 }
 
@@ -317,20 +350,23 @@ void MouseButtonUp(QMouseEvent* event)
 {
     Q_UNUSED(event)
 
-    if (_selectedBall != -1)
+    if (_selectedBall)
     {
-        _balls.at(_selectedBall)->selected = false;
-        _balls.at(_selectedBall)->body->body->SetAwake(true);
-        if (_tmpStrands.size()>1)
+        if (_selectedBall->dragging)
         {
-            Q_FOREACH (OGStrand strand, _tmpStrands)
+            Q_FOREACH (OGBall* ball, _balls)
             {
-                _strands << createStrand(_selectedBall, strand.gb1);
+                _selectedBall->Attache(ball);
             }
-        }
 
-        _selectedBall = -1;
-        _tmpStrands.clear();
+            _selectedBall->dragging = false;            
+            _selectedBall->standing = false;
+
+            _selectedBall->body->SetAwake(true);
+            _selectedBall = 0;
+
+             _balls.clear();
+        }
     }
 }
 
@@ -338,12 +374,12 @@ void MouseMove(QMouseEvent* event)
 {
     const qreal OFFSET = 50.0;
 
-    qreal x, y;
+    qreal sx, sy;
 
     QPoint mPos(event->pos());
 
-    x = mPos.x();
-    y = mPos.y();
+    sx = mPos.x();
+    sy = mPos.y();
     Scroll scroll = {false, false, false, false};
     _scroll = scroll;
     mPos = windowToLogical(mPos);
@@ -371,47 +407,57 @@ void MouseMove(QMouseEvent* event)
         }
     }
 
-    if (_selectedBall != -1)
+    if (_selectedBall)
     {
-        qreal x, y;
+        float32 x, y;
 
-        x = mPos.x()*0.1;
-        y = mPos.y()*0.1;
-        b2Body* body = _balls.at(_selectedBall)->body->body;
+        x = mPos.x()*physics::K;
+        y = mPos.y()*physics::K;
 
-        body->SetTransform(b2Vec2(x, y), body->GetAngle());
-        _balls.at(_selectedBall)->body->body->SetAwake(false);
-
-        _tmpStrands.clear();
-
-        int i = 0;
-
-        Q_FOREACH (OGBall* ball, _balls)
+        if (_selectedBall->dragging)
         {
-            if (!ball->active)
+            if (_selectedBall->attached)
             {
-                qreal x2, y1, y2, length;
-                x2 = ball->GetX()*K;
-                y2 = ball->GetY()*K;
-                length = QLineF(mPos.x(), mPos.y(), x2, y2).length();
-
-                if (length >= 100 && length <= 200)
+                _selectedBall->Detache();
+            }
+            else
+            {
+                if (_selectedBall->GetMaxStrands() != 0)
                 {
-                    y1  = mPos.y()*(-1.0);
-                    y2 *= -1.0;
-                    _tmpStrands << OGStrand(i, QLineF(mPos.x(), y1, x2, y2));
+                    _selectedBall->SetBodyPosition(x, y);
+
+                    findConnectBalls();
                 }
             }
-
-            i++;
+        }
+        else
+        {
+            if (!_selectedBall->Select(mPos))
+            {
+                _selectedBall->standing = false;
+                _selectedBall->body->SetAwake(true);
+                _selectedBall = 0;
+            }
+        }
+    }
+    else
+    {
+        Q_FOREACH (OGBall* ball, *_world->balls())
+        {
+            if (ball->Select(mPos))
+            {
+                _selectedBall = ball;
+                _selectedBall->Event("marker");
+                break;
+            }
         }
     }
 
-    if (x <= OFFSET) { _scroll.left = true; }
-    else if (x >= _width - OFFSET) { _scroll.right = true; }
+    if (sx <= OFFSET) { _scroll.left = true; }
+    else if (sx >= _width - OFFSET) { _scroll.right = true; }
 
-    if (y <= OFFSET) { _scroll.up = true; }
-    else if (y >= _height - OFFSET) { _scroll.down = true; }
+    if (sy <= OFFSET) { _scroll.up = true; }
+    else if (sy >= _height - OFFSET) { _scroll.down = true; }
 }
 
 void MouseWheel(QWheelEvent* event)
@@ -465,7 +511,7 @@ void scroll()
 {
     if (_isScrollLock) { return; }
 
-    const qreal SHIFT = 10;
+    qreal SHIFT = _timeScrollStep*_lastTime;
 
     qreal pos;
 
@@ -538,55 +584,68 @@ QPoint windowToLogical(const QPoint & position)
     return QPoint(x, y);
 }
 
-void moveCamera()
+void updateCamera(int time)
 {
-    if (_numberCameras < 2)
+    if (camera::numberCameras < 2)
     {
         _isMoveCamera = false;
 
         if (_world->leveldata()->visualdebug) { _isZoomLock = false; }
 
-        return;
+        return;        
     }
 
-    if (_frames <= 0)
+    if (camera::isInitialization)
     {
-        const OGCamera& endCam = _world->GetCamera(_nextCamera);
-        qreal x = endCam.center().x() - _camera.center().x();
-        qreal y = endCam.center().y() - _camera.center().y();
-        qreal zoom = endCam.zoom() - _camera.zoom();
+        camera::sumTime = 0;
+        camera::isPause = false;
 
-        qreal fps =  1000.0/_gameEngine->getFrameDelay();
-        _pause = endCam.pause() * fps;
-        _frames = endCam.traveltime()*fps;
+        OGCamera* endCam = _world->GetCamera(camera::nextCamera);
+        qreal dx = endCam->center().x() - _camera.center().x();
+        qreal dy = endCam->center().y() - _camera.center().y();
+        qreal dzoom = endCam->zoom() - _camera.zoom();
+        camera::pause = endCam->pause()* 1000;
 
-        if (_frames > 0)
+        if (camera::pause) { camera::isPause = true; }
+
+        camera::traveltime = endCam->traveltime()*1000;
+
+        camera::xSpeed = dx/camera::traveltime;
+        camera::ySpeed = dy/camera::traveltime;
+        camera::zoomSpeed = dzoom/camera::traveltime;
+        camera::isInitialization = false;
+    }
+
+    if (camera::isPause)
+    {
+        int lastTime = time;
+        camera::sumTime += lastTime;
+
+        if ( camera::sumTime <= camera::pause) { return; }
+        else
         {
-            _dx = x/_frames;
-            _dy = y/_frames;
-            _dzoom = zoom/_frames;
+            camera::isPause = false;
+            camera::sumTime = 0;
         }
     }
-
-    if (_pause > 0)
+    else
     {
-        _pause--;
-        return;
-    }
+        int lastTime = time;
+        camera::sumTime += lastTime;
 
-    if (_frames > 0)
-    {
-        _camera.SetPosition(_camera.center().x() + _dx,
-                            _camera.center().y() + _dy);
-        _camera.Scale(_camera.zoom() + _dzoom);
-        _frames--;
-    }
-
-    if (_frames <= 0)
-    {
-        _world->SetNextCamera();
-        _numberCameras--;
-        _nextCamera++;
+        if (camera::sumTime <= camera::traveltime)
+        {
+            _camera.SetPosition(_camera.center().x() + camera::xSpeed*lastTime,
+                                _camera.center().y() + camera::ySpeed*lastTime);
+            _camera.Scale(_camera.zoom() + camera::zoomSpeed*lastTime);
+        }
+        else
+        {
+            _world->SetNextCamera();
+            camera::numberCameras--;
+            camera::nextCamera++;
+            camera::isInitialization = true;
+        }
     }
 }
 
@@ -610,138 +669,9 @@ void buttonMenu()
 
 bool createPhysicsWorld()
 {
-    if (_physicsEngine)
-    {
-        logError("Invalid physics engine.");
-        return false;
-    }
 
-    QPointF gravity;
-    WOGMaterial* material;
-    QString id; // material name
-
-    if (!_world->scenedata()->linearforcefield.isEmpty())
-    {
-        if (_world->scenedata()->linearforcefield.last()->type == "gravity")
-        {
-            gravity = _world->scenedata()->linearforcefield.last()->force;
-        }
-    }
-
-    if (!initializePhysicsEngine(gravity, true))
-    {
-        logError("Unable init physics engine.");
-        return false;
-    }
-
-    _physicsEngine = OGPhysicsEngine::GetInstance();
-
-    Q_FOREACH (WOGCircle* circle, _world->scenedata()->circle)
-    {
-        if (!circle->dynamic)
-        {
-            id = circle->material;
-            material = _world->materialdata()->GetMaterial(id);
-
-            if (material)
-            {
-                OGStaticBody* body = new OGStaticBody;
-                body->body = createCircle(circle->position, circle->radius
-                                          , material, false, 0, body);
-
-                body->tag = circle->tag;
-
-                _staticCircles << body;
-            }
-            else { logError(QString("Wring material id: %1").arg(id)); }
-        }
-    }
-
-    Q_FOREACH (WOGLine* line, _world->scenedata()->line)
-    {
-        if (!line->dynamic)
-        {
-            id = line->material;
-            material = _world->materialdata()->GetMaterial(id);                        
-
-            if (material)
-            {
-                OGStaticBody* body = new OGStaticBody;
-                body->body = createLine(line->anchor, line->normal, material
-                                        , _world, false, body);
-
-                body->tag = line->tag;
-
-                _staticLines << body;
-            }
-            else { logError(QString("Wrong material id: %1").arg(id)); }
-        }
-    }
-
-    Q_FOREACH (WOGRectangle* rect, _world->scenedata()->rectangle)
-    {
-        if (!rect->dynamic)
-        {
-            id = rect->material;
-            material = _world->materialdata()->GetMaterial(id);
-
-            if (material)
-            {
-                OGStaticBody* body = new OGStaticBody;
-                body->body = createRectangle(rect->position, rect->size
-                                             , rect->rotation , material, false
-                                             , body);
-
-                body->tag = rect->tag;
-
-                _staticRectangles << body;
-            }
-            else { logError(QString("Wring material id: %1").arg(id)); }
-        }
-    }
-
-    Q_FOREACH (WOGBallInstance* data, _world->leveldata()->ball)
-    {
-        WOGBall* configuration = readBallConfiguration(data->type);
-
-        if (configuration)
-        {
-            _balls << createBall(data, configuration);
-
-            delete configuration;
-        }
-    }
-
-    Q_FOREACH (WOGStrand* strand, _world->leveldata()->strand)
-    {
-        _strands << createStrand(strand);
-    }
-
-    _physicsEngine->SetSimulation(6, 2, 60.0);
 
     return true;
-}
-
-void clearPhysicsWorld()
-{
-    if (!_physicsEngine) { return; }
-
-    OGPhysicsEngine::DestroyInstance();
-
-    _physicsEngine = 0;
-
-    while (!_balls.isEmpty()) { delete _balls.takeFirst(); }
-
-    while (!_staticCircles.isEmpty()) { delete _staticCircles.takeFirst(); }
-
-    while (!_staticLines.isEmpty()) { delete _staticLines.takeFirst(); }
-
-    while (!_staticRectangles.isEmpty())
-    {
-        delete _staticRectangles.takeFirst();
-    }
-
-    while (!_strands.isEmpty()) { delete _strands.takeFirst(); }
 }
 
 void readConfiguration()
@@ -768,128 +698,13 @@ void setBackgroundColor(const QColor & color)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void drawOpenGLScene()
-{
-
-}
-
-WOGBall* readBallConfiguration(const QString & dirname)
-{
-    QString path = "./res/balls/" + dirname + "/balls.xml";
-    OGBallConfig config(path);
-
-    if (config.Open())
-    {
-        if (config.Read()) { return config.Parser(); }
-        else { logWarn("File " + path + " is corrupted"); }
-    }
-    else { logWarn("File " + path +" not found"); }
-
-    return 0;
-}
-
-OGBall* createBall(WOGBallInstance* data, WOGBall* configuration)
-{
-    float32 radius;
-
-    OGBall* obj = new OGBall;
-    obj->id = data->id;    
-    QStringList list = configuration->attribute.core.shape.split(",");
-
-    if (list.at(0) == "circle")
-    {
-        radius = list.at(1).toFloat()*0.5;
-
-        if (list.size() == 3)
-        {
-            int n = list[2].toFloat()*100;
-
-            if (n > 100) { n = 100; }
-
-            if (n >= 1) { radius += radius*(qrand()%n)*0.01; }
-        }
-
-        obj->body = createCircle(data->position, radius, &_ballmaterial
-                               , true, configuration->attribute.core.mass);
-
-        obj->active = true;
-    }
-    else if (list.at(0) == "rectangle")
-    {
-
-    }
-
-    return obj;
-}
-
-OGStrand* createStrand(WOGStrand* strand)
-{
-    OGStrand* obj = new OGStrand;
-    bool isFound1 = false;
-    bool isFound2 = false;
-    int i = 0;
-
-    Q_FOREACH (OGBall* ball, _balls)
-    {
-        if (ball->IsValid())
-        {
-            if (strand->gb1 == _balls.at(i)->id)
-            {
-                obj->gb1 = i;
-                isFound1 = true;
-            }
-            else if (strand->gb2 == _balls.at(i)->id)
-            {
-                obj->gb2 = i;
-                isFound2 = true;
-            }
-
-            if (isFound1 && isFound2)
-            {
-                obj->strand = createJoint(_balls.at(obj->gb1)->body
-                                          , _balls.at(obj->gb2)->body);
-
-                _balls.at(obj->gb1)->active = false;
-                _balls.at(obj->gb2)->active = false;
-
-                break;
-            }
-        }
-
-        i++;
-    }
-
-    return obj;
-}
-
-OGStrand* createStrand(int b1, int b2)
-{
-    OGStrand* obj = new OGStrand;
-    obj->gb1 = b1;
-    obj->gb2 = b2;
-    obj->strand = createJoint(_balls.at(b1)->body, _balls.at(b2)->body);
-    _balls.at(b1)->active = false;
-    _balls.at(b2)->active = false;
-
-    return obj;
-}
+void drawOpenGLScene() {}
 
 void moveBall()
 {
-    const QPointF & pos = getNearestPosition();
-
-    Q_FOREACH (OGBall* ball, _balls)
+    Q_FOREACH (OGBall* ball, *_world->balls())
     {
-        if (ball->active && !ball->selected && testWalkable(ball->body))
-        {         
-            b2Vec2 vel = ball->body->body->GetLinearVelocity();
-            qreal dx = pos.x() - ball->GetX();
-
-            if (dx >= 0) { vel.x = 5; }
-            else { vel.x = -5; }
-
-            ball->body->body->SetLinearVelocity(vel);
-        }
+        ball->Move(_nearestPosition);
     }
 }
 
@@ -900,9 +715,9 @@ QPointF getNearestPosition()
 
     isInitialize = true;
 
-    Q_FOREACH (OGBall* ball, _balls)
+    Q_FOREACH (OGBall* ball, *_world->balls())
     {
-        if (!ball->active)
+        if (ball->attached)
         {
             if (isInitialize)
             {
@@ -934,23 +749,48 @@ QPointF getNearestPosition()
     return QPointF(x, y);
 }
 
-bool testWalkable(OGPhysicsBody* body)
+void calculateFPS()
 {
-    OGStaticBody* data;
+    _cur_fps++;
 
-    b2ContactEdge* edge = body->body->GetContactList();
-
-    while (edge)
+    if (_time.elapsed() >= 1000)
     {
-        data = static_cast<OGStaticBody*>(edge->other->GetUserData());
+        if (_cur_fps > FRAMERATE) { _fps = FRAMERATE; }
+        else { _fps = _cur_fps; }
 
-        if (data)
+        _cur_fps = 0;
+
+        _time.start();
+    }
+}
+
+void findConnectBalls()
+{
+    qreal length;
+    int maxStrands = _selectedBall->GetMaxStrands();
+    float minlen = _selectedBall->m_configuration->stand->minlen;
+    float maxlen1 = _selectedBall->m_configuration->stand->maxlen1;
+
+    _balls.clear();
+
+    Q_FOREACH (OGBall* ball, *_world->balls())
+    {
+        if (ball->attached)
         {
-            if (data->tag == "walkable") { return true; }
-        }
+            length = b2Distance(ball->GetBodyPosition()
+                                , _selectedBall->GetBodyPosition())*10;
 
-        edge = edge->next;
+            if (length >= minlen && length <= maxlen1)
+            {
+                _balls << ball;
+
+                if (_balls.size() == maxStrands)
+                {
+                    break;
+                }
+            }
+        }
     }
 
-    return false;
+    if (maxStrands >= 2 && _balls.size() < 2) { _balls.clear(); }
 }

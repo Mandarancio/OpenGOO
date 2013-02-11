@@ -19,6 +19,9 @@ private:
     void CreateMovementAttributes_(WOGBall* ball);
     void CreatePlayerInteraction_(WOGBall* ball);
     void CreateCosmeticAttributes_(WOGBall* ball);
+    WOGBallStrand* CreateStrand_(const QDomElement & element);
+    WOGBallDetachstrand* CreateDetachstrand_(const QDomElement & element);
+    WOGBallShape* StringToShape(const QString & shape);
 };
 
 #endif // OG_BALLCONFIG_H

@@ -1,12 +1,5 @@
 #include "og_physicsbody.h"
 
-OGPhysicsBody::OGPhysicsBody(float32 x, float32 y, bool dynamic)
-{
-    if (dynamic) { bodydef.type = b2_dynamicBody; }
-
-    bodydef.position.Set(x, y);
-}
-
 OGPhysicsBody::OGPhysicsBody(float32 x, float32 y, bool dynamic, float32 angle)
 {
     if (dynamic) { bodydef.type = b2_dynamicBody; }

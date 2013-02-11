@@ -1,5 +1,6 @@
 #include "physics.h"
 
+#include <qmath.h>
 #include <QDebug>
 
 namespace physics
@@ -14,6 +15,7 @@ namespace physics
     const uint16 STATIC = LINE | CIRCLE | RECTANGLE;
 }
 
+extern OGWorld* _world;
 
 using namespace physics;
 
@@ -29,15 +31,23 @@ bool initializePhysicsEngine(const QPointF gravity, bool sleep)
 }
 
 OGPhysicsBody* createCircle(const QPointF & position, float32 radius
-                            , WOGMaterial* material, bool dynamic
-                            , qreal mass, void* data)
+                            , float32 angle, WOGMaterial* material
+                            , bool dynamic, float mass, void* data)
+{
+    return createCircle(position.x(), position.y(), radius, angle, material
+                        , dynamic, mass, data);
+}
+
+OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
+                            , float32 angle, WOGMaterial* material, bool dynamic
+                            , float mass, void* data)
 {
     OGPhysicsBody* circle;
     OGPhysicsEngine* engine;
     b2Filter filter;
 
     engine = OGPhysicsEngine::GetInstance();
-    circle = new OGPhysicsBody(position.x()*K, position.y()*K, dynamic);
+    circle = new OGPhysicsBody(x*K, y*K, dynamic, angle);
 
     engine->CreateBody(circle);
     circle->CreateShape(OGPhysicsBody::CIRCLE);
@@ -46,18 +56,13 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
 
     if (dynamic)
     {
-        circle->CreateFixture(0.0, material->friction*0.01, material->bounce);
-        b2MassData m = {
-            static_cast<float>(mass)
-            , b2Vec2(0,0)
-            , 0.0
-        };
+        float32 density = (mass*K)/(M_PI*radius*radius*K*K);
 
-        circle->body->SetMassData(&m);        
+        circle->CreateFixture(density, material->friction*0.01
+                              , material->bounce);
 
         filter.categoryBits = BALL;
         filter.maskBits = STATIC;
-
         circle->fixture->SetFilterData(filter);
     }
     else
@@ -66,7 +71,6 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
 
         filter.categoryBits = CIRCLE;
         filter.maskBits = BALL;
-
         circle->fixture->SetFilterData(filter);
         circle->body->SetUserData(data);
     }
@@ -75,8 +79,7 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
 }
 
 OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
-                          , WOGMaterial* material, OGWorld* world
-                          , bool dynamic, void* data)
+                          , WOGMaterial* material, bool dynamic, void* data)
 {
     qreal x1, x2, y1, y2, length, angle;
     OGPhysicsBody* line;
@@ -87,7 +90,7 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
     y1 = anchor.y()*K*0.5;
 
     //0.55 = (length + 10%)/2
-    length = qMax(world->scenesize().width(), world->scenesize().height())
+    length = qMax(_world->scenesize().width(), _world->scenesize().height())
             *0.55*K;
 
     x2 = x1 + normal.x();
@@ -124,7 +127,6 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
 
         filter.categoryBits = LINE;
         filter.maskBits = BALL;
-
         line->fixture->SetFilterData(filter);
         line->body->SetUserData(data);
     }
@@ -133,24 +135,43 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
 }
 
 OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
-                               , qreal rotation, WOGMaterial* material
-                               , bool dynamic, void* data)
+                               , qreal angle, WOGMaterial* material
+                               , bool dynamic, float mass, void* data)
+{
+    return createRectangle(position.x(), position.y(), size.width()
+                           , size.height(), angle, material, dynamic, mass
+                           , data);
+}
+
+OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
+                               , float32 height, float32 angle
+                               , WOGMaterial* material
+                               , bool dynamic, float mass, void* data)
 {
     OGPhysicsBody* rect;
     OGPhysicsEngine* engine;
     b2Filter filter;
 
     engine = OGPhysicsEngine::GetInstance();
-    rect = new OGPhysicsBody(position.x()*K, position.y()*K , dynamic);
+    rect = new OGPhysicsBody(x*K, y*K , dynamic, angle);
 
     engine->CreateBody(rect);
     rect->CreateShape(OGPhysicsBody::POLYGON);
-    rect->shape->SetAsBox(size.width()*K*0.5, size.height()*K*0.5
-                            , b2Vec2(0, 0), rotation);
+    rect->shape->SetAsBox(width*K*0.5, height*K*0.5);
 
     if (dynamic)
     {
-        rect->CreateFixture(0.0, material->friction*0.01, material->bounce);
+        float32 density = (mass*K)/(width*height*K*K);
+
+        rect->CreateFixture(density, material->friction*0.01
+                              , material->bounce);
+
+        rect->CreateFixture(density, material->friction*0.01
+                            , material->bounce);
+
+        filter.categoryBits = BALL;
+        filter.maskBits = STATIC;
+        rect->fixture->SetFilterData(filter);
     }
     else
     {
@@ -158,7 +179,6 @@ OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
 
         filter.categoryBits = RECTANGLE;
         filter.maskBits = BALL;
-
         rect->fixture->SetFilterData(filter);
         rect->body->SetUserData(data);
     }
@@ -166,7 +186,7 @@ OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
     return rect;
 }
 
-OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2)
+OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2, void *data)
 {
     OGPhysicsJoint* joint;
     OGPhysicsEngine* engine;
@@ -182,8 +202,8 @@ OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2)
                          , b1->body->GetPosition(), b2->body->GetPosition());
 
     joint->jointdef = jointDef;
-
     engine->CreateJoint(joint);
+    joint->joint->SetUserData(data);
 
     return joint;
 }

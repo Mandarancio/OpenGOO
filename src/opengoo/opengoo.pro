@@ -146,6 +146,12 @@ HEADERS += \
     src/og_sprite.h \
     src/og_windowcamera.h \        
     src/physics.h \
+    src/og_strand.h \
+    src/og_ball.h \
+    src/og_circle.h \
+    src/og_ibody.h \
+    src/og_rectangle.h \
+    src/og_line.h
 
 
 SOURCES += \
@@ -190,6 +196,12 @@ SOURCES += \
     src/visualdebug.cpp \
     src/og_windowcamera.cpp \
     src/physics.cpp \
+    src/og_strand.cpp \
+    src/og_ball.cpp \
+    src/og_circle.cpp \
+    src/og_ibody.cpp \
+    src/og_rectangle.cpp \
+    src/og_line.cpp
 
 
 # Game engine

@@ -9,15 +9,10 @@
 struct WOGMaterial
 {
     QString id;
-    qreal friction;
-    qreal bounce;
-    qreal minbouncevel;
+    float friction;
+    float bounce;
+    float minbouncevel;
     int stickiness;
-
-    ~WOGMaterial()
-    {
-        qDebug("WOGMaterial: End");
-    }
 };
 
 struct WOGMaterialList
@@ -27,8 +22,6 @@ struct WOGMaterialList
     ~WOGMaterialList()
     {
         while (!material.isEmpty()) { delete material.takeFirst(); }
-
-        qDebug("WOGMaterialList: End");
     }
 
     WOGMaterial* GetMaterial(const QString & id);

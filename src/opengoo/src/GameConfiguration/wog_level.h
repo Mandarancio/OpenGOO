@@ -31,9 +31,10 @@ typedef WOGMusic WOGLoopSound;
 struct WOGBallInstance
 {
     QString type;
-    QPointF position;
     QString id;
-    qreal angle;
+    float x;
+    float y;
+    float angle;
     bool discovered;
 };
 

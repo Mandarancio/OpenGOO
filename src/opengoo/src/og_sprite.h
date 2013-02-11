@@ -4,6 +4,7 @@
 #include "wog_vobject.h"
 
 #include <QPixmap>
+#include <QImage>
 
 struct OGSprite : public WOGVObject
 {

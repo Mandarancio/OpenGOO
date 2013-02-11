@@ -34,10 +34,10 @@ WOGMaterialList* OGMaterialConfig::Parser()
 WOGMaterial* OGMaterialConfig::CreateMaterial(const QDomElement & element)
 {
     WOGMaterial* obj = new WOGMaterial;
-    obj->bounce = element.attribute("bounce").toDouble();
-    obj->friction = element.attribute("friction").toDouble();
+    obj->bounce = element.attribute("bounce").toFloat();
+    obj->friction = element.attribute("friction").toFloat();
     obj->id = element.attribute("id");
-    obj->minbouncevel = element.attribute("minbouncevel").toDouble();
+    obj->minbouncevel = element.attribute("minbouncevel").toFloat();
     obj->stickiness = element.attribute("stickiness").toInt();
 
     return obj;

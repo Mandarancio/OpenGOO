@@ -2,6 +2,11 @@
 
 OGPhysicsEngine* OGPhysicsEngine::instance_ = 0;
 
+OGPhysicsEngine::OGPhysicsEngine()
+{
+    world_ = 0;
+    isSleep_ = false;
+}
 OGPhysicsEngine::~OGPhysicsEngine()
 {
     delete world_;
@@ -26,8 +31,7 @@ OGPhysicsEngine* OGPhysicsEngine::GetInstance()
 
 void OGPhysicsEngine::SetSimulation(int32 velocityIterations
                                       , int32 positionIterations
-                                      , float32 steps
-                                      )
+                                      , int steps)
 {
     timeStep_ = 1.0f/steps;
     velocityIterations_ = velocityIterations;

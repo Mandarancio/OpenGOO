@@ -13,8 +13,8 @@ struct OGPhysicsBody
     b2Fixture* fixture;
     OGPhysicsShape* shape;
 
-    OGPhysicsBody(float32 x, float32 y, bool dynamic);
-    OGPhysicsBody(float32 x, float32 y, bool dynamic, float32 angle);
+    OGPhysicsBody() : body(0), fixture(0), shape(0) {}
+    OGPhysicsBody(float32 x, float32 y, bool dynamic, float32 angle=0);
     ~OGPhysicsBody() { delete shape; }
 
     void CreateFixture(float32 density);

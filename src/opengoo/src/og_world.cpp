@@ -18,6 +18,10 @@ OGWorld::OGWorld(const QString & levelname, bool widescreen)
     materialData_ = 0;
     effectsData_ = 0;
 
+    strandId_ = 0;
+
+    isPhysicsEngine_ = false;
+
     if (!widescreen)
     {
         screenType_ = "normal";
@@ -43,6 +47,10 @@ OGWorld::~OGWorld()
     if (materialData_) { delete materialData_; }
 
     if (!effectsData_) { delete effectsData_; }
+
+    OGPhysicsEngine::DestroyInstance();
+
+    while(!staticBodies_.isEmpty()) { delete staticBodies_.takeFirst(); }
 }
 
 bool OGWorld::isExist(const QString &path_level)
@@ -285,10 +293,28 @@ void OGWorld::Clear()
     if (textData_[1]) { delete textData_[1]; }
 
     textData_[1] = 0;
+
+    logDebug("Clear balls");
+
+    while (!balls_.empty()) { delete balls_.takeFirst(); }
+
 }
 
 void OGWorld::CreateScene()
 {
+    if (!isPhysicsEngine_)
+    {
+        logDebug("Initializing the physics engine");
+
+        if (InitializePhysics_()) { isPhysicsEngine_ = true; }
+        else
+        {
+            logError("Unable init physics engine.");
+
+            return;
+        }
+    }
+
     logDebug("Create scene");
 
     logDebug("Create scenelayers");
@@ -350,7 +376,7 @@ void OGWorld::CreateScene()
         }
     }
 
-    currentCamera_ = GetCamera();
+    currentCamera_ = *cameras_.first();
 
     qreal sceneWidth, sceneHeight;
 
@@ -358,6 +384,40 @@ void OGWorld::CreateScene()
     sceneHeight = qAbs(scenedata()->maxy) +qAbs(scenedata()->miny);
 
     sceneSize_ = QSizeF(sceneWidth, sceneHeight);
+
+    Q_FOREACH (WOGCircle* circle, scenedata()->circle)
+    {
+        if (!circle->dynamic)
+        {
+            staticBodies_ << CreateBody_<OGCircle, WOGCircle>(circle);
+        }
+    }
+
+    Q_FOREACH (WOGRectangle* rect, scenedata()->rectangle)
+    {
+        if (!rect->dynamic)
+        {
+            staticBodies_ << CreateBody_<OGRectangle, WOGRectangle>(rect);
+        }
+    }
+
+    Q_FOREACH (WOGLine* line, scenedata()->line)
+    {
+        if (!line->dynamic)
+        {
+            staticBodies_ << CreateBody_<OGLine, WOGLine>(line);
+        }
+    }
+
+    Q_FOREACH (WOGBallInstance* ball, leveldata()->ball)
+    {
+        balls_ << CreateBall_(ball);
+    }
+
+    Q_FOREACH (WOGStrand* strand, leveldata()->strand)
+    {
+        CreateStrand_(strand);
+    }
 }
 
 void OGWorld::CreateSceneLayer_(const WOGSceneLayer & scenelayer
@@ -377,6 +437,29 @@ OGCamera* OGWorld::CreateCamera_(WOGPoi* poi)
     return new OGCamera(QPointF(poi->position.x(), poi->position.y())
                         , cameraSize_ , poi->zoom, poi->traveltime, poi->pause
                           );
+}
+
+OGBall* OGWorld::CreateBall_(WOGBallInstance* ball)
+{
+    OGBall* obj = 0;
+    WOGBall* configuration = GetBallConfiguration(ball->type);
+
+    if (configuration != 0) { obj = new OGBall(ball, configuration); }
+
+    return obj;
+
+}
+
+template<class Body, class Data> Body* OGWorld::CreateBody_(Data* data)
+{
+    Body* obj = 0;
+    QString id = data->material;
+    WOGMaterial* material = materialdata()->GetMaterial(id);
+
+    if (material) { obj = new Body(data, material); }
+    else { logError(QString("Wrong material id: %1").arg(id)); }
+
+    return obj;
 }
 
 void OGWorld::CreateButton_(const WOGButton & button, QList<OGSprite*>* sprites
@@ -418,11 +501,17 @@ QPixmap OGWorld::CreatePixmap_(OGSprite* sprite, const QString & image)
                   );
 
     QTransform transform;
+
     transform.rotate((-1.0)*sprite->rotation);
-
     QImage tmpImage(source.transformed(transform, Qt::SmoothTransformation));
-
     QImage target(tmpImage.size(), QImage::Format_ARGB32_Premultiplied);
+
+    // Set the size of sprite
+    transform.scale(sprite->scale.x(), sprite->scale.y());
+    QImage tmpImage2 = QImage(source.size()
+                         , QImage::Format_Mono).transformed(transform);
+
+    sprite->size = tmpImage2.size();
 
     // Colorize sprite
     QPainter painter(&target);
@@ -454,7 +543,7 @@ OGSprite* OGWorld::CreateSprite_(const WOGVObject* vobject
                                  , const QString & image
                                  )
 {
-    qreal width, height, x, y;
+    qreal x, y;
     OGSprite* sprite;
 
     sprite = new OGSprite;
@@ -465,17 +554,30 @@ OGSprite* OGWorld::CreateSprite_(const WOGVObject* vobject
     sprite->depth = vobject->depth;
     sprite->image = CreatePixmap_(sprite, image);
 
-    // Set sprite size
-    width = sprite->image.width() * sprite->scale.x();
-    height = sprite->image.height() * sprite->scale.y();
-    sprite->size= QSize(width, height);
-
-    // Set sprite position    
-    x = vobject->position.x() - sprite->size.width() * 0.5;
-    y = (vobject->position.y() + sprite->size.height() * 0.5)*(-1.0);
+    // Set sprite position
+    x = vobject->position.x() - sprite->size.width()*0.5;
+    y = (vobject->position.y() + sprite->size.height()*0.5)*(-1.0);
     sprite->position = QPointF(x, y);
 
     return sprite;
+}
+
+void OGWorld::CreateStrand_(WOGStrand* strand)
+{
+    OGBall* b1 = 0;
+    OGBall* b2 = 0;
+
+    Q_FOREACH (OGBall* ball, balls_)
+    {
+        if (strand->gb1 == ball->GetId()) { b1 = ball; }
+        else if (strand->gb2 == ball->GetId()) { b2 = ball; }
+
+        if (b1 != 0 && b2 != 0)
+        {
+            b1->Attache(b2);
+            break;
+        }
+    } 
 }
 
 void OGWorld::SetNextCamera()
@@ -485,5 +587,50 @@ void OGWorld::SetNextCamera()
         numberCurrentCamera_ = 0;
     }
 
-    currentCamera_ = GetCamera(numberCurrentCamera_);
+    currentCamera_ = *GetCamera(numberCurrentCamera_);
+}
+
+WOGBall* OGWorld::GetBallConfiguration(const QString & type)
+{
+    WOGBall* configuration = ballConfigurations_.object(type);
+
+    if (!configuration)
+    {
+        QString path = "./res/balls/" + type + "/balls.xml";
+        configuration = Load_<WOGBall*, OGBallConfig> (path);
+
+        if (configuration)
+        {
+            ballConfigurations_.insert(type, configuration);
+        }
+    }
+
+    return  configuration;
+}
+
+bool OGWorld::InitializePhysics_()
+{
+    QPointF gravity(0, -10);
+
+    if (!scenedata()->linearforcefield.isEmpty())
+    {
+        if (scenedata()->linearforcefield.last()->type == "gravity")
+        {
+            gravity = scenedata()->linearforcefield.last()->force;
+        }
+    }
+
+    return initializePhysicsEngine(gravity, true);
+}
+
+void OGWorld::CreateStrand(OGBall* b1, OGBall *b2)
+{
+    OGStrand* obj = new OGStrand(b1, b2, strandId_);
+    strands_.insert(strandId_, obj);
+    strandId_++;
+}
+
+void OGWorld::RemoveStrand(OGStrand* strand)
+{
+    delete strands_.take(strand->id());
 }

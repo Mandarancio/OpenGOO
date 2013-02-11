@@ -5,34 +5,17 @@
 #include "og_camera.h"
 #include "og_button.h"
 #include "og_sprite.h"
-#include "og_physicsbody.h"
-#include "og_physicsjoint.h"
+#include "og_ibody.h"
+#include "og_ball.h"
+#include "og_strand.h"
+#include "og_circle.h"
+#include "og_rectangle.h"
+#include "og_line.h"
 
-struct OGBall
-{
-    OGPhysicsBody* body;
-    QString id;
-    bool active;
-    bool selected;
+#include "physics.h"
 
-    OGBall() : body(0), id(QString()), active(false), selected(false) { }
-    ~OGBall() { delete body; }
-
-    float32 GetX() const { return body->body->GetPosition().x; }
-    float32 GetY() const { return body->body->GetPosition().y; }
-    bool IsValid() { if (body) { return true; } else { return false; } }
-};
-
-struct OGStrand
-{
-    int gb1;
-    int gb2;
-    QLineF line;
-    OGPhysicsJoint* strand;
-
-    OGStrand() : gb1(-1), gb2(-1), strand(0) { }
-    OGStrand(int b, const QLineF & line) : gb1(b), line(line) { }
-};
+#include <QCache>
+#include <QHash>
 
 struct OGStaticBody
 {
@@ -51,6 +34,8 @@ class OGWorld
     WOGMaterialList* materialData_;
     WOGEffects* effectsData_;
 
+    bool isPhysicsEngine_;
+
     QString levelName_;
     QString language_;
 
@@ -61,9 +46,15 @@ class OGWorld
     QSizeF sceneSize_;
     QString screenType_; // normal or widescren
 
+    QList<OGBall*> balls_;
     QList<OGButton*> buttons_;
     QList<OGCamera*> cameras_;
-    QList<OGSprite*> sprites_;
+    QList<OGSprite*> sprites_;    
+    QHash<int, OGStrand*> strands_;
+    QList<OGIBody*> staticBodies_;
+    QCache<QString, WOGBall> ballConfigurations_;
+
+    int strandId_;
 
     QSize NormalCamera_() const { return QSize(800, 600); }
     QSize WideScreenCamera_() const { return QSize(1060, 600); }
@@ -81,11 +72,12 @@ class OGWorld
     bool LoadText_(const QString & path, bool share);
 
     QPixmap CreatePixmap_(OGSprite* sprite, const QString & image);
-    OGSprite* CreateSprite_(const WOGVObject *vobject, const QString & image);
+    OGSprite* CreateSprite_(const WOGVObject* vobject, const QString & image);
 
     // level
+    OGBall* CreateBall_(WOGBallInstance* ball);
     OGCamera* CreateCamera_(WOGPoi* poi);
-    void CreateStrand_();
+    void CreateStrand_(WOGStrand* strand);
 
     // scene
     void CreateRadialForcefield_();
@@ -99,7 +91,11 @@ class OGWorld
                       , QList<OGButton*>* buttons
                        );
 
+    template<class Body, class Data> Body* CreateBody_(Data* data);
+
     void CreateLabel_();
+
+    bool InitializePhysics_();
 
 public:
     OGWorld(const QString & levelname=QString(), bool widescreen=false);
@@ -108,8 +104,11 @@ public:
     static bool isExist(const QString& path_level);
 
     // Get properties
+    QList<OGBall*>* balls() { return &balls_; }
     QList<OGButton*>* buttons() { return &buttons_; }
     QList<OGSprite*>* sprites() { return &sprites_; }
+    QHash<int, OGStrand*>* strands() { return &strands_; }
+    QList<OGIBody*>* staticbodies() { return &staticBodies_; }
     OGCamera currentcamera() const { return currentCamera_; }
     WOGLevel* leveldata() { return levelData_; }
     WOGMaterialList* materialdata() { return materialData_; }
@@ -122,8 +121,8 @@ public:
     void levelname(const QString & levelname) { levelName_ = levelname; }
     void language(const QString & language) { language_ = language; }
 
-
-    OGCamera GetCamera(int number=0) const { return *cameras_.at(number); }
+    WOGBall* GetBallConfiguration(const QString & type);
+    OGCamera* GetCamera(int number=0) { return cameras_.at(number); }
     int GetNumberCameras() const { return cameras_.size(); }
 
 
@@ -134,6 +133,9 @@ public:
     void CreateScene();
     bool Initialize();
     bool Load();
+
+    void CreateStrand(OGBall* b1, OGBall *b2);
+    void RemoveStrand(OGStrand* strand);
 };
 
 #endif // OG_WORLD_H

@@ -107,11 +107,11 @@ WOGBallInstance* OGLevelConfig::CreateBallInstance(const QDomElement & element)
 {
     WOGBallInstance* obj = new WOGBallInstance;
     obj->type = element.attribute("type");
-    obj->position = StringToPoint(element.attribute("x")
-                                  , element.attribute("y"));
+    obj->x = element.attribute("x").toFloat();
+    obj->y = element.attribute("y").toFloat();
 
     obj->id = element.attribute("id");
-    obj->angle = element.attribute("angle").toDouble();
+    obj->angle = element.attribute("angle").toFloat();
     obj->discovered = StringToBool(element.attribute("discovered"));
 
     return obj;

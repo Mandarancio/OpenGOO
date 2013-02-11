@@ -8,11 +8,26 @@
 
 #include <QDir>
 #include <QTime>
+#include <QTimer>
 
 namespace physics
 {
     extern const qreal K = 0.1;
     extern bool status;
+}
+
+namespace camera
+{
+    bool isPause;
+    bool isInitialization = true;
+    int nextCamera = 1;
+    int numberCameras = 0;
+    int traveltime;
+    int sumTime;
+    qreal xSpeed;
+    qreal ySpeed;
+    qreal zoomSpeed;
+    qreal pause;
 }
 
 struct Scroll
@@ -25,22 +40,27 @@ struct Scroll
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 const qreal K = 10.0;
-
-WOGMaterial _ballmaterial = {QString(), 15.0, 0.1, 102, 30};
+const int FRAMERATE = 60;
+const int STEPS = 60;
 
 OGGameEngine* _gameEngine = 0;
 OGPhysicsEngine* _physicsEngine = 0;
 OGWorld* _world;
 
+QTime* _gameTime = 0;
+int _lastTime;
+qreal _timeStep;
+qreal _timeScrollStep;
+
 QList<OGSprite*>* _sprites;
 QList<OGButton*>* _buttons = 0;
-QList<OGStaticBody*> _staticCircles;
+
 QList<OGStaticBody*> _staticLines;
-QList<OGStaticBody*> _staticRectangles;
+
+//QList<OGStrand> _tmpStrands;
+OGBall* _selectedBall = 0;
 QList<OGBall*> _balls;
-QList<OGStrand> _tmpStrands;
-int _selectedBall = -1;
-QList<OGStrand*> _strands;
+
 OGButton _buttonMenu;
 
 QString _levelname;
@@ -56,6 +76,11 @@ bool _isMoveCamera;
 qreal _width;
 qreal _height;
 QTime _time;
+QTimer _timer;
+QPointF _nearestPosition;
+int _nearestCounter = 0;
+int _fps = FRAMERATE;
+int _cur_fps = 0;
 
 // Default settings
 OGConfig _config = {
@@ -66,6 +91,7 @@ OGConfig _config = {
 };
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
+void calculateFPS();
 void closeGame();
 void readConfiguration();
 void scroll();
@@ -74,17 +100,12 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
 void buttonMenuAction();
 void buttonMenu();
 
+void findConnectBalls();
+
 QPointF getNearestPosition();
 bool testWalkable(OGPhysicsBody* body);
 QPointF logicalToWindow(const QRectF & rect, qreal zoom);
 QPoint windowToLogical(const QPoint & position);
-
-OGBall* createBall(WOGBallInstance* data, WOGBall* configuration);
-OGStrand* createStrand(WOGStrand* strand);
-OGStrand* createStrand(int b1, int b2);
-
-bool createPhysicsWorld();
-void clearPhysicsWorld();
 
 void moveBall();
 
@@ -92,16 +113,7 @@ void setBackgroundColor(const QColor & color);
 void drawOpenGLScene();
 
 // Animate camera
-int _nextCamera = 1;
-int _numberCameras = 0;
-qreal _dx = 0;
-qreal _dy = 0;
-qreal _dzoom = 0;
-qreal _pause = 0;
-qreal _frames = 0;
-void moveCamera();
-
-WOGBall* readBallConfiguration(const QString & dirname);
+void updateCamera(int time);
 
 #define UNIMPLEMENTED qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
 

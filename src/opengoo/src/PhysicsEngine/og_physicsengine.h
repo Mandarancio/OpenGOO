@@ -4,6 +4,7 @@
 #include "common.h"
 #include "og_physicsbody.h"
 #include "og_physicsjoint.h"
+#include "debug.h"
 
 class OGPhysicsEngine
 {
@@ -14,15 +15,20 @@ public:
     bool Initialize();
     void SetGravity(float32 x, float32 y) { gravity_.Set(x, y); }
     void SetSimulation(int32 velocityIterations, int32 positionIterations
-                       , float32 steps
-            );
+                       , int steps);
 
     void SetSleep(bool sleep) { isSleep_ = sleep; }
 
-    void Simulate();
-
     void CreateBody(OGPhysicsBody*  body);
     void CreateJoint(OGPhysicsJoint* joint);
+
+    void DestroyJoint(OGPhysicsJoint* joint)
+    {
+        world_->DestroyJoint(joint->joint);
+        delete joint;
+    }
+
+    void Simulate();
 
 private:
     static OGPhysicsEngine* instance_;
@@ -33,7 +39,7 @@ private:
     int32 positionIterations_;
     bool isSleep_;
 
-    OGPhysicsEngine() : world_(0), isSleep_(false) { }
+    OGPhysicsEngine();
     ~OGPhysicsEngine();
 };
 

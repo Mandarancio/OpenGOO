@@ -2,12 +2,9 @@
 
 WOGMaterial* WOGMaterialList::GetMaterial(const QString & id)
 {
-    for (int i=0; i < material.size(); i++)
+    Q_FOREACH (WOGMaterial* m, material)
     {
-        if (material.at(i)->id == id)
-        {
-            return material.at(i);
-        }
+        if (m->id == id) { return m; }
     }
 
     return 0;

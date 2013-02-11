@@ -255,6 +255,6 @@ void OGSceneConfig::CreatePObject(WOGPObject* pobject
     }
     else { pobject->dynamic = true; }
 
-    pobject->tag = element.attribute("tag");
+    pobject->tag = element.attribute("tag", "walkable");
     pobject->material = element.attribute("material");
 }
