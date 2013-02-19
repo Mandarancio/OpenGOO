@@ -47,7 +47,7 @@ APP_NAME_UPPER = 'WOOGLE'
 APP_NAME_LOWER = 'woogle'
 APP_NAME_PROPER = 'WooGLE'
 STR_DIR_STUB='levels'
-CURRENT_VERSION = "v0.77 Final"
+CURRENT_VERSION = ""#"v0.77 Final"
 CREATED_BY = '<!-- Created by ' + APP_NAME_PROPER + ' ' + CURRENT_VERSION + ' -->\n'
 ISSUE_LEVEL_NONE = 0
 ISSUE_LEVEL_ADVICE = 1
@@ -412,7 +412,7 @@ class GameModel(QtCore.QObject):
 
     @property
     def _materials_tree( self ):
-        return self.global_world.find_tree( metawog.TREE_GLOBAL_MATERIALS )
+        return self.global_world.find_tree( metawoog.TREE_GLOBAL_MATERIALS )
 
     @property
     def _resources_tree( self ):
@@ -444,7 +444,7 @@ class GameModel(QtCore.QObject):
         path = os.path.join( directory, file_name )
         if not os.path.isfile( path ):
             raise GameModelException( tr( 'LoadData',
-                'File "%1" does not exist. You likely provided an incorrect World of Goo directory.' ).arg( path ) )
+                'File "%1" does not exist. You likely provided an incorrect OpenGOO directory.' ).arg( path ) )
         xml_data = file( path, 'rb' ).read()
         try:
             new_tree =  world.make_tree_from_xml( meta_tree, xml_data )
@@ -501,7 +501,7 @@ class GameModel(QtCore.QObject):
     def _loadDirList( self, directory, filename_filter ):
         if not os.path.isdir( directory ):
             raise GameModelException( tr('LoadLevelList',
-                'Directory "%1" does not exist. You likely provided an incorrect World of Goo directory.' ).arg( directory ) )
+                'Directory "%1" does not exist. You likely provided an incorrect OpenGOO directory.' ).arg( directory ) )
         def is_valid_dir( entry ):
             """Accepts the directory only if it contains a specified file."""
             dir_path = os.path.join( directory, entry )
@@ -520,7 +520,7 @@ class GameModel(QtCore.QObject):
     def _loadFileList( self, directory, filename_filter ):
         if not os.path.isdir( directory ):
             raise GameModelException( tr('LoadFileList',
-                'Directory "%1" does not exist. You likely provided an incorrect World of Goo directory.' ).arg( directory ) )
+                'Directory "%1" does not exist. You likely provided an incorrect OpenGOO directory.' ).arg( directory ) )
         def is_valid_file( entry ):
             """Accepts the directory only if it contains a specified file."""
             if entry.endswith(filename_filter):
@@ -2253,7 +2253,7 @@ class LevelWorld(ThingWorld):
                 all_local = False
 
         if not all_local and self.isReadOnly:
-            self._importError = ["Cannot import external files...!","You cannot import external files into levels that come with World Of Goo.\nIf you really want to do this... Clone the level first!"]
+            self._importError = ["Cannot import external files...!","You cannot import external files into levels that come with OpenGOO.\nIf you really want to do this... Clone the level first!"]
             return []
 
         if not all_local:
@@ -2328,7 +2328,7 @@ class MainWindow(QtGui.QMainWindow):
         self.createToolBars()
         self.createStatusBar()
         self.createDockWindows()
-        self.setWindowTitle(self.tr("World of Goo Level Editor"))
+        self.setWindowTitle(self.tr("OpenGOO Level Editor"))
         
         self._readSettings()
 
@@ -2345,7 +2345,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def changeWOGDir(self):
         wog_path = QtGui.QFileDialog.getExistingDirectory(self,
-             self.tr( 'Select WorldOfGoo program in the folder you want to edit' ) )
+             self.tr( 'Select the OpenGOO folder' ) )
         #wog_path =  QtGui.QFileDialog.getOpenFileName( self,
         #     self.tr( 'Select WorldOfGoo program in the folder you want to edit' ),
         #     r'',
@@ -2362,7 +2362,7 @@ class MainWindow(QtGui.QMainWindow):
         try:
             self._game_model = GameModel( self._wog_path,self)
         except GameModelException, e:
-            QtGui.QMessageBox.warning(self, self.tr("Loading World of Goo levels ("+APP_NAME_PROPER+" "+CURRENT_VERSION+")"),
+            QtGui.QMessageBox.warning(self, self.tr("Loading OpenGOO levels ("+APP_NAME_PROPER+" "+CURRENT_VERSION+")"),
                                       unicode(e))
     def _updateRecentFiles(self):
         if self.recentFiles is None:
@@ -2470,8 +2470,8 @@ class MainWindow(QtGui.QMainWindow):
             if model is not None:
                 if model.isReadOnly:
                     if model.is_dirty:
-                        QtGui.QMessageBox.warning(self, self.tr("Can not save World Of Goo standard levels!"),
-                              self.tr('You can not save changes made to levels that come with World Of Goo.\n'
+                        QtGui.QMessageBox.warning(self, self.tr("Can not save OpenGOO standard levels!"),
+                              self.tr('You can not save changes made to levels that come with OpenGOO.\n'
                                       'Instead, clone the level using the "Clone selected level" tool.\n'
                                       'Do so now, or your change will be lost once you quit the editor' ) )
                         return False
@@ -2882,12 +2882,14 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def about(self):
-        QtGui.QMessageBox.about(self, self.tr("About World of Goo Level Editor " + CURRENT_VERSION),
-            self.tr("""<p>World of Goo Level Editor <b>(WooGLE)</b> helps you create new levels for World of Goo.<p>
+        QtGui.QMessageBox.about(self, self.tr("About OpenGOO Level Editor " + CURRENT_VERSION),
+            self.tr("""<p>OpenGOO Level Editor <b>(OGLE)</b> helps you create new levels for OpenGOO.<p>
+            <p>Based on WooGLE 077 for World of Goo</p>
             <p>Download Page:<br>
             <a href="http://goofans.com/download/utility/world-of-goo-level-editor">http://goofans.com/download/utility/world-of-goo-level-editor</a></p>
             <p>FAQ, Tutorial and Reference Guide:<br>
             <a href="http://goofans.com/developers/world-of-goo-level-editor">http://goofans.com/developers/world-of-goo-level-editor</a></p>
+            <p>Copyright 2013-, The OpenGOO Team</p>
             <p>Copyright 2010-, DaftasBrush</p>
             <p>&nbsp;<br>Original Sourceforge project: (v0.5)
             <a href="http://www.sourceforge.net/projects/wogedit">http://www.sourceforge.net/projects/wogedit</a><br>
@@ -3190,9 +3192,9 @@ class MainWindow(QtGui.QMainWindow):
     def createActions(self):
         self.changeWOGDirAction = qthelper.action( self, handler = self.changeWOGDir,
             icon = ":/images/open.png",
-            text = "&Change World of Goo directory...",
+            text = "&Change OpenGOO directory...",
             shortcut = QtGui.QKeySequence.Open,
-            status_tip = "Change World Of Goo top-directory" )
+            status_tip = "Change OpenGOO top-directory" )
 
         self.editLevelAction = qthelper.action( self, handler = self.editLevel,
             icon = ":/images/icon-wog-level.png",
