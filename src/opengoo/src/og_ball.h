@@ -56,79 +56,128 @@
     suction 	in range of the pipe
     throw 	Released travelling at speed
 */
+class OGStrand;
 
-struct OGBall : public OGPhysicsBody
+class OGBall : public OGPhysicsBody
 {
+protected:
     enum BallType {C_BALL, R_BALL}; // C_ - circle R_ - rectangle
 
-    WOGBallInstance* m_data;
-    WOGBall* m_configuration;
-    WOGMaterial* m_material;
-    float m_K;
-    int m_numberStrands;
-    BallType m_type;
-
-    bool attached;
-    bool detaching;
-    bool dragging;
-    bool standing;
-    bool walking;
-
-    OGBall(WOGBallInstance* data, WOGBall* configuration);
-    virtual ~OGBall() {}
-
-    float32 GetAngle() const { return m_data->angle; }
-    float32 GetX() const { return body->GetPosition().x; }
-    float32 GetY() const { return body->GetPosition().y; }
-    QString GetType() const { return m_data->type; }
-    QString GetId() const { return m_data->id; }
-    b2Vec2 GetBodyPosition() const { return body->GetPosition(); }
-    float GetMass() const { return m_configuration->attribute.core.mass; }
-    int GetMaxStrands() const
+    enum BallEvent
     {
-        return m_configuration->attribute.core.strands;
-    }
+        ATTACH
+        , ATTACHCLOSER
+        , MARKER
+    };
 
-    WOGBallShape* GetShape() { return m_configuration->attribute.core.shape; }
-    QString GetStrandType() const { return m_configuration->stand->type; }
-    bool IsDraggable() const
-    {
-        return m_configuration->attribute.player.draggable;
-    }
+    WOGBallInstance* data_;
+    WOGBall* config_;
+    WOGMaterial* material_;
+    int numberStrands_;
+    BallType type_;
+    int id_;
+    QPointF* target_;
+    OGBall* targetBall_;
+    QPointF* curPos_;
+    float towerMass_;
+    QList<OGBall*> jointBalls_;
 
-    bool IsDetachable() const
-    {
-        return m_configuration->attribute.player.detachable;
-    }
+    bool isAttached_;
+    bool isClimbing_;
+    bool isDetaching_;
+    bool isDraggable_;
+    bool isDragging_;
+    bool isFalling_;
+    bool isMarked_;
+    bool isStanding_;
+    bool isWalking_;
+    bool isInit_;
 
-    bool IsDynamic() const { return true; }
+    QPointF* GetTarget() const;
+    float GetAngle() const { return data_->angle; }
+    QString GetType() const { return data_->type; }
+    float GetTowerMass() const { return towerMass_; }
+    WOGBallShape* GetShape() { return config_->attribute.core.shape; }
+    QString GetStrandType() const { return config_->stand->type; }
+    QPointF* GetCurrentPosition()  const { return curPos_; }
 
-    void SetBodyPosition(float32 x, float32 y);
+    void SetCurrentPosition(const b2Vec2 & pos);
+    void SetBodyPosition(float x, float y);
 
-    OGPhysicsBody* m_CreateCircle(float32 x, float32 y, float32 angle
+    OGPhysicsBody* CreateCircle(float x, float y, float angle
                                  , float mass, WOGBallShape* shape
                                  , int variation);
 
-    OGPhysicsBody* m_CreateReactangle(float32 x, float32 y, float32 angle
+    OGPhysicsBody* CreateReactangle(float x, float y, float angle
                                      , float mass, WOGBallShape* shape
                                      , int variation);
 
-    void m_AddStrand() { m_numberStrands++; attached = true; }
-    void m_ReleaseStrand()
-    {
-        m_numberStrands--;
+    void AddStrand();
+    void ReleaseStrand();
 
-        if (m_numberStrands == 0) { attached = false; }
-    }
+    void Climbing(float x, float y);
+    void Move();
+    void Walk(float x);    
+    void Walk(const QPointF & pos);
+
+    bool IsCanClimb();        
+    bool IsOnWalkableGeom(b2ContactEdge* edge);
+    bool IsTached(float x, float y);
+
+    void FindJointBalls();
+    void FindTarget();
+    void Attache();
+    void Detache();
+
+public:
+    OGBall(WOGBallInstance* data, WOGBall* configuration);
+    virtual ~OGBall() { delete target_; }
+
+    // Get properties
+    int id() const { return id_; }
+
+    bool IsAttached() const { return isAttached_; }
+    bool IsClimbing() const { return isClimbing_; }
+    bool IsDragging() const { return isDragging_; }
+    bool IsFalling() const { return isFalling_; }
+    bool IsMarked() const { return isMarked_; }
+    bool IsStanding() const { return isStanding_; }
+    bool IsWalking() const { return isWalking_; }
+
+    bool IsDraggable() const { return isDraggable_; }
+    bool IsDetachable() const { return config_->attribute.player.detachable; }
+
+    b2Vec2 GetBodyPosition() const { return body->GetPosition(); }
+    QString GetId() const { return data_->id; }
+    int GetMaxStrands() const { return config_->attribute.core.strands; }
+    float GetX() const { return body->GetPosition().x; }
+    float GetY() const { return body->GetPosition().y; }
+
+    // Set properties
+    void SetAttached(bool status) { isAttached_ = status; }
+    void SetClimbing(bool status) { isClimbing_ = status; }
+    void SetDetaching(bool status) { isDetaching_ = status; }
+    void SetDragging(bool status) { isDragging_ = status; }
+    void SetFalling(bool status) { isFalling_ = status; }
+    void SetMarked(bool status) { isMarked_ = status; Select(); }
+    void SetStanding(bool status) { isStanding_ = status; }
+    void SetWalking(bool status) { isWalking_ = status; }
+
+    void SetId(int id) { id_ = id; }
+    void SetTarget(OGBall* target) { targetBall_ = target; }
 
     void Attache(OGBall* ball);
-    void Detache();
-    void Move(const QPointF &pos);
-    bool Select(const QPoint & pos);
-    void Walk(const QPointF & pos);
-    bool testWalkable();
-    void Event(const QString & event);
+
     void Paint(QPainter* painter, bool debug=false);
+    void Update();
+    void Select();
+    bool TestPoint(const QPoint & pos);
+
+    void MouseDown(const QPoint & pos);
+    void MouseUp(const QPoint & pos);
+    void MouseMove(const QPoint & pos);
+
+    friend class  OGStrand;
 };
 
 #endif // OG_BALL_H

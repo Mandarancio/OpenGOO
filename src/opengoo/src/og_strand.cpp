@@ -7,8 +7,9 @@ OGStrand::~OGStrand()
 {
     OGPhysicsEngine* physicsEngine = OGPhysicsEngine::GetInstance();
     physicsEngine->DestroyJoint(strand_);
-    b1_->m_ReleaseStrand();
-    b2_->m_ReleaseStrand();
+
+    b1_->ReleaseStrand();
+    b2_->ReleaseStrand();
 }
 
 OGStrand::OGStrand(OGBall* gb1, OGBall* gb2, int id)
@@ -21,11 +22,15 @@ OGStrand::OGStrand(OGBall* gb1, OGBall* gb2, int id)
     {
         if (type_ == "spring")
         {
-            strand_ = createJoint(b1_, b2_, this);
+            OGUserData* data = new OGUserData;
+            data->type = OGUserData::STRAND;
+            data->data = this;
+
+            strand_ = createJoint(b1_, b2_, data);
             b1_->body->SetFixedRotation(true);
             b2_->body->SetFixedRotation(true);
-            b1_->m_AddStrand();
-            b2_->m_AddStrand();
+            b1_->AddStrand();
+            b2_->AddStrand();
         }
         else if (type_ == "rope") {}
 
@@ -49,8 +54,7 @@ void OGStrand::Paint(QPainter* painter, bool debug)
         y2 = b2_->GetY()*K*(-1.0);
 
         QPen pen(Qt::yellow,  2.0);
-
-        painter->save();
+        painter->save();        
         painter->setPen(pen);
         painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
         painter->restore();

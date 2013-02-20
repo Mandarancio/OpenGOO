@@ -143,8 +143,6 @@ void GameStart()
     _physicsEngine = OGPhysicsEngine::GetInstance();
     _physicsEngine->SetSimulation(6, 2, STEPS);
 
-    _isLevelInitialize = true;
-
     buttonMenu();
 
     if (camera::numberCameras > 1) { _isMoveCamera = true; }
@@ -153,6 +151,8 @@ void GameStart()
     if (_world->leveldata()->visualdebug) { _time.start(); }
 
     _timeStep = STEPS/1000.0;
+
+    _isLevelInitialize = true;
 }
 
 void GameEnd()
@@ -218,20 +218,19 @@ void GameCycle()
         }
     }
 
-    // Receive position of nearest vertex from the exit (approximately once per second)
-
-    if (_nearestCounter == 0)
+    if (_selectedBall != 0 && !_selectedBall->IsDragging())
     {
-        _nearestPosition = getNearestPosition();
-        _nearestCounter++;
+        if(!_selectedBall->TestPoint(_lastMousePos))
+        {
+            _selectedBall->SetMarked(false);
+            _selectedBall = 0;
+        }
     }
-    else if (_nearestCounter >= _fps)
-    {
-        _nearestCounter = 0;
-    }
-    else { _nearestCounter++; }
 
-    moveBall();
+    Q_FOREACH (OGBall* ball, *_world->balls())
+    {       
+        ball->Update();
+    }
 
     _gameEngine->getWindow()->render();
 }
@@ -340,9 +339,9 @@ void MouseButtonDown(QMouseEvent* event)
         }
     }
 
-    if (_selectedBall)
+    if (_selectedBall != 0 && _selectedBall->IsDraggable())
     {
-        _selectedBall->Event("pickup");
+        _selectedBall->MouseDown(mPos);
     }
 }
 
@@ -350,23 +349,9 @@ void MouseButtonUp(QMouseEvent* event)
 {
     Q_UNUSED(event)
 
-    if (_selectedBall)
+    if (_selectedBall != 0 && _selectedBall->IsDragging())
     {
-        if (_selectedBall->dragging)
-        {
-            Q_FOREACH (OGBall* ball, _balls)
-            {
-                _selectedBall->Attache(ball);
-            }
-
-            _selectedBall->dragging = false;            
-            _selectedBall->standing = false;
-
-            _selectedBall->body->SetAwake(true);
-            _selectedBall = 0;
-
-             _balls.clear();
-        }
+        _selectedBall->MouseUp(windowToLogical(event->pos()));
     }
 }
 
@@ -407,50 +392,28 @@ void MouseMove(QMouseEvent* event)
         }
     }
 
-    if (_selectedBall)
-    {
-        float32 x, y;
+    _lastMousePos = mPos;
 
-        x = mPos.x()*physics::K;
-        y = mPos.y()*physics::K;
-
-        if (_selectedBall->dragging)
-        {
-            if (_selectedBall->attached)
-            {
-                _selectedBall->Detache();
-            }
-            else
-            {
-                if (_selectedBall->GetMaxStrands() != 0)
-                {
-                    _selectedBall->SetBodyPosition(x, y);
-
-                    findConnectBalls();
-                }
-            }
-        }
-        else
-        {
-            if (!_selectedBall->Select(mPos))
-            {
-                _selectedBall->standing = false;
-                _selectedBall->body->SetAwake(true);
-                _selectedBall = 0;
-            }
-        }
-    }
-    else
+    if (_selectedBall == 0)
     {
         Q_FOREACH (OGBall* ball, *_world->balls())
         {
-            if (ball->Select(mPos))
+            if(ball->TestPoint(mPos))
             {
                 _selectedBall = ball;
-                _selectedBall->Event("marker");
+                _selectedBall->SetMarked(true);
                 break;
             }
         }
+    }
+    else if (_selectedBall->IsDragging())
+    {
+        _selectedBall->MouseMove(mPos);
+    }
+    else if (!_selectedBall->TestPoint(mPos))
+    {
+        _selectedBall->SetMarked(false);
+        _selectedBall = 0;
     }
 
     if (sx <= OFFSET) { _scroll.left = true; }
@@ -555,8 +518,7 @@ void zoom(int direct)
     zoom += (0.1*direct);
 
     if (_world->scenesize().width()*zoom >= _width
-            && _world->scenesize().height()*zoom >= _height
-       )
+            && _world->scenesize().height()*zoom >= _height)
     {
         _camera.Scale(zoom);
     }
@@ -655,23 +617,17 @@ void buttonMenuAction() { closeGame(); }
 
 void buttonMenu()
 {
-    qreal offset, btnW, btnH, menuX, menuY;
+    const float offset = 10.0f;
+
+    float btnW, btnH, menuX, menuY;
 
     _buttonMenu.onclick("menu");
     _buttonMenu.size(QSize(50, 20));
-    offset = 10.0;
     btnW = _buttonMenu.size().width();
     btnH = _buttonMenu.size().height();
     menuX = _width - (btnW + offset);
     menuY = _height - (btnH + offset);
     _buttonMenu.position(QPointF(menuX, menuY));
-}
-
-bool createPhysicsWorld()
-{
-
-
-    return true;
 }
 
 void readConfiguration()
@@ -700,55 +656,6 @@ void setBackgroundColor(const QColor & color)
 
 void drawOpenGLScene() {}
 
-void moveBall()
-{
-    Q_FOREACH (OGBall* ball, *_world->balls())
-    {
-        ball->Move(_nearestPosition);
-    }
-}
-
-QPointF getNearestPosition()
-{
-    qreal x, y, x1, y1, x2, y2, length, tmpLength;
-    bool isInitialize;
-
-    isInitialize = true;
-
-    Q_FOREACH (OGBall* ball, *_world->balls())
-    {
-        if (ball->attached)
-        {
-            if (isInitialize)
-            {
-                x1 = _world->leveldata()->levelexit->pos.x()*0.1;
-                y1 = _world->leveldata()->levelexit->pos.y()*0.1;
-                x2 = ball->GetX();
-                y2 = ball->GetY();
-                x = x2;
-                y = y2;
-                length = QLineF(x1, y1, x2, y2).length();
-                isInitialize = false;
-            }
-            else
-            {
-                x2 = ball->GetX();
-                y2 = ball->GetY();
-                tmpLength = QLineF(x1, y1, x2, y2).length();
-
-                if (tmpLength < length)
-                {
-                    length = tmpLength;
-                    x = x2;
-                    y = y2;
-                }
-            }
-        }
-    }
-
-    return QPointF(x, y);
-}
-
 void calculateFPS()
 {
     _cur_fps++;
@@ -762,35 +669,4 @@ void calculateFPS()
 
         _time.start();
     }
-}
-
-void findConnectBalls()
-{
-    qreal length;
-    int maxStrands = _selectedBall->GetMaxStrands();
-    float minlen = _selectedBall->m_configuration->stand->minlen;
-    float maxlen1 = _selectedBall->m_configuration->stand->maxlen1;
-
-    _balls.clear();
-
-    Q_FOREACH (OGBall* ball, *_world->balls())
-    {
-        if (ball->attached)
-        {
-            length = b2Distance(ball->GetBodyPosition()
-                                , _selectedBall->GetBodyPosition())*10;
-
-            if (length >= minlen && length <= maxlen1)
-            {
-                _balls << ball;
-
-                if (_balls.size() == maxStrands)
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    if (maxStrands >= 2 && _balls.size() < 2) { _balls.clear(); }
 }

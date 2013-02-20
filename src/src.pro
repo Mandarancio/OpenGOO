@@ -10,5 +10,4 @@ SUBDIRS = \
           extlibs \
           libs/logger \
           opengoo
-#          opengoodst
 

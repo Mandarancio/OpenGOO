@@ -14,8 +14,10 @@
 
 #include "physics.h"
 
+#include <QObject>
 #include <QCache>
 #include <QHash>
+#include <QTimer>
 
 struct OGStaticBody
 {
@@ -25,14 +27,21 @@ struct OGStaticBody
     ~OGStaticBody() { delete body; }
 };
 
-class OGWorld
-{               
+class OGWorld : public QObject
+{
+    Q_OBJECT
+
     WOGLevel* levelData_;
     WOGScene* sceneData_;        
     WOGResources* resourcesData_[2];
     WOGText* textData_[2];
     WOGMaterialList* materialData_;
     WOGEffects* effectsData_;
+
+    OGBall* nearestBall_;
+    float xExit_;
+    float yExit_;
+    QTimer* timer_;
 
     bool isPhysicsEngine_;
 
@@ -55,6 +64,7 @@ class OGWorld
     QCache<QString, WOGBall> ballConfigurations_;
 
     int strandId_;
+    int ballId_;
 
     QSize NormalCamera_() const { return QSize(800, 600); }
     QSize WideScreenCamera_() const { return QSize(1060, 600); }
@@ -95,10 +105,11 @@ class OGWorld
 
     void CreateLabel_();
 
-    bool InitializePhysics_();
+    bool InitializePhysics_();    
 
 public:
-    OGWorld(const QString & levelname=QString(), bool widescreen=false);
+    OGWorld(const QString & levelname=QString(), bool widescreen=false
+            , QObject* parent=0);
     virtual ~OGWorld();
 
     static bool isExist(const QString& path_level);
@@ -115,6 +126,7 @@ public:
     QString levelname() const { return levelName_; }
     WOGScene* scenedata() { return sceneData_; }
     QSizeF scenesize() const { return sceneSize_; }
+    OGBall* nearestball() { return nearestBall_; }
 
 
     // Set properties
@@ -135,7 +147,13 @@ public:
     bool Load();
 
     void CreateStrand(OGBall* b1, OGBall *b2);
-    void RemoveStrand(OGStrand* strand);
+    void RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()); }
+
+    void StartSearching() { timer_->start(1000); }
+
+private slots:
+    void findNearestAttachedBall();
+
 };
 
 #endif // OG_WORLD_H

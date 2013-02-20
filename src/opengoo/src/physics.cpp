@@ -32,15 +32,15 @@ bool initializePhysicsEngine(const QPointF gravity, bool sleep)
 
 OGPhysicsBody* createCircle(const QPointF & position, float32 radius
                             , float32 angle, WOGMaterial* material
-                            , bool dynamic, float mass, void* data)
+                            , bool dynamic, float mass, OGUserData* data)
 {
     return createCircle(position.x(), position.y(), radius, angle, material
                         , dynamic, mass, data);
 }
 
 OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
-                            , float32 angle, WOGMaterial* material, bool dynamic
-                            , float mass, void* data)
+                            , float32 angle, WOGMaterial* material
+                            , bool dynamic, float mass, OGUserData *data)
 {
     OGPhysicsBody* circle;
     OGPhysicsEngine* engine;
@@ -79,7 +79,8 @@ OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
 }
 
 OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
-                          , WOGMaterial* material, bool dynamic, void* data)
+                          , WOGMaterial* material, bool dynamic
+                          , OGUserData* data)
 {
     qreal x1, x2, y1, y2, length, angle;
     OGPhysicsBody* line;
@@ -136,7 +137,7 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
 
 OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
                                , qreal angle, WOGMaterial* material
-                               , bool dynamic, float mass, void* data)
+                               , bool dynamic, float mass, OGUserData* data)
 {
     return createRectangle(position.x(), position.y(), size.width()
                            , size.height(), angle, material, dynamic, mass
@@ -146,7 +147,7 @@ OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
 OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
                                , float32 height, float32 angle
                                , WOGMaterial* material
-                               , bool dynamic, float mass, void* data)
+                               , bool dynamic, float mass, OGUserData* data)
 {
     OGPhysicsBody* rect;
     OGPhysicsEngine* engine;
@@ -186,7 +187,8 @@ OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
     return rect;
 }
 
-OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2, void *data)
+OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2
+                            , OGUserData* data)
 {
     OGPhysicsJoint* joint;
     OGPhysicsEngine* engine;
@@ -206,4 +208,19 @@ OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2, void *data)
     joint->joint->SetUserData(data);
 
     return joint;
+}
+
+void setMass(OGPhysicsBody* b, float mass)
+{
+    b2MassData m;
+
+    b->body->GetMassData(&m);
+    m.mass = mass;
+    b->body->SetMassData(&m);
+}
+
+void setBodyPosition(OGPhysicsBody* b, float x, float y)
+{
+    b->body->SetTransform(b2Vec2(x, y), b->body->GetAngle());
+    b->body->SetAwake(false);
 }

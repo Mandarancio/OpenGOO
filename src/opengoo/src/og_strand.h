@@ -1,8 +1,8 @@
 #ifndef OG_STRAND_H
 #define OG_STRAND_H
 
-#include "og_ball.h"
 #include "og_physicsjoint.h"
+#include "og_ball.h"
 
 #include <QPainter>
 

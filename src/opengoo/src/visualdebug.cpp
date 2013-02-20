@@ -6,7 +6,7 @@
 
 extern bool _E404;
 extern int _fps;
-extern QPointF _nearestPosition;
+extern OGBall* _nearestBall;
 extern OGButton _buttonMenu;
 extern QList<OGStrand*> _strands;
 extern QList<OGBall*> _balls;
@@ -31,21 +31,6 @@ void showFPS(QPainter* painter, qreal zoom)
     painter->setPen(Qt::white);
     painter->setFont(QFont("Verdana", qRound(12.0/zoom), QFont::Bold));
     painter->drawText(x, y, QString::number(_fps));
-}
-
-void drawStrands(OGBall* gb1, OGBall* gb2, QPainter* painter)
-{
-    int x1, y1, x2, y2;
-
-    if (gb1 && gb2)
-    {
-        x1 = gb1->GetX()*K;
-        y1 = gb1->GetY()*K*(-1.0);
-        x2 = gb2->GetX()*K;
-        y2 = gb2->GetY()*K*(-1.0);
-
-        painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
-    }
 }
 
 void createImage(const QSizeF size, qreal angle)
@@ -164,18 +149,19 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
 
     drawRect(painter, world);   
 
-    Q_FOREACH (OGBall* ball, _balls)
-    {
-        drawStrands(_selectedBall, ball, painter);
-    }
-
     qreal x, y;
-    x = _nearestPosition.x()*10.0;
-    y = _nearestPosition.y()*(-1.0)*10.0;
+    b2Vec2 v;
 
-    pen.setColor(Qt::green);
-    painter->setPen(pen);
-    painter->drawEllipse(QPointF(x, y), 10, 10);
+    if (world->nearestball() != 0)
+    {
+        v = world->nearestball()->GetBodyPosition();
+        x = v.x*K;
+        y = v.y*K*(-1);
+
+        pen.setColor(Qt::green);
+        painter->setPen(pen);
+        painter->drawEllipse(QPointF(x, y), 10, 10);
+    }
 
     if (_E404)
     {

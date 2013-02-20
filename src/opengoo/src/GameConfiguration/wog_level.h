@@ -42,7 +42,7 @@ struct WOGLevelExit
 {
     QString id;
     QPointF pos;
-    int radius;
+    float radius;
     QString filter;
 };
 

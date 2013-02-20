@@ -67,7 +67,7 @@ WOGLevelExit* OGLevelConfig::CreateLevelExit(const QDomElement & element)
     WOGLevelExit* obj = new WOGLevelExit;
     obj->id = element.attribute("id");
     obj->pos = StringToPoint(element.attribute("pos"));
-    obj->radius = element.attribute("radius").toInt();
+    obj->radius = element.attribute("radius").toFloat();
     obj->filter = element.attribute("filter");
 
     return obj;

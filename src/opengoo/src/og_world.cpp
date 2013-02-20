@@ -4,7 +4,8 @@
 #include <QPainter>
 #include <QFile>
 
-OGWorld::OGWorld(const QString & levelname, bool widescreen)    
+OGWorld::OGWorld(const QString & levelname, bool widescreen, QObject* parent)
+    : QObject(parent)
 {
     numberCurrentCamera_ = 0;
     levelName_ = levelname;
@@ -17,8 +18,10 @@ OGWorld::OGWorld(const QString & levelname, bool widescreen)
     textData_[1] = 0;       // local text
     materialData_ = 0;
     effectsData_ = 0;
+    timer_ = 0;
 
     strandId_ = 0;
+    ballId_ = 0;
 
     isPhysicsEngine_ = false;
 
@@ -298,6 +301,20 @@ void OGWorld::Clear()
 
     while (!balls_.empty()) { delete balls_.takeFirst(); }
 
+    logDebug("Clear strands");
+
+    QHashIterator<int, OGStrand*> i(strands_);
+    while (i.hasNext())
+    {
+        i.next();
+        delete i.value();
+    }
+
+    if (timer_)
+    {
+        delete timer_;
+        timer_ = 0;
+    }
 }
 
 void OGWorld::CreateScene()
@@ -317,30 +334,28 @@ void OGWorld::CreateScene()
 
     logDebug("Create scene");
 
-    logDebug("Create scenelayers");
+    logDebug("Create scenelayers");   
 
-    for (int i=0; i< scenedata()->sceneLayer.size(); i++)
+    Q_FOREACH (WOGSceneLayer* sceneLayer, scenedata()->sceneLayer)
     {
-        CreateSceneLayer_(*scenedata()->sceneLayer.at(i), &sprites_);
+        CreateSceneLayer_(*sceneLayer, &sprites_);
     }
 
     logDebug("Create buttongroups");
 
-    for (int i=0; i< scenedata()->buttongroup.size(); i++)
+    Q_FOREACH (WOGButtonGroup* btnGroup, scenedata()->buttongroup)
     {
-        for (int j=0; j < scenedata()->buttongroup.at(i)->button.size(); j++)
+        Q_FOREACH (WOGButton* btn, btnGroup->button)
         {
-            CreateButton_(*scenedata()->buttongroup.at(i)->button.at(j)
-                          , &sprites_ , &buttons_
-                          );
+            CreateButton_(*btn, &sprites_ , &buttons_);
         }
     }
 
     logDebug("Create buttons");
 
-    for (int i=0; i< scenedata()->button.size(); i++)
+    Q_FOREACH (WOGButton* btn, scenedata()->button)
     {
-        CreateButton_(*scenedata()->button.at(i), &sprites_, &buttons_);
+        CreateButton_(*btn, &sprites_, &buttons_);
     }
 
     // Create Z-order
@@ -365,23 +380,23 @@ void OGWorld::CreateScene()
 
     logDebug("Creating cameras");
 
-    for (int i=0; i < leveldata()->camera.size(); i++)
+    Q_FOREACH(WOGCamera* camera, leveldata()->camera)
     {
-        if (leveldata()->camera.at(i)->aspect == screenType_)
+        if (camera->aspect == screenType_)
         {
-            for (int j=0; j < leveldata()->camera.at(i)->poi.size(); j++)
+            Q_FOREACH (WOGPoi* poi, camera->poi)
             {
-                cameras_ << CreateCamera_(leveldata()->camera.at(i)->poi.at(j));
+                cameras_ << CreateCamera_(poi);
             }
+
+            break;
         }
     }
 
     currentCamera_ = *cameras_.first();
 
-    qreal sceneWidth, sceneHeight;
-
-    sceneWidth = qAbs(scenedata()->maxx) + qAbs(scenedata()->minx);
-    sceneHeight = qAbs(scenedata()->maxy) +qAbs(scenedata()->miny);
+    qreal sceneWidth = qAbs(scenedata()->maxx) + qAbs(scenedata()->minx);
+    qreal sceneHeight = qAbs(scenedata()->maxy) +qAbs(scenedata()->miny);
 
     sceneSize_ = QSizeF(sceneWidth, sceneHeight);
 
@@ -418,15 +433,23 @@ void OGWorld::CreateScene()
     {
         CreateStrand_(strand);
     }
+
+    if (leveldata()->levelexit != 0)
+    {
+        xExit_ = leveldata()->levelexit->pos.x()*0.1;
+        yExit_ = leveldata()->levelexit->pos.y()*0.1;
+    }
+
+    nearestBall_ = 0;
+    timer_ = new QTimer(this);
+    connect(timer_, SIGNAL(timeout()), this, SLOT(findNearestAttachedBall()));
+    timer_->start(1000);
 }
 
 void OGWorld::CreateSceneLayer_(const WOGSceneLayer & scenelayer
-                                   , QList<OGSprite*>* sprites
-                                )
+                                , QList<OGSprite*>* sprites)
 {
-    OGSprite* sprite = CreateSprite_(&scenelayer
-                                    , scenelayer.image
-                                     );
+    OGSprite* sprite = CreateSprite_(&scenelayer, scenelayer.image);
 
     sprite->visible = true;
     sprites->push_back(sprite);
@@ -444,10 +467,19 @@ OGBall* OGWorld::CreateBall_(WOGBallInstance* ball)
     OGBall* obj = 0;
     WOGBall* configuration = GetBallConfiguration(ball->type);
 
-    if (configuration != 0) { obj = new OGBall(ball, configuration); }
+    if (configuration != 0)
+    {
+        if (configuration->attribute.core.shape->type == "circle")
+        {
+            obj = new OGBall(ball, configuration);
+        }
+        else if (configuration->attribute.core.shape->type == "rectangle")
+        {
+            obj = new OGBall(ball, configuration);
+        }
+    }
 
     return obj;
-
 }
 
 template<class Body, class Data> Body* OGWorld::CreateBody_(Data* data)
@@ -463,8 +495,7 @@ template<class Body, class Data> Body* OGWorld::CreateBody_(Data* data)
 }
 
 void OGWorld::CreateButton_(const WOGButton & button, QList<OGSprite*>* sprites
-                           , QList<OGButton*> *buttons
-                            )
+                           , QList<OGButton*> *buttons)
 {
     OGButton* btn;
 
@@ -483,10 +514,7 @@ void OGWorld::CreateButton_(const WOGButton & button, QList<OGSprite*>* sprites
 
     if (!button.disabled.isEmpty())
     {
-        sprites->push_back(CreateSprite_(&button
-                                        , button.disabled)
-                           );
-
+        sprites->push_back(CreateSprite_(&button, button.disabled));
         btn->disabled(sprites->last());
         btn->disabled()->visible = false;
     }
@@ -497,8 +525,7 @@ void OGWorld::CreateButton_(const WOGButton & button, QList<OGSprite*>* sprites
 QPixmap OGWorld::CreatePixmap_(OGSprite* sprite, const QString & image)
 {
     QImage source(resourcesData_[1]->GetResource(WOGResource::IMAGE
-                                             , image) +".png"
-                  );
+                                             , image) +".png");
 
     QTransform transform;
 
@@ -508,8 +535,8 @@ QPixmap OGWorld::CreatePixmap_(OGSprite* sprite, const QString & image)
 
     // Set the size of sprite
     transform.scale(sprite->scale.x(), sprite->scale.y());
-    QImage tmpImage2 = QImage(source.size()
-                         , QImage::Format_Mono).transformed(transform);
+    QImage tmpImage2 =
+            QImage(source.size(), QImage::Format_Mono).transformed(transform);
 
     sprite->size = tmpImage2.size();
 
@@ -540,8 +567,7 @@ QPixmap OGWorld::CreatePixmap_(OGSprite* sprite, const QString & image)
 }
 
 OGSprite* OGWorld::CreateSprite_(const WOGVObject* vobject
-                                 , const QString & image
-                                 )
+                                 , const QString & image)
 {
     qreal x, y;
     OGSprite* sprite;
@@ -575,6 +601,10 @@ void OGWorld::CreateStrand_(WOGStrand* strand)
         if (b1 != 0 && b2 != 0)
         {
             b1->Attache(b2);
+
+            if (b1->id() == -1) { b1->SetId(ballId_++); }
+            if (b2->id() == -1) { b2->SetId(ballId_++); }
+
             break;
         }
     } 
@@ -599,10 +629,7 @@ WOGBall* OGWorld::GetBallConfiguration(const QString & type)
         QString path = "./res/balls/" + type + "/balls.xml";
         configuration = Load_<WOGBall*, OGBallConfig> (path);
 
-        if (configuration)
-        {
-            ballConfigurations_.insert(type, configuration);
-        }
+        if (configuration) { ballConfigurations_.insert(type, configuration); }
     }
 
     return  configuration;
@@ -625,12 +652,53 @@ bool OGWorld::InitializePhysics_()
 
 void OGWorld::CreateStrand(OGBall* b1, OGBall *b2)
 {
+    if (b1->id() == -1) { b1->SetId(ballId_++); }
+    if (b2->id() == -1) { b2->SetId(ballId_++); }
+
     OGStrand* obj = new OGStrand(b1, b2, strandId_);
     strands_.insert(strandId_, obj);
     strandId_++;
 }
 
-void OGWorld::RemoveStrand(OGStrand* strand)
+void OGWorld::findNearestAttachedBall()
 {
-    delete strands_.take(strand->id());
+    if (leveldata()->levelexit == 0) { return; }
+
+    qreal x, y, dx, dy, x2, y2, length, tmpLength;
+    bool isInit = false;
+
+    Q_FOREACH (OGBall* ball, *balls())
+    {
+        if (ball->IsAttached())
+        {
+            if (!isInit)
+            {
+                nearestBall_ = ball;
+                x2 = nearestBall_->GetX();
+                y2 = nearestBall_->GetY();
+                x = x2;
+                y = y2;
+                dx = xExit_ - x2;
+                dy = yExit_ - y2;
+                length = dx*dx + dy*dy;
+                isInit = true;
+            }
+            else
+            {
+                x2 = ball->GetX();
+                y2 = ball->GetY();
+                dx = xExit_ - x2;
+                dy = yExit_ - y2;
+                tmpLength = dx*dx + dy*dy;
+
+                if (tmpLength < length)
+                {
+                    length = tmpLength;
+                    x = x2;
+                    y = y2;
+                    nearestBall_ = ball;
+                }
+            }
+        }
+    }
 }

@@ -12,7 +12,7 @@
 
 namespace physics
 {
-    extern const qreal K = 0.1;
+    extern const float K = 0.1f;
     extern bool status;
 }
 
@@ -55,11 +55,7 @@ qreal _timeScrollStep;
 QList<OGSprite*>* _sprites;
 QList<OGButton*>* _buttons = 0;
 
-QList<OGStaticBody*> _staticLines;
-
-//QList<OGStrand> _tmpStrands;
 OGBall* _selectedBall = 0;
-QList<OGBall*> _balls;
 
 OGButton _buttonMenu;
 
@@ -77,10 +73,10 @@ qreal _width;
 qreal _height;
 QTime _time;
 QTimer _timer;
-QPointF _nearestPosition;
 int _nearestCounter = 0;
 int _fps = FRAMERATE;
 int _cur_fps = 0;
+QPoint _lastMousePos;
 
 // Default settings
 OGConfig _config = {
@@ -99,21 +95,17 @@ void zoom(int direct);
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
 void buttonMenuAction();
 void buttonMenu();
+void Event(const QString & event);
 
-void findConnectBalls();
-
-QPointF getNearestPosition();
-bool testWalkable(OGPhysicsBody* body);
 QPointF logicalToWindow(const QRectF & rect, qreal zoom);
 QPoint windowToLogical(const QPoint & position);
-
-void moveBall();
 
 void setBackgroundColor(const QColor & color);
 void drawOpenGLScene();
 
 // Animate camera
 void updateCamera(int time);
+
 
 #define UNIMPLEMENTED qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
 

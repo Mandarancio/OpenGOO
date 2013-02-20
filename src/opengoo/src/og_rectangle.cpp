@@ -13,8 +13,11 @@ OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
     if (!rect->dynamic)
     {
         m_type =  OGIBody::S_RECTANGLE;
+        OGUserData* data = new OGUserData;
+        data->type = OGUserData::GEOM;
+        data->data = this;
         obj = createRectangle(position, size, angle, material, false, 0
-                              , this);
+                              , data);
     }
 
     body = obj->body;

@@ -11,7 +11,10 @@ OGLine::OGLine(WOGLine *line, WOGMaterial* material)
 
     if (!line->dynamic)
     {
-        obj = createLine(anchor, normal, material, false, this);
+        OGUserData* data = new OGUserData;
+        data->type = OGUserData::GEOM;
+        data->data = this;
+        obj = createLine(anchor, normal, material, false, data);
     }
 
     body = obj->body;
