@@ -214,20 +214,15 @@ inline void OGBall::Move()
             x = GetTarget()->x();
             y = GetTarget()->y();
         }
-    }
-    else
-    {
-        if (isWalking_) { FindTarget(); }
-        x = GetTarget()->x();
-    }
 
-    if (isClimbing_)
-    {
         if (targetBall_->IsAttached()) { Climbing(x, y); }
         else { isClimbing_ = false; }
     }
-    else if (isWalking_) { Walk(x); }
-    else if (isFalling_) {}
+    else if (isWalking_)
+    {
+        FindTarget();
+        Walk(GetTarget()->x());
+    }
 }
 
 inline void OGBall::Climbing(float x, float y)
@@ -265,6 +260,7 @@ inline bool OGBall::IsCanClimb()
     else { return false; }
 }
 
+// TODO need a new algorithm
 inline bool OGBall::IsOnWalkableGeom(b2ContactEdge* edge)
 {
     OGUserData* data;
@@ -280,10 +276,7 @@ inline bool OGBall::IsOnWalkableGeom(b2ContactEdge* edge)
             {
                 geom = static_cast<OGIBody*>(data->data);
 
-                if (geom->walkable() && edge->contact->IsTouching())
-                {
-                    return true;
-                }
+                if (geom->walkable()) { return true; }
             }
         }
 
@@ -432,8 +425,6 @@ inline void OGBall::FindJointBalls()
 
 void OGBall::FindTarget()
 {
-    if (targetBall_ != 0) { return; }
-
     OGBall* nearestBall = 0;
     float dist1, dist2 = 0;
     float isInit = false;
