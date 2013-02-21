@@ -19,6 +19,13 @@ public:
     virtual ~OGStrand();
 
     int id() const { return id_; }
+    OGBall* b1() const { return b1_; }
+    OGBall* b2() const { return b2_; }
+
+    float GetLenghth()
+    {
+        return b2Distance(b1_->GetBodyPosition(), b2_->GetBodyPosition());
+    }
 
     void Paint(QPainter* painter, bool debug=false);
 };

@@ -73,7 +73,11 @@ OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
 
     if (variation >= 1) { radius += radius*(qrand()%variation)*0.01f; }
 
-    return createCircle(x, y, radius, angle, material_, true, mass, 0);
+    OGUserData* data = new OGUserData;
+    data->type = OGUserData::BALL;
+    data->data = this;
+
+    return createCircle(x, y, radius, angle, material_, true, mass, data);
 }
 
 OGPhysicsBody* OGBall::CreateReactangle(float x, float y, float angle
@@ -211,6 +215,11 @@ inline void OGBall::Move()
         }
         else
         {
+            if (IsCanClimb())
+            {
+                Algorithm2();
+            }
+
             x = GetTarget()->x();
             y = GetTarget()->y();
         }
@@ -250,10 +259,9 @@ inline void OGBall::Walk(float x)
 
 inline bool OGBall::IsCanClimb()
 {
-    if (targetBall_ == 0) { return false; }
+    b2Vec2 pos(GetTarget()->x(), GetTarget()->y());
 
-    if (fixture->TestPoint(targetBall_->GetBodyPosition())
-            && targetBall_->IsAttached())
+    if (fixture->TestPoint(pos) && targetBall_->IsAttached())
     {
         return true;
     }
@@ -362,15 +370,10 @@ void OGBall::Paint(QPainter* painter, bool debug)
     painter->restore();
 }
 
-inline QPointF* OGBall::GetTarget() const
+inline void OGBall::SetTarget(OGBall* target)
 {
-    if (targetBall_ != 0)
-    {
-        target_->setX(targetBall_->GetX());
-        target_->setY(targetBall_->GetY());
-    }
-
-    return target_;
+    target_->setX(target->GetX());
+    target_->setY(target->GetY());
 }
 
 void OGBall::AddStrand()
@@ -454,6 +457,7 @@ void OGBall::FindTarget()
         }
     }
 
+    SetTarget(nearestBall);
     targetBall_ = nearestBall;
 }
 
@@ -516,4 +520,49 @@ bool OGBall::TestPoint(const QPoint & pos)
     float y = pos.y()*K;
 
     return fixture->TestPoint(b2Vec2(x, y));
+}
+
+void OGBall::Algorithm2()
+{
+    b2JointEdge* joints = 0;
+    joints = targetBall_->GetJoints();
+
+    OGUserData* data;  
+    float dist1, dist2;
+    bool init = false;
+    OGBall* b1 = 0;
+    b2Body* bb1 = 0;
+    b2Body* bb2 = 0;
+    b2Vec2 pos(_world->nearestball()->GetBodyPosition());
+
+    while (joints)
+    {
+        if (!init)
+        {
+            bb1 = joints->other;
+            dist1 = b2Distance(bb1->GetPosition(), pos);
+            init = true;
+        }
+        else
+        {
+            bb2 = joints->other;
+            dist2 = b2Distance(bb2->GetPosition(), pos);
+
+            if (dist2 < dist1)
+            {
+                dist1 = dist2;
+                bb1 = bb2;
+            }
+        }
+
+        joints = joints->next;
+    }
+
+    if (bb1 != 0)
+    {
+        data = static_cast<OGUserData*>(bb1->GetUserData());
+        b1 = static_cast<OGBall*>(data->data);
+        SetTarget(b1);
+        targetBall_ = b1;
+    }
 }

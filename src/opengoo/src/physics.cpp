@@ -64,6 +64,7 @@ OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
         filter.categoryBits = BALL;
         filter.maskBits = STATIC;
         circle->fixture->SetFilterData(filter);
+        circle->body->SetUserData(data);
     }
     else
     {
@@ -173,6 +174,7 @@ OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
         filter.categoryBits = BALL;
         filter.maskBits = STATIC;
         rect->fixture->SetFilterData(filter);
+        rect->body->SetUserData(data);
     }
     else
     {

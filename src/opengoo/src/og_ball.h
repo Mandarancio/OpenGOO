@@ -93,7 +93,7 @@ protected:
     bool isWalking_;
     bool isInit_;
 
-    QPointF* GetTarget() const;
+    QPointF* GetTarget() const { return target_; }
     float GetAngle() const { return data_->angle; }
     QString GetType() const { return data_->type; }
     float GetTowerMass() const { return towerMass_; }
@@ -125,9 +125,11 @@ protected:
     bool IsTached(float x, float y);
 
     void FindJointBalls();
-    void FindTarget();
+    void FindTarget();    
     void Attache();
     void Detache();
+
+    void Algorithm2();
 
 public:
     OGBall(WOGBallInstance* data, WOGBall* configuration);
@@ -149,6 +151,7 @@ public:
 
     b2Vec2 GetBodyPosition() const { return body->GetPosition(); }
     QString GetId() const { return data_->id; }
+    b2JointEdge* GetJoints() { return body->GetJointList(); }
     int GetMaxStrands() const { return config_->attribute.core.strands; }
     float GetX() const { return body->GetPosition().x; }
     float GetY() const { return body->GetPosition().y; }
@@ -164,8 +167,7 @@ public:
     void SetWalking(bool status) { isWalking_ = status; }
 
     void SetId(int id) { id_ = id; }
-    void SetTarget(OGBall* target) { targetBall_ = target; }
-
+    void SetTarget(OGBall* target);
     void Attache(OGBall* ball);
 
     void Paint(QPainter* painter, bool debug=false);
