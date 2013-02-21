@@ -58,17 +58,16 @@ bool GameInitialize(int argc, char **argv)
     {
         QString arg(argv[i]);
         //Check for debug Option
-        if (!arg.compare("-debug", Qt::CaseInsensitive))
+        if (!arg.compare("--debug", Qt::CaseInsensitive))
         {
             flag |= DEBUG;
             logWarn("DEBUG MODE ON");
         }
-        else if (!arg.compare("-text", Qt::CaseInsensitive))
+        if (!arg.compare("--fps",Qt::CaseInsensitive)) { flag |= FPS; }
+        else if (!arg.compare("--level",Qt::CaseInsensitive))
         {
-            flag |= ONLYTEXT | DEBUG;
+            if (++i < argc) { _levelname = QString(argv[i]); }
         }
-        else if (!arg.compare("-fps",Qt::CaseInsensitive)) { flag |= FPS; }
-        else { _levelname = arg; }
     }
 
     //CHECK FOR GAME DIR IN HOME DIRECTORY
