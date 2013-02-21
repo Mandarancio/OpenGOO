@@ -23,6 +23,12 @@ WARNING: The pre-Alpha2 version is under heavy development and it isn't playable
 
 Coming soon
 
+Command Line Options
+
+__--fps__ - Enables the FPS indicator
+
+__--level__ "level-id" - Starts the game on the specified level. The level-id is a name of directory in res/levels
+
 ## CUSTOM LEVELS
 
 Coming soon
