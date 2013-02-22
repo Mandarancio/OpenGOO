@@ -46,6 +46,7 @@ LOG_TO_FILE = False
 APP_NAME_UPPER = 'WOOGLE'
 APP_NAME_LOWER = 'woogle'
 APP_NAME_PROPER = 'WooGLE'
+GAME_NAME = 'OpenGOO'
 STR_DIR_STUB='levels'
 CURRENT_VERSION = ""#"v0.77 Final"
 CREATED_BY = '<!-- Created by ' + APP_NAME_PROPER + ' ' + CURRENT_VERSION + ' -->\n'
@@ -806,7 +807,10 @@ class GameModel(QtCore.QObject):
         else:
             #self.addLevelButton(level_model.name)
             #pid = subprocess.Popen( self._wog_path, cwd = self._wog_dir ).pid
-            pid = subprocess.Popen( [self._wog_path, level_model.name], cwd = self._wog_dir ).pid
+            pid = subprocess.Popen( [os.path.join(self._wog_path, GAME_NAME)
+                                    , '--level'
+                                    , level_model.name]
+                                    , cwd = self._wog_dir ).pid
             # Don't wait for process end...
             # @Todo ? Monitor process so that only one can be launched ???
 
