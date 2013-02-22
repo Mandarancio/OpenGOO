@@ -1,0 +1,42 @@
+<ball name="common"
+
+      shape="circle,30,0.25"
+
+      walkforce="500" 
+
+      mass="30"
+
+      towermass="3.0" 
+
+      strands="2" 
+
+      walkspeed="0.1"
+
+      climbspeed="2.0"
+
+      speedvariance="0.2" 
+
+      detachable="false" 
+
+      blinkcolor="0,0,0"
+
+      jump="0.0,0.3"
+
+      >
+
+  <strand type="spring" 
+
+          springconstmin="9" springconstmax="9" 
+
+          dampfac="0.9" 
+
+          maxlen2="140" maxlen1="200" 
+
+          maxforce="1000"
+
+          minlen="100"
+
+          />
+  
+</ball>
+

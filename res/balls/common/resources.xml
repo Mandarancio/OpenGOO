@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ResourceManifest>
+
+  <Resources id="ball_common">
+  
+    <SetDefaults path="res/balls/common/" idprefix="IMAGE_BALL_COMMON_" />
+  
+    <Image id="" path=""/>
+    
+    <font  id=""  path=""/>
+    
+  </Resources>
+  
+</ResourceManifest>
