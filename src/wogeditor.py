@@ -234,9 +234,9 @@ class PixmapCache(object):
         self._filedate_by_path = {}
         self.__event_synthetizer = metaworld.ElementEventsSynthetizer(universe,
             None,
-            self._on_element_updated, 
+            self._on_element_updated,
             self._on_element_about_to_be_removed )
-        
+
     def get_pixmap(self, image_element):
         """Returns a pixmap corresponding to the image_element.
            The pixmap is loaded if not present in the cache.
@@ -302,7 +302,7 @@ class PixmapCache(object):
         if element.tag == 'Image':
           if old_value in self._pixmaps_by_element:
             del self._pixmaps_by_element[old_value]
-    
+
 
 class GameModel(QtCore.QObject):
     def __init__( self, wog_path,window):
@@ -322,8 +322,8 @@ class GameModel(QtCore.QObject):
             # wogdir is Contents\esources\game\
             self._wog_dir = os.path.join(self._wog_path,u'Contents',u'Resources',u'game')
         else:
-            self._wog_dir = os.path.split( wog_path )[0]
-        
+            self._wog_dir = wog_path
+
         metaworld.WOG_PATH = self._wog_dir
         self._properties_dir = os.path.join( self._wog_dir, u'properties' )
         self._res_dir = os.path.join( self._wog_dir, u'res' )
@@ -360,7 +360,7 @@ class GameModel(QtCore.QObject):
                     progress.setLabelText(filepair[2])
                     width,height=wogfile.pngbinltl2png(filepair[0],filepair[1])
                 progress.setValue(progress.value()+1);
-                
+
         window.statusBar().showMessage(self.tr("Game Model : Initializing"))
         self._universe = metaworld.Universe()
         self.global_world = self._universe.make_world( metawog.WORLD_GLOBAL, 'game' )
@@ -374,10 +374,10 @@ class GameModel(QtCore.QObject):
 
         self._loadUnPackedTree( self.global_world, metawog.TREE_GLOBAL_FILES,
                                                app_path(), 'files.xml.xml' ,'')
-    
+
 	self._loadTree( self.global_world, metawog.TREE_GLOBAL_RESOURCE,
                                                self._properties_dir, 'resources.xml' )
-        
+
         self._readonly_resources = set()    # resources in resources.xml that have expanded defaults idprefix & path
         self._loadTree( self.global_world, metawog.TREE_GLOBAL_TEXT,
                                            self._properties_dir, 'text.xml' )
@@ -385,8 +385,12 @@ class GameModel(QtCore.QObject):
         self._levels = self._loadDirList( os.path.join( self._res_dir, 'levels' ),
                                           filename_filter = '%s.scene.xml' )
 
-        anims = self._loadFileList( os.path.join( self._res_dir, 'anim' ),
-                                          filename_filter = '.anim.binltl' )
+        anim_dir = os.path.join( self._res_dir, 'anim' )
+
+        if not os.path.exists(anim_dir):
+            os.mkdir(anim_dir)
+
+        anims = self._loadFileList( anim_dir, filename_filter = '.anim.binltl' )
         metawog.ANIMATIONS_GLOBAL.extend(anim[:len(anim)-12] for anim in anims )
 
         self.models_by_name = {}
@@ -412,7 +416,7 @@ class GameModel(QtCore.QObject):
 
     @property
     def _materials_tree( self ):
-        return self.global_world.find_tree( metawoog.TREE_GLOBAL_MATERIALS )
+        return self.global_world.find_tree( metawog.TREE_GLOBAL_MATERIALS )
 
     @property
     def _resources_tree( self ):
@@ -533,9 +537,12 @@ class GameModel(QtCore.QObject):
 
     def _loadBalls( self ):
         """Loads all ball models and initialize related identifiers/references."""
-        ball_names = self._loadDirList( os.path.join( self._res_dir, 'balls' ),
-                                        filename_filter = 'balls.xml' )
         ball_dir = os.path.join( self._res_dir, 'balls' )
+
+        if not os.path.exists(ball_dir):
+            os.mkdir(ball_dir)
+
+        ball_names = self._loadDirList( ball_dir, filename_filter = 'balls.xml' )
         ball_name_map = {}
         for ball_name in ball_names:
             #WoG Editor was having trouble when the Ball Folder name
@@ -543,13 +550,13 @@ class GameModel(QtCore.QObject):
             #but WOG was fine with it, even on Linux.
 
             #read in the ball_tree (balls.xml) first...
-            #get name attribute out of it, and use that to create the Ball World            
+            #get name attribute out of it, and use that to create the Ball World
             xml_data = file( os.path.join(ball_dir, ball_name, 'balls.xml'), 'rb' ).read()
             try:
                 ball_tree = self._universe.make_unattached_tree_from_xml( metawog.TREE_BALL_MAIN, xml_data )
             except IOError,e:
                 raise GameModelException(unicode(e)+u' in '+ball_name+u'/balls.xml')
-            
+
             real_ball_name = ball_tree.root.get('name')
             if real_ball_name not in self.global_world.list_world_keys(metawog.WORLD_BALL):
                 ball_world = self.global_world.make_world( metawog.WORLD_BALL, real_ball_name, BallModel, self )
@@ -585,7 +592,7 @@ class GameModel(QtCore.QObject):
                         image_element = ball_world.resolve_reference( metawog.WORLD_BALL, 'image', ball_image )
                         scale = part.get_native('scale',1)
                         metawog.BALLS_IMAGES[real_ball_name] = [image_element,scale]
-                    
+
                 if real_ball_name not in metawog.BALLS_IMAGES.keys():
                     metawog.BALLS_INVISIBLE.add(real_ball_name)
 
@@ -597,7 +604,7 @@ class GameModel(QtCore.QObject):
                  QtGui.QMessageBox.warning(self._window,self.tr("Errors found Loading Balls ("+APP_NAME_PROPER+" "+CURRENT_VERSION+")"),
                                             'Duplicate ball name <b>'+real_ball_name+'</b> found in folder <b>' + ball_name_map[real_ball_name] + '</b>  and  <b>' + ball_name + '</b><br>'+
                                             'Only the first one has been loaded!')
-        
+
     def _processSetDefaults(self,resource_tree):
         #Unwraps the SetDefaults "processing instruction"
         #updates all paths and ids to full
@@ -661,13 +668,13 @@ class GameModel(QtCore.QObject):
 
             world = self.global_world.make_world( metawog.WORLD_LEVEL,
                                                         name,
-                                                        LevelWorld, 
+                                                        LevelWorld,
                                                         self )
             #@DaB Prepare addin template
             addin_template = metawog.LEVEL_ADDIN_TEMPLATE.replace("LevelName",name)
             self._loadUnPackedTree (world, metawog.TREE_LEVEL_ADDIN,
                             dir, name + '.addin.xml', addin_template)
-         
+
             self._loadUnPackedTree (world, metawog.TREE_LEVEL_TEXT,
                             dir, name + '.text.xml', metawog.LEVEL_TEXT_TEMPLATE)
 
@@ -742,7 +749,7 @@ class GameModel(QtCore.QObject):
 
     def _onElementUpdated(self, element, attribute_name, new_value, old_value): #IGNORE:W0613
         self.modified_worlds_to_check.add( element.world )
-        
+
     def _onElementAboutToBeRemoved(self, element, index_in_parent): #IGNORE:W0613
         self.modified_worlds_to_check.add( element.world )
 
@@ -762,7 +769,7 @@ class GameModel(QtCore.QObject):
         local_text_ids = ['WOOGLE_TEST_NAME','WOOGLE_TEST_TEXT']
         for text_element in level_model.text_root.findall('string'):
             local_text_ids.append(text_element.get('id'))
-        
+
         for text_element in self._texts_tree.root.findall('string'):
             if text_element.get('id') in local_text_ids:
                 text_element.parent.remove(text_element)
@@ -837,7 +844,7 @@ class GameModel(QtCore.QObject):
             #add new WooGLE_Test element
             attrib={'id':level_name,'name':APP_NAME_UPPER+"_TEST_NAME",'text':APP_NAME_UPPER+"_TEST_TEXT"}
             _appendChildTag(root,rootmbt,attrib,keepid=True)
-            
+
             #save file
             xml_data = tree.to_xml()
             xml_data = xml_data.replace('><','>\n<')
@@ -850,7 +857,7 @@ class GameModel(QtCore.QObject):
             print "File not found:",path
             return false
         else:
-          #  print "Doing",path            
+          #  print "Doing",path
             xml_data = file( path, 'rb' ).read()
             tree = self._universe.make_unattached_tree_from_xml( metawog.TREE_LEVEL_SCENE, xml_data )
             root = tree.root
@@ -878,7 +885,7 @@ class GameModel(QtCore.QObject):
                  if abs(y-scenelayer_y)<1:
            #         print "removing old scenelayer",scenelayer.get('id')
                     scenelayer.parent.remove(scenelayer)
-            
+
            # print "create scenelayer",'ocd_'+level_name
             attrib={ 'id':'ocd_'+level_name, 'name':"OCD_flag1",
                     'depth':"-0.1", 'center':`scenelayer_x`+","+`scenelayer_y`,
@@ -1109,13 +1116,13 @@ class GameModel(QtCore.QObject):
                    os.makedirs( ball_dir )
 
                 filename =os.path.join(ball_dir,'balls.xml')
-                files_to_goomod.append(filename)               
+                files_to_goomod.append(filename)
                 xml_data = file( ball_world.find_tree(metawog.TREE_BALL_MAIN).filename, 'rb' ).read()
                 file( filename, 'wb' ).write( xml_data )
                 #self._saveUnPackedData( ball_dir, 'balls.xml.xml', ball_tree)
 
                 filename =os.path.join(ball_dir,'resources.xml')
-                files_to_goomod.append(filename)                
+                files_to_goomod.append(filename)
                 xml_data = file( ball_world.find_tree(metawog.TREE_BALL_RESOURCE).filename, 'rb' ).read()
                 file( filename, 'wb' ).write( xml_data )
 #                self._saveUnPackedData( ball_dir, 'resources.xml.xml', ball_tree)
@@ -1157,7 +1164,7 @@ class GameModel(QtCore.QObject):
                 files_to_goomod.append(os.path.join(merge_path,'materials.xml.xsl'))
                 self._output_xsl(metawog.XSL_ADD_TEMPLATE,params,merge_path,'materials.xml.xsl')
 
-            # custom resources required for particles effect need to go in 
+            # custom resources required for particles effect need to go in
             # the global  resources.xml  so require a merge xsl
             if len(global_resources)>0:
                resource_xml= '<SetDefaults path="./" idprefix=""/>\n'
@@ -1170,7 +1177,7 @@ class GameModel(QtCore.QObject):
                self._output_xsl(metawog.XSL_ADD_TEMPLATE,params,merge_path,'resources.xml.xsl')
 
             # done?
-            
+
     def _output_xsl(self,template,params,directory,filename):
         if not os.path.isdir( directory  ):
             os.makedirs( directory )
@@ -1191,7 +1198,7 @@ class GameModel(QtCore.QObject):
         return self._seekFile(root_element,path_bits,file,extension)
 
     def _seekFile(self,element,path,file,ext):
-        
+
         if path==[]:
             for fileitem in element.findall('file'):
                 if fileitem.get('name')==file:
@@ -1204,7 +1211,7 @@ class GameModel(QtCore.QObject):
                     path.pop(0)
                     return self._seekFile(folder,path,file,ext)
             return False
-        
+
     def _addNewLevel( self, name, level_tree, scene_tree, resource_tree, addin_tree=None,text_tree=None, dependancy_tree=None ):
         """Adds a new level using the specified level, scene and resource tree.
            The level directory is created, but the level xml files will not be saved immediately.
@@ -1213,7 +1220,7 @@ class GameModel(QtCore.QObject):
         if not os.path.isdir( dir_path ):
              os.mkdir( dir_path )
 
-                
+
         # Fix the hard-coded level name in resource tree: <Resources id="scene_NewTemplate" >
         for resource_element in resource_tree.root.findall( './/Resources' ):
             resource_element.set( 'id', 'scene_%s' % name )
@@ -1234,7 +1241,7 @@ class GameModel(QtCore.QObject):
         self._levels.append( unicode(name) )
         self._levels.sort(key=unicode.lower)
         self.__is_dirty = True
-        
+
 class BallModel(metaworld.World):
     def __init__( self, universe, world_meta, ball_name, game_model ):
         metaworld.World.__init__( self, universe, world_meta, ball_name )
@@ -1429,7 +1436,7 @@ class LevelWorld(ThingWorld):
             if len(camera._children)==1:
                 if camera._children[0].get_native('traveltime',0)>1:
                    self.addLevelError(101,c_aspect)
-                                
+
         if not normal_camera:
             self.addLevelError(102,None)
 
@@ -1508,7 +1515,7 @@ class LevelWorld(ThingWorld):
                problem_balls.add(strand.get('gb2'))
             if (gt1 in metawog.BALLS_MUST_BE_GB1) and (gt2 in metawog.BALLS_MUST_BE_GB1):
                self.addLevelError(109,(gt1,strand.get('gb1'),gt2,strand.get('gb1')))
-        
+
         for problem_ball in problem_balls:
                self.addLevelError(110,(balls[problem_ball],problem_ball))
 
@@ -1537,7 +1544,7 @@ class LevelWorld(ThingWorld):
             if particles is not None:
                 if particles in ambient_effects:
                    self.addLevelError(114,particles)
-         
+
         return self._level_issue_level!=ISSUE_LEVEL_NONE
 
 
@@ -1644,7 +1651,7 @@ class LevelWorld(ThingWorld):
             #static vs motor check
             if geomstatic and id in motorbodys:
                self.addSceneError(7,id)
-            
+
             if not geomstatic:
               gx,gy = geomitem.get_native('center',(0,0))
               for rffid,rffpos in rfflist.items():
@@ -1822,7 +1829,7 @@ class LevelWorld(ThingWorld):
         self._recursion = []
 
         self.game_model.global_world.refreshFromFiles()
-          
+
         self._addDependancies(self.level_root,dependancy_tree.root,current,ball_trace)
         self._addDependancies(self.scene_root,dependancy_tree.root,current,ball_trace)
 
@@ -1971,7 +1978,7 @@ class LevelWorld(ThingWorld):
                               print "ball_element no parent",ball_element.tag,i
                               break
                           ball_element = ball_element.parent
-                        
+
                     new_dep_meta = dep_element.meta.find_immediate_child_by_tag(attribute_meta.reference_family)
                     child_attrib = {}
                     id_attribute = None
@@ -2018,7 +2025,7 @@ class LevelWorld(ThingWorld):
         if len(self._recursion)>0:
             for recurse in self._recursion:
                 self.addDependancyError(301,recurse.replace(',',' --> '))
-    
+
         # Custom Balls
         ball_dep = {}
         for ball in self.dependancy_root.findall(".//ball"):
@@ -2062,7 +2069,7 @@ class LevelWorld(ThingWorld):
             for effect,found in particles_dep.items():
                 if not found:
                     self.addDependancyError(307,effect)
- 
+
         return self._dependancy_issue_level != ISSUE_LEVEL_NONE
 
     @property
@@ -2142,7 +2149,7 @@ class LevelWorld(ThingWorld):
                   #clean tree caused an infinite loop when there was a missing ball
                   # so only clean trees with no issues
                   self._cleanleveltree()
-                
+
                 self.game_model._savePackedData( dir, name + '.level.xml',
                                                  self.level_root.tree )
             if self.__dirty_tracker.is_dirty_tree( metawog.TREE_LEVEL_RESOURCE):
@@ -2183,7 +2190,7 @@ class LevelWorld(ThingWorld):
         return pixmap
 
     def updateResources( self ):
-        """Ensures all image/sound resource present in the level directory 
+        """Ensures all image/sound resource present in the level directory
            are in the resource tree.
            Adds new resource to the resource tree if required.
         """
@@ -2213,7 +2220,7 @@ class LevelWorld(ThingWorld):
                 if path not in known_paths:
                     existing_path = os.path.split( existing_path )[1]
                     ALLOWED_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789'
-                    resource_id = id_prefix + ''.join( c for c in existing_path 
+                    resource_id = id_prefix + ''.join( c for c in existing_path
                                                        if c.upper() in ALLOWED_CHARS )
                     resource_path = 'res/levels/%s/%s' % (self.name,existing_path)
                     meta_element = metawog.TREE_LEVEL_RESOURCE.find_element_meta_by_tag( tag )
@@ -2329,7 +2336,7 @@ class MainWindow(QtGui.QMainWindow):
         self.createStatusBar()
         self.createDockWindows()
         self.setWindowTitle(self.tr("OpenGOO Level Editor"))
-        
+
         self._readSettings()
 
         self._game_model = None
@@ -2346,16 +2353,16 @@ class MainWindow(QtGui.QMainWindow):
     def changeWOGDir(self):
         wog_path = QtGui.QFileDialog.getExistingDirectory(self,
              self.tr( 'Select the OpenGOO folder' ) )
-        #wog_path =  QtGui.QFileDialog.getOpenFileName( self,
-        #     self.tr( 'Select WorldOfGoo program in the folder you want to edit' ),
-        #     r'',
-        #     self.tr( 'OpenGOO (OpenGOO*)' ) )
+##        wog_path =  QtGui.QFileDialog.getOpenFileName( self,
+##             self.tr( 'Select WorldOfGoo program in the folder you want to edit' ),
+##             r'',
+##             self.tr( 'OpenGOO (OpenGOO*)' ) )
         if wog_path.isEmpty(): # user canceled action
             #wog_path="D:\World of Goo.app"
             return
         self._wog_path = os.path.normpath(unicode(wog_path))
         #print "_wog_path=",self._wog_path
-        
+
         self._reloadGameModel()
 
     def _reloadGameModel( self ):
@@ -2388,7 +2395,7 @@ class MainWindow(QtGui.QMainWindow):
         name = unicode(action.text())
         if self.open_level_view_by_name( name ):
             self._setRecentFile( name )
-        
+
     def editLevel( self ):
         if self._game_model:
             dialog = QtGui.QDialog()
@@ -2402,7 +2409,7 @@ class MainWindow(QtGui.QMainWindow):
                 name = unicode( ui.levelList.currentItem().text() )
                 if self.open_level_view_by_name( name ):
                     self._setRecentFile( name )
-                
+
     def open_level_view_by_name( self, name ):
         try:
             world = self._game_model.selectLevel( name )
@@ -2445,16 +2452,16 @@ class MainWindow(QtGui.QMainWindow):
             if sub_window.world == world:
                 return window
         return None
-        
+
     def get_active_view(self):
-        """Returns the view of the active MDI window. 
+        """Returns the view of the active MDI window.
            Returns None if no view is active.
         """
         window = self.mdiArea.activeSubWindow()
         if window:
             return window.widget()
         return None
-        
+
     def getCurrentModel( self ):
         """Returns the level model of the active MDI window."""
         window = self.mdiArea.activeSubWindow()
@@ -2612,7 +2619,7 @@ class MainWindow(QtGui.QMainWindow):
                     self.statusBar().showMessage(self.tr("goomod Created: " + filename), 2000)
 
       return False
-        
+
     def newLevel( self ):
         """Creates a new blank level."""
         new_name = self._pickNewName( is_cloning = False )
@@ -2635,7 +2642,7 @@ class MainWindow(QtGui.QMainWindow):
             ui.levelName.setValidator( validator )
             if is_cloning:
                 dialog.setWindowTitle(tr("NewLevelDialog", "Cloning Level"))
-     
+
             if dialog.exec_():
                 new_name = str(ui.levelName.text())
                 existing_names = [name.lower() for name in self._game_model.names]
@@ -2659,7 +2666,7 @@ class MainWindow(QtGui.QMainWindow):
                 except (IOError,OSError), e:
                     QtGui.QMessageBox.warning(self, self.tr("Failed to create the new cloned level! ("+APP_NAME_PROPER+" "+CURRENT_VERSION+")"),unicode(e))
 
-                                              
+
 
     def updateResources( self ):
         """Adds the required resource in the level based on existing file."""
@@ -2812,7 +2819,7 @@ class MainWindow(QtGui.QMainWindow):
                               self.tr('The Level Exit is outside the limits of the scene\n'
                                       'You should correct this, by moving the exit or changing the scene bounds.' ) )
                return
-           
+
             pipe_element = model.level_root.find('pipe')
             if pipe_element is None:
                 # add one
@@ -2903,11 +2910,11 @@ class MainWindow(QtGui.QMainWindow):
                     #Messagebox
                     QtGui.QMessageBox.warning(self, self.tr("Cannot Cut read only element!"),
                               self.tr('This element is read only.\n'
-                                      'It cannot be cut' ) )                    
+                                      'It cannot be cut' ) )
                     return
             self.on_delete_action( is_cut_action=True )
-            self.statusBar().showMessage( 
-                self.tr('Element "%s" cut to clipboard' % 
+            self.statusBar().showMessage(
+                self.tr('Element "%s" cut to clipboard' %
                         elements[0].tag), 1000 )
 
     def on_copy_action(self, is_cut_action = False):
@@ -2943,13 +2950,13 @@ class MainWindow(QtGui.QMainWindow):
                     if brect.top()>mybrect[3]:
                         mybrect[3]=brect.top()
                 i+=1
-            
+
             clipboard_element.set('posx',str((mybrect[0]+mybrect[1])*0.5))
             clipboard_element.set('posy',str(-(mybrect[2]+mybrect[3])*0.5))
             xml_data =  xml.etree.ElementTree.tostring(clipboard_element,'utf-8')
             clipboard.setText( xml_data )
             if not is_cut_action:
-                self.statusBar().showMessage( 
+                self.statusBar().showMessage(
                     self.tr('%d Element "%s" copied to clipboard' %
                             (len(elements),clipboard_element.get('type'))), 1000 )
             self.common_actions['paste'].setText("Paste In Place ("+clipboard_element.get('type')+")")
@@ -2996,7 +3003,7 @@ class MainWindow(QtGui.QMainWindow):
                                         new_posx = old_imagepos[0]+paste_posx-copy_posx
                                         new_posy = old_imagepos[1]+paste_posy-copy_posy
                                     imagepos_attribute.set_native(child_element,[new_posx,new_posy])
-                                    
+
                         element.safe_identifier_insert( len(element), child_element )
                     break
         if len(pasted_elements)>=1:
@@ -3009,7 +3016,7 @@ class MainWindow(QtGui.QMainWindow):
                 if attribute_meta.position:
                     return attribute_meta
         return None
-    
+
     def _getImageposAttribute(self,element):
         image= element.get('image',None)
         if image is None:
@@ -3079,11 +3086,11 @@ class MainWindow(QtGui.QMainWindow):
 
                 deleted_elements.append( element.tag )
                 element.parent.remove( element )
-                
+
         if is_cut_action:
             return len(deleted_elements)
         if deleted_elements:
-            self.statusBar().showMessage( 
+            self.statusBar().showMessage(
                 self.tr('Deleted %d element(s)' % len(deleted_elements)), 1000 )
             world.set_selection( previous_element )
 
@@ -3172,7 +3179,7 @@ class MainWindow(QtGui.QMainWindow):
             action.setEnabled( is_enabled )
         if self.view_action_group.checkedAction() is None:
             self.view_actions[levelview.TOOL_MOVE].setChecked( True )
-        
+
     def _on_refresh_element_status(self):
         # broadcast the event to all ElementIssueTracker
         louie.send_minimal( metaworldui.RefreshElementIssues )
@@ -3213,13 +3220,13 @@ class MainWindow(QtGui.QMainWindow):
             text = "&Clone selected level...",
             shortcut = "Ctrl+D",
             status_tip = "Clone the selected level" )
-        
+
         self.saveAction = qthelper.action( self, handler = self.saveIT,
             icon = ":/images/save.png",
             text = "&Save...",
             shortcut = QtGui.QKeySequence.Save,
             status_tip = "Saves the Level" )
-        
+
         self.playAction = qthelper.action( self, handler = self.saveAndPlayLevel,
             icon = ":/images/play.png",
             text = "&Save and play Level...",
@@ -3271,7 +3278,7 @@ class MainWindow(QtGui.QMainWindow):
             text = "&Quit",
             shortcut = "Ctrl+Q",
             status_tip = "Quit the application" )
-        
+
         self.aboutAct = qthelper.action( self, handler = self.about,
             icon = ":/images/icon.png",
             text = "&About",
@@ -3283,11 +3290,11 @@ class MainWindow(QtGui.QMainWindow):
         self.common_actions = {
             'cut': qthelper.action( self, handler = self.on_cut_action,
                     icon = ":/images/cut.png",
-                    text = "Cu&t", 
+                    text = "Cu&t",
                     shortcut = QtGui.QKeySequence.Cut ),
             'copy': qthelper.action( self, handler = self.on_copy_action,
                     icon = ":/images/copy.png",
-                    text = "&Copy", 
+                    text = "&Copy",
                     shortcut = QtGui.QKeySequence.Copy ),
             'paste': qthelper.action( self, handler = self.on_paste_action,
                     icon = ":/images/paste.png",
@@ -3347,21 +3354,21 @@ class MainWindow(QtGui.QMainWindow):
         }
 
         self.view_action_group = QtGui.QActionGroup(self)
-        self.view_actions = { 
-            levelview.TOOL_SELECT: qthelper.action( self, 
+        self.view_actions = {
+            levelview.TOOL_SELECT: qthelper.action( self,
                     handler = self.on_select_tool_action,
                     icon = ":/images/strand.png",
                     text = "&Strand Mode",
                     shortcut = QtGui.QKeySequence( Qt.Key_Space),
                     checkable = True,
                     status_tip = "Click a Goo, hold, move to another Goo and release to connect them." ),
-            levelview.TOOL_PAN: qthelper.action( self, 
+            levelview.TOOL_PAN: qthelper.action( self,
                     handler = self.on_pan_tool_action,
                     icon = ":/images/zoom.png",
                     text = "&Zoom and Pan view (F)",
                     shortcut = 'F',
                     checkable = True ),
-            levelview.TOOL_MOVE: qthelper.action( self, 
+            levelview.TOOL_MOVE: qthelper.action( self,
                     handler = self.on_move_tool_action,
                     icon = ":/images/tool-move.png",
                     text = "&Select, Move and Resize",
@@ -3372,7 +3379,7 @@ class MainWindow(QtGui.QMainWindow):
 
         for action in self.view_actions.itervalues():
             self.view_action_group.addAction( action )
-		
+
         self.additem_actions = {
         'line':qthelper.action( self,
                     handler = AddItemFactory(self, 'scene','line',{'static':'true'}),
@@ -3408,7 +3415,7 @@ class MainWindow(QtGui.QMainWindow):
                     handler = AddItemFactory(self,'compositegeom', 'circle',{'mass':'1'}),
                     icon = ":/images/childcircle.png",
                     text = "&Add Child Circle"),
-            
+
         'hinge':    qthelper.action( self,
                     handler = AddItemFactory(self,'scene', 'hinge',{}),
                     icon = ":/images/hinge.png",
@@ -3469,7 +3476,7 @@ class MainWindow(QtGui.QMainWindow):
                     handler = AddItemFactory(self,'level', 'BallInstance',{'type':'common'}),
                     icon = ":/images/goos/common32.png",
                     text = "&Add common Goo"),
-                    
+
             qthelper.action( self, handler = AddItemFactory(self,'level', 'BallInstance',{'type':'common_albino'}),
                     icon = ":/images/goos/albino32.png", text = "&Add Albino Goo"),
 
@@ -3551,7 +3558,7 @@ class MainWindow(QtGui.QMainWindow):
             self.fileMenu.addAction(recentaction)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.quitAct)
-        
+
         self.editMenu = self.menuBar().addMenu(self.tr("&Edit"))
         self.editMenu.addAction( self.undoAction)
         self.editMenu.addAction( self.redoAction)
@@ -3562,7 +3569,7 @@ class MainWindow(QtGui.QMainWindow):
         self.editMenu.addAction( self.common_actions['pastehere'] )
         self.editMenu.addSeparator()
         self.editMenu.addAction( self.common_actions['delete'] )
-        
+
         self.menuBar().addSeparator()
         self.resourceMenu = self.menuBar().addMenu(self.tr("&Resources"))
         self.resourceMenu.addAction( self.updateResourcesAction )
@@ -3577,8 +3584,8 @@ class MainWindow(QtGui.QMainWindow):
         self.menuBar().addSeparator()
 
 
-        # @todo add Windows menu. Take MDI example as model.        
-        
+        # @todo add Windows menu. Take MDI example as model.
+
         self.helpMenu = self.menuBar().addMenu(self.tr("&Help"))
         self.helpMenu.addAction(self.aboutAct)
 
@@ -3617,14 +3624,14 @@ class MainWindow(QtGui.QMainWindow):
         self.resourceToolBar.addSeparator()
         self.resourceToolBar.addAction( self.setMusicAction )
         self.resourceToolBar.addAction( self.setLoopSoundAction )
-        
+
         self.levelViewToolBar = self.addToolBar(self.tr("Level View"))
         self.levelViewToolBar.setObjectName("levelViewToolbar")
 
         for name in ('move', 'pan', 'select'):
             action = self.view_actions[name]
             self.levelViewToolBar.addAction( action )
-        
+
         self.addItemToolBar = QtGui.QToolBar(self.tr("Add Item"))
         self.addItemToolBar.setObjectName("addItemToolbar")
         self.addToolBar(Qt.LeftToolBarArea, self.addItemToolBar)
@@ -3643,7 +3650,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.addItemToolBar.addSeparator()
             else:
                 self.addItemToolBar.addAction( self.additem_actions[name] )
-            
+
         self.addToolBarBreak(Qt.LeftToolBarArea)
         self.addGooToolBar = QtGui.QToolBar(self.tr("Add Goo"))
         self.addGooToolBar.setObjectName("addGooToolbar")
@@ -3677,7 +3684,7 @@ class MainWindow(QtGui.QMainWindow):
         dock.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         self.tree_view_by_element_world[tree_meta] = element_tree_view
         return dock, element_tree_view
-        
+
     def createDockWindows(self):
         self.group_icons = {}
         for group in 'camera game image physic resource shape text info ball particles strand fire goomod material rect circle compgeom pipe line sign anim'.split():
@@ -3701,7 +3708,7 @@ class MainWindow(QtGui.QMainWindow):
                                                                             text_dock )
 
         scene_dock.raise_() # Makes the scene the default active tab
-        
+
         dock = QtGui.QDockWidget(self.tr("Properties"), self)
         dock.setAllowedAreas( Qt.RightDockWidgetArea )
         dock.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
@@ -3710,7 +3717,7 @@ class MainWindow(QtGui.QMainWindow):
         self.propertiesList = metaelementui.MetaWorldPropertyListView( self.statusBar(),
                                                                        dock )
 
-        self.propertiesListModel = metaelementui.MetaWorldPropertyListModel(0, 2, 
+        self.propertiesListModel = metaelementui.MetaWorldPropertyListModel(0, 2,
             self.propertiesList)  # nb rows, nb cols
         self.propertiesList.setModel( self.propertiesListModel )
         dock.setWidget(self.propertiesList)
@@ -3767,7 +3774,7 @@ class MainWindow(QtGui.QMainWindow):
             if not subwin.close():
                 event.ignore()
                 return
-            
+
         self._writeSettings()
         self.actionTimer.stop
         self.statusTimer.stop
@@ -3800,5 +3807,5 @@ if __name__ == "__main__":
         sys.stdout = saveout
         sys.stderr = saveerr
         fout.close()
-    
+
     sys.exit(appex)
