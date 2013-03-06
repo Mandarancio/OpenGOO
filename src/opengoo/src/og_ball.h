@@ -6,6 +6,7 @@
 #include "wog_ball.h"
 
 #include <QPainter>
+#include <QtCore/qmath.h>
 
 // Source http://goofans.com/developers/game-file-formats/balls-xml/states-and-events
 /*
@@ -58,6 +59,72 @@
 */
 class OGStrand;
 
+class OGBehavior
+{
+protected:
+    float x, y, speed;
+    OGPhysicsBody* body;    
+
+public:
+    void SetTarget(float posx, float posy=0) {  x = posx; y = posy; }
+    void SetTarget(const QPointF* pos) { SetTarget(pos->x(), pos->y()); }
+    void SetBody(OGPhysicsBody* b) { body = b; }
+    void SetSpeed(float s) { speed = s; }
+};
+
+class OGIWalkBehavior : public OGBehavior
+{
+public:
+    virtual void Walk() = 0;
+};
+
+class OGIClimbBehavior : public OGBehavior
+{
+public:
+    virtual void Climb() = 0;
+};
+
+class OGIFlyBehavior : public OGBehavior
+{
+public:
+    virtual void Fly() = 0;
+};
+
+class OGWalk : public OGIWalkBehavior
+{
+public:
+    void Walk()
+    {
+        QVector2D* vel = body->GetVelocity();
+        float dx = x - body->GetX();
+
+        if (dx >= 0) { vel->setX(speed*80); }
+        else { vel->setX(-speed*80); }
+
+        body->SetVelocity(vel);
+    }
+};
+
+class OGClimb : public OGIClimbBehavior
+{
+public:
+    void Climb()
+    {
+        QVector2D* vel = body->GetVelocity();
+        QLineF line(*body->GetPosition(), QPointF(x, y));
+        line.setLength(speed*3);
+        vel->setX(line.dx());
+        vel->setY(line.dy());
+        body->SetVelocity(vel);
+    }
+};
+
+class OGFly : public OGIFlyBehavior
+{
+public:
+    void Fly() {}
+};
+
 class OGBall : public OGPhysicsBody
 {
 protected:
@@ -72,15 +139,19 @@ protected:
 
     WOGBallInstance* data_;
     WOGBall* config_;
-    WOGMaterial* material_;
+    WOGMaterial material_;
     int numberStrands_;
     BallType type_;
     int id_;
-    QPointF* target_;
+    QPointF target_;
     OGBall* targetBall_;
-    QPointF* curPos_;
+    QPointF curPos_;
     float towerMass_;
-    QList<OGBall*> jointBalls_;
+    QList<OGBall*> jointBalls_;    
+
+    OGIWalkBehavior* walkBehavior_;
+    OGIClimbBehavior* climbBehavior_;
+    OGIFlyBehavior* flyBehavior_;
 
     bool isAttached_;
     bool isClimbing_;
@@ -93,15 +164,21 @@ protected:
     bool isWalking_;
     bool isInit_;
 
-    QPointF* GetTarget() const { return target_; }
+    QPointF* GetTarget() { return &target_; }
     float GetAngle() const { return data_->angle; }
     QString GetType() const { return data_->type; }
     float GetTowerMass() const { return towerMass_; }
     WOGBallShape* GetShape() { return config_->attribute.core.shape; }
     QString GetStrandType() const { return config_->stand->type; }
-    QPointF* GetCurrentPosition()  const { return curPos_; }
-
+    QPointF* GetCurrentPosition() { return &curPos_; }
     void SetCurrentPosition(const b2Vec2 & pos);
+
+    float DistanceSquared(OGBall *b1, OGBall *b2);
+    float DistanceSquared(OGBall* b) { return DistanceSquared(b, this); }
+
+    float Distance(OGBall* b1, OGBall* b2);
+    float Distance(OGBall* b) { return qSqrt(DistanceSquared(b)); }
+
     void SetBodyPosition(float x, float y);
 
     OGPhysicsBody* CreateCircle(float x, float y, float angle
@@ -115,10 +192,7 @@ protected:
     void AddStrand();
     void ReleaseStrand();
 
-    void Climbing(float x, float y);
     void Move();
-    void Walk(float x);    
-    void Walk(const QPointF & pos);
 
     bool IsCanClimb();        
     bool IsOnWalkableGeom(b2ContactEdge* edge);
@@ -131,9 +205,24 @@ protected:
 
     void Algorithm2();
 
+    void PerformWalk() { walkBehavior_->Walk(); }
+    void PerformClimb() { climbBehavior_->Climb(); }
+    void PerformFly() { flyBehavior_->Fly(); }
+
+    void SetWalkTarget(QPointF* pos) { walkBehavior_->SetTarget(pos->x()); }
+    void SetClimbTarget(QPointF* pos) { climbBehavior_->SetTarget(pos); }
+    void SetFlyTarget(QPointF* pos) { flyBehavior_->SetTarget(pos); }
+
+    void SetBodyWalk() { walkBehavior_->SetBody(this); }
+    void SetBodyClimb() { climbBehavior_->SetBody(this); }
+    void SetBodyFly() { flyBehavior_->SetBody(this); }
+
+    void SetWalkSpeed(float speed) { walkBehavior_->SetSpeed(speed); }
+    void SetClimbSpeed(float speed) { climbBehavior_->SetSpeed(speed); }
+
 public:
     OGBall(WOGBallInstance* data, WOGBall* configuration);
-    virtual ~OGBall() { delete target_; }
+    virtual ~OGBall();
 
     // Get properties
     int id() const { return id_; }
@@ -153,8 +242,6 @@ public:
     QString GetId() const { return data_->id; }
     b2JointEdge* GetJoints() { return body->GetJointList(); }
     int GetMaxStrands() const { return config_->attribute.core.strands; }
-    float GetX() const { return body->GetPosition().x; }
-    float GetY() const { return body->GetPosition().y; }
 
     // Set properties
     void SetAttached(bool status) { isAttached_ = status; }
@@ -162,12 +249,13 @@ public:
     void SetDetaching(bool status) { isDetaching_ = status; }
     void SetDragging(bool status) { isDragging_ = status; }
     void SetFalling(bool status) { isFalling_ = status; }
-    void SetMarked(bool status) { isMarked_ = status; Select(); }
+    void SetMarked(bool status);
     void SetStanding(bool status) { isStanding_ = status; }
     void SetWalking(bool status) { isWalking_ = status; }
 
     void SetId(int id) { id_ = id; }
     void SetTarget(OGBall* target);
+    void SetTarget(float x, float y);
     void Attache(OGBall* ball);
 
     void Paint(QPainter* painter, bool debug=false);

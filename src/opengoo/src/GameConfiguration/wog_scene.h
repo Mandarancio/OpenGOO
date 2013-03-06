@@ -9,11 +9,11 @@
 struct WOGLabel
 {
     QString id;
-    qreal depth;
+    float depth;
     QPointF position;
     QString align;
-    qreal rotation;
-    qreal scale;
+    float rotation;
+    float scale;
     bool overlay;
     bool screenspace;
     QString font;
@@ -26,7 +26,7 @@ struct WOGSceneLayer : public WOGVObject
     QString name;
     QString image;
     QString anim;
-    qreal animspeed;
+    float animspeed;
 };
 
 struct WOGRadialForceField
@@ -34,10 +34,10 @@ struct WOGRadialForceField
     QString id;
     QString type;
     QPointF center;
-    qreal radius;
-    qreal forceatcenter;
-    qreal forceatedge;
-    qreal dampeningfactor;
+    float radius;
+    float forceatcenter;
+    float forceatedge;
+    float dampeningfactor;
     bool antigrav;
     bool geomonly;
     bool enabled;
@@ -47,7 +47,7 @@ struct WOGLinearForceField
 {
     QString type;
     QPointF force;
-    qreal dampeningfactor;
+    float dampeningfactor;
     bool antigrav;
     bool geomonly;
 };
@@ -55,9 +55,9 @@ struct WOGLinearForceField
 struct WOGParticle
 {
     QString effect;
-    qreal depth;
+    float depth;
     QPointF position;
-    qreal pretick;
+    float pretick;
 };
 
 struct WOGButton : public WOGVObject
@@ -69,6 +69,8 @@ struct WOGButton : public WOGVObject
     QString onclick;
     QString onmouseenter;
     QString onmouseexit;
+    QString text;
+    QString font;
 };
 
 struct WOGButtonGroup
@@ -83,7 +85,7 @@ struct WOGButtonGroup
 struct WOGCircle : public WOGPObject
 {
     QPointF position;
-    qreal radius;
+    float radius;
 };
 
 struct WOGLine : public WOGPObject
@@ -96,15 +98,15 @@ struct WOGRectangle : public WOGPObject
 {
     QPointF position;
     QSizeF size;
-    qreal rotation;
+    float rotation;
 };
 
 struct WOGScene
 {
-    qreal minx;
-    qreal miny;
-    qreal maxx;
-    qreal maxy;
+    float minx;
+    float miny;
+    float maxx;
+    float maxy;
     QColor backgroundcolor;
     QList<WOGButton*> button;
     QList<WOGButtonGroup*> buttongroup;
@@ -118,6 +120,8 @@ struct WOGScene
     QList<WOGParticle*> particle;
 
     ~WOGScene();
+
+    WOGButtonGroup* GetButtonGroup(const QString& id);
 };
 
 #endif // WOG_SCENE_H

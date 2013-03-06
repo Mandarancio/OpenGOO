@@ -1,0 +1,8 @@
+<scene>
+	<buttongroup id="gamemenugroup" osx="0,0">
+<button alpha="1" colorize="255,255,255" depth="10" id="restart" onclick="restartlevelrightnow" over="IMAGE_IMAGES_GAMEMENUBUTTON_OVER" rotation="0" scalex="1" scaley="1" text="RESTART_BUTTON_TEXT" up="IMAGE_IMAGES_GAMEMENUBUTTON" x="0" y="140" />
+<button alpha="1" colorize="255,255,255" depth="10" id="resume" onclick="showocdcriteria" over="IMAGE_IMAGES_GAMEMENUBUTTON_OVER" rotation="0" scalex="1" scaley="1" text="OCD_CRITERIA_BUTTON_TEXT" up="IMAGE_IMAGES_GAMEMENUBUTTON" x="0" y="60" />
+<button alpha="1" colorize="255,255,255" depth="10" id="backto" onclick="backtoisland" over="IMAGE_IMAGES_GAMEMENUBUTTON_OVER" rotation="0" scalex="1" scaley="1" text="BACK_TO_ISLAND_BUTTON_TEXT" up="IMAGE_IMAGES_GAMEMENUBUTTON" x="0.0" y="-20" />
+<button alpha="1" colorize="255,255,255" depth="10" id="ocdcriteria" onclick="resumegame" over="IMAGE_IMAGES_GAMEMENUBUTTON_OVER" rotation="0" scalex="1" scaley="1" text="RESUME_BUTTON_TEXT" up="IMAGE_IMAGES_GAMEMENUBUTTON" x="0" y="-100" />
+</buttongroup>
+</scene>

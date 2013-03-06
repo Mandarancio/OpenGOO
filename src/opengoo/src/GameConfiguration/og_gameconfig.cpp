@@ -23,21 +23,19 @@ OGConfig OGGameConfig::Parser()
 
             if (attribute == "screen_width")
             {
-                config.screen_width =
-                        domElement.attribute("value", "").toInt();
+                config.screen_width = domElement.attribute("value").toInt();
             }
             else if (attribute == "screen_height")
             {
-                config.screen_height =
-                        domElement.attribute("value", "").toInt();
+                config.screen_height = domElement.attribute("value").toInt();
             }
             else if (attribute == "language")
             {
-                config.language = domElement.attribute("value", "");
+                config.language = domElement.attribute("value");
             }
             else if (attribute == "fullscreen")
             {
-                if (domElement.attribute("value", "") == "true")
+                if (domElement.attribute("value") == "true")
                 {
                     config.fullscreen = true;
                 }

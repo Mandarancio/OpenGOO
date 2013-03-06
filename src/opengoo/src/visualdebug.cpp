@@ -7,7 +7,8 @@
 extern bool _E404;
 extern int _fps;
 extern OGBall* _nearestBall;
-extern OGButton _buttonMenu;
+extern OGButton* _buttonMenu;
+extern OGButton* _buttonRetry;
 extern QList<OGStrand*> _strands;
 extern QList<OGBall*> _balls;
 extern OGBall* _selectedBall;
@@ -92,22 +93,11 @@ void drawRect(QPainter *painter, OGWorld* world)
 
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
 {
-    qreal winX = painter->window().x();
-    qreal winY = painter->window().y();
-
     QPen pen(Qt::yellow,  2.0/zoom);
 
     painter->setOpacity(1);
     painter->setPen(pen);
 
-    // menu
-    qreal btnW = _buttonMenu.size().width()/zoom;
-    qreal btnH = _buttonMenu.size().height()/zoom;
-    qreal btnX = winX + _buttonMenu.position().x()/zoom;
-    qreal btnY = winY + _buttonMenu.position().y()/zoom;
-    QRectF rect(btnX, btnY, btnW, btnH);
-
-    painter->drawRect(rect);
     painter->drawEllipse(QPointF(0, 0), 10.0/zoom, 10.0/zoom); // center of word
 
     // level exit
@@ -147,16 +137,15 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
         painter->drawEllipse(QPointF(x, y), radius, radius);
     }
 
-    drawRect(painter, world);   
-
-    qreal x, y;
-    b2Vec2 v;
+    drawRect(painter, world);       
 
     if (world->nearestball() != 0)
     {
-        v = world->nearestball()->GetBodyPosition();
-        x = v.x*K;
-        y = v.y*K*(-1);
+        qreal x, y;
+
+        QPointF* pos = world->nearestball()->GetPosition();
+        x = pos->x()*K;
+        y = pos->y()*K*(-1);
 
         pen.setColor(Qt::green);
         painter->setPen(pen);

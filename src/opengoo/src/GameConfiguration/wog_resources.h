@@ -31,7 +31,7 @@ public:
             WOGResource::Type type,
             const QString & id,
             const QString & groupid=QString()
-            );
+            ) const;
 
     ~WOGResources();
 };

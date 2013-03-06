@@ -3,6 +3,8 @@
 
 #include "og_sprite.h"
 
+#include <QPainter>
+
 class OGButton
 {
     OGSprite* up_;
@@ -34,7 +36,14 @@ public:
     void onmouseEnter(const QString & onmouseenter) { onmouseenter_ = onmouseenter ;}
     void onmouseExit(const QString & onmouseexit) { onmouseexit_ = onmouseexit; }
     void position(const QPointF position) { position_ = position; }
-    void size(const QSize & size) { size_ = size; }
+    void size(const QSize & size) { size_ = size; }    
+
+    bool TestPoint(const QPoint& pos)
+    {
+        QRectF rect(QPointF(position().x(), position().y()), size());
+        rect.moveCenter(position());
+        return rect.contains(pos);
+    }
 };
 
 #endif // OG_BUTTON_H

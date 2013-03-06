@@ -47,3 +47,24 @@ void OGPhysicsBody::CreateShape(Type type)
         break;
     }
 }
+
+QVector2D* OGPhysicsBody::GetVelocity()
+{
+    velocity.setX(body->GetLinearVelocity().x);
+    velocity.setY(body->GetLinearVelocity().y);
+
+    return &velocity;
+}
+
+void OGPhysicsBody::SetVelocity(const QVector2D *v)
+{
+    body->SetLinearVelocity(b2Vec2(v->x(), v->y()));
+}
+
+QPointF* OGPhysicsBody::GetPosition()
+{
+    position.setX(body->GetPosition().x);
+    position.setY(body->GetPosition().y);
+
+    return &position;
+}

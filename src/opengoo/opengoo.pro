@@ -5,7 +5,7 @@ DESTDIR = ../../
 TEMPLATE = app
 
 CONFIG(debug, debug|release) {
-TARGET      = OpenGOOd
+TARGET      = OpenGOO
 OBJECTS_DIR = build/debug
 MOC_DIR = build/debug
 }
@@ -84,7 +84,12 @@ HEADERS += \
     src/og_ibody.h \
     src/og_rectangle.h \
     src/og_line.h \
-    src/og_userdata.h
+    src/og_userdata.h \
+    src/og_uibutton.h \
+    src/og_ui.h \
+    src/og_states.h \
+    src/og_data.h \
+    src/og_uiscene.h
 
 
 SOURCES += \
@@ -99,7 +104,11 @@ SOURCES += \
     src/og_circle.cpp \
     src/og_ibody.cpp \
     src/og_rectangle.cpp \
-    src/og_line.cpp
+    src/og_line.cpp \
+    src/og_uibutton.cpp \
+    src/og_ui.cpp \
+    src/og_data.cpp \
+    src/og_uiscene.cpp
 
 
 # Game engine
@@ -149,6 +158,7 @@ SOURCES += \
     src/GameConfiguration/wog_scene.cpp \
     src/GameConfiguration/wog_resources.cpp \
     src/GameConfiguration/wog_material.cpp \
+    src/GameConfiguration/wog_text.cpp \
 
 
 HEADERS += \

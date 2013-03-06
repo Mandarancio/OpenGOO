@@ -5,7 +5,20 @@
 extern OGWorld* _world;
 extern OGBall* _nearestBall;
 
-OGBall::OGBall(WOGBallInstance *data, WOGBall *configuration)
+inline float LengthSquared(float x1, float y1, float x2, float y2);
+inline float LengthSquared(const QPointF* p1, const QPointF* p2);
+
+float LengthSquared(const QPointF* p1, const QPointF* p2)
+{
+    return LengthSquared(p1->x(), p1->y(), p2->x(), p2->y());
+}
+
+float LengthSquared(float x1, float y1, float x2, float y2)
+{
+    return qPow((x2 - x1), 2.0f) + qPow((y2 - y1), 2.0f);
+}
+
+OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     : data_(data), config_(configuration)
 {
     const float K = 0.1f;
@@ -20,24 +33,21 @@ OGBall::OGBall(WOGBallInstance *data, WOGBall *configuration)
     isWalking_ = false;
     isDraggable_ = config_->attribute.player.draggable;
 
-    material_ = new WOGMaterial;
-    material_->bounce = 0.1f;
-    material_->friction = 15.0f;
+    material_.bounce = 0.1f;
+    material_.friction = 15.0f;
     numberStrands_ = 0;
     id_ = -1;
     isInit_ = false;
     targetBall_ = 0;
-    target_ = new QPointF;
-    curPos_ = new QPointF;
 
     WOGBallShape* ballShape = GetShape();
 
     // Get position, angle and mass of ball
-    float32 x = data_->x;
-    float32 y = data_->y;
-    float32 angle = data_->angle;
+    float x = data_->x;
+    float y = data_->y;
+    float angle = data_->angle;
     float mass = config_->attribute.core.mass;
-    int v = ballShape->variation*100; // convert the variation to a percentage
+    int v = ballShape->variation * 100; // convert the variation to a percentage
 
     if (v > 100) { v = 100; }
 
@@ -54,48 +64,64 @@ OGBall::OGBall(WOGBallInstance *data, WOGBall *configuration)
         obj = CreateReactangle(x, y, angle, mass, ballShape, v);
     }
 
-    if (obj !=0)
+    if (obj != 0)
     {
         body = obj->body;
         fixture = obj->fixture;
         shape = obj->shape;
     }
 
-    towerMass_ = config_->attribute.core.towermass*K;
+    towerMass_ = config_->attribute.core.towermass * K;
+
+    walkBehavior_ = new OGWalk;
+    climbBehavior_ = new OGClimb;
+    flyBehavior_ = new OGFly;
+
+    SetBodyWalk();
+    SetWalkSpeed(config_->attribute.movement.walkspeed);
+
+    SetBodyClimb();
+    SetClimbSpeed(config_->attribute.movement.climbspeed);
+}
+
+OGBall::~OGBall()
+{
+    delete walkBehavior_;
+    delete climbBehavior_;
+    delete flyBehavior_;
 }
 
 OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
-                                     , float mass, WOGBallShape* shape
-                                     , int variation)
+                                    , float mass, WOGBallShape* shape
+                                    , int variation)
 {
     WOGCircleBall* obj = static_cast<WOGCircleBall*>(shape);
-    float32 radius = obj->radius;
+    float radius = obj->radius;
 
-    if (variation >= 1) { radius += radius*(qrand()%variation)*0.01f; }
+    if (variation >= 1) { radius += radius * (qrand() % variation) * 0.01f; }
 
     OGUserData* data = new OGUserData;
     data->type = OGUserData::BALL;
     data->data = this;
 
-    return createCircle(x, y, radius, angle, material_, true, mass, data);
+    return createCircle(x, y, radius, angle, &material_, true, mass, data);
 }
 
 OGPhysicsBody* OGBall::CreateReactangle(float x, float y, float angle
-                                         , float mass, WOGBallShape* shape
-                                         , int variation)
+                                        , float mass, WOGBallShape* shape
+                                        , int variation)
 {
     WOGRectangleBall* obj = static_cast<WOGRectangleBall*>(shape);
-    float width = obj->width;
-    float height = obj->height;
+    float w = obj->width;
+    float h = obj->height;
 
     if (variation >= 1)
     {
-        width += width*(qrand()%variation)*0.01f;
-        height += height*(qrand()%variation)*0.01f;
+        w += w * (qrand() % variation) * 0.01f;
+        h += h * (qrand() % variation) * 0.01f;
     }
 
-    return createRectangle(x, y, width, height, angle, material_, true, mass
-                           , 0);
+    return createRectangle(x, y, w, h, angle, &material_, true, mass, 0);
 }
 
 inline void OGBall::SetBodyPosition(float x, float y)
@@ -129,10 +155,10 @@ void OGBall::Attache()
     while (!jointBalls_.isEmpty()) { Attache(jointBalls_.takeFirst()); }
 }
 
-void OGBall::SetCurrentPosition(const b2Vec2 & pos)
+void OGBall::SetCurrentPosition(const b2Vec2 &pos)
 {
-    curPos_->setX(pos.x);
-    curPos_->setY(pos.y);   
+    curPos_.setX(pos.x);
+    curPos_.setY(pos.y);
 }
 
 void OGBall::Update()
@@ -142,7 +168,7 @@ void OGBall::Update()
     b2ContactEdge* edge = body->GetContactList();
 
     if (!isClimbing_ && !isDragging_)
-    {               
+    {
         if (edge == 0)
         {
             // The ball's falling
@@ -195,66 +221,40 @@ void OGBall::Update()
 inline void OGBall::Move()
 {
     const float K = 0.1f;
-    float x, y;    
 
     if (isClimbing_)
     {
         float x1 = GetCurrentPosition()->x();
         float y1 = GetCurrentPosition()->y();
-        float x2 = _world->leveldata()->levelexit->pos.x()*K;
-        float y2 = _world->leveldata()->levelexit->pos.y()*K;
-        float r1 = _world->leveldata()->levelexit->radius*K;
+        float x2 = _world->leveldata()->levelexit->pos.x() * K;
+        float y2 = _world->leveldata()->levelexit->pos.y() * K;
+        float r1 = _world->leveldata()->levelexit->radius * K;
         float r2 = shape->GetRadius();
-        float l1 = (r1 + r2)*(r1 + r2);
-        float l2 = (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1);
+        float l1 = qPow((r1 + r2), 2.0f);
+        float l2 = LengthSquared(x1, y1, x2, y2);
 
-        if (l2 <= l1 )
-        {
-            x = x2;
-            y = y2;
-        }
+        if (l2 <= l1) { SetTarget(x2, y2); }
         else
         {
             if (IsCanClimb())
             {
                 Algorithm2();
             }
-
-            x = GetTarget()->x();
-            y = GetTarget()->y();
         }
 
-        if (targetBall_->IsAttached()) { Climbing(x, y); }
+        if (targetBall_->IsAttached())
+        {
+            SetClimbTarget(GetTarget());
+            PerformClimb();
+        }
         else { isClimbing_ = false; }
     }
     else if (isWalking_)
     {
         FindTarget();
-        Walk(GetTarget()->x());
+        SetWalkTarget(GetTarget());
+        PerformWalk();
     }
-}
-
-inline void OGBall::Climbing(float x, float y)
-{
-    b2Vec2 vel = body->GetLinearVelocity();
-    float32 speed = config_->attribute.movement.climbspeed;
-    QLineF line(*GetCurrentPosition(), QPointF(x, y));
-    line.setLength(speed*3);
-    vel.x = line.dx();
-    vel.y = line.dy();
-    body->SetLinearVelocity(vel);
-}
-
-inline void OGBall::Walk(float x)
-{
-    b2Vec2 vel = body->GetLinearVelocity();
-    qreal dx = x - GetX();
-    float32 speed = config_->attribute.movement.walkspeed;
-
-    if (dx >= 0) { vel.x = speed*80; }
-    else { vel.x = -speed*80; }
-
-    body->SetLinearVelocity(vel);
 }
 
 inline bool OGBall::IsCanClimb()
@@ -298,18 +298,18 @@ void OGBall::Paint(QPainter* painter, bool debug)
 {
     Q_UNUSED(debug)
 
-    qreal x, y, radius, angle;
+    float posX, posY, radius, angle;
     QLineF line;
 
-    const qreal K = 10.0;
+    const float K = 10.0f;
     const qreal DEGREE = 57.2957795;
 
-    x = GetX()*K;
-    y = GetY()*K*(-1.0);
-    radius = shape->GetRadius()*K;
-    angle = body->GetAngle()*DEGREE;
-    line.setP1(QPointF(x, y));
-    line.setP2(QPointF(x+radius, y));
+    posX = GetX() * K;
+    posY = GetY() * K * (-1.0);
+    radius = shape->GetRadius() * K;
+    angle = body->GetAngle() * DEGREE;
+    line.setP1(QPointF(posX, posY));
+    line.setP2(QPointF(posX + radius, posY));
     line.setAngle(angle);
 
     QPen pen(Qt::yellow,  2.0);
@@ -333,12 +333,13 @@ void OGBall::Paint(QPainter* painter, bool debug)
         pen.setColor(Qt::black);
         painter->setPen(pen);
     }
-    else if(isFalling_)
+    else if (isFalling_)
     {
         pen.setColor(Qt::green);
         painter->setPen(pen);
     }
-    else if(isStanding_)
+
+    if (isStanding_)
     {
         pen.setColor(Qt::yellow);
         painter->setPen(pen);
@@ -350,30 +351,35 @@ void OGBall::Paint(QPainter* painter, bool debug)
         painter->setPen(pen);
     }
 
-    painter->drawEllipse(QPointF(x, y), radius, radius);
+    painter->drawEllipse(QPointF(posX, posY), radius, radius);
     pen.setColor(Qt::red);
     painter->setPen(pen);
     painter->setFont(QFont("Times", 12, QFont::Bold));
-    painter->drawText(QPointF(x, y), QString::number(id()));
+    painter->drawText(QPointF(posX, posY), QString::number(id()));
 
     int x1, y1, x2, y2;
 
-    Q_FOREACH (OGBall* ball, jointBalls_)
+    Q_FOREACH(OGBall * ball, jointBalls_)
     {
-        x1 = GetX()*K;
-        y1 = GetY()*K*(-1.0);
-        x2 = ball->GetX()*K;
-        y2 = ball->GetY()*K*(-1.0);
+        x1 = GetX() * K;
+        y1 = GetY() * K * (-1.0);
+        x2 = ball->GetX() * K;
+        y2 = ball->GetY() * K * (-1.0);
         painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
     }
 
     painter->restore();
 }
 
+inline void OGBall::SetTarget(float x, float y)
+{
+    target_.setX(x);
+    target_.setY(y);
+}
+
 inline void OGBall::SetTarget(OGBall* target)
 {
-    target_->setX(target->GetX());
-    target_->setY(target->GetY());
+    SetTarget(target->GetX(), target->GetY());
 }
 
 void OGBall::AddStrand()
@@ -398,18 +404,18 @@ void OGBall::ReleaseStrand()
 }
 
 inline void OGBall::FindJointBalls()
-{   
+{
     float dist;
     float minlen = config_->stand->minlen;
     float maxlen1 = config_->stand->maxlen1;
 
     jointBalls_.clear();
 
-    Q_FOREACH (OGBall* ball, *_world->balls())
+    Q_FOREACH(OGBall * ball, *_world->balls())
     {
         if (ball->IsAttached())
         {
-            dist = b2Distance(GetBodyPosition(), ball->GetBodyPosition())*10;
+            dist = Distance(ball) * 10;
 
             if (dist >= minlen && dist <= maxlen1)
             {
@@ -429,24 +435,20 @@ inline void OGBall::FindJointBalls()
 void OGBall::FindTarget()
 {
     OGBall* nearestBall = 0;
-    float dist1, dist2 = 0;
-    float isInit = false;
+    float dist1, dist2;
 
-    b2Vec2 pos(GetBodyPosition());
-
-    Q_FOREACH (OGBall* ball, *_world->balls())
+    Q_FOREACH(OGBall * ball, *_world->balls())
     {
         if (ball->IsStanding())
         {
-            if (!isInit)
+            if (nearestBall == 0)
             {
                 nearestBall = ball;
-                dist1 = b2Distance(pos, ball->GetBodyPosition());
-                isInit = true;
+                dist1 = DistanceSquared(ball);
             }
             else
             {
-                dist2 = b2Distance(pos, ball->GetBodyPosition());
+                dist2 = DistanceSquared(ball);
 
                 if (dist2 < dist1)
                 {
@@ -463,8 +465,8 @@ void OGBall::FindTarget()
 
 // Pickup ball
 
-void OGBall::MouseDown(const QPoint & pos)
-{       
+void OGBall::MouseDown(const QPoint &pos)
+{
     const float K = 0.1f;
 
     isDragging_ = true;
@@ -472,97 +474,114 @@ void OGBall::MouseDown(const QPoint & pos)
     isFalling_ = false;
     isStanding_ = false;
     isWalking_ = false;
-    float x = pos.x()*K;
-    float y = pos.y()*K;
+    float x = pos.x() * K;
+    float y = pos.y() * K;
 
     SetBodyPosition(x, y);
 }
 
-void OGBall::MouseUp(const QPoint & pos)
+void OGBall::MouseUp(const QPoint &pos)
 {
     Q_UNUSED(pos)
 
     if (!isAttached_)
     {
-        while(!jointBalls_.isEmpty()) { Attache(jointBalls_.takeFirst()); }
+        while (!jointBalls_.isEmpty()) { Attache(jointBalls_.takeFirst()); }
     }
 
     isDragging_ = false;
     body->SetAwake(true);
 }
 
-void OGBall::MouseMove(const QPoint & pos)
+void OGBall::MouseMove(const QPoint &pos)
 {
     const float K = 0.1f;
-    float x = pos.x()*K;
-    float y = pos.y()*K;
+
+    float x = pos.x() * K;
+    float y = pos.y() * K;
 
     SetBodyPosition(x, y);
 
     if (IsAttached()) { Detache(); }
-    else if (GetMaxStrands() > 0)
-    { FindJointBalls(); }
+    else if (GetMaxStrands() > 0) { FindJointBalls(); }
 }
 
-void OGBall::Select()
+void OGBall::SetMarked(bool status)
 {
+    isMarked_ = status;
+
     if (isMarked_)
     {
-        if (IsClimbing() || IsWalking()) { body->SetAwake(false); }
+        if (isWalking_ || isClimbing_) { body->SetAwake(false); }
     }
+
 }
 
-bool OGBall::TestPoint(const QPoint & pos)
+bool OGBall::TestPoint(const QPoint &pos)
 {
     const float K = 0.1f;
 
-    float x = pos.x()*K;
-    float y = pos.y()*K;
+    float x = pos.x() * K;
+    float y = pos.y() * K;
 
     return fixture->TestPoint(b2Vec2(x, y));
 }
 
 void OGBall::Algorithm2()
 {
+    if (_world->nearestball() == 0) return;
+
+    OGUserData* data;
+    float dist1, dist2;
+
     b2JointEdge* joints = 0;
     joints = targetBall_->GetJoints();
+    OGBall* ball = 0;
+    b2Body* b1 = 0;
+    b2Body* b2 = 0;
 
-    OGUserData* data;  
-    float dist1, dist2;
-    bool init = false;
-    OGBall* b1 = 0;
-    b2Body* bb1 = 0;
-    b2Body* bb2 = 0;
     b2Vec2 pos(_world->nearestball()->GetBodyPosition());
 
     while (joints)
     {
-        if (!init)
+        if (b1 == 0)
         {
-            bb1 = joints->other;
-            dist1 = b2Distance(bb1->GetPosition(), pos);
-            init = true;
+            b1 = joints->other;
+            dist1 = b2Distance(b1->GetPosition(), pos);
         }
         else
         {
-            bb2 = joints->other;
-            dist2 = b2Distance(bb2->GetPosition(), pos);
+            b2 = joints->other;
+            dist2 = b2Distance(b2->GetPosition(), pos);
 
             if (dist2 < dist1)
             {
                 dist1 = dist2;
-                bb1 = bb2;
+                b1 = b2;
             }
         }
 
         joints = joints->next;
     }
 
-    if (bb1 != 0)
+    if (b1 != 0)
     {
-        data = static_cast<OGUserData*>(bb1->GetUserData());
-        b1 = static_cast<OGBall*>(data->data);
-        SetTarget(b1);
-        targetBall_ = b1;
+        data = static_cast<OGUserData*>(b1->GetUserData());
+        ball = static_cast<OGBall*>(data->data);
+        SetTarget(ball);
+        targetBall_ = ball;
     }
+}
+
+inline float OGBall::DistanceSquared(OGBall* b1, OGBall* b2)
+{
+    QPointF* p1 = b1->GetPosition();
+    QPointF* p2 = b2->GetPosition();
+
+    return LengthSquared(p1, p2);
+}
+
+inline float OGBall::Distance(OGBall* b1, OGBall* b2)
+{
+    return qSqrt(DistanceSquared(b1, b2));
 }

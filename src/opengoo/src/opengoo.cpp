@@ -102,6 +102,9 @@ bool GameInitialize(int argc, char **argv)
 
     _gameEngine->setFrameRate(FRAMERATE);
 
+    _width = _config.screen_width;
+    _height = _config.screen_height;
+
     return true;
 }
 
@@ -110,24 +113,24 @@ void GameStart()
     //initialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
 
-    _width = _gameEngine->getWidth();
-    _height = _gameEngine->getHeight();
     _E404 = false;
     _isScrollLock = false;
     _isZoomLock = false;
-    _isLevelInitialize = false;
-    _timeScrollStep = _width/1000;
+    _isLevelInitialize = false;    
+    _timeScrollStep = _width*0.001f;
 
     // MapWorldView is the main menu
 
     if(_levelname.isEmpty() || (!OGWorld::isExist(_levelname)) )
     {
-     _levelname = "MapWorldView";
+        _levelname = "MapWorldView";
     }
 
     _world = new OGWorld(_levelname);
 
-    _world->language(_config.language);
+    if (_config.language.isEmpty()) { _config.language = "en"; }
+
+    _world->SetLanguage(_config.language);
 
     if (!_world->Initialize()) { return; }
 
@@ -136,20 +139,20 @@ void GameStart()
     _world->CreateScene();
     _sprites = _world->sprites();
     _buttons = _world->buttons();
-    _camera = _world->currentcamera();
+
+     _wcamera = new OGWindowCamera(_world->currentcamera());
+    _camera = _wcamera;
+
     camera::numberCameras = _world->GetNumberCameras();
-
-    _physicsEngine = OGPhysicsEngine::GetInstance();
-    _physicsEngine->SetSimulation(6, 2, STEPS);
-
-    buttonMenu();
 
     if (camera::numberCameras > 1) { _isMoveCamera = true; }
     else { _isMoveCamera = false; }
 
     if (_world->leveldata()->visualdebug) { _time.start(); }
 
-    _timeStep = STEPS/1000.0;
+    _timeStep = STEPS*0.001f;
+
+    createUIButtons();
 
     _isLevelInitialize = true;
 }
@@ -158,10 +161,12 @@ void GameEnd()
 {
     _isLevelInitialize = false;
 
-    delete _gameEngine;
-    delete _gameTime;
+    removeMenu();
+    removeRetryMenu();
+    removeUIButtons();
 
-    _physicsEngine = 0;
+    delete _gameEngine;
+    delete _gameTime;    
 
     if (_world)
     {
@@ -169,6 +174,8 @@ void GameEnd()
 
         delete _world;
     }
+
+    if (_wcamera != 0) delete _wcamera;
 }
 
 void GameCycle()
@@ -178,7 +185,7 @@ void GameCycle()
         closeGame();
 
         return;
-    }
+    }    
 
     if (!_gameTime)
     {
@@ -188,15 +195,14 @@ void GameCycle()
     }
 
     _lastTime = _gameTime->restart();
-    _lastTime = 16;
 
     calculateFPS();
 
-    int n = qRound(_lastTime*_timeStep);
-
-    for (int i=0; i < n; i++)
+    if (!_isMenu)
     {
-        _physicsEngine->Simulate();
+        int n = qRound(_lastTime * _timeStep);
+
+        for (int i=0; i < n; i++) { _world->Update(); }
     }
 
     if (_isMoveCamera)
@@ -231,15 +237,52 @@ void GameCycle()
         ball->Update();
     }
 
-    _gameEngine->getWindow()->render();
+//    _gameEngine->getWindow()->render();
+
+    if (!_listStates.isEmpty())
+    {
+        switch(_listStates.takeFirst())
+        {
+        case CREATE_MENU:
+            createMenu();
+            break;
+
+        case REMOVE_MENU:
+            removeMenu();
+            break;
+
+        case RESTART:
+            restartLevel();
+            break;
+
+        case BACKTO:
+            backToIsland();
+            break;
+
+        case SHOW_OCD:
+            break;
+
+        case RESUME:
+            resumeGame();
+            break;
+
+        case RETRY:
+            createRetryMenu();
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
 void GamePaint(QPainter* painter)
 {    
     if (!_isLevelInitialize) { return; }
 
-    painter->setWindow(_camera.window().toRect());
+    painter->setWindow(_camera->window());    
     painter->setViewport(0, 0, _width, _height);
+
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
     setBackgroundColor(_world->scenedata()->backgroundcolor);
@@ -247,17 +290,8 @@ void GamePaint(QPainter* painter)
 
     // Paint a scene
     Q_FOREACH (OGSprite* sprite, *_sprites)
-    {
-        if (sprite->visible)
-        {
-            painter->setOpacity(sprite->alpha);
-            qreal x = sprite->position.x();
-            qreal y = sprite->position.y();
-            qreal w = sprite->size.width();
-            qreal h = sprite->size.height();
-            painter->drawPixmap(QRectF(x, y, w, h), sprite->image
-                                , sprite->image.rect());
-        }
+    {        
+        sprite->Paint(painter);
     }
 
     Q_FOREACH (OGBall* ball, *_world->balls())
@@ -273,29 +307,29 @@ void GamePaint(QPainter* painter)
     if (_isPause)
     {
         painter->setOpacity(0.25);
-        painter->fillRect(_camera.window(), Qt::black);
+        painter->fillRect(_camera->window(), Qt::black);
         painter->setOpacity(1);
         painter->setPen(Qt::white);
         painter->setFont(QFont("Times", 48, QFont::Bold));
-        painter->drawText(_camera.window(), Qt::AlignCenter, "Pause");
+        painter->drawText(_camera->window(), Qt::AlignCenter, "Pause");
     }
 
     if (_world->leveldata()->visualdebug)
     {
-        visualDebug(painter, _world, _camera.zoom());
+        visualDebug(painter, _world, _camera->zoom());
+    }
+
+    painter->translate(painter->window().topLeft());
+
+    Q_FOREACH(OGUI* ui, _listUI)
+    {
+        ui->Paint(painter, _camera->zoom());
     }
 }
 
-void GameActivate()
-{
-    _isPause = false;
+void GameActivate() { _isPause = false; }
 
-}
-
-void GameDeactivate()
-{
-    _isPause = true;
-}
+void GameDeactivate() { _isPause = true; }
 
 void KeyDown(QKeyEvent* event)
 {
@@ -314,20 +348,19 @@ void MouseButtonDown(QMouseEvent* event)
     if (!_buttons) { return; }
 
     QPoint mPos(event->pos());
-    QRectF menu(_buttonMenu.position(), _buttonMenu.size());
 
-    if (menu.contains(mPos)) { buttonMenuAction(); }
+    Q_FOREACH (OGUI* ui, _listUI)
+    {
+        if (ui != 0) mouseEven(ui, event);
+    }
+
+    if (_isMenu) return;
 
     mPos = windowToLogical(mPos);
 
     Q_FOREACH (OGButton* button, *_buttons)
     {
-        QRectF rect(QPointF(button->position().x(), button->position().y())
-                    , button->size());
-
-        rect.moveCenter(button->position());
-
-        if(rect.contains(mPos))
+        if (button->TestPoint(mPos))
         {
             _E404 = false;
 
@@ -356,11 +389,18 @@ void MouseButtonUp(QMouseEvent* event)
 
 void MouseMove(QMouseEvent* event)
 {
-    const qreal OFFSET = 50.0;
+    float OFFSET = 50.0f;
 
-    qreal sx, sy;
+    float sx, sy;
 
     QPoint mPos(event->pos());
+
+    Q_FOREACH (OGUI* ui, _listUI)
+    {
+        if (ui != 0) mouseEven(ui, event);
+    }
+
+    if (_isMenu) return;
 
     sx = mPos.x();
     sy = mPos.y();
@@ -428,23 +468,15 @@ void MouseWheel(QWheelEvent* event)
 
     QPoint numDegrees = event->angleDelta() / 8;
 
-    if (_world->leveldata()->visualdebug)
-    {        
-        if (numDegrees.y() > 0) { zoom(1); }
-        else { zoom(-1); }
+    if (numDegrees.y() > 0)
+    {
+        _scroll.up = true;
+        _scrolltime = 30;
     }
     else
     {
-        if (numDegrees.y() > 0)
-        {
-            _scroll.up = true;
-            _scrolltime = 30;
-        }
-        else
-        {
-            _scroll.down = true;
-            _scrolltime = 30;
-        }
+        _scroll.down = true;
+        _scrolltime = 30;
     }
 }
 
@@ -473,38 +505,40 @@ void scroll()
 {
     if (_isScrollLock) { return; }
 
-    qreal SHIFT = _timeScrollStep*_lastTime;
+    int SHIFT = _lastTime;
 
-    qreal pos;
+    int pos;
 
     if (_scroll.up)
     {        
-        pos = qMin(_camera.center().y() + SHIFT,
-                 _world->scenedata()->maxy - _camera.height()*0.5);
+        pos = qMin(_camera->center().y() + SHIFT,
+                 qRound(_world->scenedata()->maxy - _camera->height() * 0.5f));
 
-        _camera.SetY(pos);
+        _camera->SetY(pos);
+
     }
     else if (_scroll.down)
     {
-        pos = qMax(_camera.center().y() - SHIFT,
-                 _world->scenedata()->miny + _camera.height()*0.5);
+        pos = qMax(_camera->center().y() - SHIFT,
+                 qRound(_world->scenedata()->miny + _camera->height() * 0.5f));
 
-        _camera.SetY(pos);
+        _camera->SetY(pos);
+
     }
 
     if (_scroll.left)
     {
-        pos = qMax(_camera.center().x() - SHIFT,
-                 _world->scenedata()->minx + _camera.width()*0.5);
+        pos = qMax(_camera->center().x() - SHIFT,
+                 qRound(_world->scenedata()->minx + _camera->width() * 0.5f));
 
-        _camera.SetX(pos);
+        _camera->SetX(pos);
     }
     else if (_scroll.right)
     {
-        pos = qMin(_camera.center().x() + SHIFT,
-                 _world->scenedata()->maxx - _camera.width()*0.5);
+        pos = qMin(_camera->center().x() + SHIFT,
+                 qRound(_world->scenedata()->maxx - _camera->width()*0.5f));
 
-        _camera.SetX(pos);
+        _camera->SetX(pos);
     }
 }
 
@@ -512,14 +546,14 @@ void zoom(int direct)
 {
     if (_isZoomLock) { return; }
 
-    qreal zoom = _camera.zoom();
+    float zoom = _camera->zoom();
 
-    zoom += (0.1*direct);
+    zoom += (0.1f * direct);
 
-    if (_world->scenesize().width()*zoom >= _width
-            && _world->scenesize().height()*zoom >= _height)
+    if (_world->scenesize().width() * zoom >= _width
+            && _world->scenesize().height() * zoom >= _height)
     {
-        _camera.Scale(zoom);
+        _camera->Zoom(zoom);
     }
 }
 
@@ -527,20 +561,20 @@ QPointF logicalToWindow(const QRectF & rect, qreal zoom)
 {
     qreal w = rect.width()/zoom;
     qreal h = rect.height()/zoom;
-    qreal x = rect.x() - w*0.5;
-    qreal y = (rect.y() + h*0.5)*(-1.0);
+    qreal x = rect.x() - w*0.5f;
+    qreal y = (rect.y() + h*0.5f)*(-1.0f);
 
     return QPointF(x, y);
 }
 
 QPoint windowToLogical(const QPoint & position)
 {
-    qreal x, y, a, b;
+    float x, y, a, b;
 
-    a = (position.x() - _width*0.5)/_camera.zoom();
-    b = (position.y() - _height*0.5)/_camera.zoom();
-    x = _camera.center().x() + a;
-    y = _camera.center().y() - b;
+    a = (position.x() - _width*0.5)/_camera->zoom();
+    b = (position.y() - _height*0.5)/_camera->zoom();
+    x = _camera->center().x() + a;
+    y = _camera->center().y() - b;
 
     return QPoint(x, y);
 }
@@ -562,14 +596,14 @@ void updateCamera(int time)
         camera::isPause = false;
 
         OGCamera* endCam = _world->GetCamera(camera::nextCamera);
-        qreal dx = endCam->center().x() - _camera.center().x();
-        qreal dy = endCam->center().y() - _camera.center().y();
-        qreal dzoom = endCam->zoom() - _camera.zoom();
-        camera::pause = endCam->pause()* 1000;
+        float dx = endCam->center().x() - _camera->center().x();
+        float dy = endCam->center().y() - _camera->center().y();
+        float dzoom = endCam->zoom() - _camera->zoom();
+        camera::pause = endCam->pause();
 
         if (camera::pause) { camera::isPause = true; }
 
-        camera::traveltime = endCam->traveltime()*1000;
+        camera::traveltime = endCam->traveltime();
 
         camera::xSpeed = dx/camera::traveltime;
         camera::ySpeed = dy/camera::traveltime;
@@ -596,9 +630,10 @@ void updateCamera(int time)
 
         if (camera::sumTime <= camera::traveltime)
         {
-            _camera.SetPosition(_camera.center().x() + camera::xSpeed*lastTime,
-                                _camera.center().y() + camera::ySpeed*lastTime);
-            _camera.Scale(_camera.zoom() + camera::zoomSpeed*lastTime);
+            float x = qRound(_camera->center().x() + camera::xSpeed*lastTime);
+            float y = qRound(_camera->center().y() + camera::ySpeed*lastTime);
+            _camera->SetPosition(x, y);
+            _camera->Zoom(_camera->zoom() + camera::zoomSpeed*lastTime);
         }
         else
         {
@@ -611,23 +646,6 @@ void updateCamera(int time)
 }
 
 void closeGame() { _gameEngine->getWindow()->close(); }
-
-void buttonMenuAction() { closeGame(); }
-
-void buttonMenu()
-{
-    const float offset = 10.0f;
-
-    float btnW, btnH, menuX, menuY;
-
-    _buttonMenu.onclick("menu");
-    _buttonMenu.size(QSize(50, 20));
-    btnW = _buttonMenu.size().width();
-    btnH = _buttonMenu.size().height();
-    menuX = _width - (btnW + offset);
-    menuY = _height - (btnH + offset);
-    _buttonMenu.position(QPointF(menuX, menuY));
-}
 
 void readConfiguration()
 {
@@ -665,7 +683,75 @@ void calculateFPS()
         else { _fps = _cur_fps; }
 
         _cur_fps = 0;
-
         _time.start();
     }
 }
+
+void createUI(const QString&  name)
+{
+    if (!_listUI.contains(name))
+    {
+        OGUI* ui = OGUIScene::CreateUI(name);
+
+        if (ui != 0) _listUI.insert(name, ui);
+    }
+}
+
+void removeUI(const QString&  name)
+{
+    if (_listUI.contains(name)) delete _listUI.take(name);
+}
+
+void createUIButtons()
+{
+    if (_levelname.compare("MapWorldView") != 0)  createUI("ui");
+}
+
+void removeUIButtons() { removeUI("ui"); }
+void createMenu()
+{
+    _isMenu = true;
+    removeUIButtons();
+    createUI("GameMenu");
+}
+void removeMenu() { removeUI("GameMenu"); }
+
+void createRetryMenu()
+{
+    _isMenu = true;
+    removeUIButtons();
+    createUI("RetryMenu");
+}
+
+void removeRetryMenu() { removeUI("RetryMenu"); }
+
+// Actions
+void backToIsland()
+{
+    UNIMPLEMENTED
+    closeGame();
+}
+
+inline void restartLevel()
+{
+    removeRetryMenu();
+    removeMenu();
+    _world->Reload();
+    createUIButtons();
+    _isMenu = false;
+}
+
+void resumeGame()
+{
+    removeRetryMenu();
+    removeMenu();
+    createUIButtons();
+    _isMenu = false;
+}
+
+void showOCDCriterial()
+{
+    UNIMPLEMENTED
+}
+
+void mouseEven(OGUI* ui, QMouseEvent* e) { ui->_MouseEvent(e); }

@@ -2,9 +2,11 @@
 #define OPENGOO_H
 
 #include "og_gameengine.h"
-#include "physics.h"
+//#include "physics.h"
 #include "og_world.h"
 #include "og_windowcamera.h"
+#include "og_uiscene.h"
+#include "og_states.h"
 
 #include <QDir>
 #include <QTime>
@@ -24,10 +26,10 @@ namespace camera
     int numberCameras = 0;
     int traveltime;
     int sumTime;
-    qreal xSpeed;
-    qreal ySpeed;
-    qreal zoomSpeed;
-    qreal pause;
+    float xSpeed;
+    float ySpeed;
+    float zoomSpeed;
+    int pause;
 }
 
 struct Scroll
@@ -39,25 +41,26 @@ struct Scroll
 };
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
-const qreal K = 10.0;
+const float K = 10.0f;
 const int FRAMERATE = 60;
 const int STEPS = 60;
 
 OGGameEngine* _gameEngine = 0;
-OGPhysicsEngine* _physicsEngine = 0;
 OGWorld* _world;
 
 QTime* _gameTime = 0;
 int _lastTime;
-qreal _timeStep;
-qreal _timeScrollStep;
+float _timeStep;
+float _timeScrollStep;
 
 QList<OGSprite*>* _sprites;
 QList<OGButton*>* _buttons = 0;
+QHash<QString, OGUI*> _listUI;
+OGUI* _uiButtons = 0;
+OGUI* _menu = 0;
+OGUI* _retryMenu = 0;
 
 OGBall* _selectedBall = 0;
-
-OGButton _buttonMenu;
 
 QString _levelname;
 bool _isLevelInitialize;
@@ -65,12 +68,17 @@ bool _isPause;
 bool _E404;
 bool _isScrollLock;
 bool _isZoomLock;
+bool _isMenu = false;
+
+QList<OGState> _listStates;
+
 Scroll _scroll;
 int _scrolltime = 0;
-OGWindowCamera _camera;
+OGWindowCamera* _camera;
+OGWindowCamera* _wcamera;
 bool _isMoveCamera;
-qreal _width;
-qreal _height;
+int _width;
+int _height;
 QTime _time;
 QTimer _timer;
 int _nearestCounter = 0;
@@ -83,19 +91,36 @@ OGConfig _config = {
     800,    // width
     600,    // height
     true,   // fullscreen
-    ""      // language
+    "en"      // language
 };
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 void calculateFPS();
 void closeGame();
 void readConfiguration();
+
+void mouseEven(OGUI* ui,QMouseEvent* e);
+
+void createUI(const QString& name);
+void removeUI(const QString&  name);
+
+void createUIButtons();
+void removeUIButtons();
+
+void createMenu();
+void removeMenu();
+
+void createRetryMenu();
+void removeRetryMenu();
+
+void backToIsland();
+void restartLevel();
+void resumeGame();
+void showOCDCriterial();
+
 void scroll();
 void zoom(int direct);
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
-void buttonMenuAction();
-void buttonMenu();
-void Event(const QString & event);
 
 QPointF logicalToWindow(const QRectF & rect, qreal zoom);
 QPoint windowToLogical(const QPoint & position);

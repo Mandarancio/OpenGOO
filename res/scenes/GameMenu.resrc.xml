@@ -1,0 +1,7 @@
+<ResourceManifest>
+	<Resources id="scene_GameMenu">
+		<SetDefaults idprefix="" path="./" />
+<Image id="IMAGE_IMAGES_GAMEMENUBUTTON" path="res/images/gamemenubutton" />
+<Image id="IMAGE_IMAGES_GAMEMENUBUTTON_OVER" path="res/images/gamemenubutton_over" />
+</Resources>
+</ResourceManifest>

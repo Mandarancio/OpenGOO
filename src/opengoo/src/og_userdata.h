@@ -8,6 +8,7 @@ struct OGUserData
 
     Type type;
     void* data;
+    int id;
 };
 
 #endif // OG_USERDATA_H

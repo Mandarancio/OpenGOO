@@ -8,7 +8,7 @@
 
 OGGameEngine* OGGameEngine::gameEngine_ = 0;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (GameInitialize(argc, argv))
     {
@@ -56,26 +56,23 @@ OGGameEngine::~OGGameEngine()
 bool OGGameEngine::initialize()
 {
     QScreen* screen = QGuiApplication::primaryScreen();
-    window_ = new OGWindow;
+    window_ = new OGWindow(0);
 
     // Set fixed size of window
     window_->setMaximumSize(QSize(getWidth(), getHeight()));
     window_->setMinimumSize(QSize(getWidth(), getHeight()));
 
     // Center window on screen
-    int x = qRound((screen->geometry().width() - getWidth()) / 2.0);
-    int y = qRound((screen->geometry().height() - getHeight()) /2.0);
+    int x = qRound((screen->geometry().width() - getWidth()) / 2.0f);
+    int y = qRound((screen->geometry().height() - getHeight()) / 2.0f);
     window_->setGeometry(x, y, getWidth(), getHeight());
-
-    connect(&gameCycle_, SIGNAL(timeout()), this, SLOT(gameLoop()));
 
     if (fullscreen_)
     {
-    //initialize video mode
+        //initialize video mode
 #ifdef Q_OS_WIN32
         isVideoModeSupported_ = OGVideoMode::testVideoMode(getWidth()
-                                                           , getHeight()
-                                                           );
+                                , getHeight());
 
         if (isVideoModeSupported_)
         {
@@ -85,7 +82,7 @@ bool OGGameEngine::initialize()
         }
         else { logWarn("Video mode not supported"); }
 #else
-    window_->show();
+        window_->show();
 #endif // Q_OS_WIN32
     }
     else { window_->show(); }
@@ -97,43 +94,30 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
 {
     switch (event->type())
     {
-    case QEvent::ApplicationActivate:
-        GameActivate();
-        window_->render();
-        gameCycle_.start(frameDelay_);
-        window_->setKeyboardGrabEnabled(true);
+        case QEvent::ApplicationActivate:
+            GameActivate();            
+            getWindow()->setActive(true);
+            getWindow()->setKeyboardGrabEnabled(true);
 
-        return true;
+            return true;
 
-    case QEvent::ApplicationDeactivate:
-        gameCycle_.stop();
-        GameDeactivate();
-        window_->render();
-        window_->setKeyboardGrabEnabled(false);        
+        case QEvent::ApplicationDeactivate:
+            getWindow()->setActive(false);
+            GameDeactivate();
+            getWindow()->setKeyboardGrabEnabled(false);
 
-        return true;
-    default:
+            return true;
+        default:
 
-        break;
+            break;
     }
 
     return QObject::eventFilter(obj, event);
 }
 
-void OGGameEngine::changeFrameRate()
-{
-    gameCycle_.stop();
-    gameCycle_.start(frameDelay_);
-}
-
 void OGGameEngine::gameExit()
 {
-    gameCycle_.stop();
+    getWindow()->setActive(false);
     GameEnd();
     QGuiApplication::quit();
-}
-
-void OGGameEngine::gameLoop()
-{
-    GameCycle();
 }

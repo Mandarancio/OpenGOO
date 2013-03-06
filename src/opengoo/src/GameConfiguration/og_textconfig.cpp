@@ -32,21 +32,21 @@ WOGText* OGTextConfig::Parser(const QString & language)
     return obj;
 }
 
-WOGString* OGTextConfig::CreateString(const QDomElement & elemen
+WOGString* OGTextConfig::CreateString(const QDomElement & element
                                       , const QString & language
                                       )
 {
     WOGString* obj;
 
     obj = new WOGString;
-    obj->id = elemen.attribute("id");
+    obj->id = element.attribute("id");
 
-    if (language == "en") { obj->text = elemen.attribute("text"); }
-    else if (language == "es") { obj->text = elemen.attribute("es"); }
-    else if (language == "fr") { obj->text = elemen.attribute("es"); }
-    else if (language == "de") { obj->text = elemen.attribute("es"); }
-    else if (language == "it") { obj->text = elemen.attribute("es"); }
-    else if (language == "ru") { obj->text = elemen.attribute("es"); }
+    if (language == "en") { obj->text = element.attribute("text"); }
+    else if (language == "es") { obj->text = element.attribute("es"); }
+    else if (language == "fr") { obj->text = element.attribute("es"); }
+    else if (language == "de") { obj->text = element.attribute("es"); }
+    else if (language == "it") { obj->text = element.attribute("es"); }
+    else if (language == "ru") { obj->text = element.attribute("es"); }
 
     return obj;
 }

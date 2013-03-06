@@ -12,9 +12,12 @@ OGPhysicsEngine::~OGPhysicsEngine()
     delete world_;
 }
 
-bool OGPhysicsEngine::Initialize()
+bool OGPhysicsEngine::Initialize(float32 x, float32 y, bool sleep)
 {
     if (world_) { return false; }
+
+    gravity_.Set(x, y);
+    isSleep_ = sleep;
 
     world_ = new b2World(gravity_);
     world_->SetAllowSleeping(isSleep_);
@@ -22,11 +25,25 @@ bool OGPhysicsEngine::Initialize()
     return true;
 }
 
+void OGPhysicsEngine::Reload()
+{
+    delete world_;
+
+    world_ = new b2World(gravity_);
+    world_->SetAllowSleeping(isSleep_);
+}
+
 OGPhysicsEngine* OGPhysicsEngine::GetInstance()
 {
     if (!instance_) { instance_ = new OGPhysicsEngine; }
 
     return instance_;
+}
+
+void OGPhysicsEngine::SetGravity(float32 x, float32 y)
+{
+    gravity_.Set(x, y);
+    world_->SetGravity(gravity_);
 }
 
 void OGPhysicsEngine::SetSimulation(int32 velocityIterations

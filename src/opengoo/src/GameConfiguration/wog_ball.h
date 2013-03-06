@@ -22,7 +22,7 @@ struct WOGCircleBall : public WOGBallShape
     WOGCircleBall(float diameter=0, float variation=0)
         : WOGBallShape("circle", variation)
     {
-        radius = diameter*0.5;
+        radius = diameter*0.5f;
     }
 };
 

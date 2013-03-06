@@ -5,5 +5,5 @@
 <line anchor="0.0,20.0" id="ground" material="rock" normal="0,1" static="true" tag="walkable" />
 <SceneLayer alpha="1" animdelay="1" depth="-10" image="IMAGE_LEVEL1_BG" name="bg" rotation="0" scalex="8.127" scaley="7.961" tilex="false" tiley="false" x="2.35" y="514.22" />
 <SceneLayer alpha="1" animdelay="1" depth="0" image="IMAGE_LEVEL1_GROUND" name="ground" rotation="0" scalex="2.05" scaley="1.138" tilex="false" tiley="false" x="-7.14" y="35.47" />
-<SceneLayer alpha="1" animdelay="1" depth="-5" image="IMAGE_LEVEL1_ROCK" name="rock" rotation="0" scalex="2.827" scaley="4.289" tilex="false" tiley="false" x="3.51" y="222.23" />
+<SceneLayer alpha="1" animdelay="1" depth="-5" image="IMAGE_LEVEL1_ROCK" name="rock" rotation="0" scalex="4.105" scaley="4.049" tilex="false" tiley="false" x="-9.5" y="190.0" />
 </scene>

@@ -5,7 +5,7 @@
 #include "og_world.h"
 #include "og_userdata.h"
 
-bool initializePhysicsEngine(const QPointF gravity, bool sleep);
+bool initializePhysicsEngine(const QPointF &gravity, bool sleep);
 
 OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius, float32 angle
                             , WOGMaterial* material, bool dynamic

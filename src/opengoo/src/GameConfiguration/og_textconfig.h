@@ -10,7 +10,7 @@ public:
     OGTextConfig(const QString & filename);
 
     WOGText* Parser(const QString & language);
-    WOGString* CreateString(const QDomElement & elemen
+    WOGString* CreateString(const QDomElement & element
                             , const QString & language
                             );
 };

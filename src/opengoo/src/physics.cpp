@@ -19,17 +19,6 @@ extern OGWorld* _world;
 
 using namespace physics;
 
-bool initializePhysicsEngine(const QPointF gravity, bool sleep)
-{
-    OGPhysicsEngine* engine;
-
-    engine = OGPhysicsEngine::GetInstance();
-    engine->SetGravity(gravity.x(), gravity.y());
-    engine->SetSleep(sleep);
-
-    return engine->Initialize();
-}
-
 OGPhysicsBody* createCircle(const QPointF & position, float32 radius
                             , float32 angle, WOGMaterial* material
                             , bool dynamic, float mass, OGUserData* data)

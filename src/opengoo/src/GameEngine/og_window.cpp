@@ -5,7 +5,7 @@
 #include <QSurfaceFormat>
 #include <QDebug>
 
-OGWindow::OGWindow(QWindow* parent)
+OGWindow::OGWindow(QWindow *parent)
     : QWindow(parent)
 { 
     setSurfaceType(QWindow::OpenGLSurface);
@@ -20,6 +20,11 @@ OGWindow::OGWindow(QWindow* parent)
 
     paintDevice_ = 0;
     context_ = 0;
+
+    timer_ = new QTimer();
+    QObject::connect(timer_, SIGNAL(timeout()), this, SLOT(processing()));
+    timer_->start();
+    isActive_ = false;
 }
 
 OGWindow::~OGWindow()
@@ -42,9 +47,9 @@ void OGWindow::exposeEvent(QExposeEvent* event)
 {
     Q_UNUSED(event);
 
-    if (!isExposed()) { return; }
+    if (!isExposed()) return;
 
-    render();
+    draw();
 }
 
 void OGWindow::showEvent(QShowEvent* event)
@@ -60,10 +65,10 @@ void OGWindow::resizeEvent(QResizeEvent* event)
 
     if (!isExposed()) { return; }
 
-    render();
+    draw();
 }
 
-bool OGWindow::initOpenGL_()
+bool OGWindow::_initOpenGL()
 {
     bool needsInitialize = false;
 
@@ -95,16 +100,19 @@ bool OGWindow::initOpenGL_()
     return true;
 }
 
-void OGWindow::render()
+void OGWindow::draw()
 {
     if (!isExposed()) { return; }
 
-    if (!initOpenGL_())
+    if (context_ == 0)
     {
-        delete paintDevice_;
-        paintDevice_ = 0;
+        if (!_initOpenGL())
+        {
+            delete paintDevice_;
+            paintDevice_ = 0;
 
-        return;
+            return;
+        }
     }
 
     if (!paintDevice_)
@@ -136,4 +144,12 @@ void OGWindow::mouseMoveEvent(QMouseEvent* event)
 void OGWindow::wheelEvent(QWheelEvent* event)
 {
     MouseWheel(event);
+}
+
+void OGWindow::processing()
+{
+    if (!isActive_) return;
+
+    GameCycle();
+    draw();
 }

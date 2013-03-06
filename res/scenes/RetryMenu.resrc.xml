@@ -1,0 +1,7 @@
+<ResourceManifest>
+	<Resources id="scene_RetryMenu">
+		<SetDefaults idprefix="" path="./" />
+<Image id="IMAGE_GLOBAL_CANCEL_UP" path="res/images/cancel_up" />
+<Image id="IMAGE_GLOBAL_CANCEL_OVER" path="res/images/cancel_over" />
+</Resources>
+</ResourceManifest>

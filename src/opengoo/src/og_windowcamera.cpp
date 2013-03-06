@@ -1,60 +1,61 @@
 #include "og_windowcamera.h"
 #include <QDebug>
 
-OGWindowCamera::OGWindowCamera(const OGCamera & camera)
-{
-    OGCamera(camera.center(), camera.size(), camera.zoom()
-             , camera.traveltime(), camera.pause());
-
-    Scale(zoom());
+OGWindowCamera::OGWindowCamera(const OGCamera& camera)
+    : OGCamera(camera.center(), camera.size(), camera.zoom()
+               , camera.traveltime(), camera.pause())
+{     
+    Zoom(zoom());
 }
 
 OGWindowCamera& OGWindowCamera::operator=(const OGCamera & camera)
 {
-    center(camera.center());
-    size(camera.size());
-    zoom(camera.zoom());
-    traveltime(camera.traveltime());
-    pause(camera.pause());
-    Scale(zoom());
+    SetCenter(camera.center());
+    SetSize(camera.size());
+    SetZoom(camera.zoom());
+    SetTraveltime(camera.traveltime());
+    SetPause(camera.pause());
+    Zoom(zoom());
 
     return *this;
 }
 
-void OGWindowCamera::SetPosition(const QPointF &position)
+void OGWindowCamera::SetPosition(const QPoint &position)
 {
-    center(position);
-    window_.moveCenter(ToWindowCoordinates_(center()));
+    SetCenter(position);
+    window_.moveCenter(_ToWindowCoordinates(center()));
 }
 
-void OGWindowCamera::SetPosition(qreal x, qreal y)
+void OGWindowCamera::SetPosition(int x, int y)
 {
-    center(x, y);
-    window_.moveCenter(ToWindowCoordinates_(center()));
+    SetCenter(x, y);
+    window_.moveCenter(_ToWindowCoordinates(center()));
 }
 
-void OGWindowCamera::SetX(qreal x)
+void OGWindowCamera::SetX(int x)
 {
-    center(x, center().y());
-    window_.moveCenter(ToWindowCoordinates_(center()));
+    SetCenter(x, center().y());
+    window_.moveCenter(_ToWindowCoordinates(center()));
 }
 
-void OGWindowCamera::SetY(qreal y)
+void OGWindowCamera::SetY(int y)
 {
-    center(center().x(), y);
-    window_.moveCenter(ToWindowCoordinates_(center()));
+    SetCenter(center().x(), y);
+    window_.moveCenter(_ToWindowCoordinates(center()));
 }
 
-QPointF OGWindowCamera::ToWindowCoordinates_(const QPointF &center)
+QPoint OGWindowCamera::_ToWindowCoordinates(const QPoint &center)
 {
-    return QPointF(center.x(), center.y()*(-1.0));
+    return QPoint(center.x(), center.y()*(-1));
 }
 
-void OGWindowCamera::Scale(qreal zoom)
+void OGWindowCamera::Zoom(float zoom)
 {
-    OGCamera::zoom(zoom);
-    qreal w = size().width()/zoom;
-    qreal h = size().height()/zoom;
-    window_.setSize(QSizeF(w, h));
-    window_.moveCenter(ToWindowCoordinates_(center()));
+    if (zoom == 0) return;
+
+    SetZoom(zoom);
+    int w = qRound(size().width() / zoom);
+    int h = qRound(size().height() / zoom);
+    window_.setSize(QSize(w, h));
+    window_.moveCenter(_ToWindowCoordinates(center()));
 }

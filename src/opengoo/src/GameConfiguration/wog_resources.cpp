@@ -14,7 +14,7 @@ QString WOGResources::GetResource(
         WOGResource::Type type,
         const QString & id,
         const QString & groupid
-        )
+        ) const
 {
     for (int i=0; i<group.size(); i++)
     {

@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QTimer>
 
 class OGWindow : public QWindow
 {
@@ -17,7 +18,9 @@ public:
     explicit OGWindow(QWindow* parent=0);
     virtual ~OGWindow();
 
-    void render();
+    void draw();
+
+    void setActive(bool status) { isActive_ = status; }
 
 protected:
     void keyReleaseEvent(QKeyEvent* event);
@@ -33,8 +36,13 @@ protected:
 private:
     QOpenGLContext* context_;
     QOpenGLPaintDevice* paintDevice_;
+    QTimer* timer_;
+    bool isActive_;
 
-    bool initOpenGL_();
+    bool _initOpenGL();
+
+private slots:
+    void processing();
 };
 
 #endif // OG_WINDOW_H

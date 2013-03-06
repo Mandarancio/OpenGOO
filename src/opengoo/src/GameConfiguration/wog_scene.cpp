@@ -33,3 +33,13 @@ WOGScene::~WOGScene()
 
     while (!particle.isEmpty()) { delete particle.takeFirst(); }
 }
+
+WOGButtonGroup* WOGScene::GetButtonGroup(const QString& id)
+{
+    Q_FOREACH(WOGButtonGroup * group, buttongroup)
+    {
+        if (group->id.compare(id) == 0) { return group; }
+    }
+
+    return 0;
+}

@@ -24,7 +24,7 @@ public:
 
     float GetLenghth()
     {
-        return b2Distance(b1_->GetBodyPosition(), b2_->GetBodyPosition());
+        return QLineF(*b1_->GetPosition(), *b2_->GetPosition()).length();
     }
 
     void Paint(QPainter* painter, bool debug=false);

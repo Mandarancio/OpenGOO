@@ -9,16 +9,16 @@
 struct WOGPoi
 {
     QPointF position;
-    qreal traveltime;
-    qreal pause;
-    qreal zoom;
+    float traveltime;
+    float pause;
+    float zoom;
 };
 
 struct WOGCamera
 {
     QString aspect;
     QPointF endpos;
-    qreal endzoom;
+    float endzoom;
     QList<WOGPoi*> poi;
 
     ~WOGCamera();
@@ -49,7 +49,7 @@ struct WOGLevelExit
 struct WOGPipe
 {
     QString id;
-    qreal depth;
+    float depth;
     QList<QPointF> vertex;
 };
 
@@ -68,7 +68,7 @@ struct WOGLevel
     bool autobounds;
     QColor textcolor;
     bool texteffects;
-    qreal timebugprobability;
+    float timebugprobability;
     bool strandgeom;
     bool allowskip;
     QList<WOGCamera*> camera;

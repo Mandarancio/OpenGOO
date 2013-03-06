@@ -4,7 +4,7 @@
 #include <QDebug>
 
 
-OGSceneConfig::OGSceneConfig(const QString & filename)
+OGSceneConfig::OGSceneConfig(const QString &filename)
     : OGXmlConfig(filename)
 {
     SetRootTag("scene");
@@ -18,24 +18,24 @@ WOGScene* OGSceneConfig::Parser()
     scene->maxx = rootElement.attribute("maxx").toDouble();
     scene->maxy = rootElement.attribute("maxy").toDouble();
     scene->backgroundcolor =
-            StringToColor(rootElement.attribute("backgroundcolor"));
+        StringToColor(rootElement.attribute("backgroundcolor"));
 
-    QDomNode node =rootElement.firstChild();
+    QDomNode node = rootElement.firstChild();
 
     while (!node.isNull())
     {
         QDomElement domElement = node.toElement();
 
         if (domElement.tagName() == "SceneLayer")
-        {            
+        {
             scene->sceneLayer << CreateSceneLayer(domElement);
         }
         else if (domElement.tagName() == "label")
-        {            
+        {
             scene->label << CreateLabel(domElement);
         }
         else if (domElement.tagName() == "buttongroup")
-        {            
+        {
             scene->buttongroup << CreateButtonGroup(domElement);
         }
         else if (domElement.tagName() == "button")
@@ -73,23 +73,21 @@ WOGScene* OGSceneConfig::Parser()
     return scene;
 }
 
-WOGButton* OGSceneConfig::CreateButton(const QDomElement & element)
+WOGButton* OGSceneConfig::CreateButton(const QDomElement &element)
 {
     WOGButton* obj = new WOGButton;
     obj->id = element.attribute("id");
     obj->depth = element.attribute("depth").toDouble();
     obj->position = StringToPoint(element.attribute("x")
-                                  , element.attribute("y")
-                                  );
+                                  , element.attribute("y"));
 
     obj->scale = StringToPoint(element.attribute("scalex")
-                               , element.attribute("scaley")
-                               );
+                               , element.attribute("scaley"));
 
     obj->rotation = element.attribute("rotation").toDouble();
     obj->alpha = element.attribute("alpha", "1").toDouble();
-    obj->colorize = StringToColor(element.attribute("colorize", "255,255,255")
-                                  );
+    obj->colorize = StringToColor(element.attribute("colorize"
+                                  , "255,255,255"));
 
     obj->up = element.attribute("up");
     obj->over = element.attribute("over");
@@ -97,18 +95,19 @@ WOGButton* OGSceneConfig::CreateButton(const QDomElement & element)
     obj->onclick = element.attribute("onclick");
     obj->onmouseenter = element.attribute("onmouseenter");
     obj->onmouseexit = element.attribute("onmouseexit");
+    obj->text = element.attribute("text");
+    obj->font = element.attribute("font");
 
     return obj;
 }
 
-WOGLabel* OGSceneConfig::CreateLabel(const QDomElement & element)
+WOGLabel* OGSceneConfig::CreateLabel(const QDomElement &element)
 {
     WOGLabel* obj = new WOGLabel;
     obj->id = element.attribute("id");
     obj->depth = element.attribute("depth").toDouble();
     obj->position = StringToPoint(element.attribute("x")
-                                  , element.attribute("y")
-                                  );
+                                  , element.attribute("y"));
 
     obj->align = element.attribute("align");
     obj->rotation = element.attribute("rotation").toDouble();
@@ -121,24 +120,22 @@ WOGLabel* OGSceneConfig::CreateLabel(const QDomElement & element)
     return obj;
 }
 
-WOGSceneLayer* OGSceneConfig::CreateSceneLayer(const QDomElement & element)
+WOGSceneLayer* OGSceneConfig::CreateSceneLayer(const QDomElement &element)
 {
     WOGSceneLayer* obj = new WOGSceneLayer;
     obj->id = element.attribute("id");
     obj->name = element.attribute("name");
     obj->depth = element.attribute("depth").toDouble();
     obj->position = StringToPoint(element.attribute("x")
-                                  , element.attribute("y")
-                                  );
+                                  , element.attribute("y"));
 
     obj->scale = StringToPoint(element.attribute("scalex")
-                               , element.attribute("scaley")
-                               );
+                               , element.attribute("scaley"));
 
     obj->rotation = element.attribute("rotation").toDouble();
     obj->alpha = element.attribute("alpha", "1").toDouble();
-    obj->colorize = StringToColor(element.attribute("colorize", "255,255,255")
-                                  );
+    obj->colorize = StringToColor(element.attribute("colorize"
+                                  , "255,255,255"));
 
     obj->image = element.attribute("image");
     obj->anim = element.attribute("anim");
@@ -147,12 +144,11 @@ WOGSceneLayer* OGSceneConfig::CreateSceneLayer(const QDomElement & element)
     return obj;
 }
 
-WOGCircle* OGSceneConfig::CreateCircle(const QDomElement & element)
+WOGCircle* OGSceneConfig::CreateCircle(const QDomElement &element)
 {
     WOGCircle* obj = new WOGCircle;
     obj->position = StringToPoint(element.attribute("x")
-                                  , element.attribute("y")
-                                  );
+                                  , element.attribute("y"));
 
     obj->radius = element.attribute("radius").toDouble();
 
@@ -161,7 +157,7 @@ WOGCircle* OGSceneConfig::CreateCircle(const QDomElement & element)
     return obj;
 }
 
-WOGLinearForceField* OGSceneConfig::CreateLinearForceField(const QDomElement & element)
+WOGLinearForceField* OGSceneConfig::CreateLinearForceField(const QDomElement &element)
 {
     WOGLinearForceField* obj = new WOGLinearForceField;
     obj->type = element.attribute("type");
@@ -173,7 +169,7 @@ WOGLinearForceField* OGSceneConfig::CreateLinearForceField(const QDomElement & e
     return obj;
 }
 
-WOGParticle* OGSceneConfig::CreateParticle(const QDomElement & element)
+WOGParticle* OGSceneConfig::CreateParticle(const QDomElement &element)
 {
     WOGParticle* obj = new WOGParticle;
     obj->effect = element.attribute("effect");
@@ -184,13 +180,13 @@ WOGParticle* OGSceneConfig::CreateParticle(const QDomElement & element)
     return obj;
 }
 
-WOGButtonGroup* OGSceneConfig::CreateButtonGroup(const QDomElement & element)
+WOGButtonGroup* OGSceneConfig::CreateButtonGroup(const QDomElement &element)
 {
     WOGButtonGroup* obj = new WOGButtonGroup;
     obj->id = element.attribute("id");
     obj->osx = StringToPoint(element.attribute("osx"));
 
-    for(QDomNode n=element.firstChild(); !n.isNull(); n=n.nextSibling())
+    for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
     {
         obj->button << CreateButton(n.toElement());
     }
@@ -198,7 +194,7 @@ WOGButtonGroup* OGSceneConfig::CreateButtonGroup(const QDomElement & element)
     return obj;
 }
 
-WOGLine* OGSceneConfig::CreateLine(const QDomElement & element)
+WOGLine* OGSceneConfig::CreateLine(const QDomElement &element)
 {
     WOGLine* obj = new WOGLine;
     obj->anchor = StringToPoint(element.attribute("anchor"));
@@ -209,7 +205,7 @@ WOGLine* OGSceneConfig::CreateLine(const QDomElement & element)
     return obj;
 }
 
-WOGRadialForceField* OGSceneConfig::CreateRadialForceField(const QDomElement & element)
+WOGRadialForceField* OGSceneConfig::CreateRadialForceField(const QDomElement &element)
 {
     WOGRadialForceField* obj = new WOGRadialForceField;
     obj->id = element.attribute("id");
@@ -226,18 +222,16 @@ WOGRadialForceField* OGSceneConfig::CreateRadialForceField(const QDomElement & e
     return obj;
 }
 
-WOGRectangle* OGSceneConfig::CreateRectanle(const QDomElement & element)
+WOGRectangle* OGSceneConfig::CreateRectanle(const QDomElement &element)
 {
     WOGRectangle*  obj = new WOGRectangle;
     obj->position = StringToPoint(element.attribute("x")
-                                  , element.attribute("y")
-                                  );
+                                  , element.attribute("y"));
 
     obj->size = StringToSize(element.attribute("width")
-                             , element.attribute("height")
-                             );
+                             , element.attribute("height"));
 
-    obj->rotation =element.attribute("rotation").toDouble();
+    obj->rotation = element.attribute("rotation").toDouble();
 
     CreatePObject(obj, element);
 
@@ -245,7 +239,7 @@ WOGRectangle* OGSceneConfig::CreateRectanle(const QDomElement & element)
 }
 
 void OGSceneConfig::CreatePObject(WOGPObject* pobject
-                                  , const QDomElement & element)
+                                  , const QDomElement &element)
 {
     pobject->id = element.attribute("id");
 

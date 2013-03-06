@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1052.3622"
+   height="744.09448"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="buttons.svg">
+  <defs
+     id="defs4">
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter4559-4">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.61108568"
+         id="feGaussianBlur4561-5" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter4559-4-1">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.61108568"
+         id="feGaussianBlur4561-5-7" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4755">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.6969224"
+         id="feGaussianBlur4757" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4759">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.73937764"
+         id="feGaussianBlur4761" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4763">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.40739045"
+         id="feGaussianBlur4765" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4767">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.69100824"
+         id="feGaussianBlur4769" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4771">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.69100824"
+         id="feGaussianBlur4773" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4775">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.69100824"
+         id="feGaussianBlur4777" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4779">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.69100824"
+         id="feGaussianBlur4781" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter4759-2">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.73937764"
+         id="feGaussianBlur4761-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter4759-8">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.73937764"
+         id="feGaussianBlur4761-8" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4842">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.58"
+         id="feGaussianBlur4844" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4858">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.684322"
+         id="feGaussianBlur4860" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4862">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.69791573"
+         id="feGaussianBlur4864" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.80700177"
+     inkscape:cx="334.71987"
+     inkscape:cy="642.82581"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="774"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-308.2677)">
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4.26095389999999960;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.10000000000000001;filter:url(#filter4763)"
+       id="uiMenu_up"
+       width="55.739044"
+       height="25.739046"
+       x="19.630487"
+       y="324.84979"
+       rx="2.3714297"
+       ry="8.777235"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:label="#rect2985" />
+    <rect
+       style="opacity:0.2;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:5.89917421;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.1;filter:url(#filter4767)"
+       id="uiRetry_up_transparent"
+       width="114.10082"
+       height="24.100826"
+       x="92.955185"
+       y="325.66891"
+       rx="4.8544445"
+       ry="8.2185879"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:transform-center-y="5.3505994"
+       inkscape:transform-center-x="1.2397766e-005"
+       inkscape:export-filename="H:\OpenGOO\uiRetry_up_transparent.png"
+       inkscape:label="#rect2985-1" />
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:5.89917421000000000;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.10000000000000001;filter:url(#filter4771)"
+       id="uiRetry_over"
+       width="114.10082"
+       height="24.100826"
+       x="92.9496"
+       y="373.88321"
+       rx="4.8544445"
+       ry="8.2185879"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:transform-center-y="5.3505994"
+       inkscape:transform-center-x="1.2397766e-005"
+       inkscape:export-filename="H:\OpenGOO\uiRetry_over.png"
+       inkscape:label="#rect2985-1-7" />
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:5.89917421000000000;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.10000000000000001;filter:url(#filter4759)"
+       id="gamemenubutton"
+       width="114.10082"
+       height="24.100826"
+       x="270.74408"
+       y="329.66946"
+       rx="4.8544445"
+       ry="8.2185879"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:transform-center-y="9.0194904"
+       inkscape:transform-center-x="2.9711369e-005"
+       inkscape:export-filename="H:\OpenGOO\gamemenubutton.png"
+       transform="matrix(2.0576206,0,0,1.6856946,-309.95919,-225.61463)"
+       inkscape:label="#rect2985-1-7-4" />
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-opacity:0.39215686;stroke-dasharray:none;filter:url(#filter4842)"
+       id="gamemenubutton_over"
+       width="256"
+       height="60"
+       x="235.27835"
+       y="406.87466"
+       rx="12.159704"
+       ry="14.823026"
+       inkscape:label="#rect4836"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:5.20842695;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0.1;filter:url(#filter4862)"
+       id="cancel_up"
+       width="114.79157"
+       height="24.791573"
+       x="547.95435"
+       y="330.94977"
+       rx="9.6546946"
+       ry="7.9132438"
+       inkscape:label="#rect4846"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#969696;fill-opacity:1;fill-rule:evenodd;stroke:none;filter:url(#filter4858)"
+       id="cancel_over"
+       width="118.95885"
+       height="22.304783"
+       x="567.53284"
+       y="96.016594"
+       transform="matrix(1.0625327,0,0,1.1675373,-60.294409,268.33398)"
+       rx="9.6546946"
+       ry="7.9132438"
+       inkscape:label="#rect4848"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>

@@ -12,8 +12,9 @@ public:
     static OGPhysicsEngine* GetInstance(void);
     static void DestroyInstance(void) { if (instance_) delete instance_; }
 
-    bool Initialize();
-    void SetGravity(float32 x, float32 y) { gravity_.Set(x, y); }
+    bool Initialize(float32 x, float32 y, bool sleep);
+    void Reload();
+    void SetGravity(float32 x, float32 y);
     void SetSimulation(int32 velocityIterations, int32 positionIterations
                        , int steps);
 

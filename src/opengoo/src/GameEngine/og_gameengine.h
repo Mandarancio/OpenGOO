@@ -2,7 +2,6 @@
 #define OG_GAMEENGINE_H
 
 #include <QObject>
-#include <QTimer>
 
 #include "og_window.h"
 
@@ -33,7 +32,6 @@ protected:
     int frameDelay_;
     bool fullscreen_;
     OGWindow* window_;
-    QTimer gameCycle_;
 
     bool eventFilter(QObject* obj, QEvent* event);
 
@@ -52,8 +50,6 @@ public:
 
 public slots:
     void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 /framerate); }
-    void changeFrameRate();
-    void gameLoop();
 
 private slots:
     void gameExit();

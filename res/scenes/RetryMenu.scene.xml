@@ -1,0 +1,6 @@
+<scene>
+	<buttongroup id="retrymenugroup" osx="140,0">
+<button alpha="1" colorize="255,255,255" depth="10" font="FONT_OUTLINE_18" id="ok" onclick="restartlevelrightnow" over="IMAGE_GLOBAL_CANCEL_OVER" rotation="0" scalex="0.488" scaley="1.363" text="OK_BUTTON_TEXT" up="IMAGE_GLOBAL_CANCEL_UP" x="-62.5" y="-98.13" />
+<button alpha="1" colorize="255,255,255" depth="10" font="FONT_OUTLINE_18" id="cancel" onclick="resumegame" over="IMAGE_GLOBAL_CANCEL_OVER" rotation="0" scalex="0.811" scaley="1.05" text="CANCEL_BUTTON_TEXT" up="IMAGE_GLOBAL_CANCEL_UP" x="48.94" y="-96.75" />
+</buttongroup>
+</scene>
