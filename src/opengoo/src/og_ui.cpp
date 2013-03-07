@@ -1,5 +1,10 @@
 #include "og_ui.h"
 
+OGUI::~OGUI()
+{
+    while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
+}
+
 void OGUI::Paint(QPainter* p, float zoom)
 {
     Q_FOREACH(OGUIButton * btn, buttons_)
