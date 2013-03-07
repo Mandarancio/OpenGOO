@@ -280,30 +280,38 @@ bool OGWorld::_LoadText(const QString & path, bool share)
 }
 
 void OGWorld::ClearLocalData()
-{
-    logDebug("Clear level");
+{    
+    if (levelData_ != 0)
+    {
+        logDebug("Clear level");
 
-    if (levelData_) { delete levelData_; }
+        delete levelData_;
+        levelData_ = 0;
+    }
 
-    levelData_ = 0;
+    if (sceneData_ != 0)
+    {
+        logDebug("Clear scene");
 
-    logDebug("Clear scene");
+        delete sceneData_;
+        sceneData_ = 0;
+    }
 
-    if (sceneData_) { delete sceneData_; }
+    if (resourcesData_[1] != 0)
+    {
+        logDebug("Clear resources");
 
-    sceneData_ = 0;
+        delete resourcesData_[1];
+        resourcesData_[1] = 0;
+    }
 
-    logDebug("Clear resources");
+    if (textData_[1] != 0)
+    {
+        logDebug("Clear text");
 
-    if (resourcesData_[1]) { delete resourcesData_[1]; }
-
-    resourcesData_[1] = 0;
-
-    logDebug("Clear text");
-
-    if (textData_[1]) { delete textData_[1]; }
-
-    textData_[1] = 0;    
+        delete textData_[1];
+        textData_[1] = 0;
+    }
 }
 
 void OGWorld::CreateScene()
