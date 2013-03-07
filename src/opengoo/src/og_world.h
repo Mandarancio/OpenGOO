@@ -159,6 +159,7 @@ public:
     bool Initialize();
     bool Load();
     void Reload();
+    void CloseLevel();
 
     void Update();
 

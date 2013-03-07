@@ -729,6 +729,7 @@ void removeRetryMenu() { removeUI("RetryMenu"); }
 void backToIsland()
 {
     UNIMPLEMENTED
+    _world->CloseLevel();
     closeGame();
 }
 

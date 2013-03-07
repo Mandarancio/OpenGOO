@@ -755,3 +755,10 @@ void OGWorld::Update()
 {
     if (physicsEngine_ != 0) { physicsEngine_->Simulate(); }
 }
+void OGWorld::CloseLevel()
+{
+    qDebug("CloseLevel");
+
+    _ClearPhysics();
+    _ClearScene();
+}
