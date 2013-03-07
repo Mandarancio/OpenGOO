@@ -20,6 +20,8 @@ class OGUI
     friend void mouseEven(OGUI* ui, QMouseEvent* ee);
 
 public:
+    OGUI() :  btn_(0) {}
+    ~OGUI();
     void AddButton(OGUIButton* btn) { buttons_ << btn; }   
     void Paint(QPainter* p, float zoom);
 };

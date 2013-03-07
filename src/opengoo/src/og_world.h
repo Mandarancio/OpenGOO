@@ -123,10 +123,10 @@ public:
     static bool isExist(const QString& path_level);
 
     // Get properties
-    QList<OGBall*>* balls() { return &balls_; }
+    QList<OGBall*> balls() const { return balls_; }
     QList<OGButton*>* buttons() { return &buttons_; }
-    QList<OGSprite*>* sprites() { return &sprites_; }
-    QHash<int, OGStrand*>* strands() { return &strands_; }
+    QList<OGSprite*> sprites() const { return sprites_; }
+    QHash<int, OGStrand*> strands() const { return strands_; }
     QList<OGIBody*>* staticbodies() { return &staticBodies_; }
     OGCamera currentcamera() { return currentCamera_; }
     QString language() const { return language_; }
@@ -170,6 +170,8 @@ public:
     void RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()); }
 
     void StartSearching() { timer_->start(1000); }
+
+    friend void draw(QPainter* p, OGWorld* w);
 
 private slots:
     void findNearestAttachedBall();

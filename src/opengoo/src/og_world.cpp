@@ -769,4 +769,5 @@ void OGWorld::CloseLevel()
 
     _ClearPhysics();
     _ClearScene();
+//    ClearLocalData();
 }

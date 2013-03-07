@@ -411,7 +411,7 @@ inline void OGBall::FindJointBalls()
 
     jointBalls_.clear();
 
-    Q_FOREACH(OGBall * ball, *_world->balls())
+    Q_FOREACH(OGBall * ball, _world->balls())
     {
         if (ball->IsAttached())
         {
@@ -437,7 +437,7 @@ void OGBall::FindTarget()
     OGBall* nearestBall = 0;
     float dist1, dist2;
 
-    Q_FOREACH(OGBall * ball, *_world->balls())
+    Q_FOREACH(OGBall * ball, _world->balls())
     {
         if (ball->IsStanding())
         {

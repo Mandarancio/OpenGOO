@@ -53,7 +53,6 @@ int _lastTime;
 float _timeStep;
 float _timeScrollStep;
 
-QList<OGSprite*>* _sprites;
 QList<OGButton*>* _buttons = 0;
 QHash<QString, OGUI*> _listUI;
 OGUI* _uiButtons = 0;
@@ -127,6 +126,7 @@ QPoint windowToLogical(const QPoint & position);
 
 void setBackgroundColor(const QColor & color);
 void drawOpenGLScene();
+void draw(QPainter* p, OGWorld* w);
 
 // Animate camera
 void updateCamera(int time);

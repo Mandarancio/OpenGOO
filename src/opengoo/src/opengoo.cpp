@@ -137,7 +137,6 @@ void GameStart()
     if (!_world->Load()) { return; }
 
     _world->CreateScene();
-    _sprites = _world->sprites();
     _buttons = _world->buttons();
 
      _wcamera = new OGWindowCamera(_world->currentcamera());
@@ -232,12 +231,10 @@ void GameCycle()
         }
     }
 
-    Q_FOREACH (OGBall* ball, *_world->balls())
+    Q_FOREACH (OGBall* ball, _world->balls())
     {       
         ball->Update();
     }
-
-//    _gameEngine->getWindow()->render();
 
     if (!_listStates.isEmpty())
     {
@@ -285,24 +282,7 @@ void GamePaint(QPainter* painter)
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
-    setBackgroundColor(_world->scenedata()->backgroundcolor);
-    drawOpenGLScene();
-
-    // Paint a scene
-    Q_FOREACH (OGSprite* sprite, *_sprites)
-    {        
-        sprite->Paint(painter);
-    }
-
-    Q_FOREACH (OGBall* ball, *_world->balls())
-    {
-        ball->Paint(painter, _world->leveldata()->visualdebug);
-    }
-
-    Q_FOREACH (OGStrand* strand, *_world->strands())
-    {
-        strand->Paint(painter, _world->leveldata()->visualdebug);
-    }
+    draw(painter, _world);
 
     if (_isPause)
     {
@@ -435,7 +415,7 @@ void MouseMove(QMouseEvent* event)
 
     if (_selectedBall == 0)
     {
-        Q_FOREACH (OGBall* ball, *_world->balls())
+        Q_FOREACH (OGBall* ball, _world->balls())
         {
             if(ball->TestPoint(mPos))
             {
@@ -692,6 +672,7 @@ void createUI(const QString&  name)
     if (!_listUI.contains(name))
     {
         OGUI* ui = OGUIScene::CreateUI(name);
+        logDebug(name);
 
         if (ui != 0) _listUI.insert(name, ui);
     }
@@ -699,6 +680,7 @@ void createUI(const QString&  name)
 
 void removeUI(const QString&  name)
 {
+    logDebug(name);
     if (_listUI.contains(name)) delete _listUI.take(name);
 }
 
@@ -730,7 +712,7 @@ void backToIsland()
 {
     UNIMPLEMENTED
     _world->CloseLevel();
-    closeGame();
+//    closeGame();
 }
 
 inline void restartLevel()
@@ -756,3 +738,25 @@ void showOCDCriterial()
 }
 
 void mouseEven(OGUI* ui, QMouseEvent* e) { ui->_MouseEvent(e); }
+
+void draw(QPainter *p, OGWorld *w)
+{
+    setBackgroundColor(_world->scenedata()->backgroundcolor);
+    drawOpenGLScene();
+
+    // Paint a scene
+    Q_FOREACH (OGSprite* sprite, w->sprites())
+    {
+        sprite->Paint(p);
+    }
+
+    Q_FOREACH (OGBall* ball, w->balls())
+    {
+        ball->Paint(p, _world->leveldata()->visualdebug);
+    }
+
+    Q_FOREACH (OGStrand* strand, w->strands())
+    {
+        strand->Paint(p, _world->leveldata()->visualdebug);
+    }
+}
