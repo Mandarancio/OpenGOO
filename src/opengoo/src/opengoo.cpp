@@ -249,7 +249,7 @@ void GameCycle()
 
         case OGEvent::LOAD_ISLAND:
             setIsland(e->args()->first());
-            loadIsland(_island);
+            loadIsland(e->args()->first());
             break;
 
         case OGEvent::LOAD_LEVEL:
