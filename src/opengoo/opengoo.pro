@@ -89,7 +89,8 @@ HEADERS += \
     src/og_ui.h \
     src/og_states.h \
     src/og_data.h \
-    src/og_uiscene.h
+    src/og_uiscene.h \
+    src/og_event.h
 
 
 SOURCES += \
@@ -108,7 +109,8 @@ SOURCES += \
     src/og_uibutton.cpp \
     src/og_ui.cpp \
     src/og_data.cpp \
-    src/og_uiscene.cpp
+    src/og_uiscene.cpp \
+    src/og_event.cpp
 
 
 # Game engine

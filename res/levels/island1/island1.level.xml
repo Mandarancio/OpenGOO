@@ -1,0 +1,10 @@
+<level allowskip="true" autobounds="false" ballsrequired="1" letterboxed="false" strandgeom="false" textcolor="255,255,255" timebugprobability="0" visualdebug="false">
+
+	
+	<camera aspect="normal" endpos="0,300" endzoom="1">
+		<poi pause="0" pos="0.0,300.0" traveltime="0" zoom="1" />
+</camera>
+<camera aspect="widescreen" endpos="0,300" endzoom="1">
+		<poi pause="0" pos="0,300" traveltime="0" zoom="1" />
+</camera>
+</level>

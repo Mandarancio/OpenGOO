@@ -35,12 +35,14 @@ OGWorld::OGWorld(const QString & levelname, bool widescreen, QObject* parent)
     {
         screenType_ = "widescreen";
         cameraSize_ = WIDESCREEN_CAMERA
-    }       
+    }
+
+    isLevelLoaded_ = false;
 }
 
 OGWorld::~OGWorld()
 {
-    ClearLocalData(); // clear local data
+    _ClearLocalData(); // clear local data
 
     logDebug("Clear share data");
 
@@ -147,9 +149,7 @@ bool OGWorld::Load()
 
 void OGWorld::Reload()
 {
-//    _ClearScene();
     _ClearPhysics();
-//    CreateScene();
     CreatePhysicsScene();
 }
 
@@ -279,31 +279,39 @@ bool OGWorld::_LoadText(const QString & path, bool share)
     return status;
 }
 
-void OGWorld::ClearLocalData()
-{
-    logDebug("Clear level");
+void OGWorld::_ClearLocalData()
+{    
+    if (levelData_ != 0)
+    {
+        logDebug("Clear level");
 
-    if (levelData_) { delete levelData_; }
+        delete levelData_;
+        levelData_ = 0;
+    }
 
-    levelData_ = 0;
+    if (sceneData_ != 0)
+    {
+        logDebug("Clear scene");
 
-    logDebug("Clear scene");
+        delete sceneData_;
+        sceneData_ = 0;
+    }
 
-    if (sceneData_) { delete sceneData_; }
+    if (resourcesData_[1] != 0)
+    {
+        logDebug("Clear resources");
 
-    sceneData_ = 0;
+        delete resourcesData_[1];
+        resourcesData_[1] = 0;
+    }
 
-    logDebug("Clear resources");
+    if (textData_[1] != 0)
+    {
+        logDebug("Clear text");
 
-    if (resourcesData_[1]) { delete resourcesData_[1]; }
-
-    resourcesData_[1] = 0;
-
-    logDebug("Clear text");
-
-    if (textData_[1]) { delete textData_[1]; }
-
-    textData_[1] = 0;    
+        delete textData_[1];
+        textData_[1] = 0;
+    }
 }
 
 void OGWorld::CreateScene()
@@ -439,6 +447,8 @@ void OGWorld::CreatePhysicsScene()
         connect(timer_, SIGNAL(timeout()), this, SLOT(findNearestAttachedBall()));
         timer_->start(1000);
     }
+
+    isLevelLoaded_ = true;
 }
 
 void OGWorld::_CreateSceneLayer(const WOGSceneLayer & scenelayer
@@ -681,6 +691,8 @@ void OGWorld::_ClearPhysics()
     ballId_ = 0;
 
     OGPhysicsEngine::GetInstance()->Reload();
+
+    isLevelLoaded_ = false;
 }
 
 void OGWorld::_ClearScene()
@@ -754,4 +766,12 @@ void OGWorld::findNearestAttachedBall()
 void OGWorld::Update()
 {
     if (physicsEngine_ != 0) { physicsEngine_->Simulate(); }
+}
+void OGWorld::CloseLevel()
+{
+    qDebug("CloseLevel");
+
+    _ClearPhysics();
+    _ClearScene();
+    _ClearLocalData();
 }

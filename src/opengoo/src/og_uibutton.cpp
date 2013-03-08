@@ -65,27 +65,31 @@ void OGUIButton::MouseDown(QMouseEvent *e)
 
     if (onclick().compare("createretrymenu") == 0)
     {
-        _listStates << RETRY;
+        _listStates << new OGMenuEvent("RetryMenu");
     }
     else if (onclick().compare("createmenu") == 0)
-    {
-        _listStates << CREATE_MENU;
+    {        
+        _listStates << new OGMenuEvent("GameMenu");
     }
     else if (onclick().compare("restartlevelrightnow") == 0)
     {
-        _listStates << RESTART;
+        _listStates << new OGEvent(OGEvent::RESTART);
     }
     else if (onclick().compare("showocdcriteria") == 0)
     {
-        _listStates << SHOW_OCD;
+        _listStates << new OGEvent(OGEvent::SHOW_OCD);
     }
     else if (onclick().compare("backtoisland") == 0)
     {
-        _listStates << BACKTO;
+        _listStates << new OGEvent(OGEvent::BACKTO_ISLAND);
     }
     else if (onclick().compare("resumegame") == 0)
     {
-        _listStates << RESUME;
+        _listStates << new OGEvent(OGEvent::RESUME);
+    }
+    else if (onclick().compare("backtomainmenu") == 0)
+    {
+        _listStates << new OGEvent(OGEvent::BACKTO_MAINMENU);
     }
 }
 

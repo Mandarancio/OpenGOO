@@ -47,6 +47,7 @@ class OGWorld : public QObject
 
     QString levelName_;
     QString language_;
+    bool isLevelLoaded_;
 
     QSize cameraSize_;
     OGCamera currentCamera_;
@@ -114,6 +115,7 @@ class OGWorld : public QObject
     void _ClearPhysics();
 
     void _ClearScene();
+    void _ClearLocalData();
 
 public:
     OGWorld(const QString & levelname=QString(), bool widescreen=false
@@ -123,10 +125,10 @@ public:
     static bool isExist(const QString& path_level);
 
     // Get properties
-    QList<OGBall*>* balls() { return &balls_; }
-    QList<OGButton*>* buttons() { return &buttons_; }
-    QList<OGSprite*>* sprites() { return &sprites_; }
-    QHash<int, OGStrand*>* strands() { return &strands_; }
+    QList<OGBall*> balls() const { return balls_; }
+    QList<OGButton*> buttons() { return buttons_; }
+    QList<OGSprite*> sprites() const { return sprites_; }
+    QHash<int, OGStrand*> strands() const { return strands_; }
     QList<OGIBody*>* staticbodies() { return &staticBodies_; }
     OGCamera currentcamera() { return currentCamera_; }
     QString language() const { return language_; }
@@ -140,6 +142,8 @@ public:
     const WOGResources* resrcdata() const { return resourcesData_[0]; }
     QRectF window() const { return window_; }
 
+    bool isLevelLoaded() const { return isLevelLoaded_; }
+
 
     // Set properties
     void SetLevelname(const QString & levelname) { levelName_ = levelname; }
@@ -152,13 +156,12 @@ public:
 
     void SetNextCamera();
 
-
-    void ClearLocalData();
     void CreateScene();
 
     bool Initialize();
     bool Load();
     void Reload();
+    void CloseLevel();
 
     void Update();
 
@@ -169,6 +172,8 @@ public:
     void RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()); }
 
     void StartSearching() { timer_->start(1000); }
+
+    friend void draw(QPainter* p, OGWorld* w);
 
 private slots:
     void findNearestAttachedBall();

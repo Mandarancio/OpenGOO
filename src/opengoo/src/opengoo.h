@@ -2,11 +2,10 @@
 #define OPENGOO_H
 
 #include "og_gameengine.h"
-//#include "physics.h"
 #include "og_world.h"
 #include "og_windowcamera.h"
 #include "og_uiscene.h"
-#include "og_states.h"
+#include "og_event.h"
 
 #include <QDir>
 #include <QTime>
@@ -41,6 +40,7 @@ struct Scroll
 };
 
 static const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
+const QString MAIN_MENU = "MapWorldView";
 const float K = 10.0f;
 const int FRAMERATE = 60;
 const int STEPS = 60;
@@ -53,29 +53,24 @@ int _lastTime;
 float _timeStep;
 float _timeScrollStep;
 
-QList<OGSprite*>* _sprites;
-QList<OGButton*>* _buttons = 0;
 QHash<QString, OGUI*> _listUI;
-OGUI* _uiButtons = 0;
-OGUI* _menu = 0;
-OGUI* _retryMenu = 0;
 
 OGBall* _selectedBall = 0;
 
 QString _levelname;
-bool _isLevelInitialize;
+QString _island;
+
 bool _isPause;
 bool _E404;
 bool _isScrollLock;
 bool _isZoomLock;
 bool _isMenu = false;
 
-QList<OGState> _listStates;
+QList<OGEvent*> _listStates;
 
 Scroll _scroll;
 int _scrolltime = 0;
-OGWindowCamera* _camera;
-OGWindowCamera* _wcamera;
+OGWindowCamera* _camera = 0;
 bool _isMoveCamera;
 int _width;
 int _height;
@@ -102,21 +97,30 @@ void readConfiguration();
 void mouseEven(OGUI* ui,QMouseEvent* e);
 
 void createUI(const QString& name);
-void removeUI(const QString&  name);
-
 void createUIButtons();
-void removeUIButtons();
+void createUIBack();
 
-void createMenu();
-void removeMenu();
+void clearUI();
 
-void createRetryMenu();
-void removeRetryMenu();
+void createMenu(const QString &name);
 
 void backToIsland();
 void restartLevel();
 void resumeGame();
 void showOCDCriterial();
+
+void loadLevel(const QString& name);
+void reloadLevel();
+void closeLevel();
+QString getLevel(const QString& onclick);
+
+QString getIsland();
+void setIsland(const QString& name);
+void loadIsland(const QString& name);
+
+void loadMainMenu();
+
+void initCamera();
 
 void scroll();
 void zoom(int direct);
@@ -127,6 +131,7 @@ QPoint windowToLogical(const QPoint & position);
 
 void setBackgroundColor(const QColor & color);
 void drawOpenGLScene();
+void draw(QPainter* p, OGWorld* w);
 
 // Animate camera
 void updateCamera(int time);

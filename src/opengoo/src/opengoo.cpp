@@ -116,17 +116,9 @@ void GameStart()
     _E404 = false;
     _isScrollLock = false;
     _isZoomLock = false;
-    _isLevelInitialize = false;    
     _timeScrollStep = _width*0.001f;
 
-    // MapWorldView is the main menu
-
-    if(_levelname.isEmpty() || (!OGWorld::isExist(_levelname)) )
-    {
-        _levelname = "MapWorldView";
-    }
-
-    _world = new OGWorld(_levelname);
+    _world = new OGWorld;
 
     if (_config.language.isEmpty()) { _config.language = "en"; }
 
@@ -134,36 +126,24 @@ void GameStart()
 
     if (!_world->Initialize()) { return; }
 
-    if (!_world->Load()) { return; }
-
-    _world->CreateScene();
-    _sprites = _world->sprites();
-    _buttons = _world->buttons();
-
-     _wcamera = new OGWindowCamera(_world->currentcamera());
-    _camera = _wcamera;
-
-    camera::numberCameras = _world->GetNumberCameras();
-
-    if (camera::numberCameras > 1) { _isMoveCamera = true; }
-    else { _isMoveCamera = false; }
+    if (_levelname.isEmpty() || (!OGWorld::isExist(_levelname)) )
+    {
+        loadMainMenu();
+    }
+    else
+    {
+        loadLevel(_levelname);
+        createUIButtons();
+    }
 
     if (_world->leveldata()->visualdebug) { _time.start(); }
 
     _timeStep = STEPS*0.001f;
-
-    createUIButtons();
-
-    _isLevelInitialize = true;
 }
 
 void GameEnd()
-{
-    _isLevelInitialize = false;
-
-    removeMenu();
-    removeRetryMenu();
-    removeUIButtons();
+{    
+    clearUI();
 
     delete _gameEngine;
     delete _gameTime;    
@@ -175,12 +155,12 @@ void GameEnd()
         delete _world;
     }
 
-    if (_wcamera != 0) delete _wcamera;
+    if (_camera != 0) delete _camera;
 }
 
 void GameCycle()
 {
-    if (!_isLevelInitialize)
+    if (!_world->isLevelLoaded())
     {
         closeGame();
 
@@ -232,77 +212,71 @@ void GameCycle()
         }
     }
 
-    Q_FOREACH (OGBall* ball, *_world->balls())
+    Q_FOREACH (OGBall* ball, _world->balls())
     {       
         ball->Update();
     }
 
-//    _gameEngine->getWindow()->render();
-
     if (!_listStates.isEmpty())
     {
-        switch(_listStates.takeFirst())
-        {
-        case CREATE_MENU:
-            createMenu();
+        OGEvent* e = _listStates.takeFirst();
+
+        switch(e->type())
+        {        
+        case OGEvent::CREATE_MENU:
+            createMenu(e->args()->first());
             break;
 
-        case REMOVE_MENU:
-            removeMenu();
-            break;
-
-        case RESTART:
+        case OGEvent::RESTART:
             restartLevel();
             break;
 
-        case BACKTO:
+        case OGEvent::SHOW_OCD:
+            showOCDCriterial();
+            break;
+
+        case OGEvent::BACKTO_ISLAND:
             backToIsland();
             break;
 
-        case SHOW_OCD:
-            break;
-
-        case RESUME:
+        case OGEvent::RESUME:
             resumeGame();
             break;
 
-        case RETRY:
-            createRetryMenu();
+        case OGEvent::BACKTO_MAINMENU:
+            loadMainMenu();
+            break;
+
+        case OGEvent::LOAD_ISLAND:
+            setIsland(e->args()->first());
+            loadIsland(_island);
+            break;
+
+        case OGEvent::LOAD_LEVEL:
+            clearUI();
+            closeLevel();
+            loadLevel(e->args()->first());
+            createUIButtons();
             break;
 
         default:
             break;
         }
+
+        delete e;
     }
 }
 
 void GamePaint(QPainter* painter)
 {    
-    if (!_isLevelInitialize) { return; }
+    if (!_world->isLevelLoaded()) { return; }
 
     painter->setWindow(_camera->window());    
     painter->setViewport(0, 0, _width, _height);
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
-    setBackgroundColor(_world->scenedata()->backgroundcolor);
-    drawOpenGLScene();
-
-    // Paint a scene
-    Q_FOREACH (OGSprite* sprite, *_sprites)
-    {        
-        sprite->Paint(painter);
-    }
-
-    Q_FOREACH (OGBall* ball, *_world->balls())
-    {
-        ball->Paint(painter, _world->leveldata()->visualdebug);
-    }
-
-    Q_FOREACH (OGStrand* strand, *_world->strands())
-    {
-        strand->Paint(painter, _world->leveldata()->visualdebug);
-    }
+    draw(painter, _world);
 
     if (_isPause)
     {
@@ -314,9 +288,12 @@ void GamePaint(QPainter* painter)
         painter->drawText(_camera->window(), Qt::AlignCenter, "Pause");
     }
 
-    if (_world->leveldata()->visualdebug)
+    if (_world->leveldata() != 0)
     {
-        visualDebug(painter, _world, _camera->zoom());
+        if (_world->leveldata()->visualdebug)
+        {
+            visualDebug(painter, _world, _camera->zoom());
+        }
     }
 
     painter->translate(painter->window().topLeft());
@@ -345,8 +322,6 @@ void KeyUp(QKeyEvent* event) { Q_UNUSED(event) }
 
 void MouseButtonDown(QMouseEvent* event)
 {
-    if (!_buttons) { return; }
-
     QPoint mPos(event->pos());
 
     Q_FOREACH (OGUI* ui, _listUI)
@@ -358,7 +333,7 @@ void MouseButtonDown(QMouseEvent* event)
 
     mPos = windowToLogical(mPos);
 
-    Q_FOREACH (OGButton* button, *_buttons)
+    Q_FOREACH (OGButton* button, _world->buttons())
     {
         if (button->TestPoint(mPos))
         {
@@ -367,6 +342,19 @@ void MouseButtonDown(QMouseEvent* event)
             if (button->onclick() == "quit") { closeGame(); }
             else if (button->onclick() == "credits") { }
             else if (button->onclick() == "showselectprofile") { }
+            else if (button->onclick() == "island1")
+            {
+                _listStates << new OGIslandEvent("island1");
+            }
+            else if (!button->onclick().isEmpty())
+            {
+                QString name = getLevel(button->onclick());
+
+                if (!name.isEmpty())
+                {
+                    _listStates << new OGLevelEvent(name);
+                }
+            }
             else { _E404 = true; }
         }
     }
@@ -391,8 +379,6 @@ void MouseMove(QMouseEvent* event)
 {
     float OFFSET = 50.0f;
 
-    float sx, sy;
-
     QPoint mPos(event->pos());
 
     Q_FOREACH (OGUI* ui, _listUI)
@@ -402,32 +388,28 @@ void MouseMove(QMouseEvent* event)
 
     if (_isMenu) return;
 
-    sx = mPos.x();
-    sy = mPos.y();
+    float sx = mPos.x();
+    float sy = mPos.y();
     Scroll scroll = {false, false, false, false};
     _scroll = scroll;
     mPos = windowToLogical(mPos);
 
-    if (_buttons)
+    Q_FOREACH (OGButton* _button, _world->buttons())
     {
-        Q_FOREACH (OGButton* _button, *_buttons)
+        QRectF rect(QPointF(_button->position().x(), _button->position().y())
+                    , _button->size());
+
+        rect.moveCenter(_button->position());
+
+        if(rect.contains(mPos))
         {
-            QRectF rect(QPointF(_button->position().x()
-                                , _button->position().y())
-                          , _button->size());
-
-            rect.moveCenter(_button->position());
-
-            if(rect.contains(mPos))
-            {
-                _button->up()->visible = false;
-                _button->over()->visible = true;
-            }
-            else
-            {
-                _button->up()->visible = true;
-                _button->over()->visible = false;
-            }
+            _button->up()->visible = false;
+            _button->over()->visible = true;
+        }
+        else
+        {
+            _button->up()->visible = true;
+            _button->over()->visible = false;
         }
     }
 
@@ -435,7 +417,7 @@ void MouseMove(QMouseEvent* event)
 
     if (_selectedBall == 0)
     {
-        Q_FOREACH (OGBall* ball, *_world->balls())
+        Q_FOREACH (OGBall* ball, _world->balls())
         {
             if(ball->TestPoint(mPos))
             {
@@ -464,7 +446,7 @@ void MouseMove(QMouseEvent* event)
 
 void MouseWheel(QWheelEvent* event)
 {
-    if (_isMoveCamera) { return; }
+    if (_isMoveCamera || _isMenu) { return; }
 
     QPoint numDegrees = event->angleDelta() / 8;
 
@@ -479,6 +461,8 @@ void MouseWheel(QWheelEvent* event)
         _scrolltime = 30;
     }
 }
+
+void mouseEven(OGUI* ui, QMouseEvent* e) { ui->_MouseEvent(e); }
 
 void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -503,7 +487,7 @@ void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
 
 void scroll()
 {
-    if (_isScrollLock) { return; }
+    if (_isScrollLock || _world->scenedata() == 0) { return; }
 
     int SHIFT = _lastTime;
 
@@ -559,10 +543,10 @@ void zoom(int direct)
 
 QPointF logicalToWindow(const QRectF & rect, qreal zoom)
 {
-    qreal w = rect.width()/zoom;
-    qreal h = rect.height()/zoom;
-    qreal x = rect.x() - w*0.5f;
-    qreal y = (rect.y() + h*0.5f)*(-1.0f);
+    qreal w = rect.width() / zoom;
+    qreal h = rect.height() / zoom;
+    qreal x = rect.x() - w * 0.5f;
+    qreal y = (rect.y() + h * 0.5f) * (-1.0f);
 
     return QPointF(x, y);
 }
@@ -571,8 +555,8 @@ QPoint windowToLogical(const QPoint & position)
 {
     float x, y, a, b;
 
-    a = (position.x() - _width*0.5)/_camera->zoom();
-    b = (position.y() - _height*0.5)/_camera->zoom();
+    a = (position.x() - _width * 0.5) / _camera->zoom();
+    b = (position.y() - _height * 0.5) / _camera->zoom();
     x = _camera->center().x() + a;
     y = _camera->center().y() - b;
 
@@ -605,9 +589,9 @@ void updateCamera(int time)
 
         camera::traveltime = endCam->traveltime();
 
-        camera::xSpeed = dx/camera::traveltime;
-        camera::ySpeed = dy/camera::traveltime;
-        camera::zoomSpeed = dzoom/camera::traveltime;
+        camera::xSpeed = dx / camera::traveltime;
+        camera::ySpeed = dy / camera::traveltime;
+        camera::zoomSpeed = dzoom / camera::traveltime;
         camera::isInitialization = false;
     }
 
@@ -673,6 +657,32 @@ void setBackgroundColor(const QColor & color)
 
 void drawOpenGLScene() {}
 
+void draw(QPainter *p, OGWorld *w)
+{
+    if (_world->scenedata() != 0)
+    {
+        setBackgroundColor(_world->scenedata()->backgroundcolor);
+    }
+
+    drawOpenGLScene();
+
+    // Paint a scene
+    Q_FOREACH (OGSprite* sprite, w->sprites())
+    {
+        sprite->Paint(p);
+    }
+
+    Q_FOREACH (OGBall* ball, w->balls())
+    {
+        ball->Paint(p, _world->leveldata()->visualdebug);
+    }
+
+    Q_FOREACH (OGStrand* strand, w->strands())
+    {
+        strand->Paint(p, _world->leveldata()->visualdebug);
+    }
+}
+
 void calculateFPS()
 {
     _cur_fps++;
@@ -697,61 +707,111 @@ void createUI(const QString&  name)
     }
 }
 
-void removeUI(const QString&  name)
+void clearUI()
 {
-    if (_listUI.contains(name)) delete _listUI.take(name);
+    Q_FOREACH(OGUI* ui, _listUI)
+    {
+        delete ui;
+    }
+
+    _listUI.clear();
 }
 
-void createUIButtons()
-{
-    if (_levelname.compare("MapWorldView") != 0)  createUI("ui");
-}
+void createUIButtons() { createUI("ui"); }
+void createUIBack() { createUI("uiBack"); }
 
-void removeUIButtons() { removeUI("ui"); }
-void createMenu()
-{
-    _isMenu = true;
-    removeUIButtons();
-    createUI("GameMenu");
-}
-void removeMenu() { removeUI("GameMenu"); }
-
-void createRetryMenu()
+void createMenu(const QString& name)
 {
     _isMenu = true;
-    removeUIButtons();
-    createUI("RetryMenu");
+    clearUI();
+    createUI(name);
 }
 
-void removeRetryMenu() { removeUI("RetryMenu"); }
+void initCamera()
+{
+    if (_camera == 0 )
+    {
+        _camera = new OGWindowCamera(_world->currentcamera());
+    }
+    else
+    {
+        delete _camera;
+        _camera = new OGWindowCamera(_world->currentcamera());
+    }
+
+    camera::numberCameras = _world->GetNumberCameras();
+
+    if (camera::numberCameras > 1) { _isMoveCamera = true; }
+    else { _isMoveCamera = false; }
+}
+
+QString getLevel(const QString& onclick)
+{
+    if (onclick.startsWith("pl_"))
+    {
+        return onclick.right(onclick.size() - 3);
+    }
+
+    return QString();
+}
+
+void loadLevel(const QString& name)
+{
+    _world->SetLevelname(name);
+
+    if (!_world->Load()) { return; }
+
+    _world->CreateScene();
+
+    initCamera();
+}
+
+void closeLevel() { _world->CloseLevel(); }
+void reloadLevel() { _world->Reload(); }
+
+void loadIsland(const QString& name)
+{
+    clearUI();
+    closeLevel();
+    loadLevel(name);
+    createUIBack();
+}
+
+void loadMainMenu()
+{
+    clearUI();
+    closeLevel();
+    loadLevel(MAIN_MENU);
+}
+
+QString getIsland() { return _island; }
+void setIsland(const QString& name) { _island = name; }
 
 // Actions
-void backToIsland()
+
+void restartLevel()
 {
-    UNIMPLEMENTED
-    closeGame();
+    clearUI();
+    reloadLevel();
+    createUIButtons();
+    _isMenu = false;
 }
 
-inline void restartLevel()
+void showOCDCriterial() { UNIMPLEMENTED }
+
+void backToIsland()
 {
-    removeRetryMenu();
-    removeMenu();
-    _world->Reload();
-    createUIButtons();
+    QString name = getIsland();
+
+    if (name.isEmpty()) loadMainMenu();
+    else loadIsland(name);
+
     _isMenu = false;
 }
 
 void resumeGame()
 {
-    removeRetryMenu();
-    removeMenu();
+    clearUI();
     createUIButtons();
     _isMenu = false;
 }
-
-void showOCDCriterial()
-{
-    UNIMPLEMENTED
-}
-
-void mouseEven(OGUI* ui, QMouseEvent* e) { ui->_MouseEvent(e); }

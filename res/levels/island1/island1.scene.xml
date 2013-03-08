@@ -1,0 +1,9 @@
+<scene backgroundcolor="0,0,0" maxx="600" maxy="700" minx="-450" miny="0">
+	<SceneLayer alpha="1" animdelay="1" depth="-10" image="IMAGE_BG" name="bg" rotation="0" scalex="9.106" scaley="5.763" tilex="false" tiley="false" x="48.45" y="354.63" />
+<SceneLayer alpha="1" animdelay="1" depth="-5" image="IMAGE_ROCK" name="rock" rotation="0" scalex="6.607" scaley="5.754" tilex="false" tiley="false" x="298.54" y="218.84" />
+<buttongroup id="island1group" osx="0,0">
+<button alpha="1" colorize="255,255,255" depth="10" id="lb_level1" onclick="pl_level1" onmouseenter="ss_level1" onmouseexit="hs_level1" over="IMAGE_HOUSE_OVER" rotation="0" scalex="0.566" scaley="0.626" up="IMAGE_HOUSE_UP" x="-343.2" y="160.15" />
+<button alpha="1" colorize="255,255,255" depth="10" id="lb_level2" onclick="pl_level2" onmouseenter="ss_level2" onmouseexit="hs_level2" over="IMAGE_HOUSE_OVER" rotation="0" scalex="0.596" scaley="0.536" up="IMAGE_HOUSE_UP" x="-139.18" y="244.05" />
+<button alpha="1" colorize="255,255,255" depth="10" id="lb_level3" onclick="pl_level3" onmouseenter="ss_level3" onmouseexit="hs_level3" over="IMAGE_HOUSE_OVER" rotation="0" scalex="0.581" scaley="0.596" up="IMAGE_HOUSE_UP" x="346.8" y="360.37" />
+</buttongroup>
+</scene>
