@@ -23,7 +23,7 @@ class OGUIButton : public QRect
     QImage* overImg_;
     WOGButton* config_;
 
-    WOGButton* config() const { return config_; }        
+    WOGButton* config() const { return config_; }
 
 public:
     OGUIButton(WOGButton* config);

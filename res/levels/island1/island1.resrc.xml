@@ -1,0 +1,9 @@
+<ResourceManifest>
+	<Resources id="scene_island1">
+		<SetDefaults idprefix="" path="./" />
+<Image id="IMAGE_BG" path="res/levels/island1/bg" />
+<Image id="IMAGE_ROCK" path="res/levels/island1/rock" />
+<Image id="IMAGE_HOUSE_UP" path="res/levels/island1/house_up" />
+<Image id="IMAGE_HOUSE_OVER" path="res/levels/island1/house_over" />
+</Resources>
+</ResourceManifest>

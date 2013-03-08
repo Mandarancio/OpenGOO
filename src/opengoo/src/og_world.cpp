@@ -35,12 +35,14 @@ OGWorld::OGWorld(const QString & levelname, bool widescreen, QObject* parent)
     {
         screenType_ = "widescreen";
         cameraSize_ = WIDESCREEN_CAMERA
-    }       
+    }
+
+    isLevelLoaded_ = false;
 }
 
 OGWorld::~OGWorld()
 {
-    ClearLocalData(); // clear local data
+    _ClearLocalData(); // clear local data
 
     logDebug("Clear share data");
 
@@ -147,9 +149,7 @@ bool OGWorld::Load()
 
 void OGWorld::Reload()
 {
-//    _ClearScene();
     _ClearPhysics();
-//    CreateScene();
     CreatePhysicsScene();
 }
 
@@ -279,7 +279,7 @@ bool OGWorld::_LoadText(const QString & path, bool share)
     return status;
 }
 
-void OGWorld::ClearLocalData()
+void OGWorld::_ClearLocalData()
 {    
     if (levelData_ != 0)
     {
@@ -447,6 +447,8 @@ void OGWorld::CreatePhysicsScene()
         connect(timer_, SIGNAL(timeout()), this, SLOT(findNearestAttachedBall()));
         timer_->start(1000);
     }
+
+    isLevelLoaded_ = true;
 }
 
 void OGWorld::_CreateSceneLayer(const WOGSceneLayer & scenelayer
@@ -689,6 +691,8 @@ void OGWorld::_ClearPhysics()
     ballId_ = 0;
 
     OGPhysicsEngine::GetInstance()->Reload();
+
+    isLevelLoaded_ = false;
 }
 
 void OGWorld::_ClearScene()
@@ -769,5 +773,5 @@ void OGWorld::CloseLevel()
 
     _ClearPhysics();
     _ClearScene();
-//    ClearLocalData();
+    _ClearLocalData();
 }
