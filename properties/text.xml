@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <strings>
 
-  <string id="TEST_MESSAGE"
+  <string id="TEST_MESSAGE" 
 			text="Press escape to exit"/>
-      			
+			
+	<string id="RESTART_BUTTON_TEXT"
+			text="Retry"/>
+			
+	<string id="OCD_CRITERIA_BUTTON_TEXT"
+			text="OCD"/>
+			
+  <string id="BACK_TO_ISLAND_BUTTON_TEXT"
+			text="End level"/>
+			
+	<string id="RESUME_BUTTON_TEXT"
+			text="Resume"/>
+			
+	<string id="OK_BUTTON_TEXT"
+			text="OK"/>
+			
+	<string id="CANCEL_BUTTON_TEXT"
+			text="Cancel"/>
+
+	<string id="RETRY_BUTTON_TEXT"
+			text="Retry"/>
+			
+	<string id="MENU_BUTTON_TEXT"
+			text="Menu"/>
+			
+  <string id="BACK_BUTTON_TEXT"
+			text="Back"/>			
+            			
 </strings>
