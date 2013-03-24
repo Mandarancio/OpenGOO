@@ -90,7 +90,16 @@ HEADERS += \
     src/og_states.h \
     src/og_data.h \
     src/og_uiscene.h \
-    src/og_event.h
+    src/og_event.h \
+    src/OGLib/point.h \
+    src/OGLib/icamera.h \
+    src/OGLib/pointf.h \
+    src/OGLib/vector2d.h \
+    src/OGLib/util.h \
+    src/OGLib/size.h \
+    src/OGLib/rect.h \
+    src/OGLib/rectf.h \
+    src/og_poi.h
 
 
 SOURCES += \
@@ -110,7 +119,8 @@ SOURCES += \
     src/og_ui.cpp \
     src/og_data.cpp \
     src/og_uiscene.cpp \
-    src/og_event.cpp
+    src/og_event.cpp \
+    src/og_camera.cpp
 
 
 # Game engine

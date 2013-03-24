@@ -1,7 +1,7 @@
 #include "og_ibody.h"
 
 OGIBody::OGIBody(WOGPObject* data, WOGMaterial* material)
-    : data_(data), material_(material)
+    : data_(data), material_(material), debug_(false)
 {
     walkable_ = false;
 
@@ -9,9 +9,6 @@ OGIBody::OGIBody(WOGPObject* data, WOGMaterial* material)
 
     Q_FOREACH(QString tag, tags)
     {
-        if (tag == "walkable")
-        {
-            walkable_ = true;
-        }
+        if (tag == "walkable") { walkable_ = true; }
     }
 }

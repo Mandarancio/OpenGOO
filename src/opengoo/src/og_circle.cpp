@@ -1,7 +1,7 @@
 #include "og_circle.h"
 #include "physics.h"
 
-OGCircle::OGCircle(WOGCircle *circle, WOGMaterial* material)
+OGCircle::OGCircle(WOGCircle* circle, WOGMaterial* material)
     : OGIBody(circle, material)
 {
     OGPhysicsBody* obj;
@@ -23,3 +23,20 @@ OGCircle::OGCircle(WOGCircle *circle, WOGMaterial* material)
     shape = obj->shape;
 }
 
+void OGCircle::_Draw(QPainter* p)
+{
+    if (debug_)
+    {
+        float r = shape->GetRadius() * 10;
+        b2Vec2 pos = body->GetPosition();
+        float posX = pos.x * 10;
+        float posY = pos.y * 10* -1;
+
+        p->save();
+
+        p->setPen(Qt::yellow);
+        p->drawEllipse(QPointF(posX, posY), r, r);
+
+        p->restore();
+    }
+}

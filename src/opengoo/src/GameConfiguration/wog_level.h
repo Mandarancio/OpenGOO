@@ -21,6 +21,8 @@ struct WOGCamera
     float endzoom;
     QList<WOGPoi*> poi;
 
+    WOGCamera() : aspect("normal"), endpos(), endzoom(1) {}
+
     ~WOGCamera();
 };
 
@@ -59,7 +61,6 @@ struct WOGStrand
     QString gb2;
 };
 
-
 struct WOGLevel
 {
     int ballsrequired;
@@ -80,6 +81,8 @@ struct WOGLevel
 
     WOGLevel() : levelexit(0) { }
     ~WOGLevel();
+
+    WOGCamera* GetCameraByAspect(const QString& aspect) const;
 };
 
 #endif // WOG_LEVEL_H

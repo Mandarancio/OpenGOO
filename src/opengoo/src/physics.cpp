@@ -81,8 +81,10 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
     y1 = anchor.y()*K*0.5;
 
     //0.55 = (length + 10%)/2
-    length = qMax(_world->scenesize().width(), _world->scenesize().height())
-            *0.55*K;
+
+    float wScene = qAbs(_world->scenedata()->minx) + _world->scenedata()->maxx;
+    float hScene = qAbs(_world->scenedata()->miny) + _world->scenedata()->maxy;
+    length = qMax(wScene, hScene) * 0.55 * K;
 
     x2 = x1 + normal.x();
     y2 = y1 + normal.y();

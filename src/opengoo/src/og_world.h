@@ -49,17 +49,7 @@ class OGWorld : public QObject
     QString language_;
     bool isLevelLoaded_;
 
-    QSize cameraSize_;
-    OGCamera currentCamera_;
-    int numberCurrentCamera_;
-
-    QSize sceneSize_;
-    QString screenType_; // normal or widescren
-    QPoint bottomLeft_;
-    QRectF window_;
-
     QList<OGButton*> buttons_;
-    QList<OGCamera*> cameras_;
     QList<OGSprite*> sprites_;
 
     bool isPhysicsEngine_;
@@ -70,13 +60,7 @@ class OGWorld : public QObject
     QList<OGIBody*> staticBodies_;        
 
     int strandId_;
-    int ballId_;
-
-    QSize NormalCamera_() const { return QSize(800, 600); }
-    QSize WideScreenCamera_() const { return QSize(1060, 600); }
-
-#define NORMAL_CAMERA NormalCamera_();
-#define WIDESCREEN_CAMERA WideScreenCamera_();        
+    int ballId_;     
 
     bool _LoadFX(const QString & path);
     bool _LoadLevel(const QString path);
@@ -90,7 +74,6 @@ class OGWorld : public QObject
 
     // level
     OGBall* _CreateBall(WOGBallInstance* ball);
-    OGCamera* _CreateCamera(WOGPoi* poi);
     void _CreateStrand(WOGStrand* strand);
 
     // scene
@@ -108,6 +91,7 @@ class OGWorld : public QObject
     template<class Body, class Data> Body* _CreateBody(Data* data);
 
     void _CreateLabel();
+    bool _CreateCamera();
 
     void CreatePhysicsScene();
     bool _InitializePhysics();
@@ -118,29 +102,25 @@ class OGWorld : public QObject
     void _ClearLocalData();
 
 public:
-    OGWorld(const QString & levelname=QString(), bool widescreen=false
-            , QObject* parent=0);
+    OGWorld(const QString & levelname=QString(), QObject* parent=0);
     virtual ~OGWorld();
 
     static bool isExist(const QString& path_level);
 
     // Get properties
-    QList<OGBall*> balls() const { return balls_; }
-    QList<OGButton*> buttons() { return buttons_; }
-    QList<OGSprite*> sprites() const { return sprites_; }
-    QHash<int, OGStrand*> strands() const { return strands_; }
-    QList<OGIBody*>* staticbodies() { return &staticBodies_; }
-    OGCamera currentcamera() { return currentCamera_; }
-    QString language() const { return language_; }
-    WOGLevel* leveldata() { return levelData_; }
+    const QList<OGBall*>& balls() const { return balls_; }
+    const QList<OGButton*>& buttons() const { return buttons_; }
+    const QList<OGSprite*>& sprites() const { return sprites_; }
+    const QHash<int, OGStrand*>& strands() const { return strands_; }
+    QList<OGIBody*>& staticbodies() { return staticBodies_; }
+    const QString& language() const { return language_; }
+    WOGLevel* leveldata() const { return levelData_; }
     WOGMaterialList* materialdata() { return materialData_; }
-    QString levelname() const { return levelName_; }
-    WOGScene* scenedata() { return sceneData_; }
-    QSizeF scenesize() const { return sceneSize_; }
+    const QString& levelname() const { return levelName_; }
+    WOGScene* scenedata() const { return sceneData_; }    
     OGBall* nearestball() { return nearestBall_; }
     WOGText* textdata() { return textData_[0]; }
     const WOGResources* resrcdata() const { return resourcesData_[0]; }
-    QRectF window() const { return window_; }
 
     bool isLevelLoaded() const { return isLevelLoaded_; }
 
@@ -150,11 +130,6 @@ public:
     void SetLanguage(const QString & language) { language_ = language; }
 
     WOGBall* GetBallConfiguration(const QString & type);
-    OGCamera* GetCamera(int number=0) { return cameras_.at(number); }
-    int GetNumberCameras() const { return cameras_.size(); }
-
-
-    void SetNextCamera();
 
     void CreateScene();
 

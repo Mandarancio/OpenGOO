@@ -2,7 +2,7 @@
 
 WOGCamera::~WOGCamera()
 {
-    while(poi.isEmpty()) { delete poi.takeFirst(); }
+    while(!poi.isEmpty()) { delete poi.takeFirst(); }
 }
 
 WOGLevel::~WOGLevel()
@@ -14,4 +14,17 @@ WOGLevel::~WOGLevel()
     while (!strand.isEmpty()) { delete strand.takeFirst(); }
 
     delete levelexit;
+}
+
+WOGCamera* WOGLevel::GetCameraByAspect(const QString& aspect) const
+{
+    Q_FOREACH(WOGCamera* cam, camera)
+    {
+        if (cam->aspect == aspect)
+        {
+            return cam;
+        }
+    }
+
+    return 0;
 }

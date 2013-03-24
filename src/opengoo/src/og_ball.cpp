@@ -459,7 +459,7 @@ void OGBall::FindTarget()
         }
     }
 
-    SetTarget(nearestBall);
+    if (nearestBall != 0) SetTarget(nearestBall);
     targetBall_ = nearestBall;
 }
 

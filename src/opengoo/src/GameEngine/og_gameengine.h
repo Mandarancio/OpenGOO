@@ -49,7 +49,7 @@ public:
     int getFrameDelay() const { return frameDelay_; }
 
 public slots:
-    void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 /framerate); }
+    void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 / framerate); }
 
 private slots:
     void gameExit();

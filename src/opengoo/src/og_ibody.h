@@ -6,13 +6,16 @@
 #include "wog_material.h"
 
 #include <QStringList>
+#include <QPainter>
 
 class OGIBody : public OGPhysicsBody
 {
     WOGPObject* data_;
     WOGMaterial* material_;
 
-    bool walkable_;
+    bool walkable_;    
+
+    virtual void _Draw(QPainter* p) { Q_UNUSED(p) }
 
 protected:
     // S_ - static D - dynamic
@@ -27,6 +30,7 @@ protected:
     };
 
     OGBodyType m_type;
+    bool debug_;
 
     WOGPObject* GetData() { return data_; }
     WOGMaterial* GetMaterial() { return material_; }
@@ -36,6 +40,10 @@ public:
     virtual ~OGIBody() {}       
 
     bool walkable() const { return walkable_; }
+
+    void SetDebug(bool debug) { debug_ = debug; }
+
+    void Draw(QPainter* p) { _Draw(p); }
 };
 
 #endif // OG_IBODY_H

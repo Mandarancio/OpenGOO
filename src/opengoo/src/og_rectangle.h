@@ -7,11 +7,11 @@
 
 class OGRectangle : public OGIBody
 {
+    void _Draw(QPainter* p);
+
 public:
     OGRectangle(WOGRectangle* rect, WOGMaterial* material);
-    virtual ~OGRectangle() {}
-
-    void Paint(QPainter* painter, bool debug=false);
+    virtual ~OGRectangle() {}    
 };
 
 #endif // OG_RECTANGLE_H

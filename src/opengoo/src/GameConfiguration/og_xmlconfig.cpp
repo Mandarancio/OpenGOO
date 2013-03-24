@@ -66,12 +66,12 @@ QPointF OGXmlConfig::StringToPoint(const QString & x, const QString & y)
 QColor OGXmlConfig::StringToColor(const QString & color)
 {
     QStringList list = color.split(",");
+    
     if (list.size() == 3)
     {
         return QColor(list.at(0).toInt()
                       , list.at(1).toInt()
-                      , list.at(2).toInt()
-                      );
+                      , list.at(2).toInt());
     }
     else { return QColor(); }
 }

@@ -27,11 +27,14 @@ class WOGResources
 public:
     QList<WOGResourceGroup*> group;
 
-    QString GetResource(
-            WOGResource::Type type,
-            const QString & id,
-            const QString & groupid=QString()
-            ) const;
+    QString GetResource(WOGResource::Type type, const QString & id
+                        , const QString & groupid=QString()) const;
+
+    QString GetImage(const QString & id
+                     , const QString & groupid=QString()) const
+    {
+        return GetResource(WOGResource::IMAGE, id, groupid);
+    }
 
     ~WOGResources();
 };

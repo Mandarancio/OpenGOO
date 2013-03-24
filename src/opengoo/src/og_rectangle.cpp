@@ -1,5 +1,8 @@
 #include "og_rectangle.h"
 #include "physics.h"
+#include "og_world.h"
+
+extern OGWorld* _world;
 
 OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
     : OGIBody(rect, material)
@@ -25,8 +28,31 @@ OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
     shape = obj->shape;
 }
 
-void OGRectangle::Paint(QPainter* painter, bool debug)
+void OGRectangle::_Draw(QPainter* p)
 {
-    Q_UNUSED(painter)
-    Q_UNUSED(debug)
+    if (debug_)
+    {
+        const b2Transform& xf = fixture->GetBody()->GetTransform();
+        b2PolygonShape* rect = static_cast<b2PolygonShape*>(shape->shape);
+        int vertexCount = rect->m_vertexCount;
+
+        b2Vec2 v;
+        QPointF points[4];
+
+        for (int i = 0; i < vertexCount; ++i)
+        {
+            v = b2Mul(xf, rect->m_vertices[i]);
+            points[i] = QPointF(v.x * 10, v.y * 10 * -1);
+        }
+
+        QColor greenColor(0, 255, 0, 100);
+
+        p->save();
+
+        p->setPen(Qt::transparent);
+        p->setBrush(greenColor);
+        p->drawPolygon(points, 4);
+
+        p->restore();
+    }
 }

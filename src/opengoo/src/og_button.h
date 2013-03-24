@@ -44,6 +44,18 @@ public:
         rect.moveCenter(position());
         return rect.contains(pos);
     }
+
+    QString getLevelName()
+    {
+        QString name;
+
+        if (onclick_.startsWith("pl_"))
+        {
+            name = onclick_.right(onclick_.size() - 3);
+        }
+
+        return name;
+    }
 };
 
 #endif // OG_BUTTON_H

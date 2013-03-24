@@ -39,21 +39,21 @@ void OGUIButton::SetUpImage(const QString &path)
 
 void OGUIButton::Paint(QPainter* p, float zoom)
 {
-    float w = width() / zoom;
-    float h = height() / zoom;
-    float x1 = x() / zoom;
-    float y1 = y() / zoom;
+    float w = width() * zoom;
+    float h = height() * zoom;
+    float x1 = x() * zoom;
+    float y1 = y() * zoom;
 
     QRectF target(x1, y1, w, h);
 
     if (img_ != 0) { p->drawImage(target, *img_, img_->rect()); }
 
-    QPen pen(Qt::white,  2.0f / zoom);
+    QPen pen(Qt::white,  2.0f * zoom);
     p->setOpacity(1.0f);
     p->save();
 
     p->setPen(pen);
-    p->setFont(QFont("Times", 14, QFont::Bold));
+    p->setFont(QFont("Arial", 14, QFont::Bold));
     p->drawText(target, Qt::AlignCenter, text_);
 
     p->restore();

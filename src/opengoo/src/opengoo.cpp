@@ -14,6 +14,7 @@
 */
 
 #include "opengoo.h"
+#include "OGLib/point.h"
 
 #include <QRect>
 #include <QDebug>
@@ -31,30 +32,30 @@
 #include <consoleappender.h>
 #include "og_ballconfig.h"
 
-bool GameInitialize(int argc, char **argv)
-{    
-    #ifndef Q_OS_WIN32
+bool GameInitialize(int argc, char** argv)
+{
+#ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
     BackTracer(SIGFPE);
-    #endif
-    #ifdef Q_OS_WIN32
+#endif
+#ifdef Q_OS_WIN32
     AddVectoredExceptionHandler(0, UnhandledException2);
-    #endif
+#endif
 
-    ConsoleAppender * con_apd;
-    con_apd  = new ConsoleAppender(LoggerEngine::LevelInfo,stdout,"%d - <%l> - %m%n");
+    ConsoleAppender* con_apd;
+    con_apd  = new ConsoleAppender(LoggerEngine::LevelInfo, stdout, "%d - <%l> - %m%n");
     LoggerEngine::addAppender(con_apd);
     con_apd  = new ConsoleAppender(LoggerEngine::LevelDebug     |
                                    LoggerEngine::LevelWarn      |
                                    LoggerEngine::LevelCritical  |
                                    LoggerEngine::LevelError     |
                                    LoggerEngine::LevelException |
-                                   LoggerEngine::LevelFatal,stdout,"%d - <%l> - %m [%f:%i]%n");
+                                   LoggerEngine::LevelFatal, stdout, "%d - <%l> - %m [%f:%i]%n");
     LoggerEngine::addAppender(con_apd);
     qInstallMessageHandler(gooMessageHandler);
 
     //Check for the run parameters
-    for (int i=1; i<argc; i++)
+    for (int i = 1; i < argc; i++)
     {
         QString arg(argv[i]);
         //Check for debug Option
@@ -63,8 +64,8 @@ bool GameInitialize(int argc, char **argv)
             flag |= DEBUG;
             logWarn("DEBUG MODE ON");
         }
-        if (!arg.compare("--fps",Qt::CaseInsensitive)) { flag |= FPS; }
-        else if (!arg.compare("--level",Qt::CaseInsensitive))
+        if (!arg.compare("--fps", Qt::CaseInsensitive)) { flag |= FPS; }
+        else if (!arg.compare("--level", Qt::CaseInsensitive))
         {
             if (++i < argc) { _levelname = QString(argv[i]); }
         }
@@ -73,7 +74,8 @@ bool GameInitialize(int argc, char **argv)
     //CHECK FOR GAME DIR IN HOME DIRECTORY
     QDir dir(GAMEDIR);
     //If the game dir doesn't exist create it
-    if (!dir.exists()) {
+    if (!dir.exists())
+    {
         if (flag & DEBUG) logWarn("Game dir doesn't exist!");
         dir.mkdir(GAMEDIR);
         dir.cd(GAMEDIR);
@@ -89,13 +91,11 @@ bool GameInitialize(int argc, char **argv)
 #ifdef Q_OS_WIN32
     _gameEngine = new OGGameEngine(_config.screen_width
                                    , _config.screen_height
-                                   , _config.fullscreen
-                                   );
+                                   , _config.fullscreen);
 #else
     _gameEngine = new OGGameEngine(_config.screen_width
                                    , _config.screen_height
-                                   , false
-                                   );
+                                   , false);
 #endif //   Q_OS_WIN32
 
     if (_gameEngine == 0) { return false; }
@@ -113,10 +113,7 @@ void GameStart()
     //initialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
 
-    _E404 = false;
-    _isScrollLock = false;
-    _isZoomLock = false;
-    _timeScrollStep = _width*0.001f;
+    _timeScrollStep = _width * 0.001f;
 
     _world = new OGWorld;
 
@@ -126,7 +123,7 @@ void GameStart()
 
     if (!_world->Initialize()) { return; }
 
-    if (_levelname.isEmpty() || (!OGWorld::isExist(_levelname)) )
+    if (_levelname.isEmpty() || (!OGWorld::isExist(_levelname)))
     {
         loadMainMenu();
     }
@@ -136,17 +133,14 @@ void GameStart()
         createUIButtons();
     }
 
-    if (_world->leveldata()->visualdebug) { _time.start(); }
-
-    _timeStep = STEPS*0.001f;
+    _timeStep = STEPS * 0.001f;
 }
 
 void GameEnd()
-{    
+{
     clearUI();
 
     delete _gameEngine;
-    delete _gameTime;    
 
     if (_world)
     {
@@ -154,8 +148,6 @@ void GameEnd()
 
         delete _world;
     }
-
-    if (_camera != 0) delete _camera;
 }
 
 void GameCycle()
@@ -165,55 +157,42 @@ void GameCycle()
         closeGame();
 
         return;
-    }    
+    }
 
     if (!_gameTime)
     {
-        _gameTime = new QTime;
-
+        _lastTime = 0;
+        _gameTime = std::unique_ptr<QTime>(new QTime);
         _gameTime->start();
     }
-
-    _lastTime = _gameTime->restart();
+    else _lastTime = _gameTime->restart();
 
     calculateFPS();
 
-    if (!_isMenu)
+    if (!_isPause)
     {
         int n = qRound(_lastTime * _timeStep);
 
-        for (int i=0; i < n; i++) { _world->Update(); }
+        for (int i = 0; i < n; i++) { _world->Update(); }
     }
 
-    if (_isMoveCamera)
+    if (_camera.get() != 0)
     {
-        _isZoomLock = true;
-        updateCamera(_lastTime);
-    }
-    else
-    {
+        _camera->Update(_lastTime);
         scroll();
-
-        if (_scrolltime > 0) { _scrolltime--; }
-        else if (_scrolltime == 0)
-        {
-            _scroll.up = false;
-            _scroll.down = false;
-            _scrolltime--;
-        }
     }
 
     if (_selectedBall != 0 && !_selectedBall->IsDragging())
     {
-        if(!_selectedBall->TestPoint(_lastMousePos))
+        if (!_selectedBall->TestPoint(_lastMousePos))
         {
             _selectedBall->SetMarked(false);
             _selectedBall = 0;
         }
     }
 
-    Q_FOREACH (OGBall* ball, _world->balls())
-    {       
+    Q_FOREACH(OGBall * ball, _world->balls())
+    {
         ball->Update();
     }
 
@@ -221,46 +200,46 @@ void GameCycle()
     {
         OGEvent* e = _listStates.takeFirst();
 
-        switch(e->type())
-        {        
-        case OGEvent::CREATE_MENU:
-            createMenu(e->args()->first());
-            break;
+        switch (e->type())
+        {
+            case OGEvent::CREATE_MENU:
+                createMenu(e->args()->first());
+                break;
 
-        case OGEvent::RESTART:
-            restartLevel();
-            break;
+            case OGEvent::RESTART:
+                restartLevel();
+                break;
 
-        case OGEvent::SHOW_OCD:
-            showOCDCriterial();
-            break;
+            case OGEvent::SHOW_OCD:
+                showOCDCriterial();
+                break;
 
-        case OGEvent::BACKTO_ISLAND:
-            backToIsland();
-            break;
+            case OGEvent::BACKTO_ISLAND:
+                backToIsland();
+                break;
 
-        case OGEvent::RESUME:
-            resumeGame();
-            break;
+            case OGEvent::RESUME:
+                resumeGame();
+                break;
 
-        case OGEvent::BACKTO_MAINMENU:
-            loadMainMenu();
-            break;
+            case OGEvent::BACKTO_MAINMENU:
+                loadMainMenu();
+                break;
 
-        case OGEvent::LOAD_ISLAND:
-            setIsland(e->args()->first());
-            loadIsland(e->args()->first());
-            break;
+            case OGEvent::LOAD_ISLAND:
+                setIsland(e->args()->first());
+                loadIsland(e->args()->first());
+                break;
 
-        case OGEvent::LOAD_LEVEL:
-            clearUI();
-            closeLevel();
-            loadLevel(e->args()->first());
-            createUIButtons();
-            break;
+            case OGEvent::LOAD_LEVEL:
+                clearUI();
+                closeLevel();
+                loadLevel(e->args()->first());
+                createUIButtons();
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         delete e;
@@ -268,53 +247,38 @@ void GameCycle()
 }
 
 void GamePaint(QPainter* painter)
-{    
+{
     if (!_world->isLevelLoaded()) { return; }
 
-    painter->setWindow(_camera->window());    
+    painter->setWindow(_camera->rect());
     painter->setViewport(0, 0, _width, _height);
 
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
     draw(painter, _world);
 
-    if (_isPause)
+    if (_world->leveldata() != 0 && _world->leveldata()->visualdebug)
     {
-        painter->setOpacity(0.25);
-        painter->fillRect(_camera->window(), Qt::black);
-        painter->setOpacity(1);
-        painter->setPen(Qt::white);
-        painter->setFont(QFont("Times", 48, QFont::Bold));
-        painter->drawText(_camera->window(), Qt::AlignCenter, "Pause");
-    }
-
-    if (_world->leveldata() != 0)
-    {
-        if (_world->leveldata()->visualdebug)
-        {
-            visualDebug(painter, _world, _camera->zoom());
-        }
+        visualDebug(painter, _world, _camera->zoom());
     }
 
     painter->translate(painter->window().topLeft());
 
-    Q_FOREACH(OGUI* ui, _listUI)
+    Q_FOREACH(OGUI * ui, _listUI)
     {
         ui->Paint(painter, _camera->zoom());
     }
 }
 
 void GameActivate() { _isPause = false; }
-
 void GameDeactivate() { _isPause = true; }
 
 void KeyDown(QKeyEvent* event)
 {
-    switch(event->key())
+    switch (event->key())
     {
-    case Qt::Key_Escape:
-        _E404 = false;
-        break;
+        case Qt::Key_Escape:
+            break;
     }
 }
 
@@ -322,23 +286,19 @@ void KeyUp(QKeyEvent* event) { Q_UNUSED(event) }
 
 void MouseButtonDown(QMouseEvent* event)
 {
-    QPoint mPos(event->pos());
-
-    Q_FOREACH (OGUI* ui, _listUI)
+    Q_FOREACH(OGUI * ui, _listUI)
     {
         if (ui != 0) mouseEven(ui, event);
     }
 
-    if (_isMenu) return;
+    if (_isPause || _camera.get() == 0) return;
 
-    mPos = windowToLogical(mPos);
+    QPoint mPos = _camera->windowToLogical(event->pos());
 
-    Q_FOREACH (OGButton* button, _world->buttons())
+    Q_FOREACH(OGButton * button, _world->buttons())
     {
         if (button->TestPoint(mPos))
         {
-            _E404 = false;
-
             if (button->onclick() == "quit") { closeGame(); }
             else if (button->onclick() == "credits") { }
             else if (button->onclick() == "showselectprofile") { }
@@ -348,14 +308,13 @@ void MouseButtonDown(QMouseEvent* event)
             }
             else if (!button->onclick().isEmpty())
             {
-                QString name = getLevel(button->onclick());
+                QString name = button->getLevelName();
 
                 if (!name.isEmpty())
                 {
                     _listStates << new OGLevelEvent(name);
                 }
             }
-            else { _E404 = true; }
         }
     }
 
@@ -367,41 +326,31 @@ void MouseButtonDown(QMouseEvent* event)
 
 void MouseButtonUp(QMouseEvent* event)
 {
-    Q_UNUSED(event)
-
-    if (_selectedBall != 0 && _selectedBall->IsDragging())
+    if (_selectedBall != 0 && _selectedBall->IsDragging() && _camera.get() != 0)
     {
-        _selectedBall->MouseUp(windowToLogical(event->pos()));
+        _selectedBall->MouseUp(_camera->windowToLogical(event->pos()));
     }
 }
 
 void MouseMove(QMouseEvent* event)
 {
-    float OFFSET = 50.0f;
+    _curMousePos = event->pos();
 
     QPoint mPos(event->pos());
 
-    Q_FOREACH (OGUI* ui, _listUI)
+    Q_FOREACH(OGUI * ui, _listUI)
     {
         if (ui != 0) mouseEven(ui, event);
     }
 
-    if (_isMenu) return;
+    if (_isPause || _camera.get() == 0) return;
 
-    float sx = mPos.x();
-    float sy = mPos.y();
-    Scroll scroll = {false, false, false, false};
-    _scroll = scroll;
-    mPos = windowToLogical(mPos);
+    mPos = _camera->windowToLogical(mPos);
+    _lastMousePos = mPos;
 
-    Q_FOREACH (OGButton* _button, _world->buttons())
+    Q_FOREACH(OGButton * _button, _world->buttons())
     {
-        QRectF rect(QPointF(_button->position().x(), _button->position().y())
-                    , _button->size());
-
-        rect.moveCenter(_button->position());
-
-        if(rect.contains(mPos))
+        if (_button->TestPoint(mPos))
         {
             _button->up()->visible = false;
             _button->over()->visible = true;
@@ -413,13 +362,11 @@ void MouseMove(QMouseEvent* event)
         }
     }
 
-    _lastMousePos = mPos;
-
     if (_selectedBall == 0)
     {
-        Q_FOREACH (OGBall* ball, _world->balls())
+        Q_FOREACH(OGBall * ball, _world->balls())
         {
-            if(ball->TestPoint(mPos))
+            if (ball->TestPoint(mPos))
             {
                 _selectedBall = ball;
                 _selectedBall->SetMarked(true);
@@ -436,30 +383,11 @@ void MouseMove(QMouseEvent* event)
         _selectedBall->SetMarked(false);
         _selectedBall = 0;
     }
-
-    if (sx <= OFFSET) { _scroll.left = true; }
-    else if (sx >= _width - OFFSET) { _scroll.right = true; }
-
-    if (sy <= OFFSET) { _scroll.up = true; }
-    else if (sy >= _height - OFFSET) { _scroll.down = true; }
 }
 
 void MouseWheel(QWheelEvent* event)
 {
-    if (_isMoveCamera || _isMenu) { return; }
-
-    QPoint numDegrees = event->angleDelta() / 8;
-
-    if (numDegrees.y() > 0)
-    {
-        _scroll.up = true;
-        _scrolltime = 30;
-    }
-    else
-    {
-        _scroll.down = true;
-        _scrolltime = 30;
-    }
+    Q_UNUSED(event)
 }
 
 void mouseEven(OGUI* ui, QMouseEvent* e) { ui->_MouseEvent(e); }
@@ -470,78 +398,38 @@ void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
 
     switch (type)
     {
-    case QtDebugMsg:
-        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtWarningMsg:
-        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtCriticalMsg:
-        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtFatalMsg:
-        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        abort();
+        case QtDebugMsg:
+            fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+            break;
+        case QtWarningMsg:
+            fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+            break;
+        case QtCriticalMsg:
+            fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+            break;
+        case QtFatalMsg:
+            fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+            abort();
     }
 }
 
 void scroll()
 {
-    if (_isScrollLock || _world->scenedata() == 0) { return; }
+    if (_isPause) return;
 
-    int SHIFT = _lastTime;
+    float OFFSET = 50.0f;
+    float sx = _curMousePos.x();
+    float sy = _curMousePos.y();
+    int shift = _lastTime;
 
-    int pos;
+    if (sx <= OFFSET) { _camera->ScrollLeft(shift); }
+    else if (sx >= _width - OFFSET) { _camera->ScrollRight(shift); }
 
-    if (_scroll.up)
-    {        
-        pos = qMin(_camera->center().y() + SHIFT,
-                 qRound(_world->scenedata()->maxy - _camera->height() * 0.5f));
-
-        _camera->SetY(pos);
-
-    }
-    else if (_scroll.down)
-    {
-        pos = qMax(_camera->center().y() - SHIFT,
-                 qRound(_world->scenedata()->miny + _camera->height() * 0.5f));
-
-        _camera->SetY(pos);
-
-    }
-
-    if (_scroll.left)
-    {
-        pos = qMax(_camera->center().x() - SHIFT,
-                 qRound(_world->scenedata()->minx + _camera->width() * 0.5f));
-
-        _camera->SetX(pos);
-    }
-    else if (_scroll.right)
-    {
-        pos = qMin(_camera->center().x() + SHIFT,
-                 qRound(_world->scenedata()->maxx - _camera->width()*0.5f));
-
-        _camera->SetX(pos);
-    }
+    if (sy <= OFFSET) { _camera->ScrollUp(shift); }
+    else if (sy >= _height - OFFSET) { _camera->ScrollDown(shift);}
 }
 
-void zoom(int direct)
-{
-    if (_isZoomLock) { return; }
-
-    float zoom = _camera->zoom();
-
-    zoom += (0.1f * direct);
-
-    if (_world->scenesize().width() * zoom >= _width
-            && _world->scenesize().height() * zoom >= _height)
-    {
-        _camera->Zoom(zoom);
-    }
-}
-
-QPointF logicalToWindow(const QRectF & rect, qreal zoom)
+QPointF logicalToWindow(const QRectF &rect, qreal zoom)
 {
     qreal w = rect.width() / zoom;
     qreal h = rect.height() / zoom;
@@ -549,84 +437,6 @@ QPointF logicalToWindow(const QRectF & rect, qreal zoom)
     qreal y = (rect.y() + h * 0.5f) * (-1.0f);
 
     return QPointF(x, y);
-}
-
-QPoint windowToLogical(const QPoint & position)
-{
-    float x, y, a, b;
-
-    a = (position.x() - _width * 0.5) / _camera->zoom();
-    b = (position.y() - _height * 0.5) / _camera->zoom();
-    x = _camera->center().x() + a;
-    y = _camera->center().y() - b;
-
-    return QPoint(x, y);
-}
-
-void updateCamera(int time)
-{
-    if (camera::numberCameras < 2)
-    {
-        _isMoveCamera = false;
-
-        if (_world->leveldata()->visualdebug) { _isZoomLock = false; }
-
-        return;        
-    }
-
-    if (camera::isInitialization)
-    {
-        camera::sumTime = 0;
-        camera::isPause = false;
-
-        OGCamera* endCam = _world->GetCamera(camera::nextCamera);
-        float dx = endCam->center().x() - _camera->center().x();
-        float dy = endCam->center().y() - _camera->center().y();
-        float dzoom = endCam->zoom() - _camera->zoom();
-        camera::pause = endCam->pause();
-
-        if (camera::pause) { camera::isPause = true; }
-
-        camera::traveltime = endCam->traveltime();
-
-        camera::xSpeed = dx / camera::traveltime;
-        camera::ySpeed = dy / camera::traveltime;
-        camera::zoomSpeed = dzoom / camera::traveltime;
-        camera::isInitialization = false;
-    }
-
-    if (camera::isPause)
-    {
-        int lastTime = time;
-        camera::sumTime += lastTime;
-
-        if ( camera::sumTime <= camera::pause) { return; }
-        else
-        {
-            camera::isPause = false;
-            camera::sumTime = 0;
-        }
-    }
-    else
-    {
-        int lastTime = time;
-        camera::sumTime += lastTime;
-
-        if (camera::sumTime <= camera::traveltime)
-        {
-            float x = qRound(_camera->center().x() + camera::xSpeed*lastTime);
-            float y = qRound(_camera->center().y() + camera::ySpeed*lastTime);
-            _camera->SetPosition(x, y);
-            _camera->Zoom(_camera->zoom() + camera::zoomSpeed*lastTime);
-        }
-        else
-        {
-            _world->SetNextCamera();
-            camera::numberCameras--;
-            camera::nextCamera++;
-            camera::isInitialization = true;
-        }
-    }
 }
 
 void closeGame() { _gameEngine->getWindow()->close(); }
@@ -644,20 +454,20 @@ void readConfiguration()
     }
     else
     {
-        logWarn("File " + filename +" not found");
+        logWarn("File " + filename + " not found");
         gameConfig.Create(_config);
     }
 }
 
-void setBackgroundColor(const QColor & color)
-{    
+void setBackgroundColor(const QColor &color)
+{
     glClearColor(color.redF(), color.greenF(), color.blueF(), 1);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void drawOpenGLScene() {}
 
-void draw(QPainter *p, OGWorld *w)
+void draw(QPainter* p, OGWorld* w)
 {
     if (_world->scenedata() != 0)
     {
@@ -667,17 +477,22 @@ void draw(QPainter *p, OGWorld *w)
     drawOpenGLScene();
 
     // Paint a scene
-    Q_FOREACH (OGSprite* sprite, w->sprites())
+    Q_FOREACH(OGSprite * sprite, w->sprites())
     {
         sprite->Paint(p);
     }
 
-    Q_FOREACH (OGBall* ball, w->balls())
+    Q_FOREACH(OGIBody * body, w->staticbodies())
+    {
+        body->Draw(p);
+    }
+
+    Q_FOREACH(OGBall * ball, w->balls())
     {
         ball->Paint(p, _world->leveldata()->visualdebug);
     }
 
-    Q_FOREACH (OGStrand* strand, w->strands())
+    Q_FOREACH(OGStrand * strand, w->strands())
     {
         strand->Paint(p, _world->leveldata()->visualdebug);
     }
@@ -685,19 +500,22 @@ void draw(QPainter *p, OGWorld *w)
 
 void calculateFPS()
 {
+    using namespace FPSCounter;
+
+    sumFPSTime += _lastTime;
     _cur_fps++;
 
-    if (_time.elapsed() >= 1000)
+    if (sumFPSTime >= 1000)
     {
         if (_cur_fps > FRAMERATE) { _fps = FRAMERATE; }
         else { _fps = _cur_fps; }
 
         _cur_fps = 0;
-        _time.start();
+        sumFPSTime = 0;
     }
 }
 
-void createUI(const QString&  name)
+void createUI(const QString  &name)
 {
     if (!_listUI.contains(name))
     {
@@ -709,7 +527,7 @@ void createUI(const QString&  name)
 
 void clearUI()
 {
-    Q_FOREACH(OGUI* ui, _listUI)
+    Q_FOREACH(OGUI * ui, _listUI)
     {
         delete ui;
     }
@@ -720,42 +538,14 @@ void clearUI()
 void createUIButtons() { createUI("ui"); }
 void createUIBack() { createUI("uiBack"); }
 
-void createMenu(const QString& name)
+void createMenu(const QString &name)
 {
-    _isMenu = true;
+    _isPause = true;
     clearUI();
     createUI(name);
 }
 
-void initCamera()
-{
-    if (_camera == 0 )
-    {
-        _camera = new OGWindowCamera(_world->currentcamera());
-    }
-    else
-    {
-        delete _camera;
-        _camera = new OGWindowCamera(_world->currentcamera());
-    }
-
-    camera::numberCameras = _world->GetNumberCameras();
-
-    if (camera::numberCameras > 1) { _isMoveCamera = true; }
-    else { _isMoveCamera = false; }
-}
-
-QString getLevel(const QString& onclick)
-{
-    if (onclick.startsWith("pl_"))
-    {
-        return onclick.right(onclick.size() - 3);
-    }
-
-    return QString();
-}
-
-void loadLevel(const QString& name)
+void loadLevel(const QString &name)
 {
     _world->SetLevelname(name);
 
@@ -763,13 +553,26 @@ void loadLevel(const QString& name)
 
     _world->CreateScene();
 
-    initCamera();
+    if (!_world->isLevelLoaded())
+    {
+        closeLevel();
+        return;
+    }
+
+    if (_world->leveldata()->visualdebug) setDebug(true);
+
+    _isPause = false;
 }
 
 void closeLevel() { _world->CloseLevel(); }
-void reloadLevel() { _world->Reload(); }
 
-void loadIsland(const QString& name)
+void reloadLevel()
+{
+    _world->Reload();
+    _camera->SetLastPosition();
+}
+
+void loadIsland(const QString &name)
 {
     clearUI();
     closeLevel();
@@ -785,16 +588,16 @@ void loadMainMenu()
 }
 
 QString getIsland() { return _island; }
-void setIsland(const QString& name) { _island = name; }
+void setIsland(const QString &name) { _island = name; }
 
-// Actions
+// Actions of a menu
 
 void restartLevel()
 {
     clearUI();
     reloadLevel();
     createUIButtons();
-    _isMenu = false;
+    _isPause = false;
 }
 
 void showOCDCriterial() { UNIMPLEMENTED }
@@ -806,12 +609,20 @@ void backToIsland()
     if (name.isEmpty()) loadMainMenu();
     else loadIsland(name);
 
-    _isMenu = false;
+    _isPause = false;
 }
 
 void resumeGame()
 {
     clearUI();
     createUIButtons();
-    _isMenu = false;
+    _isPause = false;
+}
+
+void setDebug(bool debug)
+{
+    Q_FOREACH(OGIBody * body, _world->staticbodies())
+    {
+        body->SetDebug(debug);
+    }
 }

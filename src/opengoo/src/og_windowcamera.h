@@ -2,32 +2,56 @@
 #define OG_WINDOWCAMERA_H
 
 #include "og_camera.h"
+#include "og_poi.h"
+#include "OGLib/rect.h"
+#include "OGLib/vector2d.h"
 
-class OGWindowCamera : public OGCamera
+#include "wog_scene.h"
+#include "wog_level.h"
+
+#include <QRect>
+#include <QPoint>
+
+#include <memory>
+
+using namespace std;
+
+class OGWindowCamera
 {
-    QRect window_;
-    QPoint _ToWindowCoordinates(const QPoint &center);
+        auto_ptr<OGCamera> camera_;
+        OGPoi* target_;
+        Rect scene_;
+        PoiList poiList_;
 
-public:
-    OGWindowCamera() : OGCamera() {}
-    OGWindowCamera(const OGCamera & camera);
-    OGWindowCamera(const QPoint & center, const QSize & size, float zoom
-                   , int traveltime, int pause)
-        : OGCamera(center, size, zoom, traveltime, pause) {}
-    ~OGWindowCamera() {}
+        float traveltime_;
+        float pause_;
+        float zoom_;
 
-    OGWindowCamera& operator =(const OGCamera  & camera);
+        Vector2D initialPosition_;
+        Vector2D finalPosition_;
+        Vector2D velocity_;
 
-    QRect window() const { return window_; }
-    int width() const { return window().width(); }
-    int height() const { return window().height(); }
+        bool isScrolling_;
 
-    void SetPosition(const QPoint & position);
-    void SetPosition(int x, int y);
-    void SetX(int x);
-    void SetY(int y);
+        void _SetTarget();
 
-    void Zoom(float zoom);
+    public:
+        OGWindowCamera(const Rect &scene, const Size& size
+                       , const WOGCamera* cam);
+
+        float zoom() const { return camera_->zoom(); }
+
+        QPoint windowToLogical(const QPoint &p);
+        QRect rect() const;
+
+        void SetLastPosition();
+
+        void ScrollUp(int shift);
+        void ScrollDown(int shift);
+        void ScrollLeft(int shift);
+        void ScrollRight(int shift);
+
+        void Update(int time);
 };
 
 #endif // OG_WINDOWCAMERA_H
