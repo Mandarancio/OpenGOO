@@ -1,6 +1,7 @@
 #include "og_uibutton.h"
 #include "og_world.h"
 #include "og_gameengine.h"
+#include "og_event.h"
 
 extern OGWorld* _world;
 
@@ -65,31 +66,31 @@ void OGUIButton::MouseDown(QMouseEvent *e)
 
     if (onclick().compare("createretrymenu") == 0)
     {
-        _listStates << new OGMenuEvent("RetryMenu");
+        SendEvent(new OGMenuEvent("RetryMenu"));
     }
     else if (onclick().compare("createmenu") == 0)
     {        
-        _listStates << new OGMenuEvent("GameMenu");
+        SendEvent(new OGMenuEvent("GameMenu"));
     }
     else if (onclick().compare("restartlevelrightnow") == 0)
     {
-        _listStates << new OGEvent(OGEvent::RESTART);
+        SendEvent(new OGEvent(OGEvent::RESTART));
     }
     else if (onclick().compare("showocdcriteria") == 0)
     {
-        _listStates << new OGEvent(OGEvent::SHOW_OCD);
+        SendEvent(new OGEvent(OGEvent::SHOW_OCD));
     }
     else if (onclick().compare("backtoisland") == 0)
     {
-        _listStates << new OGEvent(OGEvent::BACKTO_ISLAND);
+        SendEvent(new OGEvent(OGEvent::BACKTO_ISLAND));
     }
     else if (onclick().compare("resumegame") == 0)
     {
-        _listStates << new OGEvent(OGEvent::RESUME);
+        SendEvent(new OGEvent(OGEvent::RESUME));
     }
     else if (onclick().compare("backtomainmenu") == 0)
     {
-        _listStates << new OGEvent(OGEvent::BACKTO_MAINMENU);
+        SendEvent(new OGEvent(OGEvent::BACKTO_MAINMENU));
     }
 }
 

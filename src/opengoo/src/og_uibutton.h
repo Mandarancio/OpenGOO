@@ -10,7 +10,6 @@
 #include <QMouseEvent>
 #include <QWindow>
 
-#include "og_states.h"
 #include "wog_scene.h"
 
 class OGUIButton : public QRect

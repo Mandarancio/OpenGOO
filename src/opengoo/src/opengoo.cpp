@@ -204,9 +204,9 @@ void GameCycle()
         ball->Update();
     }
 
-    if (!_listStates.isEmpty())
+    if (!_eventList.isEmpty())
     {
-        OGEvent* e = _listStates.takeFirst();
+        OGEvent* e = _eventList.takeFirst();
 
         switch (e->type())
         {
@@ -314,7 +314,7 @@ void MouseButtonDown(QMouseEvent* event)
             else if (button->onclick() == "showselectprofile") { }
             else if (button->onclick() == "island1")
             {
-                _listStates << new OGIslandEvent("island1");
+                SendEvent(new OGIslandEvent("island1"));
             }
             else if (!button->onclick().isEmpty())
             {
@@ -322,7 +322,7 @@ void MouseButtonDown(QMouseEvent* event)
 
                 if (!name.isEmpty())
                 {
-                    _listStates << new OGLevelEvent(name);
+                    SendEvent(new OGLevelEvent(name));
                 }
             }
         }
@@ -437,6 +437,11 @@ void scroll()
 
     if (sy <= OFFSET) { _camera->ScrollUp(shift); }
     else if (sy >= _height - OFFSET) { _camera->ScrollDown(shift);}
+}
+
+void SendEvent(OGEvent* ev)
+{
+    _eventList << ev;
 }
 
 QPointF logicalToWindow(const QRectF &rect, qreal zoom)

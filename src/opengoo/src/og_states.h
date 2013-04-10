@@ -3,6 +3,4 @@
 
 #include "og_event.h"
 
-extern QList<OGEvent*> _listStates;
-
 #endif // OG_STATES_H

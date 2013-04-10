@@ -5,6 +5,8 @@
 
 #include "og_window.h"
 
+class OGEvent;
+
 int main(int argc, char **argv);
 bool GameInitialize(int argc, char **argv);
 void GameStart();
@@ -19,6 +21,8 @@ void MouseButtonDown(QMouseEvent* event);
 void MouseButtonUp(QMouseEvent* event);
 void MouseMove(QMouseEvent* event);
 void MouseWheel(QWheelEvent* event);
+
+void SendEvent(OGEvent* ev);
 
 class OGGameEngine : public QObject
 {

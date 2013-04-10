@@ -37,7 +37,7 @@ QString _island;
 
 bool _isPause;
 
-QList<OGEvent*> _listStates;
+QList<OGEvent*> _eventList;
 
 int _scrolltime = 0;
 std::auto_ptr<OGWindowCamera> _camera;
@@ -58,7 +58,6 @@ OGConfig _config = {
 };
 
 void gooMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
-void calculateFPS();
 void closeGame();
 void readConfiguration();
 
