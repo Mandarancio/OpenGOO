@@ -1,8 +1,6 @@
 #include "og_strand.h"
 #include "physics.h"
 
-extern OGWorld* _world;
-
 OGStrand::~OGStrand()
 {
     OGPhysicsEngine* physicsEngine = OGPhysicsEngine::GetInstance();

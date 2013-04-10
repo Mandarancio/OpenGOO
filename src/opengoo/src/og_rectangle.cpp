@@ -2,8 +2,6 @@
 #include "physics.h"
 #include "og_world.h"
 
-extern OGWorld* _world;
-
 OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
     : OGIBody(rect, material)
 {
