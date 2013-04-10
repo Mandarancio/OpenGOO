@@ -262,7 +262,7 @@ void GamePaint(QPainter* painter)
         visualDebug(painter, _world, _camera->zoom());
     }
 
-    painter->translate(painter->window().topLeft());
+    painter->setWindow(0, 0, _width, _height);
 
     Q_FOREACH(OGUI * ui, _listUI)
     {
