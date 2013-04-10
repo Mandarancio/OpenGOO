@@ -6,9 +6,8 @@
 #include "og_window.h"
 
 class OGEvent;
+class OGGame;
 
-int main(int argc, char **argv);
-bool GameInitialize(int argc, char **argv);
 void GameStart();
 void GameEnd();
 void GameActivate();
@@ -36,11 +35,12 @@ protected:
     int frameDelay_;
     bool fullscreen_;
     OGWindow* window_;
+    OGGame* pGame_;
 
     bool eventFilter(QObject* obj, QEvent* event);
 
 public:
-    OGGameEngine(int width = 640, int height = 480, bool fullscreen=false);
+    OGGameEngine(OGGame* game, int width, int height, bool fullscreen=false);
     virtual ~OGGameEngine();
 
     static OGGameEngine* getEngine() { return gameEngine_; }

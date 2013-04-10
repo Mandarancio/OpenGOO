@@ -10,12 +10,14 @@
 #include <QWheelEvent>
 #include <QTimer>
 
+class OGGame;
+
 class OGWindow : public QWindow
 {
     Q_OBJECT
 
 public:
-    explicit OGWindow(QWindow* parent=0);
+    explicit OGWindow(OGGame* game, QWindow* parent=0);
     virtual ~OGWindow();
 
     void draw();
@@ -37,7 +39,9 @@ private:
     QOpenGLContext* context_;
     QOpenGLPaintDevice* paintDevice_;
     QTimer* timer_;
+    OGGame* pGame_;
     bool isActive_;
+
 
     bool _initOpenGL();
 

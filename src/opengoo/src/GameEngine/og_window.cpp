@@ -5,7 +5,7 @@
 #include <QSurfaceFormat>
 #include <QDebug>
 
-OGWindow::OGWindow(QWindow *parent)
+OGWindow::OGWindow(OGGame *game, QWindow *parent)
     : QWindow(parent)
 { 
     setSurfaceType(QWindow::OpenGLSurface);
@@ -25,6 +25,7 @@ OGWindow::OGWindow(QWindow *parent)
     QObject::connect(timer_, SIGNAL(timeout()), this, SLOT(processing()));
     timer_->start();
     isActive_ = false;
+    pGame_ = game;
 }
 
 OGWindow::~OGWindow()

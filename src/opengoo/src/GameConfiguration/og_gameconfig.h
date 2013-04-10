@@ -7,8 +7,9 @@ struct OGConfig
 {
     int screen_width;
     int screen_height;
+    int refreshrate;
     bool fullscreen;
-    QString language;    
+    QString language;
 };
 
 class OGGameConfig : public OGXmlConfig

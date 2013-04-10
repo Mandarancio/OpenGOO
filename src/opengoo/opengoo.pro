@@ -102,6 +102,7 @@ HEADERS += \
     src/OGLib/rectf.h \
     src/og_poi.h \
     src/og_fpscounter.h \
+    src/og_utils.h
 
 
 SOURCES += \
@@ -123,7 +124,9 @@ SOURCES += \
     src/og_uiscene.cpp \
     src/og_event.cpp \
     src/og_camera.cpp \
-    src/og_fpscounter.cpp
+    src/og_fpscounter.cpp \
+    src/main.cpp \
+    src/og_utils.cpp
 
 
 # Game engine

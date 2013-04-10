@@ -17,6 +17,7 @@ public:
         , CREATE_MENU
         , LOAD_ISLAND
         , LOAD_LEVEL
+        , EXIT
     };
 
     OGEvent(Type type, QList<QString>* args=0);

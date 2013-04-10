@@ -8,31 +8,7 @@
 
 OGGameEngine* OGGameEngine::gameEngine_ = 0;
 
-int main(int argc, char** argv)
-{
-    if (GameInitialize(argc, argv))
-    {
-        QGuiApplication app(argc, argv);
-
-        app.installEventFilter(OGGameEngine::getEngine());
-
-        if (!OGGameEngine::getEngine()->initialize())
-        {
-            return false;
-        }
-
-        QObject::connect(&app, SIGNAL(aboutToQuit())
-                         , OGGameEngine::getEngine(), SLOT(gameExit()));
-
-        return app.exec();
-    }
-
-    GameEnd();
-
-    return true;
-}
-
-OGGameEngine::OGGameEngine(int width, int height, bool fullscreen)
+OGGameEngine::OGGameEngine(OGGame* game, int width, int height, bool fullscreen)
 {
     gameEngine_ = this;
     width_ = width;
@@ -40,6 +16,7 @@ OGGameEngine::OGGameEngine(int width, int height, bool fullscreen)
     frameDelay_ = 50;   // 20 FPS default
     fullscreen_ = fullscreen;
     isVideoModeSupported_ = false;
+    pGame_ = game;
 }
 
 OGGameEngine::~OGGameEngine()

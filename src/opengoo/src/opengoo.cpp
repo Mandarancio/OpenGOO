@@ -14,100 +14,197 @@
 */
 
 #include "opengoo.h"
-#include "OGLib/point.h"
+#include "og_world.h"
 #include "og_fpscounter.h"
+#include "flags.h"
+#include "GameEngine/og_gameengine.h"
+
+#include <QTime>
+
+OpenGOO* OpenGOO::instance_ = 0;
+
+OpenGOO* OpenGOO::instance()
+{
+    if (!instance_) instance_ = new OpenGOO;
+
+    return instance_;
+}
+
+void OpenGOO::Destroy()
+{
+    delete instance_;
+    instance_ = 0;
+}
+
+void OpenGOO::SetLevelName(const QString& levelname)
+{
+    levelName_ = levelname;
+}
+
+void OpenGOO::SetLanguage(const QString& language)
+{
+    language_ = language;
+}
+
+void OpenGOO::_Start()
+{
+    const int STEPS = 60;
+
+    //initialize randseed
+    qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
+
+    pWorld_ = new OGWorld;
+
+    if (language_.isEmpty()) { language_ = "en"; }
+
+    pWorld_->SetLanguage(language_);
+
+    if (!pWorld_->Initialize()) { return; }
+
+    if (levelName_.isEmpty() || (!OGWorld::isExist(levelName_)))
+    {
+        _LoadMainMenu();
+    }
+    else
+    {
+        _LoadLevel(levelName_);
+        _CreateUIButtons();
+    }
+
+    if (flag & FPS)
+    {
+        pFPS_ = new OGFPSCounter;
+    }
+
+    width_ = OGGameEngine::getEngine()->getWidth();
+    height_ = OGGameEngine::getEngine()->getHeight();
+
+    timeScrollStep_ = width_ / 1000;
+    timeStep_ = STEPS / 1000;
+}
+
+void OpenGOO::_End()
+{
+
+}
+
+void OpenGOO::_LoadLevel(const QString& levelname)
+{
+
+}
+
+void OpenGOO::_CreateUIButtons()
+{
+
+}
+
+void OpenGOO::_LoadMainMenu()
+{
+
+}
+
+#include "og_gameengine.h"
+#include "og_world.h"
+#include "og_windowcamera.h"
+#include "og_uiscene.h"
+#include "og_event.h"
+#include "OGLib/icamera.h"
+
+#include <QDir>
+#include <QTimer>
+
+#include <memory>
+
+#include "OGLib/point.h"
 
 #include <QRect>
 #include <QDebug>
 #include <QTime>
 
-#ifndef Q_OS_WIN32
-#include "backtracer.h"
-#endif
-#ifdef Q_OS_WIN32
-#include "backtracer_win32.h"
-#endif
-
-#include "flags.h"
 #include <logger.h>
-#include <consoleappender.h>
+
 #include "og_ballconfig.h"
 
-bool GameInitialize(int argc, char** argv)
-{
-#ifndef Q_OS_WIN32
-    BackTracer(SIGSEGV);
-    BackTracer(SIGFPE);
-#endif
-#ifdef Q_OS_WIN32
-    AddVectoredExceptionHandler(0, UnhandledException2);
-#endif
+const QString MAIN_MENU = "MapWorldView";
+const float K = 10.0f;
+const int FRAMERATE = 60;
+const int STEPS = 60;
 
-    ConsoleAppender* con_apd;
-    con_apd  = new ConsoleAppender(LoggerEngine::LevelInfo, stdout, "%d - <%l> - %m%n");
-    LoggerEngine::addAppender(con_apd);
-    con_apd  = new ConsoleAppender(LoggerEngine::LevelDebug     |
-                                   LoggerEngine::LevelWarn      |
-                                   LoggerEngine::LevelCritical  |
-                                   LoggerEngine::LevelError     |
-                                   LoggerEngine::LevelException |
-                                   LoggerEngine::LevelFatal, stdout, "%d - <%l> - %m [%f:%i]%n");
-    LoggerEngine::addAppender(con_apd);
-    qInstallMessageHandler(gooMessageHandler);
+OGWorld* _world;
 
-    //Check for the run parameters
-    for (int i = 1; i < argc; i++)
-    {
-        QString arg(argv[i]);
-        //Check for debug Option
-        if (!arg.compare("--debug", Qt::CaseInsensitive))
-        {
-            flag |= DEBUG;
-            logWarn("DEBUG MODE ON");
-        }
-        if (!arg.compare("--fps", Qt::CaseInsensitive)) { flag |= FPS; }
-        else if (!arg.compare("--level", Qt::CaseInsensitive))
-        {
-            if (++i < argc) { _levelname = QString(argv[i]); }
-        }
-    }
+std::unique_ptr<QTime> _gameTime;
+int _lastTime;
+float _timeStep;
+float _timeScrollStep;
 
-    //CHECK FOR GAME DIR IN HOME DIRECTORY
-    QDir dir(GAMEDIR);
-    //If the game dir doesn't exist create it
-    if (!dir.exists())
-    {
-        if (flag & DEBUG) logWarn("Game dir doesn't exist!");
-        dir.mkdir(GAMEDIR);
-        dir.cd(GAMEDIR);
-        //create subdir for user levels and progressions.
-        dir.mkdir("userLevels");
-        dir.mkdir("userProgression");
-        dir.mkdir("debug");
-    }
-    else if (flag & DEBUG) logWarn("Game dir exist!");
+QHash<QString, OGUI*> _listUI;
 
-    readConfiguration();
+OGBall* _selectedBall = 0;
 
-#ifdef Q_OS_WIN32
-    _gameEngine = new OGGameEngine(_config.screen_width
-                                   , _config.screen_height
-                                   , _config.fullscreen);
-#else
-    _gameEngine = new OGGameEngine(_config.screen_width
-                                   , _config.screen_height
-                                   , false);
-#endif //   Q_OS_WIN32
+QString _levelname;
+QString _island;
 
-    if (_gameEngine == 0) { return false; }
+bool _isPause;
 
-    _gameEngine->setFrameRate(FRAMERATE);
+QList<OGEvent*> _eventList;
 
-    _width = _config.screen_width;
-    _height = _config.screen_height;
+int _scrolltime = 0;
+std::auto_ptr<OGWindowCamera> _camera;
+int _width;
+int _height;
 
-    return true;
-}
+class OGFPSCounter* _pFPS = 0;
+
+QPoint _lastMousePos;
+QPoint _curMousePos;
+
+// Default settings
+OGConfig _config = {
+    800,    // width
+    600,    // height
+    true,   // fullscreen
+    "en"      // language
+};
+
+void closeGame();
+
+void mouseEven(OGUI* ui,QMouseEvent* e);
+
+void createUI(const QString& name);
+void createUIButtons();
+void createUIBack();
+void clearUI();
+
+void createMenu(const QString &name);
+
+void backToIsland();
+void restartLevel();
+void resumeGame();
+void showOCDCriterial();
+
+void loadLevel(const QString& name);
+void reloadLevel();
+void closeLevel();
+
+QString getIsland();
+void setIsland(const QString& name);
+void loadIsland(const QString& name);
+
+void loadMainMenu();
+
+void scroll();
+void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
+
+QPointF logicalToWindow(const QRectF & rect, qreal zoom);
+
+void setBackgroundColor(const QColor & color);
+void drawOpenGLScene();
+void draw(QPainter* p, OGWorld* w);
+
+
+void setDebug(bool debug);
+
+#define UNIMPLEMENTED qWarning() << __FUNCTION__ << "is UNIMPLEMENTED!";
 
 void GameStart()
 {
@@ -140,6 +237,9 @@ void GameStart()
     {
         _pFPS = new OGFPSCounter;
     }
+
+    _width = OGGameEngine::getEngine()->getWidth();
+    _height = OGGameEngine::getEngine()->getHeight();
 }
 
 void GameEnd()
@@ -148,7 +248,7 @@ void GameEnd()
 
     delete _pFPS;
 
-    delete _gameEngine;
+//    delete _gameEngine;
 
     if (_world)
     {
@@ -160,56 +260,16 @@ void GameEnd()
 
 void GameCycle()
 {
-    if (!_world->isLevelLoaded())
-    {
-        closeGame();
-
-        return;
-    }
-
-    if (!_gameTime)
-    {
-        _lastTime = 0;
-        _gameTime = std::unique_ptr<QTime>(new QTime);
-        _gameTime->start();
-    }
-    else _lastTime = _gameTime->restart();
-
-    if (flag & FPS) _pFPS->Update(_lastTime);
-
-    if (!_isPause)
-    {
-        int n = qRound(_lastTime * _timeStep);
-
-        for (int i = 0; i < n; i++) { _world->Update(); }
-    }
-
-    if (_camera.get() != 0)
-    {
-        _camera->Update(_lastTime);
-        scroll();
-    }
-
-    if (_selectedBall != 0 && !_selectedBall->IsDragging())
-    {
-        if (!_selectedBall->TestPoint(_lastMousePos))
-        {
-            _selectedBall->SetMarked(false);
-            _selectedBall = 0;
-        }
-    }
-
-    Q_FOREACH(OGBall * ball, _world->balls())
-    {
-        ball->Update();
-    }
-
     if (!_eventList.isEmpty())
     {
         OGEvent* e = _eventList.takeFirst();
 
         switch (e->type())
         {
+            case OGEvent::EXIT:
+                closeGame();
+                break;
+
             case OGEvent::CREATE_MENU:
                 createMenu(e->args()->first());
                 break;
@@ -252,6 +312,50 @@ void GameCycle()
 
         delete e;
     }
+
+    if (!_world->isLevelLoaded())
+    {
+        closeGame();
+
+        return;
+    }
+
+    if (!_gameTime)
+    {
+        _lastTime = 0;
+        _gameTime = std::unique_ptr<QTime>(new QTime);
+        _gameTime->start();
+    }
+    else _lastTime = _gameTime->restart();
+
+    if (flag & FPS) _pFPS->Update(_lastTime);
+
+    if (!_isPause)
+    {
+        int n = qRound(_lastTime * _timeStep);
+
+        for (int i = 0; i < n; i++) { _world->Update(); }
+    }
+
+    if (_camera.get() != 0)
+    {
+        _camera->Update(_lastTime);
+        scroll();
+    }
+
+    if (_selectedBall != 0 && !_selectedBall->IsDragging())
+    {
+        if (!_selectedBall->TestPoint(_lastMousePos))
+        {
+            _selectedBall->SetMarked(false);
+            _selectedBall = 0;
+        }
+    }
+
+    Q_FOREACH(OGBall * ball, _world->balls())
+    {
+        ball->Update();
+    }    
 }
 
 void GamePaint(QPainter* painter)
@@ -309,7 +413,10 @@ void MouseButtonDown(QMouseEvent* event)
     {
         if (button->TestPoint(mPos))
         {
-            if (button->onclick() == "quit") { closeGame(); }
+            if (button->onclick() == "quit")
+            {
+                SendEvent(new OGEvent(OGEvent::EXIT));
+            }
             else if (button->onclick() == "credits") { }
             else if (button->onclick() == "showselectprofile") { }
             else if (button->onclick() == "island1")
@@ -402,27 +509,6 @@ void MouseWheel(QWheelEvent* event)
 
 void mouseEven(OGUI* ui, QMouseEvent* e) { ui->_MouseEvent(e); }
 
-void gooMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-{
-    QByteArray localMsg = msg.toLocal8Bit();
-
-    switch (type)
-    {
-        case QtDebugMsg:
-            fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-            break;
-        case QtWarningMsg:
-            fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-            break;
-        case QtCriticalMsg:
-            fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-            break;
-        case QtFatalMsg:
-            fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-            abort();
-    }
-}
-
 void scroll()
 {
     if (_isPause) return;
@@ -454,24 +540,9 @@ QPointF logicalToWindow(const QRectF &rect, qreal zoom)
     return QPointF(x, y);
 }
 
-void closeGame() { _gameEngine->getWindow()->close(); }
-
-void readConfiguration()
+void closeGame()
 {
-    // Read game configuration
-    QString filename("./resources/config.xml");
-    OGGameConfig gameConfig(filename);
-
-    if (gameConfig.Open())
-    {
-        if (gameConfig.Read()) { _config = gameConfig.Parser(); }
-        else {logWarn("File " + filename + " is corrupted"); }
-    }
-    else
-    {
-        logWarn("File " + filename + " not found");
-        gameConfig.Create(_config);
-    }
+    OGGameEngine::getEngine()->getWindow()->close();
 }
 
 void setBackgroundColor(const QColor &color)
