@@ -5,11 +5,11 @@ OGUI::~OGUI()
     while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
 }
 
-void OGUI::Paint(QPainter* p, float zoom)
+void OGUI::Paint(QPainter* p)
 {
-    Q_FOREACH(OGUIButton * btn, buttons_)
+    Q_FOREACH(OGUIButton* btn, buttons_)
     {
-        btn->Paint(p, zoom);
+        btn->Paint(p);
     }
 }
 

@@ -37,18 +37,18 @@ void OGUIButton::SetUpImage(const QString &path)
     moveCenter(QPoint(x, y));
 }
 
-void OGUIButton::Paint(QPainter* p, float zoom)
+void OGUIButton::Paint(QPainter* p)
 {
-    float w = width() * zoom;
-    float h = height() * zoom;
-    float x1 = x() * zoom;
-    float y1 = y() * zoom;
+    float w = width();
+    float h = height();
+    float x1 = x();
+    float y1 = y();
 
     QRectF target(x1, y1, w, h);
 
     if (img_ != 0) { p->drawImage(target, *img_, img_->rect()); }
 
-    QPen pen(Qt::white,  2.0f * zoom);
+    QPen pen(Qt::white,  2.0f);
     p->setOpacity(1.0f);
     p->save();
 

@@ -23,7 +23,7 @@ public:
     OGUI() :  btn_(0) {}
     ~OGUI();
     void AddButton(OGUIButton* btn) { buttons_ << btn; }   
-    void Paint(QPainter* p, float zoom);
+    void Paint(QPainter* p);
 };
 
 #endif // OG_UI_H

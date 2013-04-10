@@ -34,7 +34,7 @@ public:
     void SetUpImage(const QString& path);
     void SetOverImage(const QString& path) { overImg_ = new QImage(path); }
 
-    virtual void Paint(QPainter* p, float zoom=1.0f);
+    virtual void Paint(QPainter* p);
 
     // Events
     void MouseDown(QMouseEvent *e);

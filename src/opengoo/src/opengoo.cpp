@@ -266,7 +266,7 @@ void GamePaint(QPainter* painter)
 
     Q_FOREACH(OGUI * ui, _listUI)
     {
-        ui->Paint(painter, _camera->zoom());
+        ui->Paint(painter);
     }
 }
 
