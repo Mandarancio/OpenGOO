@@ -19,7 +19,7 @@ float LengthSquared(float x1, float y1, float x2, float y2)
 }
 
 OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
-    : data_(data), config_(configuration)
+    : pData_(data), pConfig_(configuration)
 {
     const float K = 0.1f;
 
@@ -31,22 +31,22 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     isMarked_ = false;
     isStanding_ = false;
     isWalking_ = false;
-    isDraggable_ = config_->attribute.player.draggable;
+    isDraggable_ = pConfig_->attribute.player.draggable;
 
     material_.bounce = 0.1f;
     material_.friction = 15.0f;
     numberStrands_ = 0;
     id_ = -1;
     isInit_ = false;
-    targetBall_ = 0;
+    pTargetBall_ = 0;
 
     WOGBallShape* ballShape = GetShape();
 
     // Get position, angle and mass of ball
-    float x = data_->x;
-    float y = data_->y;
-    float angle = data_->angle;
-    float mass = config_->attribute.core.mass;
+    float x = pData_->x;
+    float y = pData_->y;
+    float angle = pData_->angle;
+    float mass = pConfig_->attribute.core.mass;
     int v = ballShape->variation * 100; // convert the variation to a percentage
 
     if (v > 100) { v = 100; }
@@ -71,24 +71,24 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
         shape = obj->shape;
     }
 
-    towerMass_ = config_->attribute.core.towermass * K;
+    towerMass_ = pConfig_->attribute.core.towermass * K;
 
-    walkBehavior_ = new OGWalk;
-    climbBehavior_ = new OGClimb;
-    flyBehavior_ = new OGFly;
+    pWalkBehavior_ = new OGWalk;
+    pClimbBehavior_ = new OGClimb;
+    pFlyBehavior_ = new OGFly;
 
     SetBodyWalk();
-    SetWalkSpeed(config_->attribute.movement.walkspeed);
+    SetWalkSpeed(pConfig_->attribute.movement.walkspeed);
 
     SetBodyClimb();
-    SetClimbSpeed(config_->attribute.movement.climbspeed);
+    SetClimbSpeed(pConfig_->attribute.movement.climbspeed);
 }
 
 OGBall::~OGBall()
 {
-    delete walkBehavior_;
-    delete climbBehavior_;
-    delete flyBehavior_;
+    delete pWalkBehavior_;
+    delete pClimbBehavior_;
+    delete pFlyBehavior_;
 }
 
 OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
@@ -143,12 +143,12 @@ void OGBall::Detache()
         joints = joints->next;
     }
 
-    while (!strands.isEmpty()) { _world->RemoveStrand(strands.takeFirst()); }
+    while (!strands.isEmpty()) { _RemoveStrand(strands.takeFirst()); }
 
     body->SetAwake(false);
 }
 
-void OGBall::Attache(OGBall* ball) { _world->CreateStrand(this, ball); }
+void OGBall::Attache(OGBall* ball) { _CreateStrand(this, ball); }
 
 void OGBall::Attache()
 {
@@ -226,9 +226,10 @@ inline void OGBall::Move()
     {
         float x1 = GetCurrentPosition()->x();
         float y1 = GetCurrentPosition()->y();
-        float x2 = _world->leveldata()->levelexit->pos.x() * K;
-        float y2 = _world->leveldata()->levelexit->pos.y() * K;
-        float r1 = _world->leveldata()->levelexit->radius * K;
+        WOGLevelExit* lvlExit = _GetLevelExit();
+        float x2 = lvlExit->pos.x() * K;
+        float y2 = lvlExit->pos.y() * K;
+        float r1 = lvlExit->radius * K;
         float r2 = shape->GetRadius();
         float l1 = qPow((r1 + r2), 2.0f);
         float l2 = LengthSquared(x1, y1, x2, y2);
@@ -242,7 +243,7 @@ inline void OGBall::Move()
             }
         }
 
-        if (targetBall_->IsAttached())
+        if (pTargetBall_->IsAttached())
         {
             SetClimbTarget(GetTarget());
             PerformClimb();
@@ -261,7 +262,7 @@ inline bool OGBall::IsCanClimb()
 {
     b2Vec2 pos(GetTarget()->x(), GetTarget()->y());
 
-    if (fixture->TestPoint(pos) && targetBall_->IsAttached())
+    if (fixture->TestPoint(pos) && pTargetBall_->IsAttached())
     {
         return true;
     }
@@ -399,19 +400,19 @@ void OGBall::ReleaseStrand()
     if (--numberStrands_ == 0)
     {
         isAttached_ = false;
-        isDraggable_ = config_->attribute.player.draggable;
+        isDraggable_ = pConfig_->attribute.player.draggable;
     }
 }
 
 inline void OGBall::FindJointBalls()
 {
     float dist;
-    float minlen = config_->stand->minlen;
-    float maxlen1 = config_->stand->maxlen1;
+    float minlen = pConfig_->stand->minlen;
+    float maxlen1 = pConfig_->stand->maxlen1;
 
     jointBalls_.clear();
 
-    Q_FOREACH(OGBall * ball, _world->balls())
+    Q_FOREACH(OGBall * ball, _GetWorld()->balls())
     {
         if (ball->IsAttached())
         {
@@ -437,7 +438,7 @@ void OGBall::FindTarget()
     OGBall* nearestBall = 0;
     float dist1, dist2;
 
-    Q_FOREACH(OGBall * ball, _world->balls())
+    Q_FOREACH(OGBall * ball, _GetWorld()->balls())
     {
         if (ball->IsStanding())
         {
@@ -460,7 +461,7 @@ void OGBall::FindTarget()
     }
 
     if (nearestBall != 0) SetTarget(nearestBall);
-    targetBall_ = nearestBall;
+    pTargetBall_ = nearestBall;
 }
 
 // Pickup ball
@@ -529,18 +530,18 @@ bool OGBall::TestPoint(const QPoint &pos)
 
 void OGBall::Algorithm2()
 {
-    if (_world->nearestball() == 0) return;
+    if (_GetWorld()->nearestball() == 0) return;
 
     OGUserData* data;
     float dist1, dist2;
 
     b2JointEdge* joints = 0;
-    joints = targetBall_->GetJoints();
+    joints = pTargetBall_->GetJoints();
     OGBall* ball = 0;
     b2Body* b1 = 0;
     b2Body* b2 = 0;
 
-    b2Vec2 pos(_world->nearestball()->GetBodyPosition());
+    b2Vec2 pos(_GetWorld()->nearestball()->GetBodyPosition());
 
     while (joints)
     {
@@ -569,7 +570,7 @@ void OGBall::Algorithm2()
         data = static_cast<OGUserData*>(b1->GetUserData());
         ball = static_cast<OGBall*>(data->data);
         SetTarget(ball);
-        targetBall_ = ball;
+        pTargetBall_ = ball;
     }
 }
 
@@ -584,4 +585,28 @@ inline float OGBall::DistanceSquared(OGBall* b1, OGBall* b2)
 inline float OGBall::Distance(OGBall* b1, OGBall* b2)
 {
     return qSqrt(DistanceSquared(b1, b2));
+}
+
+inline OGWorld* OGBall::_GetWorld()
+{
+    return _world;
+}
+
+inline WOGLevelExit* OGBall::_GetLevelExit()
+{
+    OGWorld* world = _GetWorld();
+
+    return world->leveldata()->levelexit;
+}
+
+void OGBall::_RemoveStrand(OGStrand* strand)
+{
+    OGWorld* world = _GetWorld();
+    world->RemoveStrand(strand);
+}
+
+void OGBall::_CreateStrand(OGBall* b1, OGBall* b2)
+{
+    OGWorld* world = _GetWorld();
+    world->CreateStrand(b1, b2);
 }
