@@ -4,7 +4,6 @@
 #include <QPainter>
 #include <QTime>
 
-extern int _fps;
 extern OGBall* _nearestBall;
 extern OGBall* _selectedBall;
 
@@ -17,17 +16,6 @@ const qreal DEGREE = 57.2957795;
 }
 
 using namespace visual_debug;
-
-void showFPS(QPainter* painter, qreal zoom)
-{
-    int x, y;
-
-    x = painter->window().x() + 20.0 * zoom;
-    y = painter->window().y() + 20.0 * zoom;
-    painter->setPen(Qt::white);
-    painter->setFont(QFont("Verdana", qRound(12.0 * zoom), QFont::Bold));
-    painter->drawText(x, y, QString::number(_fps));
-}
 
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
 {
@@ -78,10 +66,5 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
         pen.setColor(Qt::green);
         painter->setPen(pen);
         painter->drawEllipse(QPointF(x, y), 10, 10);
-    }
-
-    if (flag == FPS)
-    {
-        showFPS(painter, zoom);
     }
 }

@@ -14,11 +14,6 @@
 
 #include <memory>
 
-namespace FPSCounter
-{
-    int sumFPSTime = 0;
-}
-
 const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
 const QString MAIN_MENU = "MapWorldView";
 const float K = 10.0f;
@@ -48,8 +43,9 @@ int _scrolltime = 0;
 std::auto_ptr<OGWindowCamera> _camera;
 int _width;
 int _height;
-int _fps = FRAMERATE;
-int _cur_fps = 0;
+
+class OGFPSCounter* _pFPS = 0;
+
 QPoint _lastMousePos;
 QPoint _curMousePos;
 

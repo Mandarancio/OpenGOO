@@ -15,6 +15,7 @@
 
 #include "opengoo.h"
 #include "OGLib/point.h"
+#include "og_fpscounter.h"
 
 #include <QRect>
 #include <QDebug>
@@ -133,12 +134,19 @@ void GameStart()
         createUIButtons();
     }
 
-    _timeStep = STEPS * 0.001f;
+    _timeStep = STEPS * 0.001f;   
+
+    if (flag & FPS)
+    {
+        _pFPS = new OGFPSCounter;
+    }
 }
 
 void GameEnd()
 {
     clearUI();
+
+    delete _pFPS;
 
     delete _gameEngine;
 
@@ -167,7 +175,7 @@ void GameCycle()
     }
     else _lastTime = _gameTime->restart();
 
-    calculateFPS();
+    if (flag & FPS) _pFPS->Update(_lastTime);
 
     if (!_isPause)
     {
@@ -263,6 +271,8 @@ void GamePaint(QPainter* painter)
     }
 
     painter->setWindow(0, 0, _width, _height);
+
+    if (flag & FPS) _pFPS->Painter(painter);
 
     Q_FOREACH(OGUI * ui, _listUI)
     {
@@ -495,23 +505,6 @@ void draw(QPainter* p, OGWorld* w)
     Q_FOREACH(OGStrand * strand, w->strands())
     {
         strand->Paint(p, _world->leveldata()->visualdebug);
-    }
-}
-
-void calculateFPS()
-{
-    using namespace FPSCounter;
-
-    sumFPSTime += _lastTime;
-    _cur_fps++;
-
-    if (sumFPSTime >= 1000)
-    {
-        if (_cur_fps > FRAMERATE) { _fps = FRAMERATE; }
-        else { _fps = _cur_fps; }
-
-        _cur_fps = 0;
-        sumFPSTime = 0;
     }
 }
 
