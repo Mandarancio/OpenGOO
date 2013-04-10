@@ -101,7 +101,7 @@ HEADERS += \
     src/OGLib/rect.h \
     src/OGLib/rectf.h \
     src/og_poi.h \
-    src/og_fpscounter.h
+    src/og_fpscounter.h \
 
 
 SOURCES += \
@@ -139,6 +139,7 @@ HEADERS += \
     src/GameEngine/og_gameengine.h \
     src/GameEngine/og_videomode.h \
     src/GameEngine/og_videomode_native.h \
+    src/GameEngine/og_game.h
 
 
 # Physic engine
