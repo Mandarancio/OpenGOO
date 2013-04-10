@@ -5,21 +5,25 @@
 
 namespace physics
 {
-    const qreal K = 0.1;
+const float K = 0.1f;
 
-    // categories
-    const uint16 LINE = 0x0002;
-    const uint16 CIRCLE = 0x0004;
-    const uint16 RECTANGLE = 0x0008;
-    const uint16 BALL = 0x0010;
-    const uint16 STATIC = LINE | CIRCLE | RECTANGLE;
+// categories
+const uint16 LINE = 0x0002;
+const uint16 CIRCLE = 0x0004;
+const uint16 RECTANGLE = 0x0008;
+const uint16 BALL = 0x0010;
+const uint16 STATIC = LINE | CIRCLE | RECTANGLE;
+
+WOGScene* GetScene();
+float sceneWidth();
+float sceneHeight();
 }
 
 extern OGWorld* _world;
 
 using namespace physics;
 
-OGPhysicsBody* createCircle(const QPointF & position, float32 radius
+OGPhysicsBody* createCircle(const QPointF &position, float32 radius
                             , float32 angle, WOGMaterial* material
                             , bool dynamic, float mass, OGUserData* data)
 {
@@ -29,25 +33,25 @@ OGPhysicsBody* createCircle(const QPointF & position, float32 radius
 
 OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
                             , float32 angle, WOGMaterial* material
-                            , bool dynamic, float mass, OGUserData *data)
+                            , bool dynamic, float mass, OGUserData* data)
 {
     OGPhysicsBody* circle;
     OGPhysicsEngine* engine;
     b2Filter filter;
 
     engine = OGPhysicsEngine::GetInstance();
-    circle = new OGPhysicsBody(x*K, y*K, dynamic, angle);
+    circle = new OGPhysicsBody(x * K, y * K, dynamic, angle);
 
     engine->CreateBody(circle);
     circle->CreateShape(OGPhysicsBody::CIRCLE);
-    circle->shape->SetPosition(0.0, 0.0);
-    circle->shape->SetRadius(radius*K);
+    circle->shape->SetPosition(0.0f, 0.0f);
+    circle->shape->SetRadius(radius * K);
 
     if (dynamic)
     {
-        float32 density = (mass*K)/(M_PI*radius*radius*K*K);
+        float32 density = (mass * K) / (M_PI * radius * radius * K * K);
 
-        circle->CreateFixture(density, material->friction*0.01
+        circle->CreateFixture(density, material->friction * 0.01f
                               , material->bounce);
 
         filter.categoryBits = BALL;
@@ -57,7 +61,8 @@ OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
     }
     else
     {
-        circle->CreateFixture(0.0, material->friction*0.01, material->bounce);
+        circle->CreateFixture(0.0f, material->friction * 0.01f
+                              , material->bounce);
 
         filter.categoryBits = CIRCLE;
         filter.maskBits = BALL;
@@ -68,23 +73,23 @@ OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
     return circle;
 }
 
-OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
+OGPhysicsBody* createLine(const QPointF &anchor, const QPointF &normal
                           , WOGMaterial* material, bool dynamic
                           , OGUserData* data)
 {
-    qreal x1, x2, y1, y2, length, angle;
+    float x1, x2, y1, y2, length, angle;
     OGPhysicsBody* line;
     OGPhysicsEngine* engine;
 
     engine = OGPhysicsEngine::GetInstance();
-    x1 = anchor.x()*K*0.5;
-    y1 = anchor.y()*K*0.5;
+    x1 = anchor.x() * K * 0.5f;
+    y1 = anchor.y() * K * 0.5f;
 
     //0.55 = (length + 10%)/2
 
-    float wScene = qAbs(_world->scenedata()->minx) + _world->scenedata()->maxx;
-    float hScene = qAbs(_world->scenedata()->miny) + _world->scenedata()->maxy;
-    length = qMax(wScene, hScene) * 0.55 * K;
+    float wScene = sceneWidth();
+    float hScene = sceneHeight();
+    length = qMax(wScene, hScene) * 0.55f * K;
 
     x2 = x1 + normal.x();
     y2 = y1 + normal.y();
@@ -96,7 +101,7 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
 
     QLineF line3(line2);
 
-    angle = line3.angle() + 180.0;
+    angle = line3.angle() + 180.0f;
     line3.setAngle(angle);
 
     QPointF p1(line3.p2());
@@ -110,11 +115,13 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
 
     if (dynamic)
     {
-        line->CreateFixture(0.0, material->friction*0.01, material->bounce);
+        line->CreateFixture(0.0f, material->friction * 0.01f
+                            , material->bounce);
     }
     else
     {
-        line->CreateFixture(0.0, material->friction*0.01, material->bounce);
+        line->CreateFixture(0.0f, material->friction * 0.01f
+                            , material->bounce);
 
         b2Filter filter;
 
@@ -127,7 +134,7 @@ OGPhysicsBody* createLine(const QPointF & anchor, const QPointF & normal
     return line;
 }
 
-OGPhysicsBody* createRectangle(const QPointF & position, const QSizeF & size
+OGPhysicsBody* createRectangle(const QPointF &position, const QSizeF &size
                                , qreal angle, WOGMaterial* material
                                , bool dynamic, float mass, OGUserData* data)
 {
@@ -146,20 +153,20 @@ OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
     b2Filter filter;
 
     engine = OGPhysicsEngine::GetInstance();
-    rect = new OGPhysicsBody(x*K, y*K , dynamic, angle);
+    rect = new OGPhysicsBody(x * K, y * K , dynamic, angle);
 
     engine->CreateBody(rect);
     rect->CreateShape(OGPhysicsBody::POLYGON);
-    rect->shape->SetAsBox(width*K*0.5, height*K*0.5);
+    rect->shape->SetAsBox(width * K * 0.5f, height * K * 0.5f);
 
     if (dynamic)
     {
-        float32 density = (mass*K)/(width*height*K*K);
+        float32 density = (mass * K) / (width * height * K * K);
 
-        rect->CreateFixture(density, material->friction*0.01
-                              , material->bounce);
+        rect->CreateFixture(density, material->friction * 0.01f
+                            , material->bounce);
 
-        rect->CreateFixture(density, material->friction*0.01
+        rect->CreateFixture(density, material->friction * 0.01f
                             , material->bounce);
 
         filter.categoryBits = BALL;
@@ -169,7 +176,8 @@ OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
     }
     else
     {
-        rect->CreateFixture(0.0, material->friction*0.01, material->bounce);
+        rect->CreateFixture(0.0f, material->friction * 0.01f
+                            , material->bounce);
 
         filter.categoryBits = RECTANGLE;
         filter.maskBits = BALL;
@@ -190,7 +198,7 @@ OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2
     engine = OGPhysicsEngine::GetInstance();
     joint = new OGPhysicsJoint();
     jointDef = new b2DistanceJointDef;
-    jointDef->frequencyHz = 1.5;
+    jointDef->frequencyHz = 1.5f;
     jointDef->dampingRatio = 0.9f;
 
     jointDef->Initialize(b1->body, b2->body
@@ -216,4 +224,23 @@ void setBodyPosition(OGPhysicsBody* b, float x, float y)
 {
     b->body->SetTransform(b2Vec2(x, y), b->body->GetAngle());
     b->body->SetAwake(false);
+}
+
+WOGScene* physics::GetScene()
+{
+    return _world->scenedata();
+}
+
+float physics::sceneWidth()
+{
+    WOGScene* scene = GetScene();
+
+    return scene->maxx - scene->minx;
+}
+
+float physics::sceneHeight()
+{
+    WOGScene* scene = GetScene();
+
+    return scene->maxy - scene->miny;
 }
