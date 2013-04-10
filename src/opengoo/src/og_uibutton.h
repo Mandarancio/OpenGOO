@@ -1,44 +1,42 @@
 #ifndef OG_UIBUTTON_H
 #define OG_UIBUTTON_H
 
-#include "og_sprite.h"
-#include "wog_scene.h"
+#include <QRect>
+#include <QString>
 
-#include <QPainter>
-#include <QPointF>
-#include <QSizeF>
-#include <QMouseEvent>
-#include <QWindow>
+struct WOGButton;
 
-#include "wog_scene.h"
+class QImage;
+class QPainter;
+class QMouseEvent;
 
 class OGUIButton : public QRect
 {
-    QString onclick_;
-    QString text_;
+        QString onclick_;
+        QString text_;
 
-    QImage* img_;
-    QImage* upImg_;
-    QImage* overImg_;
-    WOGButton* config_;
+        QImage* pImg_;
+        QImage* pUpImg_;
+        QImage* pOverImg_;
+        WOGButton* pConfig_;
 
-    WOGButton* config() const { return config_; }
+        QString _GetText(QString &str);
 
-public:
-    OGUIButton(WOGButton* config);
-    ~OGUIButton();
+    public:
+        OGUIButton(WOGButton* config);
+        ~OGUIButton();
 
-    QString onclick() const { return onclick_; }
+        QString onclick() const { return onclick_; }
 
-    void SetUpImage(const QString& path);
-    void SetOverImage(const QString& path) { overImg_ = new QImage(path); }
+        void SetUpImage(const QString &path);
+        void SetOverImage(const QString &path);
 
-    virtual void Paint(QPainter* p);
+        virtual void Paint(QPainter* painter);
 
-    // Events
-    void MouseDown(QMouseEvent *e);
-    void MouseMove(QMouseEvent *e);
-    void Leave(QMouseEvent *e);
+        // Events
+        void MouseDown(QMouseEvent* ev);
+        void MouseMove(QMouseEvent* ev);
+        void Leave(QMouseEvent* ev);
 };
 
 #endif // OG_UIBUTTON_H
