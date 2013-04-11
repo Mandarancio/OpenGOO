@@ -130,6 +130,7 @@ void OGLevelConfig::CreatePipe(WOGPipe* pipe, const QDomElement & element)
 {    
     pipe->id = element.attribute("id");
     pipe->depth = element.attribute("depth").toDouble();
+    pipe->type = element.attribute("type");
 
     QDomNode node = element.firstChild();
 
