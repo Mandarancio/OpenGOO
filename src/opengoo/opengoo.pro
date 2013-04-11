@@ -102,7 +102,8 @@ HEADERS += \
     src/OGLib/rectf.h \
     src/og_poi.h \
     src/og_fpscounter.h \
-    src/og_utils.h
+    src/og_utils.h \
+    src/og_ipipe.h
 
 
 SOURCES += \
