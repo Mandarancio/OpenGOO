@@ -51,6 +51,7 @@ struct WOGLevelExit
 struct WOGPipe
 {
     QString id;
+    QString type;
     float depth;
     QList<QPointF> vertex;
 };
