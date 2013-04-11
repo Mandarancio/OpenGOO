@@ -1,9 +1,7 @@
 #include "og_ball.h"
 #include "physics.h"
 #include "logger.h"
-
-extern OGWorld* _world;
-extern OGBall* _nearestBall;
+#include "opengoo.h"
 
 inline float LengthSquared(float x1, float y1, float x2, float y2);
 inline float LengthSquared(const QPointF* p1, const QPointF* p2);
@@ -589,7 +587,7 @@ inline float OGBall::Distance(OGBall* b1, OGBall* b2)
 
 inline OGWorld* OGBall::_GetWorld()
 {
-    return _world;
+    return OpenGOO::instance()->GetWorld();
 }
 
 inline WOGLevelExit* OGBall::_GetLevelExit()

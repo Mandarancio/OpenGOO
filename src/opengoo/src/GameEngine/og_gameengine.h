@@ -8,55 +8,40 @@
 class OGEvent;
 class OGGame;
 
-void GameStart();
-void GameEnd();
-void GameActivate();
-void GameDeactivate();
-void GamePaint(QPainter* painter);
-void GameCycle();
-void KeyDown(QKeyEvent* event);
-void KeyUp(QKeyEvent* event);
-void MouseButtonDown(QMouseEvent* event);
-void MouseButtonUp(QMouseEvent* event);
-void MouseMove(QMouseEvent* event);
-void MouseWheel(QWheelEvent* event);
-
-void SendEvent(OGEvent* ev);
-
 class OGGameEngine : public QObject
 {
-    Q_OBJECT
+        Q_OBJECT
 
-    bool isVideoModeSupported_;
+        bool isVideoModeSupported_;
 
-protected:
-    static OGGameEngine* gameEngine_;
-    int width_, height_;
-    int frameDelay_;
-    bool fullscreen_;
-    OGWindow* window_;
-    OGGame* pGame_;
+    protected:
+        static OGGameEngine* gameEngine_;
+        int width_, height_;
+        int frameDelay_;
+        bool fullscreen_;
+        OGWindow* window_;
+        OGGame* pGame_;
 
-    bool eventFilter(QObject* obj, QEvent* event);
+        bool eventFilter(QObject* obj, QEvent* event);
 
-public:
-    OGGameEngine(OGGame* game, int width, int height, bool fullscreen=false);
-    virtual ~OGGameEngine();
+    public:
+        OGGameEngine(OGGame* game, int width, int height, bool fullscreen = false);
+        virtual ~OGGameEngine();
 
-    static OGGameEngine* getEngine() { return gameEngine_; }
-    bool initialize();
+        static OGGameEngine* getEngine() { return gameEngine_; }
+        bool initialize();
 
-    OGWindow* getWindow() const { return window_; }
+        OGWindow* getWindow() const { return window_; }
 
-    int getWidth() const { return width_; }
-    int getHeight() const { return height_; }
-    int getFrameDelay() const { return frameDelay_; }
+        int getWidth() const { return width_; }
+        int getHeight() const { return height_; }
+        int getFrameDelay() const { return frameDelay_; }
 
-public slots:
-    void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 / framerate); }
+    public slots:
+        void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 / framerate); }
 
-private slots:
-    void gameExit();
+    private slots:
+        void gameExit();
 };
 
 #endif // OG_GAMEENGINE_H

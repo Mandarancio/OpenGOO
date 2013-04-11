@@ -18,6 +18,8 @@ using namespace std;
 
 class OGWindowCamera
 {
+    static OGWindowCamera* pInstance_;
+
         auto_ptr<OGCamera> camera_;
         OGPoi* target_;
         Rect scene_;
@@ -33,11 +35,14 @@ class OGWindowCamera
 
         bool isScrolling_;
 
-        void _SetTarget();
+        void _SetTarget();                
 
     public:
         OGWindowCamera(const Rect &scene, const Size& size
                        , const WOGCamera* cam);
+        ~OGWindowCamera();
+
+        static OGWindowCamera* instance();
 
         float zoom() const { return camera_->zoom(); }
 

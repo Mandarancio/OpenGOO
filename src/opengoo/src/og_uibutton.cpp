@@ -2,8 +2,7 @@
 #include "og_world.h"
 #include "og_gameengine.h"
 #include "og_event.h"
-
-extern OGWorld* _world;
+#include "opengoo.h"
 
 OGUIButton::OGUIButton(WOGButton* config)
     : pUpImg_(0)
@@ -22,7 +21,7 @@ OGUIButton::~OGUIButton()
 
 QString OGUIButton::_GetText(QString &str)
 {
-    return _world->textdata()->GetString(str);
+    return OpenGOO::instance()->GetWorld()->textdata()->GetString(str);
 }
 
 void OGUIButton::SetUpImage(const QString &path)
@@ -73,31 +72,31 @@ void OGUIButton::MouseDown(QMouseEvent* ev)
 
     if (onclick().compare("createretrymenu") == 0)
     {
-        SendEvent(new OGMenuEvent("RetryMenu"));
+        OpenGOO::SendEvent(new OGMenuEvent("RetryMenu"));
     }
     else if (onclick().compare("createmenu") == 0)
     {
-        SendEvent(new OGMenuEvent("GameMenu"));
+        OpenGOO::SendEvent(new OGMenuEvent("GameMenu"));
     }
     else if (onclick().compare("restartlevelrightnow") == 0)
     {
-        SendEvent(new OGEvent(OGEvent::RESTART));
+        OpenGOO::SendEvent(new OGEvent(OGEvent::RESTART));
     }
     else if (onclick().compare("showocdcriteria") == 0)
     {
-        SendEvent(new OGEvent(OGEvent::SHOW_OCD));
+        OpenGOO::SendEvent(new OGEvent(OGEvent::SHOW_OCD));
     }
     else if (onclick().compare("backtoisland") == 0)
     {
-        SendEvent(new OGEvent(OGEvent::BACKTO_ISLAND));
+        OpenGOO::SendEvent(new OGEvent(OGEvent::BACKTO_ISLAND));
     }
     else if (onclick().compare("resumegame") == 0)
     {
-        SendEvent(new OGEvent(OGEvent::RESUME));
+        OpenGOO::SendEvent(new OGEvent(OGEvent::RESUME));
     }
     else if (onclick().compare("backtomainmenu") == 0)
     {
-        SendEvent(new OGEvent(OGEvent::BACKTO_MAINMENU));
+        OpenGOO::SendEvent(new OGEvent(OGEvent::BACKTO_MAINMENU));
     }
 }
 

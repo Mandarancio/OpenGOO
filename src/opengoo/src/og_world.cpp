@@ -12,8 +12,6 @@
 
 #include <memory>
 
-extern std::auto_ptr<OGWindowCamera> _camera;
-
 OGWorld::OGWorld(const QString &levelname, QObject* parent)
     : QObject(parent)
 {
@@ -28,6 +26,7 @@ OGWorld::OGWorld(const QString &levelname, QObject* parent)
     materialData_ = 0;
     effectsData_ = 0;
     timer_ = 0;
+    pCamera_ = 0;
 
     strandId_ = 0;
     ballId_ = 0;
@@ -516,7 +515,7 @@ bool OGWorld::_CreateCamera()
     Rect scene = RectF(sceneData_->maxx, sceneData_->maxy
                        , sceneData_->minx, sceneData_->miny).ToRect();
     Size size(w, h);
-    _camera.reset(new OGWindowCamera(scene, size, cam));
+    pCamera_ = new OGWindowCamera(scene, size, cam);
 
     return true;
 }
@@ -690,6 +689,9 @@ void OGWorld::_ClearScene()
     logDebug("Clear buttons");
 
     while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
+
+    delete pCamera_;
+    pCamera_ = 0;
 }
 
 void OGWorld::CreateStrand(OGBall* b1, OGBall* b2)

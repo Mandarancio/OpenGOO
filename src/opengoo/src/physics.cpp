@@ -1,4 +1,5 @@
 #include "physics.h"
+#include "opengoo.h"
 
 #include <qmath.h>
 #include <QDebug>
@@ -18,8 +19,6 @@ WOGScene* GetScene();
 float sceneWidth();
 float sceneHeight();
 }
-
-extern OGWorld* _world;
 
 using namespace physics;
 
@@ -227,8 +226,8 @@ void setBodyPosition(OGPhysicsBody* b, float x, float y)
 }
 
 WOGScene* physics::GetScene()
-{
-    return _world->scenedata();
+{       
+    return OpenGOO::instance()->GetWorld()->scenedata();
 }
 
 float physics::sceneWidth()

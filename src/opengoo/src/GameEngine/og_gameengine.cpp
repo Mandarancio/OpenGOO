@@ -1,4 +1,5 @@
 #include "og_gameengine.h"
+#include "og_game.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -33,7 +34,7 @@ OGGameEngine::~OGGameEngine()
 bool OGGameEngine::initialize()
 {
     QScreen* screen = QGuiApplication::primaryScreen();
-    window_ = new OGWindow(0);
+    window_ = new OGWindow(pGame_);
 
     // Set fixed size of window
     window_->setMaximumSize(QSize(getWidth(), getHeight()));
@@ -72,7 +73,7 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
     switch (event->type())
     {
         case QEvent::ApplicationActivate:
-            GameActivate();            
+            pGame_->Activate();
             getWindow()->setActive(true);
             getWindow()->setKeyboardGrabEnabled(true);
 
@@ -80,7 +81,7 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
 
         case QEvent::ApplicationDeactivate:
             getWindow()->setActive(false);
-            GameDeactivate();
+            pGame_->Deactivate();
             getWindow()->setKeyboardGrabEnabled(false);
 
             return true;
@@ -95,6 +96,6 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
 void OGGameEngine::gameExit()
 {
     getWindow()->setActive(false);
-    GameEnd();
+    pGame_->End();
     QGuiApplication::quit();
 }

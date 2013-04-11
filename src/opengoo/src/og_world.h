@@ -60,7 +60,9 @@ class OGWorld : public QObject
     QList<OGIBody*> staticBodies_;        
 
     int strandId_;
-    int ballId_;     
+    int ballId_;
+
+    class OGWindowCamera* pCamera_;
 
     bool _LoadFX(const QString & path);
     bool _LoadLevel(const QString path);

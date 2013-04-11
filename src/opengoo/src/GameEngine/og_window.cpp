@@ -1,13 +1,14 @@
 #include "og_gameengine.h"
+#include "og_game.h"
 
 #include <cstdio>
 
 #include <QSurfaceFormat>
 #include <QDebug>
 
-OGWindow::OGWindow(OGGame *game, QWindow *parent)
+OGWindow::OGWindow(OGGame* game, QWindow* parent)
     : QWindow(parent)
-{ 
+{
     setSurfaceType(QWindow::OpenGLSurface);
 
     Qt::WindowFlags flags = Qt::Window;
@@ -18,30 +19,28 @@ OGWindow::OGWindow(OGGame *game, QWindow *parent)
 
     setFlags(flags);
 
-    paintDevice_ = 0;
-    context_ = 0;
+    pPaintDevice_ = 0;
+    pContext_ = 0;
+    pTimer_ = 0;
 
-    timer_ = new QTimer();
-    QObject::connect(timer_, SIGNAL(timeout()), this, SLOT(processing()));
-    timer_->start();
-    isActive_ = false;
     pGame_ = game;
 }
 
 OGWindow::~OGWindow()
 {
-    delete paintDevice_;
-    delete context_;
+    delete pPaintDevice_;
+    delete pContext_;
+    delete pTimer_;
 }
 
 void OGWindow::keyPressEvent(QKeyEvent* event)
 {
-    KeyDown(event);
+    pGame_->KeyDown(event);
 }
 
 void OGWindow::keyReleaseEvent(QKeyEvent* event)
 {
-    KeyUp(event);
+    pGame_->KeyUp(event);
 }
 
 void OGWindow::exposeEvent(QExposeEvent* event)
@@ -57,7 +56,14 @@ void OGWindow::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event)
 
-    GameStart();
+    pGame_->Start();
+
+    if (!pTimer_)
+    {
+        pTimer_ = new QTimer();
+        QObject::connect(pTimer_, SIGNAL(timeout()), this, SLOT(processing()));
+        pTimer_->start();
+    }
 }
 
 void OGWindow::resizeEvent(QResizeEvent* event)
@@ -73,19 +79,19 @@ bool OGWindow::_initOpenGL()
 {
     bool needsInitialize = false;
 
-    if (!context_)
+    if (!pContext_)
     {
-        context_ = new QOpenGLContext(this);
-        context_->setFormat(requestedFormat());
-        context_->create();
+        pContext_ = new QOpenGLContext(this);
+        pContext_->setFormat(requestedFormat());
+        pContext_->create();
 
         needsInitialize = true;
     }
 
-    if (!context_->makeCurrent(this))
-    {        
-        delete context_;        
-        context_ = 0;
+    if (!pContext_->makeCurrent(this))
+    {
+        delete pContext_;
+        pContext_ = 0;
 
         return false;
     }
@@ -94,8 +100,7 @@ bool OGWindow::_initOpenGL()
     {
         glClear(GL_COLOR_BUFFER_BIT
                 | GL_DEPTH_BUFFER_BIT
-                |GL_STENCIL_BUFFER_BIT
-                );
+                | GL_STENCIL_BUFFER_BIT);
     }
 
     return true;
@@ -105,52 +110,58 @@ void OGWindow::draw()
 {
     if (!isExposed()) { return; }
 
-    if (context_ == 0)
+    if (pContext_ == 0)
     {
         if (!_initOpenGL())
         {
-            delete paintDevice_;
-            paintDevice_ = 0;
+            delete pPaintDevice_;
+            pPaintDevice_ = 0;
 
             return;
         }
     }
 
-    if (!paintDevice_)
+    if (!pPaintDevice_)
     {
-        paintDevice_ = new QOpenGLPaintDevice(QSize(width(), height()));
+        pPaintDevice_ = new QOpenGLPaintDevice(QSize(width(), height()));
     }
 
-    QPainter painter(paintDevice_);
-    GamePaint(&painter);
+    QPainter painter(pPaintDevice_);
+    pGame_->Paint(&painter);
 
-    context_->swapBuffers(this);
+    pContext_->swapBuffers(this);
 }
 
 void OGWindow::mousePressEvent(QMouseEvent* event)
 {
-    MouseButtonDown(event);
+    pGame_->MouseButtonDown(event);
 }
 
 void OGWindow::mouseReleaseEvent(QMouseEvent* event)
 {
-    MouseButtonUp(event);
+    pGame_->MouseButtonUp(event);
 }
 
 void OGWindow::mouseMoveEvent(QMouseEvent* event)
 {
-    MouseMove(event);
+    pGame_->MouseMove(event);
 }
 
 void OGWindow::wheelEvent(QWheelEvent* event)
 {
-    MouseWheel(event);
+    pGame_->MouseWheel(event);
 }
 
 void OGWindow::processing()
 {
-    if (!isActive_) return;
-
-    GameCycle();
+    pGame_->Cycle();
     draw();
+}
+
+void OGWindow::setActive(bool active)
+{
+    if (!pTimer_) return;
+
+    if (active) pTimer_->start();
+    else pTimer_->stop();
 }

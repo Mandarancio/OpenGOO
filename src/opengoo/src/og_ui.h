@@ -17,7 +17,7 @@ class OGUI
     void _MouseMove(QMouseEvent* e);
     void _MouseEvent(QMouseEvent* e);
 
-    friend void mouseEven(OGUI* ui, QMouseEvent* ee);
+    friend class OpenGOO;
 
 public:
     OGUI() :  btn_(0) {}
