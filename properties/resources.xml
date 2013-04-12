@@ -19,6 +19,22 @@
     
     <Sound id="" path=""/>
     
+    <!-- normal pipe -->
+    
+    <Image id="IMAGE_GLOBAL_PIPE_NORMAL"                      path="res/images/levelimages/pipe_horiz"/>
+
+    <Image id="IMAGE_GLOBAL_PIPE_BEND_TL_NORMAL"              path="res/images/levelimages/pipe_bend_tl"/>
+
+    <Image id="IMAGE_GLOBAL_PIPE_BEND_BR_NORMAL"              path="res/images/levelimages/pipe_bend_br"/>
+
+    <Image id="IMAGE_GLOBAL_PIPE_BEND_TR_NORMAL"              path="res/images/levelimages/pipe_bend_tr"/>
+
+    <Image id="IMAGE_GLOBAL_PIPE_BEND_BL_NORMAL"              path="res/images/levelimages/pipe_bend_bl"/>
+
+    <Image id="IMAGE_GLOBAL_PIPE_CAP_OPEN_NORMAL"             path="res/images/levelimages/pipeCap"/>
+
+    <Image id="IMAGE_GLOBAL_PIPE_CAP_CLOSED_NORMAL"           path="res/images/levelimages/pipeCap_closed"/>
+    
   </Resources>  
   
 </ResourceManifest>
