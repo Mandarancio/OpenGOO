@@ -52,7 +52,9 @@ class OGWorld : public QObject
         bool isLevelLoaded_;
 
         QList<OGButton*> buttons_;
+
         QList<OGSprite*> sprites_;
+        void _InsertSprite(OGSprite* sprite);
 
         QList<OGBall*> balls_;
         QHash<int, OGStrand*> strands_;

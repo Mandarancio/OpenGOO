@@ -807,3 +807,8 @@ void OGWorld::_CreateZOrder()
         }
     }
 }
+
+void OGWorld::_InsertSprite(OGSprite* sprite)
+{
+    sprites_ << sprite;
+}
