@@ -6,6 +6,7 @@
 #include "OGLib/rect.h"
 #include "OGLib/rectf.h"
 #include "OGLib/size.h"
+#include "og_pipe.h"
 
 #include <QPainter>
 #include <QFile>
@@ -27,6 +28,7 @@ OGWorld::OGWorld(const QString &levelname, QObject* parent)
     effectsData_ = 0;
     timer_ = 0;
     pCamera_ = 0;
+    pPipe_ = 0;
 
     strandId_ = 0;
     ballId_ = 0;
@@ -337,6 +339,8 @@ void OGWorld::CreateScene()
         _CreateButton(*btn, &sprites_, &buttons_);
     }
 
+    if (!pPipe_) _CreatePipe();
+
     // Create Z-order
     logDebug("Create Z-order");
 
@@ -520,6 +524,18 @@ bool OGWorld::_CreateCamera()
     return true;
 }
 
+void OGWorld::_CreatePipe()
+{
+    WOGPipe* pipe = _GetPipeData();
+
+    if (pipe)
+    {
+        logDebug("Create pipe");
+
+        pPipe_ = new OGPipe(pipe);
+    }
+}
+
 QPixmap OGWorld::_CreatePixmap(OGSprite* sprite, const QString &image)
 {
     QImage source(resourcesData_[1]->GetResource(WOGResource::IMAGE
@@ -690,8 +706,18 @@ void OGWorld::_ClearScene()
 
     while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
 
+    logDebug("Clear camera");
+
     delete pCamera_;
     pCamera_ = 0;
+
+    if (pPipe_)
+    {
+        logDebug("Clear pipe");
+
+        delete pPipe_;
+        pPipe_ = 0;
+    }
 }
 
 void OGWorld::CreateStrand(OGBall* b1, OGBall* b2)

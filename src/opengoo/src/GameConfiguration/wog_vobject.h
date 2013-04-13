@@ -8,12 +8,14 @@
 
 struct WOGVObject
 {
-    qreal depth;
+    float depth;
     QPointF position;
     QPointF scale;
-    qreal rotation;
-    qreal alpha;
+    float rotation;
+    float alpha;
     QColor colorize;
+
+    WOGVObject() : alpha(1) {}
 };
 
 #endif // WOG_VOBJECT_H

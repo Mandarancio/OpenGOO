@@ -1,6 +1,6 @@
 #include "og_levelconfig.h"
 
-OGLevelConfig::OGLevelConfig(const QString & filename)
+OGLevelConfig::OGLevelConfig(const QString &filename)
     : OGXmlConfig(filename)
 {
     SetRootTag("level");
@@ -17,7 +17,7 @@ WOGLevel* OGLevelConfig::Parser()
     level->textcolor = StringToColor(rootElement.attribute("textcolor"));
     level->texteffects = StringToBool(rootElement.attribute("texteffects"));
     level->timebugprobability =
-            rootElement.attribute("timebugprobability").toDouble();
+        rootElement.attribute("timebugprobability").toDouble();
 
     level->strandgeom = StringToBool(rootElement.attribute("strandgeom"));
     level->allowskip = StringToBool(rootElement.attribute("allowskip"));
@@ -29,7 +29,7 @@ WOGLevel* OGLevelConfig::Parser()
         QDomElement domElement = node.toElement();
 
         if (domElement.tagName() == "camera")
-        {           
+        {
             level->camera << CreateCamera(domElement);
         }
         else if (domElement.tagName() == "music")
@@ -37,7 +37,7 @@ WOGLevel* OGLevelConfig::Parser()
             level->music.id = domElement.attribute("music");
         }
         else if (domElement.tagName() == "BallInstance")
-        {            
+        {
             level->ball << CreateBallInstance(domElement);
         }
         else if (domElement.tagName() == "levelexit")
@@ -49,7 +49,10 @@ WOGLevel* OGLevelConfig::Parser()
         }
         else if (domElement.tagName() == "pipe")
         {
-            CreatePipe(&level->pipe, domElement);
+            if (!level->pipe)
+            {
+                level->pipe = CreatePipe(domElement);
+            }
         }
         else if (domElement.tagName() == "Strand")
         {
@@ -62,7 +65,7 @@ WOGLevel* OGLevelConfig::Parser()
     return level;
 }
 
-WOGLevelExit* OGLevelConfig::CreateLevelExit(const QDomElement & element)
+WOGLevelExit* OGLevelConfig::CreateLevelExit(const QDomElement &element)
 {
     WOGLevelExit* obj = new WOGLevelExit;
     obj->id = element.attribute("id");
@@ -73,7 +76,7 @@ WOGLevelExit* OGLevelConfig::CreateLevelExit(const QDomElement & element)
     return obj;
 }
 
-WOGPoi* OGLevelConfig::CreatePoi(const QDomElement & element)
+WOGPoi* OGLevelConfig::CreatePoi(const QDomElement &element)
 {
     WOGPoi* obj = new WOGPoi;
     obj->position = StringToPoint(element.attribute("pos"));
@@ -84,7 +87,7 @@ WOGPoi* OGLevelConfig::CreatePoi(const QDomElement & element)
     return obj;
 }
 
-WOGCamera* OGLevelConfig::CreateCamera(const QDomElement & element)
+WOGCamera* OGLevelConfig::CreateCamera(const QDomElement &element)
 {
     WOGCamera* obj = new WOGCamera;
 
@@ -103,7 +106,7 @@ WOGCamera* OGLevelConfig::CreateCamera(const QDomElement & element)
     return obj;
 }
 
-WOGBallInstance* OGLevelConfig::CreateBallInstance(const QDomElement & element)
+WOGBallInstance* OGLevelConfig::CreateBallInstance(const QDomElement &element)
 {
     WOGBallInstance* obj = new WOGBallInstance;
     obj->type = element.attribute("type");
@@ -117,31 +120,34 @@ WOGBallInstance* OGLevelConfig::CreateBallInstance(const QDomElement & element)
     return obj;
 }
 
-void OGLevelConfig::CreateVertex(QList<QPointF>* vertex, const QDomElement & element)
+QPointF OGLevelConfig::CreateVertex(const QDomElement &element)
 {
 
-    qreal x = element.attribute("x").toDouble();
-    qreal y = element.attribute("y").toDouble();
+    float x = element.attribute("x").toFloat();
+    float y = element.attribute("y").toFloat();
 
-    vertex->push_back(QPointF(x, y));
+    return QPointF(x, y);
 }
 
-void OGLevelConfig::CreatePipe(WOGPipe* pipe, const QDomElement & element)
-{    
+WOGPipe* OGLevelConfig::CreatePipe(const QDomElement &element)
+{
+    WOGPipe* pipe = new WOGPipe;
     pipe->id = element.attribute("id");
-    pipe->depth = element.attribute("depth").toDouble();
+    pipe->depth = element.attribute("depth").toFloat();
     pipe->type = element.attribute("type");
-
+    pipe->vertex = new QList<QPointF>;
     QDomNode node = element.firstChild();
 
     while (!node.isNull())
     {
-        CreateVertex(&pipe->vertex, node.toElement());
+        pipe->vertex->append(CreateVertex(node.toElement()));
         node = node.nextSibling();
     }
+
+    return pipe;
 }
 
-WOGStrand* OGLevelConfig::CreateStrand(const QDomElement & element)
+WOGStrand* OGLevelConfig::CreateStrand(const QDomElement &element)
 {
     WOGStrand* obj = new WOGStrand;
     obj->gb1 = element.attribute("gb1");

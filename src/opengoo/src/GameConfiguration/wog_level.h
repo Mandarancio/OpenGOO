@@ -1,6 +1,8 @@
 #ifndef WOG_LEVEL_H
 #define WOG_LEVEL_H
 
+#include "wog_pipe.h"
+
 #include <QPointF>
 #include <QString>
 #include <QList>
@@ -22,7 +24,6 @@ struct WOGCamera
     QList<WOGPoi*> poi;
 
     WOGCamera() : aspect("normal"), endpos(), endzoom(1) {}
-
     ~WOGCamera();
 };
 
@@ -48,14 +49,6 @@ struct WOGLevelExit
     QString filter;
 };
 
-struct WOGPipe
-{
-    QString id;
-    QString type;
-    float depth;
-    QList<QPointF> vertex;
-};
-
 struct WOGStrand
 {
     QString gb1;
@@ -78,9 +71,9 @@ struct WOGLevel
     QList<WOGBallInstance*> ball;
     WOGLevelExit* levelexit;
     QList<WOGStrand*> strand;
-    WOGPipe pipe;
+    WOGPipe* pipe;
 
-    WOGLevel() : levelexit(0) { }
+    WOGLevel() : levelexit(0), pipe(0) { }
     ~WOGLevel();
 
     WOGCamera* GetCameraByAspect(const QString& aspect) const;

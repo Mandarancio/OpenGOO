@@ -39,20 +39,7 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
 
             rect.moveCenter(rect.topLeft());
             painter->fillRect(rect, Qt::yellow);
-        }
-
-        // pipe
-        for (int i = 0; i < world->leveldata()->pipe.vertex.size() - 1; i++)
-        {
-            qreal x1, x2, y1, y2;
-
-            x1 = world->leveldata()->pipe.vertex.at(i).x();
-            y1 = world->leveldata()->pipe.vertex.at(i).y() * (-1.0);
-            x2 = world->leveldata()->pipe.vertex.at(i + 1).x();
-            y2 = world->leveldata()->pipe.vertex.at(i + 1).y() * (-1.0);
-
-            painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
-        }
+        }        
     }
 
     if (world->nearestball() != 0)

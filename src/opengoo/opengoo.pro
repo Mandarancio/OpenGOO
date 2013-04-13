@@ -103,7 +103,8 @@ HEADERS += \
     src/og_poi.h \
     src/og_fpscounter.h \
     src/og_utils.h \
-    src/og_ipipe.h
+    src/og_ipipe.h \
+    src/og_pipe.h \
 
 
 SOURCES += \
@@ -127,7 +128,8 @@ SOURCES += \
     src/og_camera.cpp \
     src/og_fpscounter.cpp \
     src/main.cpp \
-    src/og_utils.cpp
+    src/og_utils.cpp \
+    src/og_pipe.cpp \   
 
 
 # Game engine
@@ -179,6 +181,7 @@ SOURCES += \
     src/GameConfiguration/wog_resources.cpp \
     src/GameConfiguration/wog_material.cpp \
     src/GameConfiguration/wog_text.cpp \
+    src/GameConfiguration/wog_pipe.cpp
 
 
 HEADERS += \
@@ -202,6 +205,7 @@ HEADERS += \
     src/GameConfiguration/wog_effects.h \
     src/GameConfiguration/wog_ball.h \
     src/GameConfiguration/wog_island.h \
+    src/GameConfiguration/wog_pipe.h
 
 
 !win32{
