@@ -408,6 +408,7 @@ void OpenGOO::_CloseLevel()
 {
     pWorld_->CloseLevel();
     pCamera_ = 0;
+    pSelectedBall_ = 0;
 }
 
 void OpenGOO::_ReloadLevel()
