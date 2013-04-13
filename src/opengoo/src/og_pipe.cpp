@@ -82,6 +82,29 @@ OGPipe::OGPipe(WOGPipe* pipe)
             _InsertSprite(sprite);
         }
     }
+
+    pCapClosed_ = _CreateCap(pipe, "IMAGE_GLOBAL_PIPE_CAP_CLOSED" + type
+                             , true);
+
+    if (pCapClosed_) _InsertSprite(pCapClosed_);
+
+    pCapOpen_ = _CreateCap(pipe, "IMAGE_GLOBAL_PIPE_CAP_OPEN" + type
+                           , false);
+
+    if (pCapOpen_) _InsertSprite(pCapOpen_);
+
+}
+
+void OGPipe::_Close()
+{
+    pCapOpen_->visible = false;
+    pCapClosed_->visible = true;
+}
+
+void OGPipe::_Open()
+{
+    pCapOpen_->visible = true;
+    pCapClosed_->visible = false;
 }
 
 QImage* OGPipe::_GetImage(const QString &id)
@@ -97,8 +120,51 @@ WOGResources* OGPipe::_GetResourceManager()
     return world->resrcdata();
 }
 
-void OGPipe::_InsertSprite(OGSprite *sprite)
+void OGPipe::_InsertSprite(OGSprite* sprite)
 {
     OGWorld* world = OpenGOO::instance()->GetWorld();
-    world->sprites_ << sprite;
+    world->_InsertSprite(sprite);
+}
+
+OGSprite* OGPipe::_CreateCap(WOGPipe* pipe, const QString &id,  bool visible)
+{
+    std::auto_ptr<QImage> src;
+    src.reset(_GetImage(id));
+
+    if (src.get() == 0 || pipe->vertex->size() < 2) return 0;
+
+    QPointF p1 = pipe->vertex->at(0);
+    QPointF p2 = pipe->vertex->at(1);
+
+    float angle = QLineF(p2, p1).angle() - 90;
+
+    const float w = 80;
+    const float h = 80;
+
+    float x = p1.x() - w * 0.5f;
+    float y = (p1.y() + h * 0.5f) * -1;
+
+    OGSprite* sprite = new OGSprite;
+
+    if (angle != 0)
+    {
+        QTransform transform;
+        transform.rotate(angle);
+        sprite->image = QPixmap::fromImage(src->transformed(transform));
+    }
+    else
+    {
+        sprite->image = QPixmap::fromImage(*src);
+    }
+
+    sprite->position.setX(x);
+    sprite->position.setY(y);
+
+    sprite->size.setWidth(w);
+    sprite->size.setHeight(h);
+
+    sprite->visible = visible;
+    sprite->depth = pipe->depth;
+
+    return sprite;
 }
