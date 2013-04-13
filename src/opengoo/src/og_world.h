@@ -33,19 +33,19 @@ class OGWorld : public QObject
 {
         Q_OBJECT
 
-        WOGLevel* levelData_;
-        WOGScene* sceneData_;
-        WOGResources* resourcesData_[2];
-        WOGText* textData_[2];
-        WOGMaterialList* materialData_;
-        WOGEffects* effectsData_;
+        WOGLevel* pLevelData_;
+        WOGScene* pSceneData_;
+        WOGResources* pResourcesData_[2];
+        WOGText* pTextData_[2];
+        WOGMaterialList* pMaterialData_;
+        WOGEffects* pEffectsData_;
 
         QCache<QString, WOGBall> ballConfigurations_;
 
-        OGBall* nearestBall_;
+        OGBall* pNearestBall_;
         float xExit_;
         float yExit_;
-        QTimer* timer_;
+        QTimer* pTimer_;
 
         QString levelName_;
         QString language_;
@@ -54,17 +54,12 @@ class OGWorld : public QObject
         QList<OGButton*> buttons_;
         QList<OGSprite*> sprites_;
 
-        bool isPhysicsEngine_;
-        OGPhysicsEngine* physicsEngine_;
-
         QList<OGBall*> balls_;
         QHash<int, OGStrand*> strands_;
         QList<OGIBody*> staticBodies_;
 
         int strandId_;
         int ballId_;
-
-        class OGWindowCamera* pCamera_;
 
         bool _LoadFX(const QString &path);
         bool _LoadLevel(const QString path);
@@ -84,23 +79,26 @@ class OGWorld : public QObject
         void _CreateRadialForcefield();
         void _CreateParticle();
         void _CreateSceneLayer(const WOGSceneLayer &scenelayer
-                               , QList<OGSprite*>* sprites
-                              );
+                               , QList<OGSprite*>* sprites);
 
         void _CreateButtongroup();
         void _CreateButton(const WOGButton &button, QList<OGSprite*>* sprites
-                           , QList<OGButton*>* buttons
-                          );
+                           , QList<OGButton*>* buttons);
 
         // Pipe
         OGIPipe* pPipe_;
-        WOGPipe* _GetPipeData() { return levelData_->pipe; }
+        WOGPipe* _GetPipeData() { return pLevelData_->pipe; }
         void _CreatePipe();
 
         template<class Body, class Data> Body* _CreateBody(Data* data);
 
         void _CreateLabel();
+
+        class OGWindowCamera* pCamera_;
         bool _CreateCamera();
+
+        bool isPhysicsEngine_;
+        OGPhysicsEngine* pPhysicsEngine_;
 
         void CreatePhysicsScene();
         bool _InitializePhysics();
@@ -109,6 +107,8 @@ class OGWorld : public QObject
 
         void _ClearScene();
         void _ClearLocalData();
+
+        void _CreateZOrder();
 
     public:
         OGWorld(const QString &levelname = QString(), QObject* parent = 0);
@@ -123,13 +123,13 @@ class OGWorld : public QObject
         const QHash<int, OGStrand*>& strands() const { return strands_; }
         QList<OGIBody*>& staticbodies() { return staticBodies_; }
         const QString &language() const { return language_; }
-        WOGLevel* leveldata() const { return levelData_; }
-        WOGMaterialList* materialdata() { return materialData_; }
+        WOGLevel* leveldata() const { return pLevelData_; }
+        WOGMaterialList* materialdata() { return pMaterialData_; }
         const QString &levelname() const { return levelName_; }
-        WOGScene* scenedata() const { return sceneData_; }
-        OGBall* nearestball() { return nearestBall_; }
-        WOGText* textdata() { return textData_[0]; }
-        WOGResources* resrcdata() const { return resourcesData_[0]; }
+        WOGScene* scenedata() const { return pSceneData_; }
+        OGBall* nearestball() { return pNearestBall_; }
+        WOGText* textdata() { return pTextData_[0]; }
+        WOGResources* resrcdata() const { return pResourcesData_[0]; }
         OGIPipe* pipe() const { return pPipe_; }
 
         bool isLevelLoaded() const { return isLevelLoaded_; }
@@ -156,7 +156,7 @@ class OGWorld : public QObject
         void CreateStrand(OGBall* b1, OGBall* b2);
         void RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()); }
 
-        void StartSearching() { timer_->start(1000); }
+        void StartSearching() { pTimer_->start(1000); }
 
         friend void draw(QPainter* p, OGWorld* w);
         friend class OGPipe;

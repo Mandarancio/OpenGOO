@@ -18,17 +18,19 @@ OGWorld::OGWorld(const QString &levelname, QObject* parent)
 {
     levelName_ = levelname;
 
-    levelData_ = 0;
-    sceneData_ = 0;
-    resourcesData_[0] = 0;  // global resources
-    resourcesData_[1] = 0;  // local resources
-    textData_[0] = 0;       // global text
-    textData_[1] = 0;       // local text
-    materialData_ = 0;
-    effectsData_ = 0;
-    timer_ = 0;
+    pLevelData_ = 0;
+    pSceneData_ = 0;
+    pResourcesData_[0] = 0;  // global resources
+    pResourcesData_[1] = 0;  // local resources
+    pTextData_[0] = 0;       // global text
+    pTextData_[1] = 0;       // local text
+    pMaterialData_ = 0;
+    pEffectsData_ = 0;
+    pTimer_ = 0;
     pCamera_ = 0;
     pPipe_ = 0;
+    pNearestBall_ = 0;
+    pPhysicsEngine_ = 0;
 
     strandId_ = 0;
     ballId_ = 0;
@@ -43,15 +45,15 @@ OGWorld::~OGWorld()
 
     logDebug("Clear share data");
 
-    if (resourcesData_[0]) { delete resourcesData_[0]; }
+    if (pResourcesData_[0]) { delete pResourcesData_[0]; }
 
-    if (textData_[0]) { delete textData_[0]; }
+    if (pTextData_[0]) { delete pTextData_[0]; }
 
-    if (materialData_) { delete materialData_; }
+    if (pMaterialData_) { delete pMaterialData_; }
 
-    if (!effectsData_) { delete effectsData_; }
+    if (pEffectsData_) { delete pEffectsData_; }
 
-    delete timer_;
+    delete pTimer_;
 
     logDebug("Destroy physics engine");
 
@@ -169,11 +171,11 @@ bool OGWorld::_LoadFX(const QString &path)
 {
     logDebug("effects file");
 
-    if (effectsData_) { return false; }
+    if (pEffectsData_) { return false; }
 
-    effectsData_ = LoadConf<WOGEffects*, OGEffectConfig> (path);
+    pEffectsData_ = LoadConf<WOGEffects*, OGEffectConfig> (path);
 
-    if (effectsData_) { return true; }
+    if (pEffectsData_) { return true; }
     else { return false; }
 }
 
@@ -181,11 +183,11 @@ bool OGWorld::_LoadLevel(const QString path)
 {
     logDebug("level file");
 
-    if (levelData_) { return false; }
+    if (pLevelData_) { return false; }
 
-    levelData_ = LoadConf<WOGLevel*, OGLevelConfig> (path);
+    pLevelData_ = LoadConf<WOGLevel*, OGLevelConfig> (path);
 
-    if (levelData_) { return true; }
+    if (pLevelData_) { return true; }
     else { return false; }
 }
 
@@ -193,11 +195,11 @@ bool OGWorld::_LoadMaterials(const QString &path)
 {
     logDebug("material file");
 
-    if (materialData_) { return false; }
+    if (pMaterialData_) { return false; }
 
-    materialData_ = LoadConf<WOGMaterialList*, OGMaterialConfig> (path);
+    pMaterialData_ = LoadConf<WOGMaterialList*, OGMaterialConfig> (path);
 
-    if (materialData_) { return true; }
+    if (pMaterialData_) { return true; }
     else { return false; }
 }
 
@@ -207,8 +209,8 @@ bool OGWorld::_LoadResources(const QString &path, bool share)
 
     WOGResources* data;
 
-    if (share) data = resourcesData_[0];
-    else data = resourcesData_[1];
+    if (share) data = pResourcesData_[0];
+    else data = pResourcesData_[1];
 
     if (data) { return false; }
 
@@ -216,8 +218,8 @@ bool OGWorld::_LoadResources(const QString &path, bool share)
     else { data = OGData::GetResources(path); }
 
     if (!data) {  return false; }
-    else if (share) { resourcesData_[0] = data; }
-    else { resourcesData_[1] = data; }
+    else if (share) { pResourcesData_[0] = data; }
+    else { pResourcesData_[1] = data; }
 
     return true;
 }
@@ -226,11 +228,11 @@ bool OGWorld::_LoadScene(const QString &path)
 {
     logDebug("scene file");
 
-    if (sceneData_) { return false; }
+    if (pSceneData_) { return false; }
 
-    sceneData_ = OGData::GetScene(path);
+    pSceneData_ = OGData::GetScene(path);
 
-    if (sceneData_) { return true; }
+    if (pSceneData_) { return true; }
     else { return false; }
 }
 
@@ -240,8 +242,8 @@ bool OGWorld::_LoadText(const QString &path, bool share)
 
     WOGText* data;
 
-    if (share) data = textData_[0];
-    else data = textData_[1];
+    if (share) data = pTextData_[0];
+    else data = pTextData_[1];
 
     if (data) { return false; }
 
@@ -256,8 +258,8 @@ bool OGWorld::_LoadText(const QString &path, bool share)
             data = config.Parser(language_);
 
             if (!data) { status = false; }
-            else if (share) { textData_[0] = data; }
-            else { textData_[1] = data; }
+            else if (share) { pTextData_[0] = data; }
+            else { pTextData_[1] = data; }
         }
         else
         {
@@ -278,36 +280,36 @@ bool OGWorld::_LoadText(const QString &path, bool share)
 
 void OGWorld::_ClearLocalData()
 {
-    if (levelData_ != 0)
+    if (pLevelData_)
     {
         logDebug("Clear level");
 
-        delete levelData_;
-        levelData_ = 0;
+        delete pLevelData_;
+        pLevelData_ = 0;
     }
 
-    if (sceneData_ != 0)
+    if (pSceneData_)
     {
         logDebug("Clear scene");
 
-        delete sceneData_;
-        sceneData_ = 0;
+        delete pSceneData_;
+        pSceneData_ = 0;
     }
 
-    if (resourcesData_[1] != 0)
+    if (pResourcesData_[1])
     {
         logDebug("Clear resources");
 
-        delete resourcesData_[1];
-        resourcesData_[1] = 0;
+        delete pResourcesData_[1];
+        pResourcesData_[1] = 0;
     }
 
-    if (textData_[1] != 0)
+    if (pTextData_[1])
     {
         logDebug("Clear text");
 
-        delete textData_[1];
-        textData_[1] = 0;
+        delete pTextData_[1];
+        pTextData_[1] = 0;
     }
 }
 
@@ -344,29 +346,17 @@ void OGWorld::CreateScene()
     // Create Z-order
     logDebug("Create Z-order");
 
-    // Bubble sort
-    // Source http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Bubble_sort#C.2B.2B
-    QList <OGSprite*>::iterator first = sprites_.begin();
-    QList <OGSprite*>::iterator last = sprites_.end();
-    QList <OGSprite*>::iterator i;
+    _CreateZOrder();
 
-    while (first < --last)
+    if (!pCamera_)
     {
-        for (i = first; i < last; ++i)
+        logDebug("Creating cameras");
+
+        if (!_CreateCamera())
         {
-            if ((*(i + 1))->depth < (*i)->depth)
-            {
-                std::iter_swap(i, i + 1);
-            }
+            logDebug("Error initializing camera");
+            return;
         }
-    }
-
-    logDebug("Creating cameras");
-
-    if (!_CreateCamera())
-    {
-        logDebug("Error initializing camera");
-        return;
     }
 
     if (leveldata()->levelexit != 0)
@@ -416,17 +406,17 @@ void OGWorld::CreatePhysicsScene()
 
     _SetGravity();
 
-    physicsEngine_ = OGPhysicsEngine::GetInstance();
+    pPhysicsEngine_ = OGPhysicsEngine::GetInstance();
 
-    physicsEngine_->SetSimulation(6, 2, 60);
+    pPhysicsEngine_->SetSimulation(6, 2, 60);
 
-    nearestBall_ = 0;
+    pNearestBall_ = 0;
 
-    if (timer_ == 0)
+    if (pTimer_ == 0)
     {
-        timer_ = new QTimer(this);
-        connect(timer_, SIGNAL(timeout()), this, SLOT(findNearestAttachedBall()));
-        timer_->start(1000);
+        pTimer_ = new QTimer(this);
+        connect(pTimer_, SIGNAL(timeout()), this, SLOT(findNearestAttachedBall()));
+        pTimer_->start(1000);
     }
 
     isLevelLoaded_ = true;
@@ -446,7 +436,7 @@ OGBall* OGWorld::_CreateBall(WOGBallInstance* ball)
     OGBall* obj = 0;
     WOGBall* configuration = GetBallConfiguration(ball->type);
 
-    if (configuration != 0)
+    if (configuration)
     {
         if (configuration->attribute.core.shape->type == "circle")
         {
@@ -511,14 +501,16 @@ bool OGWorld::_CreateCamera()
     float aspect = h / w;
     WOGCamera* cam;
 
-    if (aspect == 0.75f) cam =  levelData_->GetCameraByAspect("normal");
-    else cam = levelData_->GetCameraByAspect("widescreen");
+    if (aspect == 0.75f) cam =  pLevelData_->GetCameraByAspect("normal");
+    else cam = pLevelData_->GetCameraByAspect("widescreen");
 
-    if (cam == 0 || cam->poi.isEmpty()) return false;
+    if (!cam || cam->poi.isEmpty()) return false;
 
-    Rect scene = RectF(sceneData_->maxx, sceneData_->maxy
-                       , sceneData_->minx, sceneData_->miny).ToRect();
+    Rect scene = RectF(pSceneData_->maxx, pSceneData_->maxy
+                       , pSceneData_->minx, pSceneData_->miny).ToRect();
     Size size(w, h);
+
+
     pCamera_ = new OGWindowCamera(scene, size, cam);
 
     return true;
@@ -538,7 +530,7 @@ void OGWorld::_CreatePipe()
 
 QPixmap OGWorld::_CreatePixmap(OGSprite* sprite, const QString &image)
 {
-    QImage source(resourcesData_[1]->GetResource(WOGResource::IMAGE
+    QImage source(pResourcesData_[1]->GetResource(WOGResource::IMAGE
                   , image) + ".png");
 
     QTransform transform;
@@ -612,7 +604,7 @@ void OGWorld::_CreateStrand(WOGStrand* strand)
         if (strand->gb1 == ball->GetId()) { b1 = ball; }
         else if (strand->gb2 == ball->GetId()) { b2 = ball; }
 
-        if (b1 != 0 && b2 != 0)
+        if (b1 && b2)
         {
             b1->Attache(b2);
 
@@ -660,7 +652,7 @@ void OGWorld::_SetGravity()
 
 void OGWorld::_ClearPhysics()
 {
-    physicsEngine_ = 0;
+    pPhysicsEngine_ = 0;
 
     logDebug("Clear strands");
 
@@ -672,10 +664,10 @@ void OGWorld::_ClearPhysics()
         delete i.value();
     }
 
-    if (timer_)
+    if (pTimer_)
     {
-        delete timer_;
-        timer_ = 0;
+        delete pTimer_;
+        pTimer_ = 0;
     }
 
     strands_.clear();
@@ -698,18 +690,28 @@ void OGWorld::_ClearPhysics()
 
 void OGWorld::_ClearScene()
 {
-    logDebug("Clear sprites");
+    if (!sprites_.isEmpty())
+    {
+        logDebug("Clear sprites");
 
-    while (!sprites_.isEmpty()) { delete sprites_.takeFirst(); }
+        while (!sprites_.isEmpty()) { delete sprites_.takeFirst(); }
+    }
 
-    logDebug("Clear buttons");
+    if (!buttons_.isEmpty())
+    {
+        logDebug("Clear buttons");
 
-    while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
+        while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
 
-    logDebug("Clear camera");
+    }
 
-    delete pCamera_;
-    pCamera_ = 0;
+    if (pCamera_)
+    {
+        logDebug("Clear camera");
+
+        delete pCamera_;
+        pCamera_ = 0;
+    }
 
     if (pPipe_)
     {
@@ -743,9 +745,9 @@ void OGWorld::findNearestAttachedBall()
         {
             if (!isInit)
             {
-                nearestBall_ = ball;
-                x2 = nearestBall_->GetX();
-                y2 = nearestBall_->GetY();
+                pNearestBall_ = ball;
+                x2 = pNearestBall_->GetX();
+                y2 = pNearestBall_->GetY();
                 x = x2;
                 y = y2;
                 dx = xExit_ - x2;
@@ -766,7 +768,7 @@ void OGWorld::findNearestAttachedBall()
                     length = tmpLength;
                     x = x2;
                     y = y2;
-                    nearestBall_ = ball;
+                    pNearestBall_ = ball;
                 }
             }
         }
@@ -775,7 +777,7 @@ void OGWorld::findNearestAttachedBall()
 
 void OGWorld::Update()
 {
-    if (physicsEngine_ != 0) { physicsEngine_->Simulate(); }
+    if (pPhysicsEngine_) { pPhysicsEngine_->Simulate(); }
 }
 void OGWorld::CloseLevel()
 {
@@ -784,4 +786,24 @@ void OGWorld::CloseLevel()
     _ClearPhysics();
     _ClearScene();
     _ClearLocalData();
+}
+
+void OGWorld::_CreateZOrder()
+{
+    // Bubble sort
+    // Source http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Bubble_sort#C.2B.2B
+    QList <OGSprite*>::iterator first = sprites_.begin();
+    QList <OGSprite*>::iterator last = sprites_.end();
+    QList <OGSprite*>::iterator i;
+
+    while (first < --last)
+    {
+        for (i = first; i < last; ++i)
+        {
+            if ((*(i + 1))->depth < (*i)->depth)
+            {
+                std::iter_swap(i, i + 1);
+            }
+        }
+    }
 }
