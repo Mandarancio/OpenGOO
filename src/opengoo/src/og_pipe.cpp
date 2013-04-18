@@ -31,6 +31,7 @@ OGPipe::OGPipe(WOGPipe* pipe)
     QLineF line;
     QPointF p1;
     QPointF p2;
+    QPointF p3;
     float length;
     float angle;
 
@@ -83,6 +84,22 @@ OGPipe::OGPipe(WOGPipe* pipe)
         }
     }
 
+    if (verteces->size() > 2)
+    {
+        OGSprite* bend;
+
+        for (int i = 0; i < verteces->size() - 2; i++)
+        {
+            p1 = verteces->at(i);
+            p2 = verteces->at(i + 1);
+            p3 = verteces->at(i + 2);
+
+            bend = _CreateBend(type, p1, p2, p3, pipe->depth);
+
+            if (bend) _InsertSprite(bend);
+        }
+    }
+
     pCapClosed_ = _CreateCap(pipe, "IMAGE_GLOBAL_PIPE_CAP_CLOSED" + type
                              , true);
 
@@ -92,7 +109,6 @@ OGPipe::OGPipe(WOGPipe* pipe)
                            , false);
 
     if (pCapOpen_) _InsertSprite(pCapOpen_);
-
 }
 
 void OGPipe::_Close()
@@ -157,14 +173,52 @@ OGSprite* OGPipe::_CreateCap(WOGPipe* pipe, const QString &id,  bool visible)
         sprite->image = QPixmap::fromImage(*src);
     }
 
-    sprite->position.setX(x);
-    sprite->position.setY(y);
-
-    sprite->size.setWidth(w);
-    sprite->size.setHeight(h);
-
+    sprite->position = QPointF(x, y);
+    sprite->size = QSize(w, h);
     sprite->visible = visible;
     sprite->depth = pipe->depth;
+
+    return sprite;
+}
+
+OGSprite* OGPipe::_CreateBend(const QString &type, const QPointF &p1, const QPointF &p2
+                              , const QPointF &p3, float depth)
+{
+    OGSprite* sprite = 0;
+    float angle1 = QLineF(p1, p2).angle();
+    float angle2 = QLineF(p2, p3).angle();
+    float w = 54;
+    float h = 54;
+    float x = p2.x() - w / 2;
+    float y = (p2.y() + h / 2) * -1;
+    std::auto_ptr<QImage> img;
+
+    if ((angle1 == 0 && angle2 == 270) || (angle1 == 90 && angle2 == 180))
+    {
+        img.reset(_GetImage("IMAGE_GLOBAL_PIPE_BEND_BR" + type));
+    }
+    else if ((angle1 == 90 && angle2 == 0) || (angle1 == 180 && angle2 == 270))
+    {
+        img.reset(_GetImage("IMAGE_GLOBAL_PIPE_BEND_BL" + type));
+    }
+    else if ((angle1 == 270 && angle2 == 180) || (angle1 == 0 && angle2 == 90))
+    {
+        img.reset(_GetImage("IMAGE_GLOBAL_PIPE_BEND_TR" + type));
+    }
+    else if ((angle1 == 180 && angle2 == 90) || (angle1 == 270 && angle2 == 0))
+    {
+        img.reset(_GetImage("IMAGE_GLOBAL_PIPE_BEND_TL" + type));
+    }
+
+    if (img.get() != 0)
+    {
+        sprite = new OGSprite;
+        sprite->image = QPixmap::fromImage(*img);
+        sprite->position = QPoint(x, y);
+        sprite->size = QSize(w, h);
+        sprite->visible = true;
+        sprite->depth = depth;
+    }
 
     return sprite;
 }

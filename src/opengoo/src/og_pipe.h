@@ -31,6 +31,9 @@ class OGPipe : public OGIPipe
         void _InsertSprite(OGSprite* sprite);
         WOGResources* _GetResourceManager();
         OGSprite* _CreateCap(WOGPipe* pipe, const QString &id, bool visible);
+        OGSprite* _CreateBend(const QString &type, const QPointF &p1
+                              , const QPointF &p2, const QPointF &p3
+                              , float depth);
 
     public:
         OGPipe(WOGPipe* pipe);
