@@ -1,18 +1,10 @@
 #ifndef OG_TYPES_H
 #define OG_TYPES_H
 
-// signed 8-bit 2's complement integer
-typedef signed char OGbyte;
+class b2Fixture;
+class b2Contact;
 
-// unsigned 8-bit integer
-typedef unsigned char OGubyte;
-
-// unsigned 16-bit integer
-typedef unsigned short OGushort;
-
-// unsigned 32-bit integer
-typedef unsigned int OGuint;
-
-typedef char* OGpchar;
+typedef b2Fixture Fixture ;
+typedef b2Contact Contact;
 
 #endif // OG_TYPES_H

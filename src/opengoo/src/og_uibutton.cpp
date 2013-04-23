@@ -3,6 +3,7 @@
 #include "og_gameengine.h"
 #include "og_event.h"
 #include "opengoo.h"
+#include "wog_text.h"
 
 OGUIButton::OGUIButton(WOGButton* config)
     : pUpImg_(0)

@@ -1,5 +1,10 @@
 #include "og_strand.h"
+#include <OGPhysicsEngine>
+#include "og_userdata.h"
 #include "physics.h"
+
+#include <QPainter>
+#include <QVector2D>
 
 OGStrand::~OGStrand()
 {
@@ -57,4 +62,13 @@ void OGStrand::Paint(QPainter* painter, bool debug)
         painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
         painter->restore();
     }
+}
+
+float OGStrand::GetLenghth()
+{
+    QVector2D v1 = b1_->GetPosition();
+    QVector2D v2 = b2_->GetPosition();
+    float l = (v1 - v2).length();
+
+    return l;
 }

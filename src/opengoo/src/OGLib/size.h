@@ -1,7 +1,7 @@
 #ifndef SIZE_H
 #define SIZE_H
 
-namespace opengoo
+namespace oglib
 {
 class Size
 {

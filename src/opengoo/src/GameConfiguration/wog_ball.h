@@ -1,10 +1,11 @@
 #ifndef WOG_BALL_H
 #define WOG_BALL_H
 
-#include <QDebug>
-
 // Ball definition file
 // source http://goofans.com/developers/game-file-formats/balls-xml
+
+#include <QString>
+#include <QColor>
 
 struct WOGBallShape
 {
@@ -154,8 +155,6 @@ struct WOGBall
         if (stand) { delete stand; }
 
         if (detachstrand) { delete detachstrand; }
-
-        qDebug("WOGBall: End");
     }
 };
 

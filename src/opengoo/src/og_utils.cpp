@@ -8,6 +8,7 @@
 #include "backtracer_win32.h"
 #endif
 
+#include "og_userdata.h"
 
 #include <QFile>
 
@@ -81,4 +82,13 @@ OGConfig ogUtils::ogReadConfig(const QString & filename)
     }
 
     return config;
+}
+
+OGUserData* ogUtils::ogGetUserData(void *userdata)
+{
+    OGUserData* data = 0;
+
+    if (userdata) data = static_cast<OGUserData*>(userdata);
+
+    return data;
 }

@@ -1,7 +1,7 @@
 #ifndef RECT_H
 #define RECT_H
 
-namespace opengoo
+namespace oglib
 {
 class Rect
 {

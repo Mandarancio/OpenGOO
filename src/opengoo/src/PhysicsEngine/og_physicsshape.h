@@ -15,10 +15,11 @@ struct OGPhysicsShape
     float32 GetRadius() const { return shape->m_radius; }
 
     void SetAsBox(float32 width, float32 height); // Create the box
-    void SetAsBox(float32 width, float32 height, const b2Vec2 & center
+    void SetAsBox(float32 width, float32 height, const b2Vec2 &center
                   , float32 angle);
 
     void SetPosition(float32 x, float32 y);
+    void SetPosition(const QPointF &pos);
     void SetRadius(float32 radius) { shape->m_radius = radius; }
     void Set(float32 x1, float32 y1, float32 x2, float y2);
 };

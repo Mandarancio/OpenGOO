@@ -1,5 +1,6 @@
 #include "og_line.h"
 #include "physics.h"
+#include "og_userdata.h"
 
 OGLine::OGLine(WOGLine *line, WOGMaterial* material)
     : OGIBody(line, material)

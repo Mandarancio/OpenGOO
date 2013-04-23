@@ -1,6 +1,7 @@
 #include "og_rectangle.h"
 #include "physics.h"
 #include "og_world.h"
+#include "og_userdata.h"
 
 OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
     : OGIBody(rect, material)

@@ -1,4 +1,5 @@
 #include "og_uiscene.h"
+#include "og_uibutton.h"
 #include "og_data.h"
 
 OGUI* OGUIScene::CreateUI(const QString &name)

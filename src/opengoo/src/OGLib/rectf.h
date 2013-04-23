@@ -4,7 +4,7 @@
 #include "rect.h"
 #include "util.h"
 
-namespace opengoo
+namespace oglib
 {
 class RectF
 {

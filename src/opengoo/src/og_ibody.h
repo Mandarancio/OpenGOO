@@ -1,12 +1,12 @@
 #ifndef OG_IBODY_H
 #define OG_IBODY_H
 
-#include "og_physicsbody.h"
-#include "wog_pobject.h"
-#include "wog_material.h"
+#include <OGPhysicsBody>
 
-#include <QStringList>
-#include <QPainter>
+struct WOGMaterial;
+struct WOGPObject;
+
+class QPainter;
 
 class OGIBody : public OGPhysicsBody
 {

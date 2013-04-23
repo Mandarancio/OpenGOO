@@ -23,8 +23,8 @@ INCLUDEPATH += ../extlibs/box2d
 INCLUDEPATH += ../opengoo/src
 INCLUDEPATH += ../libs/logger/src
 INCLUDEPATH += src/GameEngine
-INCLUDEPATH += src/PhysicsEngine
 INCLUDEPATH += src/GameConfiguration
+INCLUDEPATH += src/include
 
 CONFIG(debug, debug|release) {
 LIBS += -L../libs/lib -lloggerd
@@ -68,17 +68,18 @@ SOURCES += src/backtracer_win32.cpp
 OTHER_FILES += \
     README \
     ../README \
-    ../README.md
+    ../README.md \
 
 HEADERS += \
+    src/opengoo.h \
     src/flags.h \
-    src/opengoo.h \     
+    src/physics.h \
+    src/circle.h \
     src/og_world.h \
     src/og_camera.h \
     src/og_button.h \
     src/og_sprite.h \
     src/og_windowcamera.h \        
-    src/physics.h \
     src/og_strand.h \
     src/og_ball.h \
     src/og_circle.h \
@@ -88,32 +89,32 @@ HEADERS += \
     src/og_userdata.h \
     src/og_uibutton.h \
     src/og_ui.h \
-    src/og_states.h \
     src/og_data.h \
     src/og_uiscene.h \
     src/og_event.h \
-    src/OGLib/point.h \
-    src/OGLib/icamera.h \
-    src/OGLib/pointf.h \
-    src/OGLib/vector2d.h \
-    src/OGLib/util.h \
-    src/OGLib/size.h \
-    src/OGLib/rect.h \
-    src/OGLib/rectf.h \
     src/og_poi.h \
     src/og_fpscounter.h \
     src/og_utils.h \
     src/og_ipipe.h \
     src/og_pipe.h \
+    src/og_behavior.h \
+    src/og_walk.h \
+    src/og_climb.h \
+    src/og_fly.h \
+    src/og_staticbody.h \
+    src/og_types.h \
+    src/exitsensor.h \
+    src/exit.h
 
 
 SOURCES += \
+    src/main.cpp \
     src/flags.cpp \
     src/opengoo.cpp \
+    src/physics.cpp \
     src/og_world.cpp \
     src/visualdebug.cpp \
     src/og_windowcamera.cpp \
-    src/physics.cpp \
     src/og_strand.cpp \
     src/og_ball.cpp \
     src/og_circle.cpp \
@@ -127,9 +128,15 @@ SOURCES += \
     src/og_event.cpp \
     src/og_camera.cpp \
     src/og_fpscounter.cpp \
-    src/main.cpp \
     src/og_utils.cpp \
     src/og_pipe.cpp \   
+    src/og_behavior.cpp \
+    src/og_walk.cpp \
+    src/og_climb.cpp \
+    src/og_fly.cpp \
+    src/og_staticbody.cpp \
+    src/exitsensor.cpp \
+    src/exit.cpp
 
 
 # Game engine
@@ -153,6 +160,9 @@ SOURCES += \
     src/PhysicsEngine/og_physicsshape.cpp \
     src/PhysicsEngine/og_physicsengine.cpp \
     src/PhysicsEngine/og_physicsbody.cpp \
+    src/PhysicsEngine/og_pcircle.cpp \
+    src/PhysicsEngine/og_circlesensor.cpp \
+    src/PhysicsEngine/og_contactlistener.cpp
 
 
 HEADERS += \
@@ -160,8 +170,25 @@ HEADERS += \
     src/PhysicsEngine/og_physicsengine.h \
     src/PhysicsEngine/og_physicsbody.h \
     src/PhysicsEngine/og_physicsjoint.h \
+    src/PhysicsEngine/og_pcircle.h \
     src/PhysicsEngine/debug.h \
-    src/PhysicsEngine/common.h \   
+    src/PhysicsEngine/common.h \
+    src/PhysicsEngine/og_sensor.h \
+    src/PhysicsEngine/og_contactlistener.h \
+    src/PhysicsEngine/og_circlesensor.h
+
+# OGLib
+HEADERS += \
+    src/OGLib/circle.h \
+    src/OGLib/circlef.h \
+    src/OGLib/point.h \
+    src/OGLib/icamera.h \
+    src/OGLib/pointf.h \
+    src/OGLib/vector2d.h \
+    src/OGLib/util.h \
+    src/OGLib/size.h \
+    src/OGLib/rect.h \
+    src/OGLib/rectf.h
 
 
 # Game configuration
@@ -205,7 +232,9 @@ HEADERS += \
     src/GameConfiguration/wog_effects.h \
     src/GameConfiguration/wog_ball.h \
     src/GameConfiguration/wog_island.h \
-    src/GameConfiguration/wog_pipe.h
+    src/GameConfiguration/wog_pipe.h \
+    src/GameConfiguration/wog_exit.h \
+    src/GameConfiguration/wog_circle.h
 
 
 !win32{

@@ -4,7 +4,7 @@
 #include "common.h"
 #include "og_physicsshape.h"
 
-#include <QVector2D>
+class QVector2D;
 
 struct OGPhysicsBody
 {
@@ -14,23 +14,27 @@ struct OGPhysicsBody
     b2BodyDef bodydef;
     b2Fixture* fixture;
     OGPhysicsShape* shape;
-    QVector2D velocity;
-    QPointF position;
 
     OGPhysicsBody() : body(0), fixture(0), shape(0) {}
-    OGPhysicsBody(float32 x, float32 y, bool dynamic, float32 angle=0);
-    ~OGPhysicsBody() { delete shape; }
+    OGPhysicsBody(float x, float y, bool dynamic = false, float angle = 0);
+    OGPhysicsBody(const QVector2D &pos, bool dynamic = false, float angle = 0);
+    virtual ~OGPhysicsBody() { delete shape; }
 
-    QPointF* GetPosition();
+    QVector2D GetPosition() const;
     float GetX() const { return body->GetPosition().x; }
     float GetY() const { return body->GetPosition().y; }
 
-    QVector2D* GetVelocity();
-    void SetVelocity(const QVector2D* v);
+    QVector2D GetVelocity() const;
+    void SetVelocity(const QVector2D &v);
 
-    void CreateFixture(float32 density);
+    void CreateFixture(float32 density = 0.0f);
     void CreateFixture(float32 density, float32 friction, float32 restitution);
     void CreateShape(Type shape);
+
+    void ApplyForce(const QVector2D &force, const QVector2D &point);
+    void ApplyForce(const b2Vec2 &force, const b2Vec2 &point);
+
+    void SetSensor(bool sensor);
 };
 
 #endif // OG_PHYSICSBODY_H

@@ -1,29 +1,32 @@
 #ifndef OG_UI_H
 #define OG_UI_H
 
-#include "og_uibutton.h"
 #include "wog_scene.h"
-#include "wog_resources.h"
 
-#include <QList>
-#include <QMouseEvent>
+class OGUIButton;
+
+class QMouseEvent;
+class QPainter;
 
 class OGUI
 {
-    QList<OGUIButton*> buttons_;
-    OGUIButton* btn_;
+    public:
+        OGUI();
+        ~OGUI();
+        void AddButton(OGUIButton* btn);
+        void Paint(QPainter* p);
 
-    void _MouseDown(QMouseEvent* e);
-    void _MouseMove(QMouseEvent* e);
-    void _MouseEvent(QMouseEvent* e);
+        friend class OpenGOO;
 
-    friend class OpenGOO;
+    private:
+        struct OGUIImpl* pImpl_;
 
-public:
-    OGUI() :  btn_(0) {}
-    ~OGUI();
-    void AddButton(OGUIButton* btn) { buttons_ << btn; }   
-    void Paint(QPainter* p);
+        void _MouseDown(QMouseEvent* e);
+        void _MouseMove(QMouseEvent* e);
+        void _MouseEvent(QMouseEvent* e);
+
+        void _Reset();
+        void _SetButton(OGUIButton* button);
 };
 
 #endif // OG_UI_H

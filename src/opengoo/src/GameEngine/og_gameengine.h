@@ -7,6 +7,7 @@
 
 class OGEvent;
 class OGGame;
+class OGPhysicsEngine;
 
 class OGGameEngine : public QObject
 {
@@ -36,6 +37,8 @@ class OGGameEngine : public QObject
         int getWidth() const { return width_; }
         int getHeight() const { return height_; }
         int getFrameDelay() const { return frameDelay_; }
+
+        OGPhysicsEngine* getPhysicsEngine();
 
     public slots:
         void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 / framerate); }

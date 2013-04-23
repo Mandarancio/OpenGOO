@@ -2,6 +2,8 @@
 #include "opengoo.h"
 #include "og_world.h"
 #include "og_sprite.h"
+#include "wog_pipe.h"
+#include "wog_resources.h"
 
 #include <QPainter>
 #include <QPointer>

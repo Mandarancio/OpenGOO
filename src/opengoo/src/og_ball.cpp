@@ -1,7 +1,20 @@
 #include "og_ball.h"
+#include "wog_ball.h"
+#include "wog_level.h"
+#include "og_walk.h"
+#include "og_climb.h"
+#include "og_fly.h"
+#include "og_userdata.h"
 #include "physics.h"
-#include "logger.h"
+#include "og_ibody.h"
+#include "og_world.h"
 #include "opengoo.h"
+
+#include <QLineF>
+#include <QPen>
+#include <QPainter>
+
+#include <QtCore/qmath.h>
 
 inline float LengthSquared(float x1, float y1, float x2, float y2);
 inline float LengthSquared(const QPointF* p1, const QPointF* p2);
@@ -17,7 +30,11 @@ float LengthSquared(float x1, float y1, float x2, float y2)
 }
 
 OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
-    : pData_(data), pConfig_(configuration)
+    : pData_(data)
+    , pConfig_(configuration)
+    , pWalkBehavior_(0)
+    , pClimbBehavior_(0)
+    , pFlyBehavior_(0)
 {
     const float K = 0.1f;
 
@@ -71,14 +88,11 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
 
     towerMass_ = pConfig_->attribute.core.towermass * K;
 
-    pWalkBehavior_ = new OGWalk;
-    pClimbBehavior_ = new OGClimb;
-    pFlyBehavior_ = new OGFly;
+    pWalkBehavior_ = GetWalkBehavior();
+    pClimbBehavior_ = GetClimbBehavior();
+    pFlyBehavior_ = GetFlyBehavior();
 
-    SetBodyWalk();
     SetWalkSpeed(pConfig_->attribute.movement.walkspeed);
-
-    SetBodyClimb();
     SetClimbSpeed(pConfig_->attribute.movement.climbspeed);
 }
 
@@ -87,6 +101,13 @@ OGBall::~OGBall()
     delete pWalkBehavior_;
     delete pClimbBehavior_;
     delete pFlyBehavior_;
+}
+
+QVector2D OGBall::GetCenter() const
+{
+    b2Vec2 pos = body->GetPosition();
+
+    return QVector2D(pos.x, pos.y);
 }
 
 OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
@@ -100,6 +121,7 @@ OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
 
     OGUserData* data = new OGUserData;
     data->type = OGUserData::BALL;
+    data->isTouching = false;
     data->data = this;
 
     return createCircle(x, y, radius, angle, &material_, true, mass, data);
@@ -160,7 +182,8 @@ void OGBall::SetCurrentPosition(const b2Vec2 &pos)
 }
 
 void OGBall::Update()
-{
+{   
+
     SetCurrentPosition(GetBodyPosition());
 
     b2ContactEdge* edge = body->GetContactList();
@@ -232,7 +255,11 @@ inline void OGBall::Move()
         float l1 = qPow((r1 + r2), 2.0f);
         float l2 = LengthSquared(x1, y1, x2, y2);
 
-        if (l2 <= l1) { SetTarget(x2, y2); }
+        if (l2 <= l1)
+        {
+//            SetTarget(x2, y2);
+            isClimbing_ = false;
+        }
         else
         {
             if (IsCanClimb())
@@ -572,17 +599,30 @@ void OGBall::Algorithm2()
     }
 }
 
-inline float OGBall::DistanceSquared(OGBall* b1, OGBall* b2)
+inline float OGBall::DistanceSquared(OGBall* b1, OGBall* b2) const
 {
-    QPointF* p1 = b1->GetPosition();
-    QPointF* p2 = b2->GetPosition();
+    QVector2D p1 = b1->GetPosition();
+    QVector2D p2 = b2->GetPosition();
 
-    return LengthSquared(p1, p2);
+    return (p2 - p1).lengthSquared();
 }
 
-inline float OGBall::Distance(OGBall* b1, OGBall* b2)
+inline float OGBall::DistanceSquared(OGBall* b)
 {
-    return qSqrt(DistanceSquared(b1, b2));
+    return DistanceSquared(b, this);
+}
+
+inline float OGBall::Distance(OGBall* b1, OGBall* b2) const
+{
+    QVector2D p1 = b1->GetPosition();
+    QVector2D p2 = b2->GetPosition();
+
+    return (p2 - p1).length();
+}
+
+inline float OGBall::Distance(OGBall* b)
+{
+    return Distance(b, this);
 }
 
 inline OGWorld* OGBall::_GetWorld()
@@ -607,4 +647,71 @@ void OGBall::_CreateStrand(OGBall* b1, OGBall* b2)
 {
     OGWorld* world = _GetWorld();
     world->CreateStrand(b1, b2);
+}
+
+OGUserData* OGBall::GetUserData()
+{
+    return OGUserData::GetUserData(body->GetUserData());
+}
+
+inline void OGBall::PerformWalk() { pWalkBehavior_->Walk(); }
+inline void OGBall::PerformClimb() { pClimbBehavior_->Climb(); }
+inline void OGBall::PerformFly() { pFlyBehavior_->Fly(); }
+
+inline void OGBall::SetWalkTarget(QPointF* pos)
+{
+    pWalkBehavior_->SetTarget(pos->x(), 0);
+}
+
+inline void OGBall::SetClimbTarget(QPointF* pos)
+{
+    pClimbBehavior_->SetTarget(*pos);
+}
+
+inline void OGBall::SetFlyTarget(QPointF* pos)
+{
+    pFlyBehavior_->SetTarget(*pos);
+}
+
+inline void OGBall::SetWalkSpeed(float speed) { pWalkBehavior_->SetSpeed(speed); }
+inline void OGBall::SetClimbSpeed(float speed) { pClimbBehavior_->SetSpeed(speed); }
+
+inline float OGBall::GetAngle() const { return pData_->angle; }
+inline QString OGBall::GetType() const { return pData_->type; }
+
+inline WOGBallShape* OGBall::GetShape() const
+{
+    return pConfig_->attribute.core.shape;
+}
+
+QString OGBall::GetStrandType() const
+{
+    return pConfig_->stand->type;
+}
+
+inline bool OGBall::IsDetachable() const { return pConfig_->attribute.player.detachable; }
+
+QString OGBall::GetId() const { return pData_->id; }
+
+int OGBall::GetMaxStrands() const { return pConfig_->attribute.core.strands; }
+
+OGIWalkBehavior* OGBall::GetWalkBehavior()
+{
+    if (!pWalkBehavior_) pWalkBehavior_ = new OGWalk(this);
+
+    return pWalkBehavior_;
+}
+
+OGIClimbBehavior* OGBall::GetClimbBehavior()
+{
+    if (!pClimbBehavior_) pClimbBehavior_ = new OGClimb(this);
+
+    return pClimbBehavior_;
+}
+
+OGIFlyBehavior* OGBall::GetFlyBehavior()
+{
+    if (!pFlyBehavior_) pFlyBehavior_ = new OGFly(this);
+
+    return pFlyBehavior_;
 }

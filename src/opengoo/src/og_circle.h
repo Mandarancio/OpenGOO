@@ -2,8 +2,10 @@
 #define OG_CIRCLE_H
 
 #include "og_ibody.h"
-#include "wog_scene.h"
 
+struct WOGCircle;
+
+class QPainter;
 
 class OGCircle : public OGIBody
 {

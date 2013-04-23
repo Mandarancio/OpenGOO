@@ -3,7 +3,7 @@
 
 #include "OGLib/point.h"
 
-namespace opengoo
+namespace oglib
 {
 
 class ICamera

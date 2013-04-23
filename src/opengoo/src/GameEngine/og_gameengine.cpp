@@ -1,4 +1,5 @@
 #include "og_gameengine.h"
+#include "PhysicsEngine/og_physicsengine.h"
 #include "og_game.h"
 
 #include <QGuiApplication>
@@ -98,4 +99,9 @@ void OGGameEngine::gameExit()
     getWindow()->setActive(false);
     pGame_->End();
     QGuiApplication::quit();
+}
+
+OGPhysicsEngine* OGGameEngine::getPhysicsEngine()
+{
+    return OGPhysicsEngine::GetInstance();
 }

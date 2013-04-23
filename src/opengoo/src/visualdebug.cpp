@@ -1,8 +1,11 @@
 #include "og_world.h"
+#include "wog_level.h"
+#include "og_ball.h"
 #include "flags.h"
 
 #include <QPainter>
 #include <QTime>
+#include <QVector2D>
 
 extern OGBall* _nearestBall;
 extern OGBall* _selectedBall;
@@ -24,31 +27,15 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
     painter->setOpacity(1);
     painter->setPen(pen);
 
-    painter->drawEllipse(QPointF(0, 0), 10.0 * zoom, 10.0 * zoom); // center of word
-
-    // level exit
-    if (world->isLevelLoaded())
-    {
-        if (world->leveldata()->levelexit)
-        {
-            qreal x, y;
-
-            x = world->leveldata()->levelexit->pos.x();
-            y = world->leveldata()->levelexit->pos.y() * (-1.0);
-            QRectF rect(x, y, 10.0 , 10.0);
-
-            rect.moveCenter(rect.topLeft());
-            painter->fillRect(rect, Qt::yellow);
-        }        
-    }
+    painter->drawEllipse(QPointF(0, 0), 10.0 * zoom, 10.0 * zoom); // center of word   
 
     if (world->nearestball() != 0)
     {
         qreal x, y;
 
-        QPointF* pos = world->nearestball()->GetPosition();
-        x = pos->x() * K;
-        y = pos->y() * K * (-1);
+        QPointF pos = world->nearestball()->GetPosition().toPointF();
+        x = pos.x() * K;
+        y = pos.y() * K * (-1);
 
         pen.setColor(Qt::green);
         painter->setPen(pen);

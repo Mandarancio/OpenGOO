@@ -71,6 +71,11 @@ void OGPhysicsShape::SetPosition(float32 x, float32 y)
     }
 }
 
+void OGPhysicsShape::SetPosition(const QPointF& pos)
+{
+    SetPosition(pos.x(), pos.y());
+}
+
 void OGPhysicsShape::Set(float32 x1, float32 y1, float32 x2, float y2)
 {
     switch(shape->GetType())

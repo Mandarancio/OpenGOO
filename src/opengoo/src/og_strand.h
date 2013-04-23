@@ -1,10 +1,10 @@
 #ifndef OG_STRAND_H
 #define OG_STRAND_H
 
-#include "og_physicsjoint.h"
+#include <OGPhysicsJoint>
 #include "og_ball.h"
 
-#include <QPainter>
+class QPainter;
 
 class OGStrand
 {
@@ -22,10 +22,7 @@ public:
     OGBall* b1() const { return b1_; }
     OGBall* b2() const { return b2_; }
 
-    float GetLenghth()
-    {
-        return QLineF(*b1_->GetPosition(), *b2_->GetPosition()).length();
-    }
+    float GetLenghth();
 
     void Paint(QPainter* painter, bool debug=false);
 };

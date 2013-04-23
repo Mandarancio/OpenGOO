@@ -3,6 +3,8 @@
 
 #include "og_ui.h"
 
+class WOGResources;
+
 class OGUIScene
 {
     static OGUIButton* _CreateButton(WOGButton* btn, const WOGResources* resrc);

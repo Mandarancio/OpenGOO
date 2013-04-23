@@ -1,4 +1,5 @@
 #include "og_gameengine.h"
+#include <OGPhysicsEngine>
 #include "og_world.h"
 #include "logger.h"
 #include "og_data.h"
@@ -7,6 +8,21 @@
 #include "OGLib/rectf.h"
 #include "OGLib/size.h"
 #include "og_pipe.h"
+#include "exit.h"
+#include "og_circle.h"
+#include "og_rectangle.h"
+#include "og_line.h"
+#include "og_sprite.h"
+#include "og_ball.h"
+#include "og_button.h"
+#include "og_strand.h"
+#include "wog_level.h"
+#include "exitsensor.h"
+#include "physics.h"
+#include "circle.h"
+
+#include <OGPhysicsEngine>
+#include <OGContactListener>
 
 #include <QPainter>
 #include <QFile>
@@ -31,6 +47,7 @@ OGWorld::OGWorld(const QString &levelname, QObject* parent)
     pPipe_ = 0;
     pNearestBall_ = 0;
     pPhysicsEngine_ = 0;
+    pExit_ = 0;
 
     strandId_ = 0;
     ballId_ = 0;
@@ -370,6 +387,15 @@ void OGWorld::CreateScene()
 
 void OGWorld::CreatePhysicsScene()
 {
+    pPhysicsEngine_ = OGPhysicsEngine::GetInstance();
+
+    if (!pExit_ && leveldata()->levelexit != 0)
+    {
+        logDebug("Creating exit");
+
+        pExit_ = new Exit(leveldata()->levelexit);
+    }
+
     Q_FOREACH(WOGCircle * circle, scenedata()->circle)
     {
         if (!circle->dynamic)
@@ -405,8 +431,6 @@ void OGWorld::CreatePhysicsScene()
     }
 
     _SetGravity();
-
-    pPhysicsEngine_ = OGPhysicsEngine::GetInstance();
 
     pPhysicsEngine_->SetSimulation(6, 2, 60);
 
@@ -680,6 +704,14 @@ void OGWorld::_ClearPhysics()
 
     while (!staticBodies_.isEmpty()) { delete staticBodies_.takeFirst(); }
 
+    logDebug("Remove exit");
+
+    if (pExit_)
+    {
+        delete pExit_;
+        pExit_ = 0;
+    }
+
     strandId_ = 0;
     ballId_ = 0;
 
@@ -777,6 +809,7 @@ void OGWorld::findNearestAttachedBall()
 
 void OGWorld::Update()
 {
+    if (pExit_) pExit_->Update();
     if (pPhysicsEngine_) { pPhysicsEngine_->Simulate(); }
 }
 void OGWorld::CloseLevel()
@@ -812,3 +845,9 @@ void OGWorld::_InsertSprite(OGSprite* sprite)
 {
     sprites_ << sprite;
 }
+
+void OGWorld::RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()); }
+
+inline void  OGWorld::StartSearching() { pTimer_->start(1000); }
+
+inline WOGPipe* OGWorld::_GetPipeData() { return pLevelData_->pipe; }

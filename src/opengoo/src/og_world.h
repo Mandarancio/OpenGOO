@@ -1,33 +1,37 @@
 #ifndef OG_WORLD_H
 #define OG_WORLD_H
 
-#include <OGConfiguration>
-#include "og_camera.h"
-#include "og_button.h"
-#include "og_sprite.h"
-#include "og_ibody.h"
-#include "og_ball.h"
-#include "og_strand.h"
-#include "og_circle.h"
-#include "og_rectangle.h"
-#include "og_line.h"
+#include "wog_scene.h"
+#include "wog_ball.h"
 
-#include "physics.h"
-
-#include <QObject>
 #include <QCache>
 #include <QHash>
-#include <QTimer>
+#include <QList>
+#include <QPainter>
 
-struct OGStaticBody
-{
-    OGPhysicsBody* body;
-    QString tag;
+struct WOGLevel;
+struct WOGText;
+struct WOGMaterialList;
+struct WOGEffects;
+struct WOGBallInstance;
+struct WOGStrand;
+struct WOGPipe;
+struct WOGLevelExit;
 
-    ~OGStaticBody() { delete body; }
-};
+class WOGResources;
+
+struct OGSprite;
 
 class OGIPipe;
+class Exit;
+
+class OGBall;
+class OGButton;
+class OGStrand;
+class OGIBody;
+class OGPhysicsEngine;
+
+class QTimer;
 
 class OGWorld : public QObject
 {
@@ -43,8 +47,12 @@ class OGWorld : public QObject
         QCache<QString, WOGBall> ballConfigurations_;
 
         OGBall* pNearestBall_;
+
+        // Exit
+        Exit* pExit_;
         float xExit_;
         float yExit_;
+
         QTimer* pTimer_;
 
         QString levelName_;
@@ -89,7 +97,7 @@ class OGWorld : public QObject
 
         // Pipe
         OGIPipe* pPipe_;
-        WOGPipe* _GetPipeData() { return pLevelData_->pipe; }
+        WOGPipe* _GetPipeData();
         void _CreatePipe();
 
         template<class Body, class Data> Body* _CreateBody(Data* data);
@@ -133,6 +141,7 @@ class OGWorld : public QObject
         WOGText* textdata() { return pTextData_[0]; }
         WOGResources* resrcdata() const { return pResourcesData_[0]; }
         OGIPipe* pipe() const { return pPipe_; }
+        Exit* exit() const { return pExit_; }
 
         bool isLevelLoaded() const { return isLevelLoaded_; }
 
@@ -156,12 +165,12 @@ class OGWorld : public QObject
         Target LoadConf(const QString &path);
 
         void CreateStrand(OGBall* b1, OGBall* b2);
-        void RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()); }
+        void RemoveStrand(OGStrand* strand);
 
-        void StartSearching() { pTimer_->start(1000); }
+        void StartSearching();
 
         friend void draw(QPainter* p, OGWorld* w);
-        friend class OGPipe;
+        friend class OGPipe;        
 
     private slots:
         void findNearestAttachedBall();

@@ -1,5 +1,10 @@
 #include "og_circle.h"
 #include "physics.h"
+#include "wog_scene.h"
+#include "wog_material.h"
+#include "og_userdata.h"
+
+#include <QPainter>
 
 OGCircle::OGCircle(WOGCircle* circle, WOGMaterial* material)
     : OGIBody(circle, material)

@@ -2,7 +2,6 @@
 #define WOG_POBJECT_H
 
 #include <QString>
-#include <QDebug>
 
 // The basic class of World of Goo physical objects
 
@@ -12,6 +11,8 @@ struct WOGPObject
     bool dynamic;
     QString tag;
     QString material;
+
+    virtual ~WOGPObject() {}
 };
 
 #endif // WOG_POBJECT_H

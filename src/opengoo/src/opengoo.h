@@ -9,14 +9,16 @@
 #include <QPoint>
 #include <QString>
 
-class OGBall;
 class OGEvent;
 class OGFPSCounter;
 class OGWindowCamera;
-class OGWorld;
 class OGUI;
+class OGBall;
+class OGWorld;
 
 class QTime;
+
+void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
 
 class OpenGOO : public OGGame
 {
@@ -63,6 +65,10 @@ class OpenGOO : public OGGame
     void _MouseButtonDown(QMouseEvent *ev);
     void _MouseButtonUp(QMouseEvent *ev);
     void _MouseMove(QMouseEvent *ev);
+    void _MouseWheel(QWheelEvent *ev) { Q_UNUSED (ev)}
+
+    void _KeyDown(QKeyEvent *ev) { Q_UNUSED (ev)}
+    void _KeyUp(QKeyEvent *ev) { Q_UNUSED (ev)}
 
     void _Quit();
 
@@ -117,6 +123,8 @@ public:
 
     static void SendEvent(OGEvent* ev);
 
+    void OpenPipe();
+    void ClosePipe();
 };
 
 #endif // OPENGOO_H

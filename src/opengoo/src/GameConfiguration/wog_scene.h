@@ -3,6 +3,7 @@
 
 #include "wog_pobject.h"
 #include "wog_vobject.h"
+#include "wog_circle.h"
 
 #include <QSizeF>
 
@@ -80,12 +81,6 @@ struct WOGButtonGroup
     QList<WOGButton*> button;
 
     ~WOGButtonGroup();
-};
-
-struct WOGCircle : public WOGPObject
-{
-    QPointF position;
-    float radius;
 };
 
 struct WOGLine : public WOGPObject

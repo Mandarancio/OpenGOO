@@ -1,21 +1,43 @@
 #include "og_ui.h"
+#include "og_uibutton.h"
+
+#include <QList>
+#include <QMouseEvent>
+
+typedef QList<OGUIButton*> buttonList;
+
+struct OGUIImpl
+{
+    buttonList buttons;
+    OGUIButton* pButton;
+};
+
+OGUI::OGUI()
+{
+    pImpl_ = new OGUIImpl;
+    _Reset();
+}
 
 OGUI::~OGUI()
 {
-    while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
+    buttonList* buttons = &pImpl_->buttons;
+
+    while (!buttons->isEmpty()) { delete buttons->takeFirst(); }
 }
 
 void OGUI::Paint(QPainter* p)
 {
-    Q_FOREACH(OGUIButton* btn, buttons_)
+    Q_FOREACH(OGUIButton* btn, pImpl_->buttons)
     {
         btn->Paint(p);
     }
 }
 
+void OGUI::AddButton(OGUIButton* btn) { pImpl_->buttons << btn; }
+
 void OGUI::_MouseDown(QMouseEvent *e)
 {    
-    Q_FOREACH(OGUIButton* btn, buttons_)
+    Q_FOREACH(OGUIButton* btn, pImpl_->buttons)
     {
         if (btn->contains(e->pos()))
         {
@@ -26,30 +48,34 @@ void OGUI::_MouseDown(QMouseEvent *e)
     }
 }
 
+inline void OGUI::_Reset() { pImpl_->pButton = 0; }
+inline void OGUI::_SetButton(OGUIButton *button) { pImpl_->pButton = button; }
+
 void OGUI::_MouseMove(QMouseEvent *e)
 {
-    if (btn_ != 0)
+    OGUIButton* btn = pImpl_->pButton;
+
+    if (btn)
     {
-        if (btn_->contains(e->pos()))
+        if (btn->contains(e->pos()))
         {
-            btn_->MouseMove(e);
+            btn->MouseMove(e);
 
             return;
         }
         else
         {
-            btn_->Leave(e);
-            btn_ = 0;
+            btn->Leave(e);
+            _Reset();
         }
     }
 
-    Q_FOREACH(OGUIButton* btn, buttons_)
+    Q_FOREACH(OGUIButton* btn, pImpl_->buttons)
     {
         if (btn->contains(e->pos()))
         {
-            btn_ = btn;
+            _SetButton(btn);
             btn->MouseMove(e);
-
             break;
         }
     }

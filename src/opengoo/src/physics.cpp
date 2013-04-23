@@ -1,37 +1,28 @@
 #include "physics.h"
 #include "opengoo.h"
+#include "wog_scene.h"
+#include "wog_material.h"
+#include "og_world.h"
 
+#include <OGPhysicsEngine>
+#include <OGPhysicsBody>
+#include <OGPhysicsJoint>
+
+#include <QLineF>
 #include <qmath.h>
-#include <QDebug>
-
-namespace physics
-{
-const float K = 0.1f;
-
-// categories
-const uint16 LINE = 0x0002;
-const uint16 CIRCLE = 0x0004;
-const uint16 RECTANGLE = 0x0008;
-const uint16 BALL = 0x0010;
-const uint16 STATIC = LINE | CIRCLE | RECTANGLE;
-
-WOGScene* GetScene();
-float sceneWidth();
-float sceneHeight();
-}
 
 using namespace physics;
 
-OGPhysicsBody* createCircle(const QPointF &position, float32 radius
-                            , float32 angle, WOGMaterial* material
+OGPhysicsBody* createCircle(const QPointF &position, float radius
+                            , float angle, WOGMaterial* material
                             , bool dynamic, float mass, OGUserData* data)
 {
     return createCircle(position.x(), position.y(), radius, angle, material
                         , dynamic, mass, data);
 }
 
-OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
-                            , float32 angle, WOGMaterial* material
+OGPhysicsBody* createCircle(float x, float y, float radius
+                            , float angle, WOGMaterial* material
                             , bool dynamic, float mass, OGUserData* data)
 {
     OGPhysicsBody* circle;
@@ -48,13 +39,13 @@ OGPhysicsBody* createCircle(float32 x, float32 y, float32 radius
 
     if (dynamic)
     {
-        float32 density = (mass * K) / (M_PI * radius * radius * K * K);
+        float density = (mass * K) / (M_PI * radius * radius * K * K);
 
         circle->CreateFixture(density, material->friction * 0.01f
                               , material->bounce);
 
         filter.categoryBits = BALL;
-        filter.maskBits = STATIC;
+        filter.maskBits = STATIC | EXIT;
         circle->fixture->SetFilterData(filter);
         circle->body->SetUserData(data);
     }
@@ -142,8 +133,8 @@ OGPhysicsBody* createRectangle(const QPointF &position, const QSizeF &size
                            , data);
 }
 
-OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
-                               , float32 height, float32 angle
+OGPhysicsBody* createRectangle(float x, float y, float width
+                               , float height, float angle
                                , WOGMaterial* material
                                , bool dynamic, float mass, OGUserData* data)
 {
@@ -160,7 +151,7 @@ OGPhysicsBody* createRectangle(float32 x, float32 y, float32 width
 
     if (dynamic)
     {
-        float32 density = (mass * K) / (width * height * K * K);
+        float density = (mass * K) / (width * height * K * K);
 
         rect->CreateFixture(density, material->friction * 0.01f
                             , material->bounce);

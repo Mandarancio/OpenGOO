@@ -2,7 +2,7 @@
 #include "og_gameengine.h"
 
 using namespace std;
-using namespace opengoo;
+using namespace oglib;
 
 OGWindowCamera* OGWindowCamera::pInstance_ = 0;
 

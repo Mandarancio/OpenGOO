@@ -1,6 +1,7 @@
 #ifndef WOG_LEVEL_H
 #define WOG_LEVEL_H
 
+#include "wog_exit.h"
 #include "wog_pipe.h"
 
 #include <QPointF>
@@ -39,14 +40,6 @@ struct WOGBallInstance
     float y;
     float angle;
     bool discovered;
-};
-
-struct WOGLevelExit
-{
-    QString id;
-    QPointF pos;
-    float radius;
-    QString filter;
 };
 
 struct WOGStrand

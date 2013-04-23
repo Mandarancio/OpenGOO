@@ -2,46 +2,61 @@
 #define OG_PHYSICSENGINE_H
 
 #include "common.h"
-#include "og_physicsbody.h"
-#include "og_physicsjoint.h"
 #include "debug.h"
+
+class Circle;
+
+class OGPCircle;
+struct OGPhysicsBody;
+struct OGPhysicsJoint;
+
+class OGContactListener;
+class OGSensor;
 
 class OGPhysicsEngine
 {
-public:
-    static OGPhysicsEngine* GetInstance(void);
-    static void DestroyInstance(void) { if (instance_) delete instance_; }
+    public:
+        static OGPhysicsEngine* GetInstance(void);
+        static void DestroyInstance(void);
 
-    bool Initialize(float32 x, float32 y, bool sleep);
-    void Reload();
-    void SetGravity(float32 x, float32 y);
-    void SetSimulation(int32 velocityIterations, int32 positionIterations
-                       , int steps);
+        bool Initialize(float x, float y, bool sleep);
+        void Reload();
+        void SetGravity(float x, float y);
 
-    void SetSleep(bool sleep) { isSleep_ = sleep; }
+        void SetSleep(bool sleep) { isSleep_ = sleep; }
 
-    void CreateBody(OGPhysicsBody*  body);
-    void CreateJoint(OGPhysicsJoint* joint);
+        void CreateBody(OGPhysicsBody*  body);
+        OGPCircle* CreateCircle(const Circle &circle);
 
-    void DestroyJoint(OGPhysicsJoint* joint)
-    {
-        world_->DestroyJoint(joint->joint);
-        delete joint;
-    }
+        void CreateJoint(OGPhysicsJoint* joint);
+        void DestroyJoint(OGPhysicsJoint* joint);
 
-    void Simulate();
+        void Simulate();
+        void SetSimulation(int velIter, int posIter, int steps);
 
-private:
-    static OGPhysicsEngine* instance_;
-    b2World* world_;
-    b2Vec2 gravity_;
-    float32 timeStep_;
-    int32 velocityIterations_;
-    int32 positionIterations_;
-    bool isSleep_;
+        OGContactListener* GetContactListener();
 
-    OGPhysicsEngine();
-    ~OGPhysicsEngine();
+        void AddSensor(OGSensor* sensor);
+        void RemoveSensor(const QString &id);
+
+    private:
+        static OGPhysicsEngine* pInstance_;
+        b2World* pWorld_;
+        b2Vec2 gravity_;
+        float32 timeStep_;
+        int32 velocityIterations_;
+        int32 positionIterations_;
+        bool isSleep_;
+
+        OGContactListener* pContactListener_;
+
+        OGPhysicsEngine();
+        ~OGPhysicsEngine();
+
+        void _Init();
+        void _Release();
 };
+
+typedef OGPhysicsEngine PEngine;
 
 #endif // OG_PHYSICSENGINE_H

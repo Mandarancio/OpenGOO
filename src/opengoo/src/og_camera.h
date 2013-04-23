@@ -5,7 +5,7 @@
 #include "OGLib/point.h"
 #include "OGLib/size.h"
 
-using namespace opengoo;
+using namespace oglib;
 
 class OGCamera : public ICamera
 {    

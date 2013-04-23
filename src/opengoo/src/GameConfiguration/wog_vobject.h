@@ -16,6 +16,7 @@ struct WOGVObject
     QColor colorize;
 
     WOGVObject() : alpha(1) {}
+    virtual ~WOGVObject() {}
 };
 
 #endif // WOG_VOBJECT_H

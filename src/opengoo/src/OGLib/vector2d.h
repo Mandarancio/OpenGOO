@@ -6,7 +6,7 @@
 
 #include <QtGlobal>
 
-namespace opengoo
+namespace oglib
 {
 class Vector2D
 {

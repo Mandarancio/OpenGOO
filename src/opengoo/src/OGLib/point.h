@@ -1,14 +1,10 @@
 #ifndef POINT_H
 #define POINT_H
 
-namespace opengoo
+namespace oglib
 {
 class Point
 {
-    protected:
-        int x_;
-        int y_;
-
     public:
         Point(int x = 0, int y = 0) : x_(x), y_(y) {}
         virtual ~Point() {}
@@ -19,6 +15,9 @@ class Point
         void SetX(int x) { x_ = x; }
         void SetY(int y) { y_ = y; }
 
+    protected:
+        int x_;
+        int y_;
 };
 }
 

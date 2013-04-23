@@ -4,8 +4,6 @@
 #include <QList>
 #include <QString>
 
-#include <QDebug>
-
 struct WOGMaterial
 {
     QString id;

@@ -1,71 +1,131 @@
 #include "og_physicsengine.h"
+#include "og_physicsjoint.h"
+#include "og_pcircle.h"
+#include "og_contactlistener.h"
 
-OGPhysicsEngine* OGPhysicsEngine::instance_ = 0;
+#include "circle.h"
+
+OGPhysicsEngine* OGPhysicsEngine::pInstance_ = 0;
 
 OGPhysicsEngine::OGPhysicsEngine()
 {
-    world_ = 0;
+    pWorld_ = 0;
+    pContactListener_ = 0;
     isSleep_ = false;
 }
+
 OGPhysicsEngine::~OGPhysicsEngine()
 {
-    delete world_;
+    _Release();
 }
 
-bool OGPhysicsEngine::Initialize(float32 x, float32 y, bool sleep)
+OGPhysicsEngine* OGPhysicsEngine::GetInstance()
 {
-    if (world_) { return false; }
+    if (!pInstance_) pInstance_ = new OGPhysicsEngine;
+
+    return pInstance_;
+}
+
+void OGPhysicsEngine::DestroyInstance(void)
+{
+    if (pInstance_) delete pInstance_;
+
+    pInstance_ = 0;
+}
+
+bool OGPhysicsEngine::Initialize(float x, float y, bool sleep)
+{
+    if (pWorld_) return true;
 
     gravity_.Set(x, y);
     isSleep_ = sleep;
-
-    world_ = new b2World(gravity_);
-    world_->SetAllowSleeping(isSleep_);
+    _Init();
 
     return true;
 }
 
 void OGPhysicsEngine::Reload()
 {
-    delete world_;
-
-    world_ = new b2World(gravity_);
-    world_->SetAllowSleeping(isSleep_);
+    _Release();
+    _Init();
 }
 
-OGPhysicsEngine* OGPhysicsEngine::GetInstance()
-{
-    if (!instance_) { instance_ = new OGPhysicsEngine; }
-
-    return instance_;
-}
-
-void OGPhysicsEngine::SetGravity(float32 x, float32 y)
+void OGPhysicsEngine::SetGravity(float x, float y)
 {
     gravity_.Set(x, y);
-    world_->SetGravity(gravity_);
+    pWorld_->SetGravity(gravity_);
 }
 
-void OGPhysicsEngine::SetSimulation(int32 velocityIterations
-                                      , int32 positionIterations
-                                      , int steps)
+void OGPhysicsEngine::SetSimulation(int velIter, int posIter, int steps)
 {
-    timeStep_ = 1.0f/steps;
-    velocityIterations_ = velocityIterations;
-    positionIterations_ = positionIterations;
+    timeStep_ = 1.0f / steps;
+    velocityIterations_ = velIter;
+    positionIterations_ = posIter;
 }
 
 void OGPhysicsEngine::Simulate()
 {
-    world_->Step(timeStep_, velocityIterations_, positionIterations_);
+    pWorld_->Step(timeStep_, velocityIterations_, positionIterations_);
 }
 
 void OGPhysicsEngine::CreateBody(OGPhysicsBody* body)
-{   
-    body->body = world_->CreateBody(&body->bodydef);
+{
+    body->body = pWorld_->CreateBody(&body->bodydef);
 }
 
 void OGPhysicsEngine::CreateJoint(OGPhysicsJoint* joint)
 {
-    joint->joint = world_->CreateJoint(joint->jointdef);
+    joint->joint = pWorld_->CreateJoint(joint->jointdef);
+}
+
+void OGPhysicsEngine::DestroyJoint(OGPhysicsJoint* joint)
+{
+    pWorld_->DestroyJoint(joint->joint);
+    delete joint;
+}
+
+OGPCircle* OGPhysicsEngine::CreateCircle(const Circle &circle)
+{
+    OGPCircle* body = new OGPCircle(circle);
+    CreateBody(body);
+    body->CreateShape(OGPhysicsBody::CIRCLE);
+    body->shape->SetRadius(circle.radius());
+    body->CreateFixture();
+
+    return body;
+}
+
+OGContactListener* OGPhysicsEngine::GetContactListener()
+{
+    if (!pContactListener_) pContactListener_ = new OGContactListener;
+
+    return pContactListener_;
+}
+
+void OGPhysicsEngine::AddSensor(OGSensor* sensor)
+{
+    pContactListener_->AddSensor(sensor);
+}
+
+void OGPhysicsEngine::RemoveSensor(const QString &id)
+{
+    pContactListener_->RemoveSensor(id);
+}
+
+void OGPhysicsEngine::_Init()
+{
+    pWorld_ = new b2World(gravity_);
+    pWorld_->SetAllowSleeping(isSleep_);
+    pContactListener_ = GetContactListener();
+    pWorld_->SetContactListener(pContactListener_);
+}
+
+void OGPhysicsEngine::_Release()
+{
+    delete pWorld_;
+    pWorld_ = 0;
+
+    delete pContactListener_;
+    pContactListener_ = 0;
+
 }

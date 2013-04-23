@@ -23,10 +23,15 @@
 #include "og_windowcamera.h"
 #include "og_ballconfig.h"
 #include "og_uiscene.h"
+#include "og_ball.h"
+#include "og_sprite.h"
+#include "og_ibody.h"
+#include "og_strand.h"
+#include "og_button.h"
+#include "og_pipe.h"
+#include "exit.h"
 
 #include <QTime>
-
-void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
 
 OpenGOO* OpenGOO::pInstance_ = 0;
 
@@ -48,6 +53,16 @@ OGBall* OpenGOO::GetNearestBall() { return pWorld_->nearestball(); }
 void OpenGOO::SetLevelName(const QString& levelname)
 {
     levelName_ = levelname;
+}
+
+void OpenGOO::OpenPipe()
+{
+    pWorld_->pipe()->Open();
+}
+
+void OpenGOO::ClosePipe()
+{
+    pWorld_->pipe()->Close();
 }
 
 void OpenGOO::SetLanguage(const QString& language) { language_ = language; }
@@ -247,6 +262,7 @@ void OpenGOO::_Paint(QPainter *painter)
     painter->setWindow(0, 0, width_, height_);
 
     if (flag & FPS) pFPS_->Painter(painter);
+    if (pWorld_->exit()) pWorld_->exit()->Painter(painter);
 
     Q_FOREACH(OGUI * ui, uiList_) { ui->Paint(painter); }
 }
