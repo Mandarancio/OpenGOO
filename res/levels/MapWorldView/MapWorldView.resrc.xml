@@ -11,9 +11,13 @@
 <SetDefaults idprefix="" path="./" />
 <Sound id="" path="" />
 <Image id="IMAGE_MAPWORLDVIEW_EXIT_UP" path="res/levels/MapWorldView/exit_up" />
+<Image id="IMAGE_MAPWORLDVIEW_EXIT_UP_SEL" path="res/levels/MapWorldView/exit_up_sel" />
 <Image id="IMAGE_MAPWORLDVIEW_POST" path="res/levels/MapWorldView/post" />
 <Image id="IMAGE_MAPWORLDVIEW_LEVELS_UP" path="res/levels/MapWorldView/levels_up" />
+<Image id="IMAGE_MAPWORLDVIEW_LEVELS_UP_SEL" path="res/levels/MapWorldView/levels_up_sel" />
 <Image id="IMAGE_MAPWORLDVIEW_CREDIT_UP" path="res/levels/MapWorldView/credit_up" />
+<Image id="IMAGE_MAPWORLDVIEW_CREDIT_UP_SEL" path="res/levels/MapWorldView/credit_up_sel" />
 <Image id="IMAGE_MAPWORLDVIEW_CONFIG_UP" path="res/levels/MapWorldView/config_up" />
+<Image id="IMAGE_MAPWORLDVIEW_CONFIG_UP_SEL" path="res/levels/MapWorldView/config_up_sel" />
 </Resources>
 </ResourceManifest>
