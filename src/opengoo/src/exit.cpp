@@ -10,65 +10,99 @@
 #include "og_world.h"
 #include "og_userdata.h"
 
-#include <QPainter>
-
 struct ExitImpl
 {
     ExitSensor* pSensor;
     int balls;
+    bool isClosed;
 };
 
 Exit::Exit(WOGLevelExit* exit)
 {
+    // [0] Create pimpl
     pImpl_ = new ExitImpl;
+
+    // [1] Create sensor
     Circle c = Circle(exit->pos, exit->radius) / 10.0f;
-    pImpl_->pSensor = new ExitSensor("exit", c);
-    pImpl_->pSensor->SetFilter(physics::EXIT, physics::BALL);
+    OGSensorFilter f = {physics::EXIT, physics::BALL};
+    pImpl_->pSensor = new ExitSensor("levelExit", c, f);
+
+    // [2] Add sensor
     PEngine::GetInstance()->AddSensor(pImpl_->pSensor);
+
+    pImpl_->balls = 0;
+
+    pImpl_->isClosed = false;
 }
 
 Exit::~Exit()
 {
-    PEngine::GetInstance()->RemoveSensor("exit");
+    PEngine::GetInstance()->RemoveSensor(pImpl_->pSensor->id());
+
     delete pImpl_->pSensor;
     delete pImpl_;
 }
 
 void Exit::Update()
 {
+    if (pImpl_->isClosed) return;
+
     QVector2D center = pImpl_->pSensor->GetPosition();
     OpenGOO* game = OpenGOO::instance();
     QList<OGBall*> balls = game->GetWorld()->balls();
 
     Q_FOREACH(OGBall * ball, balls)
     {
+        if (ball->isExit()) continue;
+
         OGUserData* userData = ball->GetUserData();
 
-        if (!userData || !userData->isTouching) continue;
-
-        QVector2D position = ball->GetCenter();
-        QVector2D d = center - position;
-
-        float force = 100.0f;
-
-        if (d.lengthSquared() < FLT_EPSILON * FLT_EPSILON)
+        if (userData && userData->isTouching)
         {
-            continue;
+            QVector2D position = ball->GetCenter();
+            QVector2D d = center - position;
+
+            float force = 40.0f;
+
+            if (d.lengthSquared() < FLT_EPSILON * FLT_EPSILON)
+            {
+                continue;
+            }
+
+            d.normalize();
+
+            QVector2D F =  force * d;
+
+            ball->ApplyForce(F, position);
         }
 
-        d.normalize();
+        if (ball->isSuction())
+        {
+            QVector2D position = ball->GetCenter();
+            float lq = (center - position).lengthSquared();
 
-        QVector2D F =  force * d;
-
-        ball->ApplyForce(F, position);;
+            if (lq <= 1.0f)
+            {
+                pImpl_->balls++;
+                ball->SetExit(true);
+            }
+        }
     }
 }
 
-void Exit::Painter(QPainter* painter)
+int Exit::Balls() const { return pImpl_->balls; }
+
+void Exit::Close()
 {
-    painter->save();
-    painter->setPen(Qt::white);
-    painter->setFont(QFont("Verdana", 12.0, QFont::Bold));
-    painter->drawText(120, 20, QString::number(pImpl_->balls));
-    painter->restore();
+    pImpl_->isClosed = true;
+    PEngine::GetInstance()->RemoveSensor(pImpl_->pSensor->id());
+    OpenGOO* game = OpenGOO::instance();
+    QList<OGBall*> balls = game->GetWorld()->balls();
+
+    Q_FOREACH(OGBall * ball, balls)
+    {
+        ball->SetSuction(false);
+    }
+
+    game->ClosePipe();
 }

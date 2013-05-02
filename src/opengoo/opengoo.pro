@@ -104,7 +104,19 @@ HEADERS += \
     src/og_staticbody.h \
     src/og_types.h \
     src/exitsensor.h \
-    src/exit.h
+    src/exit.h \
+    src/GameEngine/og_resourcemanager.h \
+    src/og_dispatcher.h \
+    src/og_eventhandler.h \
+    src/eventhandlers.h \
+    src/handler_exit.h \
+    src/handler_continue.h \
+    src/progresswindow.h \
+    src/og_uiwindow.h \
+    src/continuebutton.h \
+    src/og_uilabel.h \
+    src/og_uipushbutton.h \
+    src/continuebutton2.h
 
 
 SOURCES += \
@@ -136,7 +148,14 @@ SOURCES += \
     src/og_fly.cpp \
     src/og_staticbody.cpp \
     src/exitsensor.cpp \
-    src/exit.cpp
+    src/exit.cpp \
+    src/GameEngine/og_resourcemanager.cpp \
+    src/og_dispatcher.cpp \
+    src/progresswindow.cpp \
+    src/og_uiwindow.cpp \
+    src/continuebutton.cpp \
+    src/og_uipushbutton.cpp \
+    src/continuebutton2.cpp
 
 
 # Game engine

@@ -2,12 +2,16 @@
 #define OPENGOO_H
 
 #include "GameEngine/og_game.h"
+#include "progresswindow.h"
+#include "continuebutton2.h"
 
 #include <QColor>
 #include <QList>
 #include <QHash>
 #include <QPoint>
 #include <QString>
+
+#include <memory>
 
 class OGEvent;
 class OGFPSCounter;
@@ -21,110 +25,130 @@ class QTime;
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
 
 class OpenGOO : public OGGame
-{
-    OpenGOO() {}
-    ~OpenGOO() {}
+{        
+    public:
+        static OpenGOO* instance();
 
-    static OpenGOO* pInstance_;
+        void Destroy();
 
-    OGWorld* pWorld_;
-    OGFPSCounter* pFPS_;
-    OGWindowCamera* pCamera_;
-    OGBall* pSelectedBall_;
+        OGWorld* GetWorld() { return pWorld_; }
+        OGBall* GetNearestBall();
 
-    QString levelName_;
-    QString language_;
-    QString island_;
+        void SetLevelName(const QString &levelname);
+        void SetLanguage(const QString &language);
 
-    int width_;
-    int height_;
+        static void SendEvent(OGEvent* ev);
 
-    float timeStep_;
-    float timeScrollStep_;
+        void OpenPipe();
+        void ClosePipe();
 
-    QList<OGEvent*> eventList_;
-    QHash<QString, OGUI*> uiList_;
+        void CreateUI(const QString  &name) { _CreateUI(name); }
 
-    QTime* pGameTime_;
-    int lastTime_;
+        void ShowProgress();
 
-    bool isPause_;
+        void Quit() { _Quit(); }
 
-    QPoint lastMousePos_;
-    QPoint curMousePos_;
+private:
+        OpenGOO() {}
+        ~OpenGOO() {}
 
-    void _Start();
-    void _End();
+        OpenGOO(const OpenGOO&);
+        OpenGOO& operator= (const OpenGOO&);
 
-    void _Activate();
-    void _Deactivate();
+        static OpenGOO* pInstance_;
 
-    void _Cycle();
-    void _Paint(QPainter *painter);
+        OGWorld* pWorld_;
+        OGFPSCounter* pFPS_;
+        OGWindowCamera* pCamera_;
+        OGBall* pSelectedBall_;
+        std::unique_ptr<ProgressWindow> pProgressWnd_;
+        std::unique_ptr<ContinueButton2> pContinueBtn_;
 
-    void _MouseButtonDown(QMouseEvent *ev);
-    void _MouseButtonUp(QMouseEvent *ev);
-    void _MouseMove(QMouseEvent *ev);
-    void _MouseWheel(QWheelEvent *ev) { Q_UNUSED (ev)}
+        QString levelName_;
+        QString language_;
+        QString island_;
 
-    void _KeyDown(QKeyEvent *ev) { Q_UNUSED (ev)}
-    void _KeyUp(QKeyEvent *ev) { Q_UNUSED (ev)}
+        int width_;
+        int height_;
 
-    void _Quit();
+        float timeStep_;
+        float timeScrollStep_;
 
-    void _CreateUI(const QString  &name);
-    void _ClearUI();
+        QList<OGEvent*> eventList_;
+        QHash<QString, OGUI*> uiList_;
 
-    void _CreateUIBack();
-    void _CloseUIBack();
+        QTime* pGameTime_;
+        int lastTime_;
 
-    void _CreateUIButtons();
+        bool isPause_;
+        bool isContinue_;
+        bool isLevelExit_;
 
-    void _LoadLevel(const QString& levelname);
-    void _CloseLevel();
-    void _ReloadLevel();
+        QPoint lastMousePos_;
+        QPoint curMousePos_;
 
-    void _SetDebug(bool debug);
+        int balls_;
+        int ballsRequired_;
+
+        void _Start();
+        void _End();
+
+        void _Activate();
+        void _Deactivate();
+
+        void _Cycle();
+        void _Paint(QPainter* painter);
+
+        void _MouseButtonDown(QMouseEvent* ev);
+        void _MouseButtonUp(QMouseEvent* ev);
+        void _MouseMove(QMouseEvent* ev);
+        void _MouseWheel(QWheelEvent* ev) { Q_UNUSED(ev)}
+
+        void _KeyDown(QKeyEvent* ev) { Q_UNUSED(ev)}
+        void _KeyUp(QKeyEvent* ev) { Q_UNUSED(ev)}
+
+        void _Quit();
+
+        void _CreateUI(const QString  &name);
+        void _ClearUI();
+
+        void _CreateUIBack();
+        void _CloseUIBack();
+
+        void _CreateUIButtons();
+
+        void _LoadLevel(const QString &levelname);
+        void _CloseLevel();
+        void _ReloadLevel();
+
+        void _SetDebug(bool debug);
 
 
-    void _Scroll();
-    void _SetBackgroundColor(const QColor &color);
+        void _Scroll();
+        void _SetBackgroundColor(const QColor &color);
 
-    void _CreateMenu(const QString &name);
+        void _CreateMenu(const QString &name);
 
-    QString _GetMainMenu();
-    void _LoadMainMenu();
+        QString _GetMainMenu();
+        void _LoadMainMenu();
 
-    QString _GetIsland();
-    void _SetIsland(const QString &name);
-    void _LoadIsland(const QString &name);
+        QString _GetIsland();
+        void _SetIsland(const QString &name);
+        void _LoadIsland(const QString &name);
 
-    // Handlers
-    void _HQuit();
-    void _HCreateMenu(OGEvent* ev);
-    void _HRestart();
-    void _HShowOCD();
-    void _HBackToIsland();
-    void _HResume();
-    void _HBackToMainMenu();
-    void _HLoadIsland(OGEvent* ev);
-    void _HLoadLevel(OGEvent* ev);
+        void _InitProgressWindow();
+        void _SaveProgress();
 
-public:
-    static OpenGOO* instance();
+        // Handlers
+        void _HCreateMenu(OGEvent* ev);
+        void _HRestart();
+        void _HShowOCD();
+        void _HBackToIsland();
+        void _HResume();
+        void _HBackToMainMenu();
+        void _HLoadIsland(OGEvent* ev);
+        void _HLoadLevel(OGEvent* ev);
 
-    void Destroy();
-
-    OGWorld* GetWorld() { return pWorld_; }
-    OGBall* GetNearestBall();
-
-    void SetLevelName(const QString& levelname);
-    void SetLanguage(const QString& language);
-
-    static void SendEvent(OGEvent* ev);
-
-    void OpenPipe();
-    void ClosePipe();
 };
 
 #endif // OPENGOO_H

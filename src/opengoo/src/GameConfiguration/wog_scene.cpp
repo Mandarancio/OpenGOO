@@ -43,3 +43,19 @@ WOGButtonGroup* WOGScene::GetButtonGroup(const QString& id)
 
     return 0;
 }
+
+WOGButton* WOGScene::FindButton(const QString &id)
+{
+    WOGButton* btn = 0;
+
+    Q_FOREACH (WOGButton* b, button)
+    {
+        if (b->id == id)
+        {
+            btn = b;
+            break;
+        }
+    }
+
+    return btn;
+}

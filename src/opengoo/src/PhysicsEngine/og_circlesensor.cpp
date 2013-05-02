@@ -14,7 +14,7 @@ OGCircleSensor::OGCircleSensor(const QString &id, const Circle &circle)
 }
 
 OGCircleSensor::~OGCircleSensor()
-{    
+{
     delete pBody_;
 }
 
@@ -42,10 +42,10 @@ void OGCircleSensor::_SetMask(unsigned short mask)
     pBody_->fixture->SetFilterData(filter);
 }
 
-void OGCircleSensor::_SetFilter(unsigned short category, unsigned short mask)
+void OGCircleSensor::_SetFilter(const OGSensorFilter &filter)
 {
-    b2Filter filter;
-    filter.categoryBits = category;
-    filter.maskBits = mask;
-    pBody_->fixture->SetFilterData(filter);
+    b2Filter f;
+    f.categoryBits = filter.category;
+    f.maskBits = filter.mask;
+    pBody_->fixture->SetFilterData(f);
 }

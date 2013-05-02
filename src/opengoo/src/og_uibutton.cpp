@@ -4,57 +4,101 @@
 #include "og_event.h"
 #include "opengoo.h"
 #include "wog_text.h"
+#include "og_sprite.h"
+
+#include <QImage>
+#include <QString>
+#include <QTransform>
+
+struct OGUIButtonImpl
+{
+    QString onclick;
+    QString text;
+
+    OGUIButton::Sprites sprites;
+
+    QImage upImg;
+    QImage overImg;
+
+    WOGButton* pConfig;
+
+    bool isOver;
+};
+
+OGUIButton::OGUIButton()
+{
+    pImpl_ = new OGUIButtonImpl;
+
+    pImpl_->pConfig = 0;
+    pImpl_->isOver = false;
+}
 
 OGUIButton::OGUIButton(WOGButton* config)
-    : pUpImg_(0)
-    , pOverImg_(0)
-    , onclick_(config->onclick)
 {
-    text_ = _GetText(config->text);
-    pConfig_ = config;
+    pImpl_ = new OGUIButtonImpl;
+
+    pImpl_->onclick = config->onclick;
+    pImpl_->text = _GetText(config->text);
+    pImpl_->pConfig = config;
+    pImpl_->isOver = false;
+
+    pImpl_->sprites.upImage = 0;
+    pImpl_->sprites.overImage = 0;
 }
 
 OGUIButton::~OGUIButton()
 {
-    delete pUpImg_;
-    delete pOverImg_;
+    delete pImpl_;
 }
 
-QString OGUIButton::_GetText(QString &str)
+void OGUIButton::AddSprites(const Sprites &spritelist)
 {
-    return OpenGOO::instance()->GetWorld()->textdata()->GetString(str);
+    pImpl_->sprites = spritelist;
+}
+
+void OGUIButton::SetOnClick(const QString &onclick)
+{
+    pImpl_->onclick = onclick;
 }
 
 void OGUIButton::SetUpImage(const QString &path)
 {
-    pUpImg_ = new QImage(path);
-    pImg_ = pUpImg_;
-
-    int w = qRound(pUpImg_->width() * pConfig_->scale.x());
-    int h = qRound(pUpImg_->height() * pConfig_->scale.y());
-
-    setWidth(w);
-    setHeight(h);
-
-    w = OGGameEngine::getEngine()->getWidth();
-    h = OGGameEngine::getEngine()->getHeight();
-
-    int x = qRound(w * 0.5f + pConfig_->position.x());
-    int y = qRound(h * 0.5f - pConfig_->position.y());
-
-    moveCenter(QPoint(x, y));
+    _SetUpImage(path);
 }
 
 void OGUIButton::SetOverImage(const QString &path)
 {
-    pOverImg_ = new QImage(path);
+    _SetOverImage(path);
 }
 
 void OGUIButton::Paint(QPainter* painter)
 {
-    QRectF target(x(), y(), width(), height());
+    QImage* img;
 
-    if (pImg_) { painter->drawImage(target, *pImg_, pImg_->rect()); }
+    if (pImpl_->sprites.upImage != 0)
+    {
+        QPixmap* pm = 0;
+
+        if (pImpl_->isOver)
+        {
+            if (pImpl_->sprites.overImage != 0)
+            {
+                pm = &pImpl_->sprites.overImage->image;
+            }
+        }
+        else pm = &pImpl_->sprites.upImage->image;
+
+        if (pm) painter->drawPixmap(*this, *pm, pm->rect());
+
+        return;
+    }
+
+    if (pImpl_->isOver) img = &pImpl_->overImg;
+    else img = &pImpl_->upImg;
+
+    if (img) { painter->drawImage(*this, *img, img->rect()); }
+
+
 
     QPen pen(Qt::white,  2.0f);
     painter->setOpacity(1.0f);
@@ -62,7 +106,7 @@ void OGUIButton::Paint(QPainter* painter)
 
     painter->setPen(pen);
     painter->setFont(QFont("Arial", 14, QFont::Bold));
-    painter->drawText(target, Qt::AlignCenter, text_);
+    painter->drawText(*this, Qt::AlignCenter, pImpl_->text);
 
     painter->restore();
 }
@@ -71,31 +115,33 @@ void OGUIButton::MouseDown(QMouseEvent* ev)
 {
     Q_UNUSED(ev);
 
-    if (onclick().compare("createretrymenu") == 0)
+    QString onclick = _GetOnClick();
+
+    if (onclick == "createretrymenu")
     {
         OpenGOO::SendEvent(new OGMenuEvent("RetryMenu"));
     }
-    else if (onclick().compare("createmenu") == 0)
+    else if (onclick == "createmenu")
     {
         OpenGOO::SendEvent(new OGMenuEvent("GameMenu"));
     }
-    else if (onclick().compare("restartlevelrightnow") == 0)
+    else if (onclick == "restartlevelrightnow")
     {
         OpenGOO::SendEvent(new OGEvent(OGEvent::RESTART));
     }
-    else if (onclick().compare("showocdcriteria") == 0)
+    else if (onclick == "showocdcriteria")
     {
         OpenGOO::SendEvent(new OGEvent(OGEvent::SHOW_OCD));
     }
-    else if (onclick().compare("backtoisland") == 0)
+    else if (onclick == "backtoisland")
     {
         OpenGOO::SendEvent(new OGEvent(OGEvent::BACKTO_ISLAND));
     }
-    else if (onclick().compare("resumegame") == 0)
+    else if (onclick == "resumegame")
     {
         OpenGOO::SendEvent(new OGEvent(OGEvent::RESUME));
     }
-    else if (onclick().compare("backtomainmenu") == 0)
+    else if (onclick == "backtomainmenu")
     {
         OpenGOO::SendEvent(new OGEvent(OGEvent::BACKTO_MAINMENU));
     }
@@ -105,12 +151,65 @@ void OGUIButton::MouseMove(QMouseEvent* ev)
 {
     Q_UNUSED(ev);
 
-    if (pOverImg_) { pImg_ = pOverImg_; }
+    pImpl_->isOver = true;
 }
 
 void OGUIButton::Leave(QMouseEvent* ev)
 {
     Q_UNUSED(ev);
 
-    pImg_ = pUpImg_;
+    pImpl_->isOver = false;
+}
+
+bool OGUIButton::isOver() { return pImpl_->isOver; }
+
+inline void OGUIButton::_SetUpImage(const QString &path)
+{
+    pImpl_->upImg = QImage(path);
+    QImage* img = &pImpl_->upImg;
+    const WOGButton* config = pImpl_->pConfig;
+
+    if (config->rotation != 0)
+    {
+        QTransform t;
+        t.rotate(config->rotation * -1.0f);
+        pImpl_->upImg = img->transformed(t);
+    }
+
+    int w = qRound(img->width() * config->scale.x());
+    int h = qRound(img->height() * config->scale.y());
+
+    setWidth(w);
+    setHeight(h);
+
+    w = OGGameEngine::getEngine()->getWidth();
+    h = OGGameEngine::getEngine()->getHeight();
+
+    int x = qRound(w * 0.5f + config->position.x());
+    int y = qRound(h * 0.5f - config->position.y());
+
+    moveCenter(QPoint(x, y));
+}
+
+inline void OGUIButton::_SetOverImage(const QString &path)
+{
+    pImpl_->overImg = QImage(path);
+    QImage* img = &pImpl_->overImg;
+
+    if (pImpl_->pConfig->rotation != 0)
+    {
+        QTransform t;
+        t.rotate(pImpl_->pConfig->rotation * -1.0f);
+        pImpl_->overImg = img->transformed(t);
+    }
+}
+
+inline const QString &OGUIButton::_GetOnClick() const
+{
+    return pImpl_->onclick;
+}
+
+inline QString OGUIButton::_GetText(QString &str)
+{
+    return OpenGOO::instance()->GetWorld()->textdata()->GetString(str);
 }

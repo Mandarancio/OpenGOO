@@ -19,6 +19,7 @@ private:
     void CreateMovementAttributes_(WOGBall* ball);
     void CreatePlayerInteraction_(WOGBall* ball);
     void CreateCosmeticAttributes_(WOGBall* ball);
+    void _CreateLevelInteraction(WOGBall* ball);
     WOGBallStrand* CreateStrand_(const QDomElement & element);
     WOGBallDetachstrand* CreateDetachstrand_(const QDomElement & element);
     WOGBallShape* StringToShape(const QString & shape);

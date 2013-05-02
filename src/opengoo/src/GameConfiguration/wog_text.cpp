@@ -2,13 +2,16 @@
 
 QString WOGText::GetString(const QString& str)
 {
+    QString text;
+
     Q_FOREACH (WOGString*s, string)
     {
         if (s->id.compare(str) == 0)
         {
-            return s->text;
+            text = s->text;
+            break;
         }
     }
 
-    return QString();
+    return text;
 }

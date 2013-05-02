@@ -1,6 +1,8 @@
 #ifndef OG_WINDOW_H
 #define OG_WINDOW_H
 
+#include "og_uiwindow.h"
+
 #include <QWindow>
 #include <QOpenGLContext>
 #include <QOpenGLPaintDevice>
@@ -24,6 +26,9 @@ class OGWindow : public QWindow
 
         void setActive(bool active);
 
+        void AddWindow(const QString &id, OGUIWindow* wnd);
+        void RemoveWindow(const QString &id);
+
     protected:
         void keyReleaseEvent(QKeyEvent* event);
         void keyPressEvent(QKeyEvent* event);
@@ -40,6 +45,7 @@ class OGWindow : public QWindow
         QOpenGLPaintDevice* pPaintDevice_;
         QTimer* pTimer_;
         OGGame* pGame_;
+        QMap<QString, OGUIWindow*> wndStack;
 
         bool _initOpenGL();
 

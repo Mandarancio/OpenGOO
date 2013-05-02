@@ -167,6 +167,8 @@ void OGWorld::Reload()
 {
     _ClearPhysics();
     CreatePhysicsScene();
+
+    if (pPipe_) pPipe_->Close();
 }
 
 template<class Target, class Config>
@@ -809,7 +811,6 @@ void OGWorld::findNearestAttachedBall()
 
 void OGWorld::Update()
 {
-    if (pExit_) pExit_->Update();
     if (pPhysicsEngine_) { pPhysicsEngine_->Simulate(); }
 }
 void OGWorld::CloseLevel()

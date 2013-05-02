@@ -3,6 +3,7 @@
 
 #include <cstdio>
 
+#include <QMap>
 #include <QSurfaceFormat>
 #include <QDebug>
 
@@ -134,7 +135,17 @@ void OGWindow::draw()
 
 void OGWindow::mousePressEvent(QMouseEvent* event)
 {
-    pGame_->MouseButtonDown(event);
+    QMapIterator<QString, OGUIWindow*> i(wndStack);
+    i.toBack();
+
+    bool status = false;
+
+    while (i.hasPrevious() && !status)
+    {
+        status = i.previous().value()->MouseDown(event);
+    }
+
+    if (!status) pGame_->MouseButtonDown(event);
 }
 
 void OGWindow::mouseReleaseEvent(QMouseEvent* event)
@@ -164,4 +175,14 @@ void OGWindow::setActive(bool active)
 
     if (active) pTimer_->start();
     else pTimer_->stop();
+}
+
+void OGWindow::AddWindow(const QString &id, OGUIWindow* wnd)
+{
+    wndStack.insert(id, wnd);
+}
+
+void OGWindow::RemoveWindow(const QString &id)
+{
+    wndStack.remove(id);
 }

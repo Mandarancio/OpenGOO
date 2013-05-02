@@ -89,10 +89,14 @@ class OGBall : public OGPhysicsBody
         bool IsFalling() const { return isFalling_; }
         bool IsMarked() const { return isMarked_; }
         bool IsStanding() const { return isStanding_; }
+        bool IsSuckable() const { return isSuckable_; }
         bool IsWalking() const { return isWalking_; }
 
         bool IsDraggable() const { return isDraggable_; }
         bool IsDetachable() const;
+
+        bool isExit() const { return isExit_; }
+        bool isSuction() const { return isSuction_; }
 
         b2Vec2 GetBodyPosition() const { return body->GetPosition(); }
         QVector2D GetCenter() const;
@@ -115,6 +119,9 @@ class OGBall : public OGPhysicsBody
         void SetId(int id) { id_ = id; }
         void SetTarget(OGBall* target);
         void SetTarget(float x, float y);
+        void SetExit(bool exit);
+        void SetSuction(bool suction);
+
         void Attache(OGBall* ball);
 
         void Paint(QPainter* painter, bool debug = false);
@@ -162,8 +169,11 @@ class OGBall : public OGPhysicsBody
         bool isFalling_;
         bool isMarked_;
         bool isStanding_;
+        bool isSuckable_;
         bool isWalking_;
         bool isInit_;
+        bool isSuction_;
+        bool isExit_;
 
         QPointF* GetTarget() { return &target_; }
         float GetAngle() const;
@@ -222,7 +232,6 @@ class OGBall : public OGPhysicsBody
 
     private:
         OGWorld* _GetWorld();
-        WOGLevelExit* _GetLevelExit();
         void _RemoveStrand(OGStrand* strand);
         void _CreateStrand(OGBall* b1, OGBall* b2);
 };

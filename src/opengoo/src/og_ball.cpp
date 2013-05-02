@@ -45,8 +45,9 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     isFalling_ = false;
     isMarked_ = false;
     isStanding_ = false;
-    isWalking_ = false;
+    isWalking_ = false;    
     isDraggable_ = pConfig_->attribute.player.draggable;
+    isSuckable_ = pConfig_->attribute.level.suckable;
 
     material_.bounce = 0.1f;
     material_.friction = 15.0f;
@@ -54,6 +55,8 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     id_ = -1;
     isInit_ = false;
     pTargetBall_ = 0;
+    isSuction_ = false;
+    isExit_ = false;
 
     WOGBallShape* ballShape = GetShape();
 
@@ -181,6 +184,12 @@ void OGBall::SetCurrentPosition(const b2Vec2 &pos)
     curPos_.setY(pos.y);
 }
 
+void OGBall::SetExit(bool exit)
+{
+    isExit_ = exit;
+    body->SetActive(!exit);    
+}
+
 void OGBall::Update()
 {   
 
@@ -241,31 +250,11 @@ void OGBall::Update()
 
 inline void OGBall::Move()
 {
-    const float K = 0.1f;
-
     if (isClimbing_)
-    {
-        float x1 = GetCurrentPosition()->x();
-        float y1 = GetCurrentPosition()->y();
-        WOGLevelExit* lvlExit = _GetLevelExit();
-        float x2 = lvlExit->pos.x() * K;
-        float y2 = lvlExit->pos.y() * K;
-        float r1 = lvlExit->radius * K;
-        float r2 = shape->GetRadius();
-        float l1 = qPow((r1 + r2), 2.0f);
-        float l2 = LengthSquared(x1, y1, x2, y2);
-
-        if (l2 <= l1)
+    {      
+        if (IsCanClimb() && !isSuction_)
         {
-//            SetTarget(x2, y2);
-            isClimbing_ = false;
-        }
-        else
-        {
-            if (IsCanClimb())
-            {
-                Algorithm2();
-            }
+            Algorithm2();
         }
 
         if (pTargetBall_->IsAttached())
@@ -323,6 +312,8 @@ inline bool OGBall::IsOnWalkableGeom(b2ContactEdge* edge)
 void OGBall::Paint(QPainter* painter, bool debug)
 {
     Q_UNUSED(debug)
+
+    if (isExit()) return;
 
     float posX, posY, radius, angle;
     QLineF line;
@@ -395,6 +386,16 @@ void OGBall::Paint(QPainter* painter, bool debug)
     }
 
     painter->restore();
+}
+
+void OGBall::SetSuction(bool suction)
+{
+    isSuction_ = suction;
+
+    if (suction)
+    {
+        isClimbing_ = false;
+    }
 }
 
 inline void OGBall::SetTarget(float x, float y)
@@ -628,13 +629,6 @@ inline float OGBall::Distance(OGBall* b)
 inline OGWorld* OGBall::_GetWorld()
 {
     return OpenGOO::instance()->GetWorld();
-}
-
-inline WOGLevelExit* OGBall::_GetLevelExit()
-{
-    OGWorld* world = _GetWorld();
-
-    return world->leveldata()->levelexit;
 }
 
 void OGBall::_RemoveStrand(OGStrand* strand)

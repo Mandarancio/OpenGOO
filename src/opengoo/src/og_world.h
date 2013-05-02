@@ -174,7 +174,6 @@ class OGWorld : public QObject
 
     private slots:
         void findNearestAttachedBall();
-
 };
 
 #endif // OG_WORLD_H

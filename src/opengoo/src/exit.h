@@ -3,15 +3,14 @@
 
 struct WOGLevelExit;
 
-class QPainter;
-
 class Exit
 {
     public:
         Exit(WOGLevelExit* exit);
         ~Exit();
-        void Update();
-        void Painter(QPainter* painter);
+        void Update();        
+        int Balls() const;
+        void Close();
 
     private:
         struct ExitImpl* pImpl_;

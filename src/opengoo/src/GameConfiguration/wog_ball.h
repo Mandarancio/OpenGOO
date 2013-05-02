@@ -70,7 +70,7 @@ struct WOGBallPlayerInteraction
 
 struct WOGBallLevelInteraction
 {
-
+    bool suckable;
 };
 
 // Other Ball Interaction

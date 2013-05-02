@@ -8,12 +8,14 @@
 class OGEvent;
 class OGGame;
 class OGPhysicsEngine;
+class OGResourceManager;
 
 class OGGameEngine : public QObject
 {
         Q_OBJECT
 
         bool isVideoModeSupported_;
+        OGResourceManager* pResourceManager_;
 
     protected:
         static OGGameEngine* gameEngine_;
@@ -39,6 +41,11 @@ class OGGameEngine : public QObject
         int getFrameDelay() const { return frameDelay_; }
 
         OGPhysicsEngine* getPhysicsEngine();
+
+        OGResourceManager* getResourceManager();
+
+        void addWindow(const QString &id, OGUIWindow* wnd);
+        void RemoveWindow(const QString &id);
 
     public slots:
         void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 / framerate); }

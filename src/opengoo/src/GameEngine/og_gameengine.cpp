@@ -1,4 +1,5 @@
 #include "og_gameengine.h"
+#include "og_resourcemanager.h"
 #include "PhysicsEngine/og_physicsengine.h"
 #include "og_game.h"
 
@@ -19,6 +20,7 @@ OGGameEngine::OGGameEngine(OGGame* game, int width, int height, bool fullscreen)
     fullscreen_ = fullscreen;
     isVideoModeSupported_ = false;
     pGame_ = game;
+    pResourceManager_ = 0;
 }
 
 OGGameEngine::~OGGameEngine()
@@ -104,4 +106,21 @@ void OGGameEngine::gameExit()
 OGPhysicsEngine* OGGameEngine::getPhysicsEngine()
 {
     return OGPhysicsEngine::GetInstance();
+}
+
+OGResourceManager* OGGameEngine::getResourceManager()
+{
+    if (!pResourceManager_) pResourceManager_ = new OGResourceManager;
+
+    return pResourceManager_;
+}
+
+void OGGameEngine::addWindow(const QString &id, OGUIWindow* wnd)
+{
+    window_->AddWindow(id, wnd);
+}
+
+void OGGameEngine::RemoveWindow(const QString &id)
+{
+    window_->RemoveWindow(id);
 }

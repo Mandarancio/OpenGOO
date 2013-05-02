@@ -4,6 +4,7 @@
 #include "wog_scene.h"
 
 class OGUIButton;
+class OGUIWindow;
 
 class QMouseEvent;
 class QPainter;
@@ -14,14 +15,16 @@ class OGUI
         OGUI();
         ~OGUI();
         void AddButton(OGUIButton* btn);
+        void Add(OGUIWindow* ui);
         void Paint(QPainter* p);
 
         friend class OpenGOO;
+        friend class OGUIWindow;
 
     private:
         struct OGUIImpl* pImpl_;
 
-        void _MouseDown(QMouseEvent* e);
+        bool _MouseDown(QMouseEvent* ev);
         void _MouseMove(QMouseEvent* e);
         void _MouseEvent(QMouseEvent* e);
 

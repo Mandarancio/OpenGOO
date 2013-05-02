@@ -22,7 +22,7 @@ class OGCircleSensor : public OGSensor
 
         void _SetCategory(unsigned short category);
         void _SetMask(unsigned short mask);
-        void _SetFilter(unsigned short category, unsigned short mask);
+        void _SetFilter(const OGSensorFilter &filte);
 };
 
 #endif // OG_CIRCLESENSOR_H

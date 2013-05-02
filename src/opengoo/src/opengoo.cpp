@@ -14,12 +14,12 @@
 */
 
 #include "opengoo.h"
+#include "og_dispatcher.h"
 #include "og_world.h"
 #include "og_fpscounter.h"
 #include "flags.h"
 #include "GameEngine/og_gameengine.h"
 #include <logger.h>
-#include "og_event.h"
 #include "og_windowcamera.h"
 #include "og_ballconfig.h"
 #include "og_uiscene.h"
@@ -65,6 +65,13 @@ void OpenGOO::ClosePipe()
     pWorld_->pipe()->Close();
 }
 
+void OpenGOO::ShowProgress()
+{    
+    pContinueBtn_.reset();
+    pWorld_->exit()->Close();
+    _InitProgressWindow();
+}
+
 void OpenGOO::SetLanguage(const QString& language) { language_ = language; }
 
 void OpenGOO::SendEvent(OGEvent* ev) { pInstance_->eventList_ << ev; }
@@ -76,7 +83,7 @@ void OpenGOO::_Start()
     pGameTime_ = 0;
     pSelectedBall_ = 0;
     pFPS_ = 0;
-    isPause_ = false;
+    isPause_ = false;    
 
     //initialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
@@ -109,7 +116,7 @@ void OpenGOO::_Start()
 }
 
 void OpenGOO::_End()
-{
+{    
     _ClearUI();
     delete pFPS_;
 
@@ -130,12 +137,10 @@ void OpenGOO::_Cycle()
     {
         OGEvent* e = eventList_.takeFirst();
 
+        OGDispatcher<>::EventDispatch(e->type());
+
         switch (e->type())
         {
-            case OGEvent::EXIT:
-                _HQuit();
-                break;
-
             case OGEvent::CREATE_MENU:
                 _HCreateMenu(e);
                 break;
@@ -173,7 +178,7 @@ void OpenGOO::_Cycle()
         }
 
         delete e;
-    }
+    }    
 
     if (!pWorld_->isLevelLoaded())
     {
@@ -192,18 +197,13 @@ void OpenGOO::_Cycle()
 
     if (flag & FPS) pFPS_->Update(lastTime_);
 
-    if (!isPause_)
-    {
-        int n = (lastTime_ * timeStep_) + 0.5f; // round
-
-        for (int i = 0; i < n; i++) { pWorld_->Update(); }
-    }
-
     if (pCamera_)
     {
         pCamera_->Update(lastTime_);
         _Scroll();
     }
+
+    if (isPause_) return;
 
     if (pSelectedBall_ && !pSelectedBall_->IsDragging())
     {
@@ -217,6 +217,30 @@ void OpenGOO::_Cycle()
     Q_FOREACH(OGBall * ball, pWorld_->balls())
     {
         ball->Update();
+    }
+
+    if (pWorld_->exit() && !pProgressWnd_)
+    {
+        pWorld_->exit()->Update();
+    }
+
+    {
+        int n = (lastTime_ * timeStep_) + 0.5f; // round
+
+        for (int i = 0; i < n; i++) { pWorld_->Update(); }
+    }
+
+
+    if (isLevelExit_)
+    {
+        balls_ = pWorld_->exit()->Balls();
+
+        if (balls_ >= ballsRequired_ && !isContinue_)
+        {
+            isContinue_ = true;
+            pContinueBtn_.reset(new ContinueButton2);
+            pContinueBtn_->Show();
+        }
     }
 }
 
@@ -261,8 +285,17 @@ void OpenGOO::_Paint(QPainter *painter)
 
     painter->setWindow(0, 0, width_, height_);
 
-    if (flag & FPS) pFPS_->Painter(painter);
-    if (pWorld_->exit()) pWorld_->exit()->Painter(painter);
+    if (pContinueBtn_)
+    {
+        pContinueBtn_->Paint(painter);
+    }
+
+    if (pProgressWnd_)
+    {
+        pProgressWnd_->Paint(painter);
+    }
+
+    if (flag & FPS) pFPS_->Painter(painter);    
 
     Q_FOREACH(OGUI * ui, uiList_) { ui->Paint(painter); }
 }
@@ -365,7 +398,7 @@ void OpenGOO::_MouseMove(QMouseEvent *ev)
     }
 }
 
-void OpenGOO::_Quit() { SendEvent(new OGEvent(OGEvent::EXIT)); }
+inline void OpenGOO::_Quit() { SendEvent(new OGEvent(OGEvent::EXIT)); }
 
 void OpenGOO::_Scroll()
 {
@@ -397,6 +430,21 @@ inline void OpenGOO::_SetBackgroundColor(const QColor &color)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void OpenGOO::_InitProgressWindow()
+{    
+    pProgressWnd_.reset(new ProgressWindow(400, 300));
+
+    int x = width_ / 2;
+    int y = height_ / 2;
+
+    pProgressWnd_->MoveCenter(x, y);
+
+    pProgressWnd_->Init();
+    pProgressWnd_->SetBalls(balls_);
+
+    pProgressWnd_->Show();
+}
+
 // Level
 void OpenGOO::_LoadLevel(const QString& levelname)
 {
@@ -416,8 +464,13 @@ void OpenGOO::_LoadLevel(const QString& levelname)
     if (pWorld_->leveldata()->visualdebug) _SetDebug(true);
 
     pCamera_ = OGWindowCamera::instance();
-
+    balls_ = 0;
+    ballsRequired_ = pWorld_->leveldata()->ballsrequired;
     isPause_ = false;
+    isContinue_ = false;
+
+    if (pWorld_->exit()) isLevelExit_ = true;
+    else isLevelExit_ = false;
 }
 
 void OpenGOO::_CloseLevel()
@@ -430,7 +483,8 @@ void OpenGOO::_CloseLevel()
 void OpenGOO::_ReloadLevel()
 {
     pWorld_->Reload();
-    pCamera_->SetLastPosition();
+    pCamera_->SetLastPosition();    
+    balls_ = 0;
 }
 
 // User interface
@@ -489,12 +543,6 @@ void OpenGOO::_LoadIsland(const QString &name)
 
 // Handlers
 
-void OpenGOO::_HQuit()
-{
-    OGGameEngine::getEngine()->getWindow()->close();
-}
-
-
 void OpenGOO::_HCreateMenu(OGEvent* ev)
 {
     _ClearUI();
@@ -536,7 +584,10 @@ void OpenGOO::_HShowOCD() {}
 
 void OpenGOO::_HBackToIsland()
 {
-    QString name = _GetIsland();
+    QString name = _GetIsland();       
+
+    isContinue_ = false;
+    pProgressWnd_.reset();
 
     if (name.isEmpty()) _Quit();
     else _LoadIsland(name);

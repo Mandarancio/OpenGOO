@@ -13,11 +13,7 @@ struct OGUserData
 
     static OGUserData* GetUserData(void* userdata)
     {
-        OGUserData* data = 0;
-
-        if (userdata) data = static_cast<OGUserData*>(userdata);
-
-        return data;
+        return static_cast<OGUserData*>(userdata);
     }
 };
 

@@ -117,6 +117,7 @@ struct WOGScene
     ~WOGScene();
 
     WOGButtonGroup* GetButtonGroup(const QString& id);
+    WOGButton* FindButton(const QString &id);
 };
 
 #endif // WOG_SCENE_H

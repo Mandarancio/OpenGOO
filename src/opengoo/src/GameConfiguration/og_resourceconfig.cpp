@@ -67,7 +67,7 @@ WOGResourceGroup* OGResourceConfig::CreateResourceGroup(
 
         if (resElement.tagName() == "SetDefaults")
         {
-            defaultPath_ = resElement.attribute("path");
+            defaultPath_ = resElement.attribute("path") + "/";
             defaultIdPrefix_ = resElement.attribute("idprefix");
         }
         else if (resElement.tagName() == "Image")

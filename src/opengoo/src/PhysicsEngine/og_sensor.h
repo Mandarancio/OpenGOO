@@ -6,11 +6,17 @@
 #include <QString>
 #include <QVector2D>
 
+struct OGSensorFilter
+{
+    unsigned short category;
+    unsigned short mask;
+};
+
 class OGSensor
 {
     public:
         OGSensor(const QString &id = QString()) : id_(id) {}
-        virtual ~OGSensor() { qDebug("test1"); }
+        virtual ~OGSensor() {}
 
         const QString &id() const { return id_; }
 
@@ -18,11 +24,8 @@ class OGSensor
         QVector2D GetPosition() const { return _GetPosition(); }
 
         void SetCategory(unsigned short category) { _SetCategory(category); }
-        void SetMask(unsigned short mask) { _SetMask(mask); }
-        void SetFilter(unsigned short category, unsigned short mask)
-        {
-            _SetFilter(category, mask);
-        }
+        void SetMask(unsigned short mask) { _SetMask(mask); }       
+        void SetFilter(const OGSensorFilter &filter) { _SetFilter(filter); }
 
         void BeginContact(Fixture* fixture) { _BeginContact(fixture); }
         void EndContact(Fixture* fixture) { _EndContact(fixture); }
@@ -35,8 +38,7 @@ class OGSensor
 
         virtual void _SetCategory(unsigned short category) = 0;
         virtual void _SetMask(unsigned short mask) = 0;
-        virtual void _SetFilter(unsigned short category
-                                , unsigned short mask) = 0;
+        virtual void _SetFilter(const OGSensorFilter &filter) = 0;
 
         virtual void _BeginContact(Fixture* fixture) = 0;
         virtual void _EndContact(Fixture* fixture) = 0;

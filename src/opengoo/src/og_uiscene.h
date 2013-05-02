@@ -7,7 +7,8 @@ class WOGResources;
 
 class OGUIScene
 {
-    static OGUIButton* _CreateButton(WOGButton* btn, const WOGResources* resrc);
+    static OGUIButton* _CreateButton(WOGButton* btn
+                                     , const WOGResources* resrc);
     static QString _GetImgPath(const QString id, const WOGResources* resrc);
 
 public:

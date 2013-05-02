@@ -72,6 +72,7 @@ void OGBallConfig::CreateAttributes_(WOGBall* ball)
     CreateMovementAttributes_(ball);
     CreatePlayerInteraction_(ball);
     CreateCosmeticAttributes_(ball);
+    _CreateLevelInteraction(ball);
 
     ball->attribute.spawn = rootElement.attribute("spawn", "");
 }
@@ -208,4 +209,10 @@ WOGBallShape* OGBallConfig::StringToShape(const QString & shape)
     }
 
     return 0;
+}
+
+void OGBallConfig::_CreateLevelInteraction(WOGBall* ball)
+{
+    ball->attribute.level.suckable =
+            StringToBool(rootElement.attribute("suckable", "true"));
 }
