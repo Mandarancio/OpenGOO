@@ -13,9 +13,9 @@
 <SceneLayer animdelay="1" depth="-7" image="IMAGE_MAPWORLDVIEW_HOUSE" name="house" rotation="0" scalex="1.517" scaley="1.737" tilex="false" tiley="false" x="-112.94" y="222.81" />
 <SceneLayer animdelay="1" depth="-5" image="IMAGE_MAPWORLDVIEW_POST" name="menu" rotation="0" scalex="0.672" scaley="0.443" tilex="false" tiley="false" x="120.39" y="211.49" />
 <buttongroup id="boringmenugroup">
-<button depth="10" id="exit" onclick="quit" over="" rotation="0" scalex="0.656" scaley="0.43" up="IMAGE_MAPWORLDVIEW_EXIT_UP" x="123.17" y="160.76" />
-<button alpha="1" colorize="255,255,255" depth="10" id="levels" onclick="levels" over="" rotation="5" scalex="0.504" scaley="0.485" up="IMAGE_MAPWORLDVIEW_LEVELS_UP" x="121.5" y="302.51" />
-<button alpha="1" colorize="255,255,255" depth="10" id="config" onclick="config" over="" rotation="0" scalex="0.492" scaley="0.442" up="IMAGE_MAPWORLDVIEW_CONFIG_UP" x="118.51" y="250.25" />
-<button alpha="1" colorize="255,255,255" depth="10" id="credits" onclick="credits" over="" rotation="-3" scalex="0.647" scaley="0.434" up="IMAGE_MAPWORLDVIEW_CREDIT_UP" x="121.18" y="203.45" />
+<button depth="10" id="exit" onclick="quit" over="IMAGE_MAPWORLDVIEW_EXIT_UP_SEL" rotation="0" scalex="0.656" scaley="0.43" up="IMAGE_MAPWORLDVIEW_EXIT_UP" x="123.17" y="160.76" />
+<button alpha="1" colorize="255,255,255" depth="10" id="levels" onclick="levels" over="IMAGE_MAPWORLDVIEW_LEVELS_UP_SEL" rotation="5" scalex="0.504" scaley="0.485" up="IMAGE_MAPWORLDVIEW_LEVELS_UP" x="121.5" y="302.51" />
+<button alpha="1" colorize="255,255,255" depth="10" id="config" onclick="config" over="IMAGE_MAPWORLDVIEW_CONFIG_UP_SEL" rotation="0" scalex="0.492" scaley="0.442" up="IMAGE_MAPWORLDVIEW_CONFIG_UP" x="118.51" y="250.25" />
+<button alpha="1" colorize="255,255,255" depth="10" id="credits" onclick="credits" over="IMAGE_MAPWORLDVIEW_CREDIT_UP_SEL" rotation="-3" scalex="0.647" scaley="0.434" up="IMAGE_MAPWORLDVIEW_CREDIT_UP" x="121.18" y="203.45" />
 </buttongroup>
 </scene>
