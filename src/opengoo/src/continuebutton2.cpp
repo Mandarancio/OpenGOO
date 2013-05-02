@@ -4,11 +4,22 @@
 #include "GameEngine/og_gameengine.h"
 
 ContinueButton2::ContinueButton2()
-{    
-    SetPosition(20, 50);
-    SetSize(120, 40);
+{
+    int w = 120;
+    int h = 40;
+
+    OGGameEngine* ge = OGGameEngine::getEngine();
+
+    int x = ge->getWidth() - w - 50;
+    int y = 50;
+
+    SetSize(w, h);
+    SetPosition(x, y);
     SetText("Continue");
-    OGGameEngine::getEngine()->addWindow("WND_CONTINUE", this);
+    SetBG(0, 0, 0, 32);
+    SetFontColor(Qt::white);
+
+    ge->addWindow("WND_CONTINUE", this);
 }
 
 ContinueButton2::~ContinueButton2()

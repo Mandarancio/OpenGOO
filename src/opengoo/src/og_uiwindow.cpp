@@ -111,6 +111,11 @@ void OGUIWindow::SetBG(const QColor &color)
     pImpl_->bg = color;
 }
 
+void OGUIWindow::SetBG(int r, int g, int b, int a)
+{
+    SetBG(QColor(r, g, b, a));
+}
+
 void OGUIWindow::SetParent(OGUIWindow *parent)
 {
     pImpl_->pParent = parent;

@@ -28,6 +28,7 @@ class OGUIWindow
         const QSize &GetSize() const;
 
         void SetBG(const QColor &color);
+        void SetBG(int r, int g, int b, int a = 255);
         void SetParent(OGUIWindow* parent);
         void SetPosition(const QPoint &pos);
         void SetPosition(int posx, int posy);

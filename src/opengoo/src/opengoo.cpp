@@ -30,6 +30,7 @@
 #include "og_button.h"
 #include "og_pipe.h"
 #include "exit.h"
+#include "continuebutton2.h"
 
 #include <QTime>
 
@@ -238,9 +239,10 @@ void OpenGOO::_Cycle()
         if (balls_ >= ballsRequired_ && !isContinue_)
         {
             isContinue_ = true;
-            pContinueBtn_.reset(new ContinueButton2);
+            pContinueBtn_ = _CreateContinueButton();
             pContinueBtn_->Show();
-        }
+            _ClearUI();
+        }        
     }
 }
 
@@ -428,6 +430,13 @@ inline void OpenGOO::_SetBackgroundColor(const QColor &color)
 {
     glClearColor(color.redF(), color.greenF(), color.blueF(), 1);
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+unique_ptr<OGUIPushButton> OpenGOO::_CreateContinueButton()
+{
+    unique_ptr<OGUIPushButton> btn(new ContinueButton2);
+
+    return btn;
 }
 
 void OpenGOO::_InitProgressWindow()

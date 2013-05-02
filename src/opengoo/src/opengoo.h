@@ -3,7 +3,7 @@
 
 #include "GameEngine/og_game.h"
 #include "progresswindow.h"
-#include "continuebutton2.h"
+#include "og_uipushbutton.h"
 
 #include <QColor>
 #include <QList>
@@ -60,9 +60,7 @@ private:
         OGWorld* pWorld_;
         OGFPSCounter* pFPS_;
         OGWindowCamera* pCamera_;
-        OGBall* pSelectedBall_;
-        std::unique_ptr<ProgressWindow> pProgressWnd_;
-        std::unique_ptr<ContinueButton2> pContinueBtn_;
+        OGBall* pSelectedBall_;        
 
         QString levelName_;
         QString language_;
@@ -136,8 +134,12 @@ private:
         void _SetIsland(const QString &name);
         void _LoadIsland(const QString &name);
 
+        std::unique_ptr<ProgressWindow> pProgressWnd_;
         void _InitProgressWindow();
         void _SaveProgress();
+
+        std::unique_ptr<OGUIPushButton> pContinueBtn_;
+        std::unique_ptr<OGUIPushButton> _CreateContinueButton();
 
         // Handlers
         void _HCreateMenu(OGEvent* ev);

@@ -22,6 +22,8 @@ ProgressWindow::ProgressWindow(int width, int height)
 
     pImpl_->btnContinue.SetParent(this);
     pImpl_->btnContinue.SetSize(120, 40);
+    pImpl_->btnContinue.SetBG(Qt::black);
+    pImpl_->btnContinue.SetFontColor(Qt::white);
 
     pImpl_->labelBalls.SetParent(this);
     pImpl_->labelBalls.SetSize(120, 40);
