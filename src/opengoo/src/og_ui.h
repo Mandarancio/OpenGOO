@@ -30,6 +30,9 @@ class OGUI
 
         void _Reset();
         void _SetButton(OGUIButton* button);
+
+        void _Hide();
+        void _Show();
 };
 
 #endif // OG_UI_H

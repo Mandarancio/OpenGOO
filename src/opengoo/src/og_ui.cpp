@@ -117,3 +117,19 @@ void OGUI::_MouseEvent(QMouseEvent* e)
         break;
     }
 }
+
+void OGUI::_Hide()
+{
+    Q_FOREACH (OGUIWindow* wnd, pImpl_->uiList)
+    {
+        wnd->Hide();
+    }
+}
+
+void OGUI::_Show()
+{
+    Q_FOREACH (OGUIWindow* wnd, pImpl_->uiList)
+    {
+        wnd->Show();
+    }
+}

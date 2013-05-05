@@ -9,7 +9,6 @@ public:
     ProgressWindow(int width, int height);
     ~ProgressWindow();
 
-    void Init();
     void SetBalls(int balls);
 
 private:

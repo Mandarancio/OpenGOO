@@ -14,7 +14,7 @@ struct OGUIWindowImpl
     QSize size;
     QColor bg;
     OGUI* pUI;
-    bool isShow;
+    bool isVisible;
 };
 
 OGUIWindow::OGUIWindow(OGUIWindow* parent)
@@ -25,7 +25,7 @@ OGUIWindow::OGUIWindow(OGUIWindow* parent)
     pImpl_->size = QSize(100, 40);
     pImpl_->bg = QColor(157, 172, 189);
     pImpl_->pUI = 0;
-    pImpl_->isShow = false;
+    pImpl_->isVisible = false;
 }
 
 OGUIWindow::~OGUIWindow()
@@ -93,17 +93,25 @@ void OGUIWindow::MoveCenter(int posx, int posy)
 
 void OGUIWindow::Hide()
 {
-    pImpl_->isShow = false;
+    pImpl_->isVisible = false;
+
+    if (pImpl_->pUI) pImpl_->pUI->_Hide();
+
+    EventHide();
 }
 
 void OGUIWindow::Show()
 {
-    pImpl_->isShow = true;
+    pImpl_->isVisible = true;
+
+    EventShow();
+
+    if (pImpl_->pUI) pImpl_->pUI->_Show();
 }
 
-bool OGUIWindow::isShow()
+bool OGUIWindow::isVisible()
 {
-    return pImpl_->isShow;
+    return pImpl_->isVisible;
 }
 
 void OGUIWindow::SetBG(const QColor &color)
@@ -143,7 +151,7 @@ void OGUIWindow::SetSize(int width, int height)
 
 void OGUIWindow::Paint(QPainter* painter)
 {
-    if (pImpl_->isShow) _Paint(painter);
+    if (pImpl_->isVisible) _Paint(painter);
 }
 
 bool OGUIWindow::MouseDown(QMouseEvent *ev)
@@ -223,3 +231,12 @@ inline bool OGUIWindow::_MouseMove(QMouseEvent* ev)
     return true;
 }
 
+int OGUIWindow::width() const
+{
+    return pImpl_->size.width();
+}
+
+int OGUIWindow::height() const
+{
+    return pImpl_->size.height();
+}

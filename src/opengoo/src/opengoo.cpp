@@ -107,7 +107,11 @@ void OpenGOO::_Start()
         _CreateUIButtons();
     }
 
-    if (flag & FPS) { pFPS_ = new OGFPSCounter; }
+    if (flag & FPS)
+    {
+        pFPS_ = new OGFPSCounter;
+        pFPS_->Show();
+    }
 
     width_ = OGGameEngine::getEngine()->getWidth();
     height_ = OGGameEngine::getEngine()->getHeight();
@@ -231,7 +235,6 @@ void OpenGOO::_Cycle()
         for (int i = 0; i < n; i++) { pWorld_->Update(); }
     }
 
-
     if (isLevelExit_)
     {
         balls_ = pWorld_->exit()->Balls();
@@ -286,18 +289,6 @@ void OpenGOO::_Paint(QPainter *painter)
     }
 
     painter->setWindow(0, 0, width_, height_);
-
-    if (pContinueBtn_)
-    {
-        pContinueBtn_->Paint(painter);
-    }
-
-    if (pProgressWnd_)
-    {
-        pProgressWnd_->Paint(painter);
-    }
-
-    if (flag & FPS) pFPS_->Painter(painter);    
 
     Q_FOREACH(OGUI * ui, uiList_) { ui->Paint(painter); }
 }
@@ -446,11 +437,8 @@ void OpenGOO::_InitProgressWindow()
     int x = width_ / 2;
     int y = height_ / 2;
 
-    pProgressWnd_->MoveCenter(x, y);
-
-    pProgressWnd_->Init();
+    pProgressWnd_->MoveCenter(x, y);    
     pProgressWnd_->SetBalls(balls_);
-
     pProgressWnd_->Show();
 }
 

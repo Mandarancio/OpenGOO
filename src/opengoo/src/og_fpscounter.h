@@ -1,20 +1,19 @@
 #ifndef OG_FPSCOUNTER_H
 #define OG_FPSCOUNTER_H
 
-class QPainter;
+#include "og_uiwindow.h"
 
-class OGFPSCounter
+class OGFPSCounter : public OGUIWindow
 {
-    int fps_;
-    int curFPS_;
-    int time_;
-
 public:
     OGFPSCounter();
+    ~OGFPSCounter();
 
-    void Painter(QPainter* painter);
     void Reset();
     void Update(int time);
+
+private:
+    struct OGFPSCounterImpl* pImpl_;
 };
 
 #endif // OG_FPSCOUNTER_H

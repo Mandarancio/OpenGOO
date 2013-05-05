@@ -130,6 +130,15 @@ void OGWindow::draw()
     QPainter painter(pPaintDevice_);
     pGame_->Paint(&painter);
 
+    painter.setWindow(0, 0, width(), height());
+
+    QMapIterator<QString, OGUIWindow*> i(wndStack);
+
+    while (i.hasNext())
+    {
+        i.next().value()->Paint(&painter);
+    }
+
     pContext_->swapBuffers(this);
 }
 

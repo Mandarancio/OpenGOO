@@ -21,6 +21,9 @@ class OGUIWindow
 
         void AddUI(OGUI* ui);
 
+        int width() const;
+        int height() const;
+
         const QColor &GetBG() const;
         QRect GetGeometry() const;
         const OGUIWindow* GetParent() const;
@@ -40,15 +43,21 @@ class OGUIWindow
         void Show();
         void Hide();
 
-        bool isShow();
+        bool isVisible();
+
+        friend class OGWindow;
+        friend class OGUI;
+
+    protected:
+        bool TestPoint(const QPoint &pos);
+        QPoint GetAbsPosition();
 
         bool MouseDown(QMouseEvent *ev);
         bool MouseButtonUp(QMouseEvent* ev);
         bool MouseMove(QMouseEvent *ev);
 
-    protected:
-        bool TestPoint(const QPoint &pos);
-        QPoint GetAbsPosition();
+        virtual void EventShow() {}
+        virtual void EventHide() {}
 
     private:
         struct OGUIWindowImpl* pImpl_;       

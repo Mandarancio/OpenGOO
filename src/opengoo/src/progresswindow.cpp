@@ -4,13 +4,11 @@
 #include "og_uilabel.h"
 #include "GameEngine/og_gameengine.h"
 
-#include <QPainter>
-
 struct ProgressWindowImpl
 {
     ContinueButton btnContinue;
     OGUILabel labelBalls;
-    OGUI* pUI;
+    OGUI ui;
 };
 
 ProgressWindow::ProgressWindow(int width, int height)
@@ -20,22 +18,32 @@ ProgressWindow::ProgressWindow(int width, int height)
     SetSize(width, height);
     SetBG(QColor(0, 0, 0, 32));
 
-    pImpl_->btnContinue.SetParent(this);
-    pImpl_->btnContinue.SetSize(120, 40);
-    pImpl_->btnContinue.SetBG(Qt::black);
-    pImpl_->btnContinue.SetFontColor(Qt::white);
+    ContinueButton* btnContinue = &pImpl_->btnContinue;
 
-    pImpl_->labelBalls.SetParent(this);
-    pImpl_->labelBalls.SetSize(120, 40);
-    pImpl_->labelBalls.SetPosition(0, 0);
-    pImpl_->labelBalls.SetBG(QColor(Qt::transparent));
-    pImpl_->labelBalls.SetFontColor(Qt::white);
+    btnContinue->SetParent(this);
+    btnContinue->SetSize(120, 40);
+    btnContinue->SetBG(Qt::black);
+    btnContinue->SetFontColor(Qt::white);
 
-    pImpl_->pUI = new OGUI;
-    pImpl_->pUI->Add(&pImpl_->btnContinue);
-    pImpl_->pUI->Add(&pImpl_->labelBalls);
+    int x = (width / 2) - (btnContinue->width() / 2);
+    int y = height - (btnContinue->height() + 20);
+    btnContinue->SetPosition(QPoint(x, y));
+    btnContinue->SetText("Continue");
 
-    AddUI(pImpl_->pUI);
+    OGUILabel* labelBalls = &pImpl_->labelBalls;
+
+    labelBalls->SetParent(this);
+    labelBalls->SetSize(120, 40);
+    labelBalls->SetPosition(0, 0);
+    labelBalls->SetBG(QColor(Qt::transparent));
+    labelBalls->SetFontColor(Qt::white);
+
+    OGUI* ui = &pImpl_->ui;
+
+    ui->Add(btnContinue);
+    ui->Add(labelBalls);
+
+    AddUI(ui);
 
     OGGameEngine::getEngine()->addWindow("WND_PROGRESS", this);
 }
@@ -43,20 +51,7 @@ ProgressWindow::ProgressWindow(int width, int height)
 ProgressWindow::~ProgressWindow()
 {
     OGGameEngine::getEngine()->RemoveWindow("WND_PROGRESS");
-    delete pImpl_->pUI;
     delete pImpl_;
-}
-
-void ProgressWindow::Init()
-{
-    QSize wndSize = GetSize();
-    QSize btnSize = pImpl_->btnContinue.GetSize();
-    int x = (wndSize.width() / 2) - (btnSize.width() / 2);
-    int y = wndSize.height() - (btnSize.height() + 20);
-    pImpl_->btnContinue.SetPosition(QPoint(x, y));
-    pImpl_->btnContinue.SetText("Continue");
-    pImpl_->btnContinue.Show();
-    pImpl_->labelBalls.Show();
 }
 
 void ProgressWindow::SetBalls(int balls)
