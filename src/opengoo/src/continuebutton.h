@@ -1,12 +1,12 @@
 #ifndef CONTINUEBUTTON_H
 #define CONTINUEBUTTON_H
 
-#include "og_uipushbutton.h"
+#include <OGPushButton>
 
-class ContinueButton : public OGUIPushButton
+class ContinueButton : public og::ui::PushButton
 {
 public:
-    bool _MouseButtonDown(QMouseEvent *ev);
+    ContinueButton();
 };
 
 #endif // CONTINUEBUTTON_H

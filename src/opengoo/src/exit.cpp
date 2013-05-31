@@ -10,44 +10,42 @@
 #include "og_world.h"
 #include "og_userdata.h"
 
-struct ExitImpl
+using namespace og;
+
+struct Exit::Impl
 {
     ExitSensor* pSensor;
     int balls;
     bool isClosed;
 };
 
-Exit::Exit(WOGLevelExit* exit)
-{
-    // [0] Create pimpl
-    pImpl_ = new ExitImpl;
-
+Exit::Exit(WOGLevelExit* exit) : _pImpl(new Impl)
+{       
     // [1] Create sensor
     Circle c = Circle(exit->pos, exit->radius) / 10.0f;
     OGSensorFilter f = {physics::EXIT, physics::BALL};
-    pImpl_->pSensor = new ExitSensor("levelExit", c, f);
+    _pImpl->pSensor = new ExitSensor("levelExit", c, f);
 
     // [2] Add sensor
-    PEngine::GetInstance()->AddSensor(pImpl_->pSensor);
+    PEngine::GetInstance()->AddSensor(_pImpl->pSensor);
 
-    pImpl_->balls = 0;
+    _pImpl->balls = 0;
 
-    pImpl_->isClosed = false;
+    _pImpl->isClosed = false;
 }
 
 Exit::~Exit()
 {
-    PEngine::GetInstance()->RemoveSensor(pImpl_->pSensor->id());
+    PEngine::GetInstance()->RemoveSensor(_pImpl->pSensor->id());
 
-    delete pImpl_->pSensor;
-    delete pImpl_;
+    delete _pImpl->pSensor;
 }
 
 void Exit::Update()
 {
-    if (pImpl_->isClosed) return;
+    if (_pImpl->isClosed) return;
 
-    QVector2D center = pImpl_->pSensor->GetPosition();
+    QVector2D center = _pImpl->pSensor->GetPosition();
     OpenGOO* game = OpenGOO::instance();
     QList<OGBall*> balls = game->GetWorld()->balls();
 
@@ -83,19 +81,19 @@ void Exit::Update()
 
             if (lq <= 1.0f)
             {
-                pImpl_->balls++;
+                _pImpl->balls++;
                 ball->SetExit(true);
             }
         }
     }
 }
 
-int Exit::Balls() const { return pImpl_->balls; }
+int Exit::Balls() const { return _pImpl->balls; }
 
 void Exit::Close()
 {
-    pImpl_->isClosed = true;
-    PEngine::GetInstance()->RemoveSensor(pImpl_->pSensor->id());
+    _pImpl->isClosed = true;
+    PEngine::GetInstance()->RemoveSensor(_pImpl->pSensor->id());
     OpenGOO* game = OpenGOO::instance();
     QList<OGBall*> balls = game->GetWorld()->balls();
 

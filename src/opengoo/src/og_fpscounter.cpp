@@ -1,60 +1,33 @@
 #include "og_fpscounter.h"
-#include "GameEngine/og_gameengine.h"
-#include "og_uilabel.h"
-#include "og_ui.h"
+#include "fpscounter.h"
+#include <OGLabel>
 
-struct OGFPSCounterImpl
+using namespace og::ui;
+
+struct OGFPSCounter::Impl
 {
-    int fps;
-    int curFPS;
-    int time;
-    OGUILabel label;
-    OGUI ui;
+    FPSCounter counter;
+    Label label;
 };
 
-OGFPSCounter::OGFPSCounter()
+OGFPSCounter::OGFPSCounter(const QRect &rect) : _pImpl(new Impl)
 {
-    pImpl_ = new OGFPSCounterImpl;
+    connect(&_pImpl->counter, SIGNAL(setFPS(int)), this, SLOT(SetFPS(int)));
 
-    Reset();
-
-    SetBG(Qt::transparent);
-
-    OGUILabel* label = &pImpl_->label;
-
-    label->SetParent(this);
-    label->SetBG(Qt::transparent);
-    label->SetFontColor(Qt::white);
-
-    pImpl_->ui.Add(label);
-    AddUI(&pImpl_->ui);
-
-    OGGameEngine::getEngine()->addWindow("WND_FPS_COUNTER", this);
+    int w = rect.width();
+    int h = rect.height();
+    int x = rect.x();
+    int y = rect.y();
+    _pImpl->label.setSize(w, h);
+    _pImpl->label.setPosition(x, y);
+    _pImpl->label.setVisible(true);
 }
 
-OGFPSCounter::~OGFPSCounter()
-{
-    OGGameEngine::getEngine()->RemoveWindow("WND_FPS_COUNTER");
-    delete pImpl_;
-}
+void OGFPSCounter::Reset() { _pImpl->counter.reset(); }
 
-void OGFPSCounter::Reset()
-{
-    pImpl_->time = 0;
-    pImpl_->curFPS = 0;
-    pImpl_->fps = 0;
-}
+void OGFPSCounter::Update(int dt) { _pImpl->counter.update(dt); }
 
-void OGFPSCounter::Update(int time)
+void OGFPSCounter::SetFPS(int fps)
 {
-    pImpl_->curFPS++;
-    pImpl_->time += time;
-
-    if (pImpl_->time >= 1000)
-    {
-        pImpl_->fps = pImpl_->curFPS;
-        pImpl_->curFPS = 0;
-        pImpl_->time = 0;
-        pImpl_->label.SetText(QString::number(pImpl_->fps));
-    }    
+    _pImpl->label.setText(QString::number(fps));
 }

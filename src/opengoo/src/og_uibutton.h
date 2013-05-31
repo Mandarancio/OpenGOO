@@ -13,6 +13,10 @@ class QImage;
 class QPainter;
 class QMouseEvent;
 
+namespace og
+{
+namespace ui
+{
 class OGUIButton : public QRect
 {
     public:
@@ -56,5 +60,7 @@ class OGUIButton : public QRect
         void _SetUpImage(const QString &path);
         void _SetOverImage(const QString &path);
 };
+} // namespace ui
+} // namespace og
 
 #endif // OG_UIBUTTON_H

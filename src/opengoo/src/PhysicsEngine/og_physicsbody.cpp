@@ -2,6 +2,8 @@
 
 #include <QVector2D>
 
+using namespace og;
+
 OGPhysicsBody::OGPhysicsBody(float x, float y, bool dynamic, float angle)
 {
     if (dynamic) { bodydef.type = b2_dynamicBody; }

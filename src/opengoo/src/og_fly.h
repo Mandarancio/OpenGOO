@@ -2,13 +2,12 @@
 #define OG_FLY_H
 
 #include "og_behavior.h"
-
-struct OGPhysicsBody;
+#include <OGPhysicsBody>
 
 class OGFly : public OGIFlyBehavior
 {
     public:
-        OGFly(OGPhysicsBody* body);
+        OGFly(og::OGPhysicsBody* body);
         ~OGFly();
 
     private:

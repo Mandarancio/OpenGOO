@@ -20,26 +20,20 @@
 #include "og_utils.h"
 
 #include <QDir>
-#include <QGuiApplication>
+#include <QApplication>
 
 bool Initialize(int argc, char** argv);
 void Clear();
+
+using namespace og;
 
 int main(int argc, char** argv)
 {
     if (Initialize(argc, argv))
     {
-        QGuiApplication app(argc, argv);
+        QApplication app(argc, argv);
 
-        app.installEventFilter(OGGameEngine::getEngine());
-
-        if (OGGameEngine::getEngine()->initialize())
-        {
-            QObject::connect(&app, SIGNAL(aboutToQuit())
-                             , OGGameEngine::getEngine(), SLOT(gameExit()));
-
-            app.exec();
-        }
+        if (OGGameEngine::getEngine()->initialize()) app.exec();
     }
 
     Clear();

@@ -2,13 +2,12 @@
 #define OG_CLIMB_H
 
 #include "og_behavior.h"
-
-struct OGPhysicsBody;
+#include <OGPhysicsBody>
 
 class OGClimb : public OGIClimbBehavior
 {
     public:
-        OGClimb(OGPhysicsBody* body);
+        OGClimb(og::OGPhysicsBody* body);
         ~OGClimb();
 
     private:

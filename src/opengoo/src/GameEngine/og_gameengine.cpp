@@ -3,70 +3,75 @@
 #include "PhysicsEngine/og_physicsengine.h"
 #include "og_game.h"
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QScreen>
 
 #include "og_videomode.h"
 #include "logger.h"
 
-OGGameEngine* OGGameEngine::gameEngine_ = 0;
+using namespace og;
 
-OGGameEngine::OGGameEngine(OGGame* game, int width, int height, bool fullscreen)
+OGGameEngine* OGGameEngine::gameEngine = 0;
+
+OGGameEngine::OGGameEngine(OGGame* game, int width, int height
+                           , bool fullscreen)
 {
-    gameEngine_ = this;
+    gameEngine = this;
     width_ = width;
     height_ = height;
     frameDelay_ = 50;   // 20 FPS default
     fullscreen_ = fullscreen;
-    isVideoModeSupported_ = false;
-    pGame_ = game;
-    pResourceManager_ = 0;
+    _isVideoModeSupported = false;
+    pGame = game;
+    _pResourceManager = 0;
 }
 
 OGGameEngine::~OGGameEngine()
 {
 #ifdef Q_OS_WIN32
-    if (isVideoModeSupported_)
+    if (_isVideoModeSupported)
     {
         OGVideoMode::returnDefaultMode();
     }
 #endif // Q_OS_WIN32
-    delete window_;
 }
 
 bool OGGameEngine::initialize()
 {
-    QScreen* screen = QGuiApplication::primaryScreen();
-    window_ = new OGWindow(pGame_);
+    qApp->installEventFilter(this);
 
-    // Set fixed size of window
-    window_->setMaximumSize(QSize(getWidth(), getHeight()));
-    window_->setMinimumSize(QSize(getWidth(), getHeight()));
+    _pWindow.reset(new OGWindow(pGame));
 
-    // Center window on screen
-    int x = qRound((screen->geometry().width() - getWidth()) / 2.0f);
-    int y = qRound((screen->geometry().height() - getHeight()) / 2.0f);
-    window_->setGeometry(x, y, getWidth(), getHeight());
+    QScreen* screen = _getPrimaryScreen();
+    int x = (screen->geometry().width() - getWidth()) / 2.0f;
+    int y = (screen->geometry().height() - getHeight()) / 2.0f;
+    _pWindow->setGeometry(x, y, getWidth(), getHeight());
+    _pWindow->setFixedSize(getWidth(), getHeight());
 
     if (fullscreen_)
     {
         //initialize video mode
 #ifdef Q_OS_WIN32
-        isVideoModeSupported_ = OGVideoMode::testVideoMode(getWidth()
+        _isVideoModeSupported = OGVideoMode::testVideoMode(getWidth()
                                 , getHeight());
 
-        if (isVideoModeSupported_)
+        if (_isVideoModeSupported)
         {
             OGVideoMode::setVideoMode(getWidth(), getHeight());
 
-            window_->showFullScreen();
+            _pWindow->showFullScreen();
         }
         else { logWarn("Video mode not supported"); }
 #else
-        window_->show();
+        _pIWindow->show();
 #endif // Q_OS_WIN32
     }
-    else { window_->show(); }
+    else
+    {
+        _pWindow->show();
+    }
+
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(gameExit()));
 
     return true;
 }
@@ -76,20 +81,20 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
     switch (event->type())
     {
         case QEvent::ApplicationActivate:
-            pGame_->Activate();
-            getWindow()->setActive(true);
-            getWindow()->setKeyboardGrabEnabled(true);
+            pGame->Activate();
+            _pWindow->setActive(true);
+            _pWindow->grabKeyboard();
 
             return true;
 
         case QEvent::ApplicationDeactivate:
-            getWindow()->setActive(false);
-            pGame_->Deactivate();
-            getWindow()->setKeyboardGrabEnabled(false);
+            _pWindow->setActive(true);
+            pGame->Deactivate();
+            _pWindow->releaseKeyboard();
 
             return true;
-        default:
 
+        default:
             break;
     }
 
@@ -97,10 +102,11 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
 }
 
 void OGGameEngine::gameExit()
-{
-    getWindow()->setActive(false);
-    pGame_->End();
-    QGuiApplication::quit();
+{    
+    _pWindow->setActive(false);
+    pGame->End();
+    _pWindow.reset();
+    QApplication::quit();
 }
 
 OGPhysicsEngine* OGGameEngine::getPhysicsEngine()
@@ -110,17 +116,27 @@ OGPhysicsEngine* OGGameEngine::getPhysicsEngine()
 
 OGResourceManager* OGGameEngine::getResourceManager()
 {
-    if (!pResourceManager_) pResourceManager_ = new OGResourceManager;
+    if (!_pResourceManager) _pResourceManager = new OGResourceManager;
 
-    return pResourceManager_;
+    return _pResourceManager;
 }
 
-void OGGameEngine::addWindow(const QString &id, OGUIWindow* wnd)
+void OGGameEngine::addUI(ui::IUI* ui)
 {
-    window_->AddWindow(id, wnd);
+    _pWindow->addUI(ui);
 }
 
-void OGGameEngine::RemoveWindow(const QString &id)
+void OGGameEngine::removeUI(ui::IUI* ui)
 {
-    window_->RemoveWindow(id);
+    _pWindow->removeUI(ui);
+}
+
+QScreen* OGGameEngine::_getPrimaryScreen()
+{
+    return QApplication::primaryScreen();
+}
+
+void OGGameEngine::quit()
+{
+    _pWindow->close();
 }

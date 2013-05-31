@@ -7,6 +7,8 @@
 #include <QImage>
 #include <QString>
 
+using namespace og;
+
 OGResourceManager::OGResourceManager() : src_(0)
 {    
 }

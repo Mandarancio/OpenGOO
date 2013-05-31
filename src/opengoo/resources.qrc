@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ui">
+        <file>resources.xml</file>
+    </qresource>
+</RCC>

@@ -1,5 +1,0 @@
-<scene>
-	<buttongroup id="uibackgroup" osx="140,0">
-<button alpha="1" colorize="255,255,255" depth="10" font="" id="backButton" onclick="backtomainmenu" over="IMAGE_GLOBAL_UI_RETRY_OVER" rotation="0" scalex="1" scaley="1" text="BACK_BUTTON_TEXT" up="IMAGE_GLOBAL_UI_RETRY_UP_TRANSPARENT" x="-314.75" y="-266.74" />
-</buttongroup>
-</scene>

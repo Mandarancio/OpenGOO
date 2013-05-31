@@ -6,6 +6,8 @@
 
 #include <QString>
 
+using namespace og;
+
 OGCircleSensor::OGCircleSensor(const QString &id, const Circle &circle)
     : OGSensor(id)
 {

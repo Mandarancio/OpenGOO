@@ -1,5 +1,4 @@
 #include "og_xmlconfig.h"
-#include <QDebug>
 
 OGXmlConfig::OGXmlConfig(const QString & filename)
 {

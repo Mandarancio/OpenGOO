@@ -6,6 +6,8 @@ class WOGResources;
 class QImage;
 class QString;
 
+namespace og
+{
 class OGResourceManager
 {
 public:
@@ -19,5 +21,6 @@ public:
 private:
     WOGResources* src_;
 };
+} // namespace og
 
 #endif // OG_RESOURCEMANAGER_H

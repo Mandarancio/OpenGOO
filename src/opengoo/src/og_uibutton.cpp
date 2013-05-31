@@ -1,7 +1,6 @@
 #include "og_uibutton.h"
 #include "og_world.h"
 #include "og_gameengine.h"
-#include "og_event.h"
 #include "opengoo.h"
 #include "wog_text.h"
 #include "og_sprite.h"
@@ -10,7 +9,7 @@
 #include <QString>
 #include <QTransform>
 
-struct OGUIButtonImpl
+struct og::ui::OGUIButtonImpl
 {
     QString onclick;
     QString text;
@@ -24,6 +23,8 @@ struct OGUIButtonImpl
 
     bool isOver;
 };
+
+using namespace og::ui;
 
 OGUIButton::OGUIButton()
 {
@@ -114,37 +115,6 @@ void OGUIButton::Paint(QPainter* painter)
 void OGUIButton::MouseDown(QMouseEvent* ev)
 {
     Q_UNUSED(ev);
-
-    QString onclick = _GetOnClick();
-
-    if (onclick == "createretrymenu")
-    {
-        OpenGOO::SendEvent(new OGMenuEvent("RetryMenu"));
-    }
-    else if (onclick == "createmenu")
-    {
-        OpenGOO::SendEvent(new OGMenuEvent("GameMenu"));
-    }
-    else if (onclick == "restartlevelrightnow")
-    {
-        OpenGOO::SendEvent(new OGEvent(OGEvent::RESTART));
-    }
-    else if (onclick == "showocdcriteria")
-    {
-        OpenGOO::SendEvent(new OGEvent(OGEvent::SHOW_OCD));
-    }
-    else if (onclick == "backtoisland")
-    {
-        OpenGOO::SendEvent(new OGEvent(OGEvent::BACKTO_ISLAND));
-    }
-    else if (onclick == "resumegame")
-    {
-        OpenGOO::SendEvent(new OGEvent(OGEvent::RESUME));
-    }
-    else if (onclick == "backtomainmenu")
-    {
-        OpenGOO::SendEvent(new OGEvent(OGEvent::BACKTO_MAINMENU));
-    }
 }
 
 void OGUIButton::MouseMove(QMouseEvent* ev)
@@ -182,8 +152,8 @@ inline void OGUIButton::_SetUpImage(const QString &path)
     setWidth(w);
     setHeight(h);
 
-    w = OGGameEngine::getEngine()->getWidth();
-    h = OGGameEngine::getEngine()->getHeight();
+    w = og::OGGameEngine::getEngine()->getWidth();
+    h = og::OGGameEngine::getEngine()->getHeight();
 
     int x = qRound(w * 0.5f + config->position.x());
     int y = qRound(h * 0.5f - config->position.y());

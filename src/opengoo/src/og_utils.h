@@ -6,6 +6,11 @@
 
 #include "OGLib/circlef.h"
 
+#include <OGPushButton>
+#include "GameEngine/og_gameengine.h"
+#include "uidata.h"
+#include "opengoo.h"
+
 struct OGUserData;
 
 class OGContactListener;
@@ -24,6 +29,25 @@ OGConfig ogReadConfig(const QString & filename);
 OGUserData* ogGetUserData(void* userdata);
 
 OGContactListener* ogGetContactListener();
+
+QPixmap* getImage(const QString & id);
+QString getText(const QString &id);
+
+og::OGGameEngine* getGameEngine();
+
+std::unique_ptr<UIData> getUIData(const QString &id);
+
+template<class T> T* createUI(const QPoint &pos, const UIData &data);
+og::ui::PushButton* createButton(const QPoint &pos, const UIData &data);
+
+OpenGOO* getGame();
+}
+
+inline OpenGOO* ogUtils::getGame() { return OpenGOO::instance(); }
+
+inline og::OGGameEngine* ogUtils::getGameEngine()
+{
+    return og::OGGameEngine::getEngine();
 }
 
 #endif // OG_UTILS_H

@@ -3,9 +3,11 @@
 
 #include <Box2D/Box2D.h>
 
-class OGSensor;
-
 class QString;
+
+namespace og
+{
+class OGSensor;
 
 class OGContactListener : public b2ContactListener
 {
@@ -20,5 +22,6 @@ class OGContactListener : public b2ContactListener
     private:
         struct OGContactListenerImpl* pImpl_;
 };
+} // namespace og
 
 #endif // OG_CONTACTLISTENER_H

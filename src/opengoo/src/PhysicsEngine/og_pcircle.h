@@ -5,10 +5,13 @@
 
 class Circle;
 
+namespace og
+{
 class OGPCircle : public OGPhysicsBody
 {
 public:
     OGPCircle(const Circle& circle);
 };
+} // namespace og
 
 #endif // OG_PCIRCLE_H

@@ -6,6 +6,8 @@
 
 class QVector2D;
 
+namespace og
+{
 struct OGPhysicsBody
 {
     enum Type {CIRCLE, POLYGON, EDGE, CHAIN};
@@ -36,5 +38,6 @@ struct OGPhysicsBody
 
     void SetSensor(bool sensor);
 };
+} // namespace og
 
 #endif // OG_PHYSICSBODY_H

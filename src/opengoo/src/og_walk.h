@@ -2,13 +2,12 @@
 #define OG_WALK_H
 
 #include "og_behavior.h"
-
-struct OGPhysicsBody;
+#include <OGPhysicsBody>
 
 class OGWalk : public OGIWalkBehavior
 {
 public:
-    OGWalk(OGPhysicsBody* body);
+    OGWalk(og::OGPhysicsBody* body);
     ~OGWalk();
 
 private:

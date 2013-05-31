@@ -1,60 +1,57 @@
 #include "progresswindow.h"
-#include "og_ui.h"
+#include "og_utils.h"
+#include <OGLabel>
 #include "continuebutton.h"
-#include "og_uilabel.h"
-#include "GameEngine/og_gameengine.h"
 
-struct ProgressWindowImpl
+using namespace og::ui;
+using namespace ogUtils;
+
+struct ProgressWindow::Impl
 {
+    Frame frame;
     ContinueButton btnContinue;
-    OGUILabel labelBalls;
-    OGUI ui;
+    Label labelBalls;
 };
 
-ProgressWindow::ProgressWindow(int width, int height)
-{
-    pImpl_ = new ProgressWindowImpl;
+ProgressWindow::ProgressWindow() : _pImpl(new Impl)
+{    
+    auto ge = getGameEngine();
 
-    SetSize(width, height);
-    SetBG(QColor(0, 0, 0, 32));
+    auto frame = &_pImpl->frame;
+    {
+        int w = 400;
+        int h = 400;
+        int x = ge->getWidth() / 2 - w / 2;
+        int y = ge->getHeight() / 2 - h / 2;
+        frame->setSize(w, h);
+        frame->setPosition(x, y);
+        frame->setBgColor(QColor(0, 0, 0, 25));
+        frame->setVisible(true);
+    }
 
-    ContinueButton* btnContinue = &pImpl_->btnContinue;
+    auto btn = &_pImpl->btnContinue;
+    {
+        int x = frame->x() + frame->width() / 2 - btn->width() / 2;
+        int y = frame->y() + frame->height() - (btn->height() + 50);
+        btn->setPosition(x, y);
+        connect(btn, SIGNAL(pressed()), this, SIGNAL(close()));
+        btn->setVisible(true);
+    }
 
-    btnContinue->SetParent(this);
-    btnContinue->SetSize(120, 40);
-    btnContinue->SetBG(Qt::black);
-    btnContinue->SetFontColor(Qt::white);
-
-    int x = (width / 2) - (btnContinue->width() / 2);
-    int y = height - (btnContinue->height() + 20);
-    btnContinue->SetPosition(QPoint(x, y));
-    btnContinue->SetText("Continue");
-
-    OGUILabel* labelBalls = &pImpl_->labelBalls;
-
-    labelBalls->SetParent(this);
-    labelBalls->SetSize(120, 40);
-    labelBalls->SetPosition(0, 0);
-    labelBalls->SetBG(QColor(Qt::transparent));
-    labelBalls->SetFontColor(Qt::white);
-
-    OGUI* ui = &pImpl_->ui;
-
-    ui->Add(btnContinue);
-    ui->Add(labelBalls);
-
-    AddUI(ui);
-
-    OGGameEngine::getEngine()->addWindow("WND_PROGRESS", this);
+    auto label = &_pImpl->labelBalls;
+    {
+        int w = 120;
+        int h = 80;
+        int x = frame->x() + 50;
+        int y = frame->y() + 50;
+        label->setSize(w, h);
+        label->setPosition(x, y);
+        label->setVisible(true);
+    }
 }
 
-ProgressWindow::~ProgressWindow()
+void ProgressWindow::setBalls(int balls, int extraBalls)
 {
-    OGGameEngine::getEngine()->RemoveWindow("WND_PROGRESS");
-    delete pImpl_;
-}
-
-void ProgressWindow::SetBalls(int balls)
-{
-    pImpl_->labelBalls.SetText("Balls: " + QString::number(balls));
+    _pImpl->labelBalls.setText("Balls: " + QString::number(balls) + "\n\n"
+                                "Extra balls: " + QString::number(extraBalls));
 }

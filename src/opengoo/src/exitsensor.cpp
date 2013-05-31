@@ -3,6 +3,8 @@
 #include "opengoo.h"
 #include "og_userdata.h"
 
+using namespace og;
+
 ExitSensor::ExitSensor(const QString &id, const Circle &circle
                        , const OGSensorFilter &filter)
     : OGCircleSensor(id, circle)

@@ -1,17 +1,18 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
+#include <OGPhysicsBody>
+#include <OGPhysicsJoint>
+
 #include <QPointF>
 #include <QSizeF>
 
 struct WOGMaterial;
 struct WOGScene;
 
-struct OGPhysicsBody;
-struct OGPhysicsJoint;
 struct OGUserData;
 
-#include <Box2D/Common/b2Settings.h>
+#include "Box2D/Common/b2Settings.h"
 
 namespace physics
 {
@@ -32,33 +33,33 @@ float sceneHeight();
 
 bool initializePhysicsEngine(const QPointF &gravity, bool sleep);
 
-OGPhysicsBody* createCircle(float x, float y, float radius, float angle
+og::OGPhysicsBody* createCircle(float x, float y, float radius, float angle
                             , WOGMaterial* material, bool dynamic
                             , float mass, OGUserData* data);
 
-OGPhysicsBody* createCircle(const QPointF &position, float radius
+og::OGPhysicsBody* createCircle(const QPointF &position, float radius
                             , float angle, WOGMaterial* material
                             , bool dynamic = false, float mass = 0
                                     , OGUserData* data = 0);
 
-OGPhysicsBody* createLine(const QPointF &anchor, const QPointF &normal
+og::OGPhysicsBody* createLine(const QPointF &anchor, const QPointF &normal
                           , WOGMaterial* material, bool dynamic = false
                                   , OGUserData* data = 0);
 
-OGPhysicsBody* createRectangle(float x, float y, float width
+og::OGPhysicsBody* createRectangle(float x, float y, float width
                                , float height, float angle
                                , WOGMaterial* material, bool dynamic
                                , float mass, OGUserData* data);
 
-OGPhysicsBody* createRectangle(const QPointF &position, const QSizeF &size
+og::OGPhysicsBody* createRectangle(const QPointF &position, const QSizeF &size
                                , qreal angle, WOGMaterial* material
                                , bool dynamic = false, float mass = 0
                                        , OGUserData* data = 0);
 
-OGPhysicsJoint* createJoint(OGPhysicsBody* b1, OGPhysicsBody* b2
+og::OGPhysicsJoint* createJoint(og::OGPhysicsBody* b1, og::OGPhysicsBody* b2
                             , OGUserData* data);
 
-void setMass(OGPhysicsBody* b, float mass);
-void setBodyPosition(OGPhysicsBody* body, float x, float y);
+void setMass(og::OGPhysicsBody* b, float mass);
+void setBodyPosition(og::OGPhysicsBody* body, float x, float y);
 
 #endif // PHYSICS_H

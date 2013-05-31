@@ -1,6 +1,0 @@
-<scene>
-	<buttongroup id="uigroup" osx="140,0">
-<button alpha="1" colorize="255,255,255" depth="10" font="" id="retryButton" onclick="createretrymenu" over="IMAGE_GLOBAL_UI_RETRY_OVER" rotation="0" scalex="1" scaley="1" text="RETRY_BUTTON_TEXT" up="IMAGE_GLOBAL_UI_RETRY_UP_TRANSPARENT" x="-314.75" y="-266.74" />
-<button alpha="1" colorize="255,255,255" depth="10" font="" id="menuButton" onclick="createmenu" rotation="0" scalex="1" scaley="1" text="MENU_BUTTON_TEXT" up="IMAGE_GLOBAL_MENU_BUTTON_UP" x="347.9" y="-261.89" />
-</buttongroup>
-</scene>

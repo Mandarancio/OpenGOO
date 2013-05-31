@@ -1,6 +1,7 @@
 #include "og_walk.h"
-
 #include <OGPhysicsBody>
+
+using namespace og;
 
 struct OGWalkImpl
 {

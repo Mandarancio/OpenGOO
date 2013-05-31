@@ -16,6 +16,8 @@
 
 #include <QtCore/qmath.h>
 
+using namespace og;
+
 inline float LengthSquared(float x1, float y1, float x2, float y2);
 inline float LengthSquared(const QPointF* p1, const QPointF* p2);
 
@@ -541,7 +543,6 @@ void OGBall::SetMarked(bool status)
     {
         if (isWalking_ || isClimbing_) { body->SetAwake(false); }
     }
-
 }
 
 bool OGBall::TestPoint(const QPoint &pos)

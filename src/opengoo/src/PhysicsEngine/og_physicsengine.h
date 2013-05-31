@@ -6,6 +6,9 @@
 
 class Circle;
 
+namespace og
+{
+
 class OGPCircle;
 struct OGPhysicsBody;
 struct OGPhysicsJoint;
@@ -56,7 +59,8 @@ class OGPhysicsEngine
         void _Init();
         void _Release();
 };
+} // namespace og
 
-typedef OGPhysicsEngine PEngine;
+typedef og::OGPhysicsEngine PEngine;
 
 #endif // OG_PHYSICSENGINE_H

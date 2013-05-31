@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QVector2D>
 
+using namespace og;
+
 OGStrand::~OGStrand()
 {
     OGPhysicsEngine* physicsEngine = OGPhysicsEngine::GetInstance();

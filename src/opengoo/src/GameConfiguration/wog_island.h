@@ -11,6 +11,7 @@ struct WOGOcd
     WOGOcd(): number(-1) { }
 };
 
+namespace wog {
 struct Level
 {
     QString id;
@@ -21,12 +22,14 @@ struct Level
     QStringList cutscene;
 };
 
+} // namespace wog
+
 struct WOGIsland
 {
     QString name;
     QString map;
     QString icon;
-    QList<Level*> level;
+    QList<wog::Level*> level;
 
     ~WOGIsland() { while (!level.isEmpty()) { delete level.takeFirst(); } }
 };

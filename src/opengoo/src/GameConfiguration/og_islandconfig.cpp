@@ -1,5 +1,7 @@
 #include "og_islandconfig.h"
 
+using namespace wog;
+
 OGIslandConfig::OGIslandConfig(const QString & filename)
     : OGXmlConfig(filename)
 {

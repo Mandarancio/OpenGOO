@@ -1,5 +1,7 @@
 #include "og_fly.h"
 
+using namespace og;
+
 struct OGFlyImpl
 {
     OGPhysicsBody* pBody;

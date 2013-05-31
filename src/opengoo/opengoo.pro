@@ -1,5 +1,4 @@
-QT       += core gui xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui xml opengl
 CONFIG += c++11
 
 DESTDIR = ../../
@@ -65,16 +64,19 @@ HEADERS += src/backtracer_win32.h
 SOURCES += src/backtracer_win32.cpp
 }
 
+
 OTHER_FILES += \
     README \
     ../README \
     ../README.md \
+
 
 HEADERS += \
     src/opengoo.h \
     src/flags.h \
     src/physics.h \
     src/circle.h \
+    src/fpscounter.h \
     src/og_world.h \
     src/og_camera.h \
     src/og_button.h \
@@ -88,10 +90,7 @@ HEADERS += \
     src/og_line.h \
     src/og_userdata.h \
     src/og_uibutton.h \
-    src/og_ui.h \
     src/og_data.h \
-    src/og_uiscene.h \
-    src/og_event.h \
     src/og_poi.h \
     src/og_fpscounter.h \
     src/og_utils.h \
@@ -101,23 +100,17 @@ HEADERS += \
     src/og_walk.h \
     src/og_climb.h \
     src/og_fly.h \
-    src/og_staticbody.h \
     src/og_types.h \
     src/exitsensor.h \
     src/exit.h \
-    src/GameEngine/og_resourcemanager.h \
-    src/og_dispatcher.h \
-    src/og_eventhandler.h \
-    src/eventhandlers.h \
-    src/handler_exit.h \
-    src/handler_continue.h \
     src/progresswindow.h \
-    src/og_uiwindow.h \
+    src/og_layer.h \
+    src/island.h \
+    src/retrymenu.h \
+    src/gamemenu.h \
+    src/level.h \
+    src/uidata.h \
     src/continuebutton.h \
-    src/og_uilabel.h \
-    src/og_uipushbutton.h \
-    src/continuebutton2.h
-
 
 SOURCES += \
     src/main.cpp \
@@ -134,11 +127,9 @@ SOURCES += \
     src/og_rectangle.cpp \
     src/og_line.cpp \
     src/og_uibutton.cpp \
-    src/og_ui.cpp \
     src/og_data.cpp \
-    src/og_uiscene.cpp \
-    src/og_event.cpp \
     src/og_camera.cpp \
+    src/fpscounter.cpp \
     src/og_fpscounter.cpp \
     src/og_utils.cpp \
     src/og_pipe.cpp \   
@@ -146,32 +137,33 @@ SOURCES += \
     src/og_walk.cpp \
     src/og_climb.cpp \
     src/og_fly.cpp \
-    src/og_staticbody.cpp \
     src/exitsensor.cpp \
     src/exit.cpp \
-    src/GameEngine/og_resourcemanager.cpp \
-    src/og_dispatcher.cpp \
     src/progresswindow.cpp \
-    src/og_uiwindow.cpp \
+    src/og_layer.cpp \
+    src/island.cpp \
+    src/retrymenu.cpp \
+    src/gamemenu.cpp \
+    src/level.cpp \
     src/continuebutton.cpp \
-    src/og_uipushbutton.cpp \
-    src/continuebutton2.cpp
 
 
 # Game engine
 SOURCES += \
-    src/GameEngine/og_window.cpp \
     src/GameEngine/og_gameengine.cpp \
+    src/GameEngine/og_widget.cpp \
     src/GameEngine/og_videomode.cpp \
     src/GameEngine/og_videomode_native.cpp \
-
+    src/GameEngine/og_resourcemanager.cpp
 
 HEADERS += \
-    src/GameEngine/og_window.h \
     src/GameEngine/og_gameengine.h \
+    src/GameEngine/og_widget.h \
     src/GameEngine/og_videomode.h \
     src/GameEngine/og_videomode_native.h \
-    src/GameEngine/og_game.h
+    src/GameEngine/og_game.h \
+    src/GameEngine/og_resourcemanager.h \
+    src/GameEngine/og_iui.h
 
 
 # Physic engine
@@ -182,7 +174,6 @@ SOURCES += \
     src/PhysicsEngine/og_pcircle.cpp \
     src/PhysicsEngine/og_circlesensor.cpp \
     src/PhysicsEngine/og_contactlistener.cpp
-
 
 HEADERS += \
     src/PhysicsEngine/og_physicsshape.h \
@@ -196,7 +187,15 @@ HEADERS += \
     src/PhysicsEngine/og_contactlistener.h \
     src/PhysicsEngine/og_circlesensor.h
 
+
 # OGLib
+SOURCES += \
+    src/OGLib/UI/og_ui.cpp \
+    src/OGLib/UI/og_ipushbutton.cpp \
+    src/OGLib/UI/og_uipushbutton.cpp \
+    src/OGLib/UI/og_uilabel.cpp \
+    src/OGLib/UI/og_uiframe.cpp
+
 HEADERS += \
     src/OGLib/circle.h \
     src/OGLib/circlef.h \
@@ -207,7 +206,12 @@ HEADERS += \
     src/OGLib/util.h \
     src/OGLib/size.h \
     src/OGLib/rect.h \
-    src/OGLib/rectf.h
+    src/OGLib/rectf.h\
+    src/OGLib/UI/og_ipushbutton.h \
+    src/OGLib/UI/og_ui.h \
+    src/OGLib/UI/og_uiframe.h \
+    src/OGLib/UI/og_uilabel.h \
+    src/OGLib/UI/og_uipushbutton.h
 
 
 # Game configuration
@@ -228,7 +232,6 @@ SOURCES += \
     src/GameConfiguration/wog_material.cpp \
     src/GameConfiguration/wog_text.cpp \
     src/GameConfiguration/wog_pipe.cpp
-
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
@@ -260,3 +263,7 @@ HEADERS += \
 HEADERS += src/backtracer.h
 SOURCES += src/backtracer.cpp
 }
+
+
+RESOURCES += \
+    resources.qrc

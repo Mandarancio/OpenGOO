@@ -1,33 +1,29 @@
-#include "og_gameengine.h"
-#include <OGPhysicsEngine>
 #include "og_world.h"
 #include "logger.h"
-#include "og_data.h"
-#include "og_windowcamera.h"
-#include "OGLib/rect.h"
-#include "OGLib/rectf.h"
-#include "OGLib/size.h"
 #include "og_pipe.h"
-#include "exit.h"
+#include "og_data.h"
 #include "og_circle.h"
+#include "exit.h"
 #include "og_rectangle.h"
 #include "og_line.h"
-#include "og_sprite.h"
 #include "og_ball.h"
 #include "og_button.h"
+#include "GameEngine/og_gameengine.h"
+#include "og_windowcamera.h"
 #include "og_strand.h"
-#include "wog_level.h"
-#include "exitsensor.h"
-#include "physics.h"
-#include "circle.h"
+#include "opengoo.h"
+#include "OGLib/rectf.h"
 
 #include <OGPhysicsEngine>
 #include <OGContactListener>
 
 #include <QPainter>
 #include <QFile>
+#include <QTimer>
 
 #include <memory>
+
+using namespace og;
 
 OGWorld::OGWorld(const QString &levelname, QObject* parent)
     : QObject(parent)
@@ -60,7 +56,7 @@ OGWorld::~OGWorld()
 {
     _ClearLocalData(); // clear local data
 
-    logDebug("Clear share data");
+    logInfo("Clear share data");
 
     if (pResourcesData_[0]) { delete pResourcesData_[0]; }
 
@@ -72,7 +68,7 @@ OGWorld::~OGWorld()
 
     delete pTimer_;
 
-    logDebug("Destroy physics engine");
+    logInfo("Destroy physics engine");
 
     OGPhysicsEngine::DestroyInstance();
 }
@@ -102,7 +98,7 @@ bool OGWorld::isExist(const QString &path_level)
 
 bool OGWorld::Initialize()
 {
-    logDebug("Initializing the physics engine");
+    logInfo("Initializing the physics engine");
 
     if (!_InitializePhysics())
     {
@@ -111,7 +107,7 @@ bool OGWorld::Initialize()
         return false;
     }
 
-    logDebug("Loading share data...");
+    logInfo("Loading share data...");
 
     QString path;
 
@@ -136,7 +132,7 @@ bool OGWorld::Initialize()
 
 bool OGWorld::Load()
 {
-    logDebug("Loading ...");
+    logInfo("Loading ...");
 
     if (isExist(levelName_))
     {
@@ -188,7 +184,7 @@ Target OGWorld::LoadConf(const QString &path)
 
 bool OGWorld::_LoadFX(const QString &path)
 {
-    logDebug("effects file");
+    logInfo("effects file");
 
     if (pEffectsData_) { return false; }
 
@@ -200,7 +196,7 @@ bool OGWorld::_LoadFX(const QString &path)
 
 bool OGWorld::_LoadLevel(const QString path)
 {
-    logDebug("level file");
+    logInfo("level file");
 
     if (pLevelData_) { return false; }
 
@@ -212,7 +208,7 @@ bool OGWorld::_LoadLevel(const QString path)
 
 bool OGWorld::_LoadMaterials(const QString &path)
 {
-    logDebug("material file");
+    logInfo("material file");
 
     if (pMaterialData_) { return false; }
 
@@ -224,7 +220,7 @@ bool OGWorld::_LoadMaterials(const QString &path)
 
 bool OGWorld::_LoadResources(const QString &path, bool share)
 {
-    logDebug("resources file");
+    logInfo("resources file");
 
     WOGResources* data;
 
@@ -245,7 +241,7 @@ bool OGWorld::_LoadResources(const QString &path, bool share)
 
 bool OGWorld::_LoadScene(const QString &path)
 {
-    logDebug("scene file");
+    logInfo("scene file");
 
     if (pSceneData_) { return false; }
 
@@ -257,7 +253,7 @@ bool OGWorld::_LoadScene(const QString &path)
 
 bool OGWorld::_LoadText(const QString &path, bool share)
 {
-    logDebug("text file");
+    logInfo("text file");
 
     WOGText* data;
 
@@ -301,7 +297,7 @@ void OGWorld::_ClearLocalData()
 {
     if (pLevelData_)
     {
-        logDebug("Clear level");
+        logInfo("Clear level");
 
         delete pLevelData_;
         pLevelData_ = 0;
@@ -309,7 +305,7 @@ void OGWorld::_ClearLocalData()
 
     if (pSceneData_)
     {
-        logDebug("Clear scene");
+        logInfo("Clear scene");
 
         delete pSceneData_;
         pSceneData_ = 0;
@@ -317,7 +313,7 @@ void OGWorld::_ClearLocalData()
 
     if (pResourcesData_[1])
     {
-        logDebug("Clear resources");
+        logInfo("Clear resources");
 
         delete pResourcesData_[1];
         pResourcesData_[1] = 0;
@@ -325,7 +321,7 @@ void OGWorld::_ClearLocalData()
 
     if (pTextData_[1])
     {
-        logDebug("Clear text");
+        logInfo("Clear text");
 
         delete pTextData_[1];
         pTextData_[1] = 0;
@@ -334,16 +330,16 @@ void OGWorld::_ClearLocalData()
 
 void OGWorld::CreateScene()
 {
-    logDebug("Create scene");
+    logInfo("Create scene");
 
-    logDebug("Create scenelayers");
+    logInfo("Create scenelayers");
 
     Q_FOREACH(WOGSceneLayer * sceneLayer, scenedata()->sceneLayer)
     {
         _CreateSceneLayer(*sceneLayer, &sprites_);
     }
 
-    logDebug("Create buttongroups");
+    logInfo("Create buttongroups");
 
     Q_FOREACH(WOGButtonGroup * btnGroup, scenedata()->buttongroup)
     {
@@ -353,7 +349,7 @@ void OGWorld::CreateScene()
         }
     }
 
-    logDebug("Create buttons");
+    logInfo("Create buttons");
 
     Q_FOREACH(WOGButton * btn, scenedata()->button)
     {
@@ -363,13 +359,13 @@ void OGWorld::CreateScene()
     if (!pPipe_) _CreatePipe();
 
     // Create Z-order
-    logDebug("Create Z-order");
+    logInfo("Create Z-order");
 
     _CreateZOrder();
 
     if (!pCamera_)
     {
-        logDebug("Creating cameras");
+        logInfo("Creating cameras");
 
         if (!_CreateCamera())
         {
@@ -389,11 +385,13 @@ void OGWorld::CreateScene()
 
 void OGWorld::CreatePhysicsScene()
 {
+    logInfo("Creating physics");
+
     pPhysicsEngine_ = OGPhysicsEngine::GetInstance();
 
     if (!pExit_ && leveldata()->levelexit != 0)
     {
-        logDebug("Creating exit");
+        logInfo("Creating exit");
 
         pExit_ = new Exit(leveldata()->levelexit);
     }
@@ -445,7 +443,7 @@ void OGWorld::CreatePhysicsScene()
         pTimer_->start(1000);
     }
 
-    isLevelLoaded_ = true;
+    isLevelLoaded_ = true;    
 }
 
 void OGWorld::_CreateSceneLayer(const WOGSceneLayer &scenelayer
@@ -519,8 +517,8 @@ void OGWorld::_CreateButton(const WOGButton &button, QList<OGSprite*>* sprites
 
 bool OGWorld::_CreateCamera()
 {
-    float w = OGGameEngine::getEngine()->getWidth();
-    float h = OGGameEngine::getEngine()->getHeight();
+    float w = og::OGGameEngine::getEngine()->getWidth();
+    float h = og::OGGameEngine::getEngine()->getHeight();
 
     if (w == 0) return false;
 
@@ -548,7 +546,7 @@ void OGWorld::_CreatePipe()
 
     if (pipe)
     {
-        logDebug("Create pipe");
+        logInfo("Create pipe");
 
         pPipe_ = new OGPipe(pipe);
     }
@@ -609,7 +607,7 @@ OGSprite* OGWorld::_CreateSprite(const WOGVObject* vobject
     sprite->rotation = vobject->rotation;
     sprite->colorize = vobject->colorize;
     sprite->alpha = vobject->alpha;
-    sprite->depth = vobject->depth;
+    sprite->depth = vobject->depth;    
     sprite->image = _CreatePixmap(sprite, image);
 
     // Set sprite position
@@ -680,7 +678,7 @@ void OGWorld::_ClearPhysics()
 {
     pPhysicsEngine_ = 0;
 
-    logDebug("Clear strands");
+    logInfo("Clear strands");
 
     QHashIterator<int, OGStrand*> i(strands_);
 
@@ -698,15 +696,15 @@ void OGWorld::_ClearPhysics()
 
     strands_.clear();
 
-    logDebug("Clear balls");
+    logInfo("Clear balls");
 
     while (!balls_.empty()) { delete balls_.takeFirst(); }
 
-    logDebug("Clear static bodies");
+    logInfo("Clear static bodies");
 
     while (!staticBodies_.isEmpty()) { delete staticBodies_.takeFirst(); }
 
-    logDebug("Remove exit");
+    logInfo("Remove exit");
 
     if (pExit_)
     {
@@ -726,7 +724,7 @@ void OGWorld::_ClearScene()
 {
     if (!sprites_.isEmpty())
     {
-        logDebug("Clear sprites");
+        logInfo("Clear sprites");
 
         while (!sprites_.isEmpty()) { delete sprites_.takeFirst(); }
     }
@@ -813,9 +811,28 @@ void OGWorld::Update()
 {
     if (pPhysicsEngine_) { pPhysicsEngine_->Simulate(); }
 }
+
+bool OGWorld::LoadLevel(const QString &levelname)
+{
+    SetLevelname(levelname);
+
+    if (!Load()) { return false; }
+
+    CreateScene();
+
+    if (!isLevelLoaded())
+    {
+        CloseLevel();
+
+        return false;
+    }
+
+    return true;
+}
+
 void OGWorld::CloseLevel()
 {
-    qDebug("CloseLevel");
+    logInfo("Close level");
 
     _ClearPhysics();
     _ClearScene();
@@ -824,8 +841,11 @@ void OGWorld::CloseLevel()
 
 void OGWorld::_CreateZOrder()
 {
-    // Bubble sort
-    // Source http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Bubble_sort#C.2B.2B
+#define NEW_ZORDER
+
+#ifndef NEW_ZORDER
+//    // Bubble sort
+//    // Source http://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Bubble_sort#C.2B.2B
     QList <OGSprite*>::iterator first = sprites_.begin();
     QList <OGSprite*>::iterator last = sprites_.end();
     QList <OGSprite*>::iterator i;
@@ -840,6 +860,13 @@ void OGWorld::_CreateZOrder()
             }
         }
     }
+
+#else
+    Q_FOREACH (OGSprite* sprite, sprites_)
+    {
+        _GetGame()->AddSprite(sprite->depth, sprite);
+    }
+#endif
 }
 
 void OGWorld::_InsertSprite(OGSprite* sprite)
@@ -852,3 +879,8 @@ void OGWorld::RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()
 inline void  OGWorld::StartSearching() { pTimer_->start(1000); }
 
 inline WOGPipe* OGWorld::_GetPipeData() { return pLevelData_->pipe; }
+
+inline OpenGOO* OGWorld::_GetGame()
+{
+    return OpenGOO::instance();
+}

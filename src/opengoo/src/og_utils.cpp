@@ -9,6 +9,12 @@
 #endif
 
 #include "og_userdata.h"
+#include <OGPushButton>
+#include "opengoo.h"
+#include "og_world.h"
+#include "wog_resources.h"
+#include "wog_text.h"
+
 
 #include <QFile>
 
@@ -84,7 +90,7 @@ OGConfig ogUtils::ogReadConfig(const QString & filename)
     return config;
 }
 
-OGUserData* ogUtils::ogGetUserData(void *userdata)
+OGUserData* ogUtils::ogGetUserData(void* userdata)
 {
     OGUserData* data = 0;
 
@@ -92,3 +98,80 @@ OGUserData* ogUtils::ogGetUserData(void *userdata)
 
     return data;
 }
+
+QPixmap* ogUtils::getImage(const QString & id)
+{
+    OGWorld* world = OpenGOO::instance()->GetWorld();
+    WOGResources* resrc = world->resrcdata();
+
+    return new QPixmap(resrc->GetImage(id));
+}
+
+QString ogUtils::getText(const QString & id)
+{
+    OGWorld* world = OpenGOO::instance()->GetWorld();
+    WOGText* text = world->textdata();
+
+    return text->GetString(id);
+}
+
+std::unique_ptr<UIData> ogUtils::getUIData(const QString & id)
+{    
+    QFile file(":/ui/resources.xml");
+    file.open(QIODevice::ReadOnly);
+
+    QDomDocument domDoc;
+    std::unique_ptr<UIData> data;
+
+    if (domDoc.setContent(&file))
+    {
+        QDomElement rootElement = domDoc.documentElement();
+        QDomNode node = rootElement.firstChild();
+        QDomElement element;
+        bool isFound = false;
+
+        while (!node.isNull() && !isFound)
+        {
+            element = node.toElement();
+
+            if (element.attribute("id") == id) isFound = true;
+            else node = node.nextSibling();
+        }
+
+        if (isFound)
+        {
+            data.reset(new UIData);
+            data->width = element.attribute("width").toInt();
+            data->height = element.attribute("height").toInt();
+            data->up = element.attribute("up");
+            data->over = element.attribute("over");
+            data->text = element.attribute("text");
+        }
+    }
+
+    return data;
+}
+
+template<class T> T* ogUtils::createUI(const QPoint & pos, const UIData & data)
+{
+    using namespace og::ui;
+
+    T* ui = new T;
+
+    ui->setPosition(pos.x(), pos.y());
+    ui->setSize(data.width, data.height);
+    ui->setUpImage(getImage(data.up));
+    ui->setOverImage(getImage(data.over));
+    ui->setText(getText(data.text));
+
+    return ui;
+}
+
+og::ui::PushButton* ogUtils::createButton(const QPoint &pos
+                                          , const UIData &data)
+{
+    using namespace og::ui;
+
+    return createUI<PushButton> (pos, data);
+}
+

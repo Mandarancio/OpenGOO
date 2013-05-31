@@ -1,5 +1,7 @@
 #include "og_climb.h"
-#include "OGPhysicsBody"
+#include <OGPhysicsBody>
+
+using namespace og;
 
 struct OGClimbImpl
 {

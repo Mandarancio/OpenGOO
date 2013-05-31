@@ -5,11 +5,11 @@
 
 class OGBall;
 
-class ExitSensor : public OGCircleSensor
+class ExitSensor : public og::OGCircleSensor
 {
     public:
         ExitSensor(const QString &id, const Circle &circle
-                   , const OGSensorFilter &filter);
+                   , const og::OGSensorFilter &filter);
         ~ExitSensor() {}
 
     private:

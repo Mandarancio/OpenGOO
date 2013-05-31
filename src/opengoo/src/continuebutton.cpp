@@ -1,12 +1,13 @@
 #include "continuebutton.h"
-#include "opengoo.h"
-#include "og_event.h"
+#include "og_utils.h"
 
-bool ContinueButton::_MouseButtonDown(QMouseEvent *ev)
+using namespace ogUtils;
+
+ContinueButton::ContinueButton()
 {
-    Q_UNUSED(ev)
-
-    OpenGOO::SendEvent(new OGEvent(OGEvent::BACKTO_ISLAND));
-
-    return true;
+    auto data = getUIData("CONTINUE_BUTTON");
+    setSize(data->width, data->height);
+    setText("Continue");
+    setUpImage(getImage(data->up));
+    setOverImage(getImage(data->over));
 }

@@ -1,9 +1,0 @@
-<ResourceManifest>
-	<Resources id="scene_ui">
-		<SetDefaults idprefix="" path="./" />
-<Image id="IMAGE_GLOBAL_UI_RETRY_UP_TRANSPARENT" path="res/images/uiRetry_up_transparent" />
-<Image id="IMAGE_GLOBAL_UI_RETRY_OVER" path="res/images/uiRetry_over" />
-<Image id="IMAGE_GLOBAL_MENU_BUTTON_UP" path="res/images/uiMenu_up" />
-<Image id="IMAGE_GLOBAL_UI_SHADOW" path="res/images/uishadow" />
-</Resources>
-</ResourceManifest>

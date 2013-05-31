@@ -3,6 +3,7 @@
 
 #include "wog_scene.h"
 #include "wog_ball.h"
+#include <OGPhysicsEngine>
 
 #include <QCache>
 #include <QHash>
@@ -29,7 +30,7 @@ class OGBall;
 class OGButton;
 class OGStrand;
 class OGIBody;
-class OGPhysicsEngine;
+class OpenGOO;
 
 class QTimer;
 
@@ -108,7 +109,7 @@ class OGWorld : public QObject
         bool _CreateCamera();
 
         bool isPhysicsEngine_;
-        OGPhysicsEngine* pPhysicsEngine_;
+        og::OGPhysicsEngine* pPhysicsEngine_;
 
         void CreatePhysicsScene();
         bool _InitializePhysics();
@@ -119,6 +120,8 @@ class OGWorld : public QObject
         void _ClearLocalData();
 
         void _CreateZOrder();
+
+        OpenGOO* _GetGame();
 
     public:
         OGWorld(const QString &levelname = QString(), QObject* parent = 0);
@@ -156,6 +159,7 @@ class OGWorld : public QObject
 
         bool Initialize();
         bool Load();
+        bool LoadLevel(const QString &levelname);
         void Reload();
         void CloseLevel();
 
@@ -168,8 +172,6 @@ class OGWorld : public QObject
         void RemoveStrand(OGStrand* strand);
 
         void StartSearching();
-
-        friend void draw(QPainter* p, OGWorld* w);
         friend class OGPipe;        
 
     private slots:

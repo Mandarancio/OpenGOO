@@ -1,6 +1,8 @@
 #ifndef EXIT_H
 #define EXIT_H
 
+#include <memory>
+
 struct WOGLevelExit;
 
 class Exit
@@ -13,7 +15,11 @@ class Exit
         void Close();
 
     private:
-        struct ExitImpl* pImpl_;
+        Exit(const Exit&);
+        Exit& operator=(const Exit&);
+
+        struct Impl;
+        std::unique_ptr<Impl> _pImpl;
 };
 
 #endif // EXIT_H

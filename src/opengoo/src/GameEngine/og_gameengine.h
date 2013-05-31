@@ -3,55 +3,68 @@
 
 #include <QObject>
 
-#include "og_window.h"
+#include "og_widget.h"
 
-class OGEvent;
-class OGGame;
-class OGPhysicsEngine;
-class OGResourceManager;
+typedef og::OGWidget OGWindow;
 
-class OGGameEngine : public QObject
+class QScreen;
+
+namespace og
 {
-        Q_OBJECT
+    class OGGame;
+    class OGPhysicsEngine;
+    class OGResourceManager;
 
-        bool isVideoModeSupported_;
-        OGResourceManager* pResourceManager_;
+    class OGGameEngine : public QObject
+    {
+            Q_OBJECT
 
-    protected:
-        static OGGameEngine* gameEngine_;
-        int width_, height_;
-        int frameDelay_;
-        bool fullscreen_;
-        OGWindow* window_;
-        OGGame* pGame_;
+            bool _isVideoModeSupported;
+            OGResourceManager* _pResourceManager;
+            std::unique_ptr<OGWindow> _pWindow;
 
-        bool eventFilter(QObject* obj, QEvent* event);
+            QScreen* _getPrimaryScreen();            
 
-    public:
-        OGGameEngine(OGGame* game, int width, int height, bool fullscreen = false);
-        virtual ~OGGameEngine();
+            OGGameEngine(const OGGameEngine&);
+            OGGameEngine& operator=(const OGGameEngine&);
 
-        static OGGameEngine* getEngine() { return gameEngine_; }
-        bool initialize();
+        protected:
+            static OGGameEngine* gameEngine;
+            int width_, height_;
+            int frameDelay_;
+            bool fullscreen_;
+            OGGame* pGame;
 
-        OGWindow* getWindow() const { return window_; }
+            bool eventFilter(QObject* obj, QEvent* event);
 
-        int getWidth() const { return width_; }
-        int getHeight() const { return height_; }
-        int getFrameDelay() const { return frameDelay_; }
+        public:
+            OGGameEngine(OGGame* game, int width, int height
+                         , bool fullscreen = false);
+            virtual ~OGGameEngine();
 
-        OGPhysicsEngine* getPhysicsEngine();
+            static OGGameEngine* getEngine() { return gameEngine; }
+            bool initialize();
 
-        OGResourceManager* getResourceManager();
+            int getWidth() const { return width_; }
+            int getHeight() const { return height_; }
+            int getFrameDelay() const { return frameDelay_; }
 
-        void addWindow(const QString &id, OGUIWindow* wnd);
-        void RemoveWindow(const QString &id);
+            OGPhysicsEngine* getPhysicsEngine();
 
-    public slots:
-        void setFrameRate(int framerate) { frameDelay_ = qRound(1000.0 / framerate); }
+            OGResourceManager* getResourceManager();
 
-    private slots:
-        void gameExit();
-};
+            void addUI(ui::IUI* ui);
+            void removeUI(ui::IUI* ui);
+
+        public slots:
+            void setFrameRate(int framerate)
+            { frameDelay_ = qRound(1000.0f / framerate); }
+            void quit();
+
+        private slots:
+            void gameExit();
+    };
+
+} // namespace og
 
 #endif // OG_GAMEENGINE_H

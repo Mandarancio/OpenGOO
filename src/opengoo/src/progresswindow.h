@@ -1,21 +1,25 @@
 #ifndef PROGRESSWINDOW_H
 #define PROGRESSWINDOW_H
 
-#include "og_uiwindow.h"
+#include <QObject>
 
-class ProgressWindow : public OGUIWindow
+class ProgressWindow : public QObject
 {
-public:
-    ProgressWindow(int width, int height);
-    ~ProgressWindow();
+    Q_OBJECT
 
-    void SetBalls(int balls);
+    Q_DISABLE_COPY(ProgressWindow)
+
+public:
+    ProgressWindow();
+
+    void setBalls(int balls, int extraBalls);
+
+signals:
+    void close();
 
 private:
-    struct ProgressWindowImpl* pImpl_;
-
-    ProgressWindow(const ProgressWindow&);
-    ProgressWindow& operator= (const ProgressWindow&);
+    struct Impl;
+    std::unique_ptr<Impl> _pImpl;
 };
 
 #endif // PROGRESSWINDOW_H

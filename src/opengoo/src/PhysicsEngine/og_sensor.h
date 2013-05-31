@@ -6,6 +6,8 @@
 #include <QString>
 #include <QVector2D>
 
+namespace og
+{
 struct OGSensorFilter
 {
     unsigned short category;
@@ -43,5 +45,6 @@ class OGSensor
         virtual void _BeginContact(Fixture* fixture) = 0;
         virtual void _EndContact(Fixture* fixture) = 0;
 };
+} // namespace og
 
 #endif // OG_SENSOR_H

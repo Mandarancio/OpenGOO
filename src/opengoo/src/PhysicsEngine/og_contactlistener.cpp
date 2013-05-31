@@ -3,10 +3,12 @@
 
 #include <QHash>
 
+using namespace og;
+
 typedef QHash<QString, OGSensor*> Hash;
 typedef QHashIterator<QString, OGSensor*> HIterator;
 
-struct OGContactListenerImpl
+struct og::OGContactListenerImpl
 {
      Hash sensors;
 };

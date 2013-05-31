@@ -2,11 +2,13 @@
 #define OG_CIRCLESENSOR_H
 
 #include "og_sensor.h"
+#include "og_pcircle.h"
 
 class Circle;
-class OGPCircle;
 
-class OGCircleSensor : public OGSensor
+namespace og
+{
+class OGCircleSensor : public og::OGSensor
 {
     public:
         OGCircleSensor(const QString &id, const Circle &circle);
@@ -24,5 +26,6 @@ class OGCircleSensor : public OGSensor
         void _SetMask(unsigned short mask);
         void _SetFilter(const OGSensorFilter &filte);
 };
+}
 
 #endif // OG_CIRCLESENSOR_H

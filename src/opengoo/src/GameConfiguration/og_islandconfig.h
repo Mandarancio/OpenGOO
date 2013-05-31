@@ -14,7 +14,7 @@ public:
 private:
     QStringList StringToList(const QString & attribute);
     void StringToOCD(WOGOcd* ocd, const QString & attribute);
-    Level* CreateLevel(const QDomElement & element);
+    wog::Level* CreateLevel(const QDomElement & element);
 
 };
 

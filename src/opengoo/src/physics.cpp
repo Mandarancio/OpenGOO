@@ -11,6 +11,7 @@
 #include <QLineF>
 #include <qmath.h>
 
+using namespace og;
 using namespace physics;
 
 OGPhysicsBody* createCircle(const QPointF &position, float radius

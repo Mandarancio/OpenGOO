@@ -5,6 +5,8 @@
 
 #include "circle.h"
 
+using namespace og;
+
 OGPhysicsEngine* OGPhysicsEngine::pInstance_ = 0;
 
 OGPhysicsEngine::OGPhysicsEngine()
