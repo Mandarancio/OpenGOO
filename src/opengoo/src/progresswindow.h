@@ -2,6 +2,7 @@
 #define PROGRESSWINDOW_H
 
 #include <QObject>
+#include <memory>
 
 class ProgressWindow : public QObject
 {

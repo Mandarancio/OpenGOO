@@ -1,6 +1,7 @@
 #ifndef RETRYMENU_H
 #define RETRYMENU_H
 
+#include <memory>
 #include <QObject>
 
 class RetryMenu : public QObject

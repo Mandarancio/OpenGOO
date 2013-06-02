@@ -2,6 +2,7 @@
 #define OG_FPSCOUNTER_H
 
 #include <QObject>
+#include <memory>
 
 class OGFPSCounter : public QObject
 {

@@ -1,6 +1,7 @@
 #ifndef OPENGOO_H
 #define OPENGOO_H
 
+#include <memory>
 #include "GameEngine/og_game.h"
 #include "progresswindow.h"
 #include <OGIPushButton>
@@ -16,7 +17,6 @@
 #include <QPoint>
 #include <QString>
 
-#include <memory>
 
 
 class OGWindowCamera;

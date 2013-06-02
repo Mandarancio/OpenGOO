@@ -2,6 +2,7 @@
 #define FPSCOUNTER_H
 
 #include <QObject>
+#include <memory>
 
 class FPSCounter : public QObject
 {
