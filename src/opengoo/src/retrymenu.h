@@ -4,6 +4,8 @@
 #include <memory>
 #include <QObject>
 
+#include "OGLib/UI/og_ipushbutton.h"
+
 class RetryMenu : public QObject
 {
     Q_OBJECT
@@ -17,7 +19,12 @@ signals:
     void close();    
 
 private:
-    struct Impl;
+    struct Impl
+    {
+        std::unique_ptr<og::ui::IPushButton> okBtn;
+        std::unique_ptr<og::ui::IPushButton> cancelBtn;
+    };
+
     std::unique_ptr<Impl> _pImpl;
 
 private slots:

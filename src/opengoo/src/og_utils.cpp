@@ -25,7 +25,7 @@ void ogUtils::ogBackTracer()
     BackTracer(SIGFPE);
 #endif
 
-#ifdef Q_OS_WIN32
+#ifdef Q_CC_MSVC
     AddVectoredExceptionHandler(0, UnhandledException2);
 #endif
 }

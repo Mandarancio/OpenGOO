@@ -1,11 +1,11 @@
 #include "fpscounter.h"
 
-struct FPSCounter::Impl
-{
-    int fps;
-    int curFPS;
-    int time;
-};
+//struct FPSCounter::Impl
+//{
+//    int fps;
+//    int curFPS;
+//    int time;
+//};
 
 FPSCounter::FPSCounter() : _pImpl(new Impl)
 {    

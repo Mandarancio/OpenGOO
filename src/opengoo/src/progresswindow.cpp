@@ -1,17 +1,16 @@
 #include "progresswindow.h"
 #include "og_utils.h"
-#include <OGLabel>
-#include "continuebutton.h"
+
 
 using namespace og::ui;
 using namespace ogUtils;
 
-struct ProgressWindow::Impl
-{
-    Frame frame;
-    ContinueButton btnContinue;
-    Label labelBalls;
-};
+//struct ProgressWindow::Impl
+//{
+//    Frame frame;
+//    ContinueButton btnContinue;
+//    Label labelBalls;
+//};
 
 ProgressWindow::ProgressWindow() : _pImpl(new Impl)
 {    

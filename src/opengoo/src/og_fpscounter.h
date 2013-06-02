@@ -2,6 +2,8 @@
 #define OG_FPSCOUNTER_H
 
 #include <QObject>
+#include "fpscounter.h"
+#include <OGLabel>
 #include <memory>
 
 class OGFPSCounter : public QObject
@@ -17,7 +19,12 @@ public:
 private:
     Q_DISABLE_COPY(OGFPSCounter)
 
-    struct Impl;
+    struct Impl
+    {
+        FPSCounter counter;
+        og::ui::Label label;
+    };
+
     std::unique_ptr<Impl> _pImpl;
 
 private slots:

@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include <memory>
+#include <OGLabel>
+#include "continuebutton.h"
+
 
 class ProgressWindow : public QObject
 {
@@ -19,7 +22,13 @@ signals:
     void close();
 
 private:
-    struct Impl;
+    struct Impl
+    {
+        og::ui::Frame frame;
+        ContinueButton btnContinue;
+        og::ui::Label labelBalls;
+    };
+
     std::unique_ptr<Impl> _pImpl;
 };
 

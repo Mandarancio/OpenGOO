@@ -1,14 +1,12 @@
 #include "og_fpscounter.h"
-#include "fpscounter.h"
-#include <OGLabel>
 
 using namespace og::ui;
 
-struct OGFPSCounter::Impl
-{
-    FPSCounter counter;
-    Label label;
-};
+//struct OGFPSCounter::Impl
+//{
+//    FPSCounter counter;
+//    Label label;
+//};
 
 OGFPSCounter::OGFPSCounter(const QRect &rect) : _pImpl(new Impl)
 {
