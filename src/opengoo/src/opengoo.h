@@ -150,7 +150,7 @@ class OpenGOO : public og::OGGame
         void _CreateLevel(const QString &levelname);
         void _LoadLevel(const QString &levelname);
         void _RemoveLevel();
-        void _CloseLevel();        
+        void _CloseLevel();
 
         std::unique_ptr<ProgressWindow> pProgressWnd_;
         void _InitProgressWindow();
