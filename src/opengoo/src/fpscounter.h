@@ -23,13 +23,7 @@ signals:
     void setFPS(int setFPS);
 
 private:
-    struct Impl
-    {
-        int fps;
-        int curFPS;
-        int time;
-    };
-
+    struct Impl;
     std::unique_ptr<Impl> _pImpl;
 };
 

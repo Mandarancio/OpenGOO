@@ -2,11 +2,11 @@
 
 using namespace og::ui;
 
-//struct OGFPSCounter::Impl
-//{
-//    FPSCounter counter;
-//    Label label;
-//};
+struct OGFPSCounter::Impl
+{
+    FPSCounter counter;
+    Label label;
+};
 
 OGFPSCounter::OGFPSCounter(const QRect &rect) : _pImpl(new Impl)
 {
@@ -20,6 +20,8 @@ OGFPSCounter::OGFPSCounter(const QRect &rect) : _pImpl(new Impl)
     _pImpl->label.setPosition(x, y);
     _pImpl->label.setVisible(true);
 }
+
+OGFPSCounter::~OGFPSCounter() {}
 
 void OGFPSCounter::Reset() { _pImpl->counter.reset(); }
 

@@ -19,20 +19,14 @@ class GameMenu : public QObject
 
 public:
     GameMenu();
+    ~GameMenu();
 
 signals:
     void close();
     void backToIsland();
 
 private:
-    struct Impl
-    {
-        std::unique_ptr<og::ui::IPushButton> restart;
-        std::unique_ptr<og::ui::IPushButton> resume;
-        std::unique_ptr<og::ui::IPushButton> backto;
-        std::unique_ptr<og::ui::IPushButton> ocdcriteria;
-    };
-
+    struct Impl;
     std::unique_ptr<Impl> _pImpl;
 
     std::unique_ptr<og::ui::PushButton> _createButton(const WOGButton* button

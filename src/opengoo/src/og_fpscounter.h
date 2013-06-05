@@ -10,21 +10,17 @@ class OGFPSCounter : public QObject
 {
     Q_OBJECT
 
+    Q_DISABLE_COPY(OGFPSCounter)
+
 public:
     OGFPSCounter(const QRect &rect);
+    ~OGFPSCounter();
 
     void Reset();
     void Update(int dt);
 
 private:
-    Q_DISABLE_COPY(OGFPSCounter)
-
-    struct Impl
-    {
-        FPSCounter counter;
-        og::ui::Label label;
-    };
-
+    struct Impl;
     std::unique_ptr<Impl> _pImpl;
 
 private slots:

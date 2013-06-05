@@ -5,11 +5,11 @@ using namespace og::ui;
 using namespace ogUtils;
 using namespace std;
 
-//struct RetryMenu::Impl
-//{
-//    unique_ptr<IPushButton> okBtn;
-//    unique_ptr<IPushButton> cancelBtn;
-//};
+struct RetryMenu::Impl
+{
+    unique_ptr<IPushButton> okBtn;
+    unique_ptr<IPushButton> cancelBtn;
+};
 
 RetryMenu::RetryMenu() : _pImpl(new Impl)
 {    
@@ -37,6 +37,8 @@ RetryMenu::RetryMenu() : _pImpl(new Impl)
         btn->setVisible(true);
     }
 }
+
+RetryMenu::~RetryMenu() {}
 
 void RetryMenu::_ok()
 {

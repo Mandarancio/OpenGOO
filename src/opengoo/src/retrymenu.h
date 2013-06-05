@@ -14,17 +14,13 @@ class RetryMenu : public QObject
 
 public:
     RetryMenu();
+    ~RetryMenu();
     
 signals:
     void close();    
 
 private:
-    struct Impl
-    {
-        std::unique_ptr<og::ui::IPushButton> okBtn;
-        std::unique_ptr<og::ui::IPushButton> cancelBtn;
-    };
-
+    struct Impl;
     std::unique_ptr<Impl> _pImpl;
 
 private slots:

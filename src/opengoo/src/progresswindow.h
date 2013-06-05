@@ -15,6 +15,7 @@ class ProgressWindow : public QObject
 
 public:
     ProgressWindow();
+    ~ProgressWindow();
 
     void setBalls(int balls, int extraBalls);
 
@@ -22,13 +23,7 @@ signals:
     void close();
 
 private:
-    struct Impl
-    {
-        og::ui::Frame frame;
-        ContinueButton btnContinue;
-        og::ui::Label labelBalls;
-    };
-
+    struct Impl;
     std::unique_ptr<Impl> _pImpl;
 };
 

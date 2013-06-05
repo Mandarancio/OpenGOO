@@ -8,13 +8,13 @@ using namespace og::ui;
 using namespace ogUtils;
 using namespace std;
 
-//struct GameMenu::Impl
-//{
-//    unique_ptr<IPushButton> restart;
-//    unique_ptr<IPushButton> resume;
-//    unique_ptr<IPushButton> backto;
-//    unique_ptr<IPushButton> ocdcriteria;
-//};
+struct GameMenu::Impl
+{
+    unique_ptr<IPushButton> restart;
+    unique_ptr<IPushButton> resume;
+    unique_ptr<IPushButton> backto;
+    unique_ptr<IPushButton> ocdcriteria;
+};
 
 GameMenu::GameMenu() : _pImpl(new Impl)
 {
@@ -57,6 +57,8 @@ GameMenu::GameMenu() : _pImpl(new Impl)
         }
     }
 }
+
+GameMenu::~GameMenu() {}
 
 unique_ptr<PushButton> GameMenu::_createButton(const WOGButton* button
                                     , const WOGResources &resrc)
