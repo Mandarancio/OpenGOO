@@ -146,7 +146,7 @@ void OGPipe::_InsertSprite(OGSprite* sprite)
 
 OGSprite* OGPipe::_CreateCap(WOGPipe* pipe, const QString &id,  bool visible)
 {
-    std::auto_ptr<QImage> src;
+    std::unique_ptr<QImage> src;
     src.reset(_GetImage(id));
 
     if (src.get() == 0 || pipe->vertex->size() < 2) return 0;
@@ -193,7 +193,7 @@ OGSprite* OGPipe::_CreateBend(const QString &type, const QPointF &p1, const QPoi
     float h = 54;
     float x = p2.x() - w / 2;
     float y = (p2.y() + h / 2) * -1;
-    std::auto_ptr<QImage> img;
+    std::unique_ptr<QImage> img;
 
     if ((angle1 == 0 && angle2 == 270) || (angle1 == 90 && angle2 == 180))
     {

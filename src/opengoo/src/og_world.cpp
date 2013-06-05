@@ -768,7 +768,7 @@ void OGWorld::findNearestAttachedBall()
 {
     if (leveldata()->levelexit == 0) { return; }
 
-    qreal x, y, dx, dy, x2, y2, length, tmpLength;
+    qreal dx, dy, x2, y2, length, tmpLength;
     bool isInit = false;
 
     Q_FOREACH(OGBall * ball, balls_)
@@ -780,8 +780,6 @@ void OGWorld::findNearestAttachedBall()
                 pNearestBall_ = ball;
                 x2 = pNearestBall_->GetX();
                 y2 = pNearestBall_->GetY();
-                x = x2;
-                y = y2;
                 dx = xExit_ - x2;
                 dy = yExit_ - y2;
                 length = dx * dx + dy * dy;
@@ -798,8 +796,6 @@ void OGWorld::findNearestAttachedBall()
                 if (tmpLength < length)
                 {
                     length = tmpLength;
-                    x = x2;
-                    y = y2;
                     pNearestBall_ = ball;
                 }
             }
