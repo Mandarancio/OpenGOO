@@ -38,6 +38,8 @@ RetryMenu::RetryMenu() : _pImpl(new Impl)
     }
 }
 
+RetryMenu::~RetryMenu() {}
+
 void RetryMenu::_ok()
 {
     getGame()->ReloadLevel();

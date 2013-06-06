@@ -2,6 +2,7 @@
 #define OG_GAMEENGINE_H
 
 #include <QObject>
+#include <memory>
 
 #include "og_widget.h"
 

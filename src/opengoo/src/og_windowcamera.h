@@ -18,9 +18,9 @@ using namespace std;
 
 class OGWindowCamera
 {
-    static OGWindowCamera* pInstance_;
+        static OGWindowCamera* pInstance_;
 
-        auto_ptr<OGCamera> camera_;
+        unique_ptr<OGCamera> camera_;
         OGPoi* target_;
         Rect scene_;
         PoiList poiList_;

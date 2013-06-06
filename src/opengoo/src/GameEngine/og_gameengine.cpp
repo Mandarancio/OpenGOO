@@ -63,7 +63,7 @@ bool OGGameEngine::initialize()
         }
         else { logWarn("Video mode not supported"); }
 #else
-        _pIWindow->show();
+        _pWindow->show();
 #endif // Q_OS_WIN32
     }
     else

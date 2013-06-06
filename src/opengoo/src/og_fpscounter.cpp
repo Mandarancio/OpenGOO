@@ -1,6 +1,4 @@
 #include "og_fpscounter.h"
-#include "fpscounter.h"
-#include <OGLabel>
 
 using namespace og::ui;
 
@@ -22,6 +20,8 @@ OGFPSCounter::OGFPSCounter(const QRect &rect) : _pImpl(new Impl)
     _pImpl->label.setPosition(x, y);
     _pImpl->label.setVisible(true);
 }
+
+OGFPSCounter::~OGFPSCounter() {}
 
 void OGFPSCounter::Reset() { _pImpl->counter.reset(); }
 

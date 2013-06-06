@@ -1,7 +1,10 @@
 #ifndef RETRYMENU_H
 #define RETRYMENU_H
 
+#include <memory>
 #include <QObject>
+
+#include "OGLib/UI/og_ipushbutton.h"
 
 class RetryMenu : public QObject
 {
@@ -11,6 +14,7 @@ class RetryMenu : public QObject
 
 public:
     RetryMenu();
+    ~RetryMenu();
     
 signals:
     void close();    

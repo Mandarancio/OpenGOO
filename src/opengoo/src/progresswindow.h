@@ -2,6 +2,10 @@
 #define PROGRESSWINDOW_H
 
 #include <QObject>
+#include <memory>
+#include <OGLabel>
+#include "continuebutton.h"
+
 
 class ProgressWindow : public QObject
 {
@@ -11,6 +15,7 @@ class ProgressWindow : public QObject
 
 public:
     ProgressWindow();
+    ~ProgressWindow();
 
     void setBalls(int balls, int extraBalls);
 

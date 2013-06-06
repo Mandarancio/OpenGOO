@@ -456,7 +456,7 @@ void OpenGOO::_LoadLevel(const QString &levelname)
     else { isLevelExit_ = false; }
 }
 
-inline void OpenGOO::_CloseLevel()
+void OpenGOO::_CloseLevel()
 {
     pWorld_->CloseLevel();
     _ClearLayers();

@@ -58,13 +58,18 @@ LIBS += -lBox2Dd
 }
 else {
 LIBS += -lBox2D
-QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
-QMAKE_LFLAGS   += /DEBUG
 }
 
+msvc:{
 #  Backtrace on win32
 HEADERS += src/backtracer_win32.h
 SOURCES += src/backtracer_win32.cpp
+release:{
+QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
+QMAKE_LFLAGS   += /DEBUG
+}
+}
+
 }
 
 

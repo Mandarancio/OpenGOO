@@ -58,6 +58,8 @@ GameMenu::GameMenu() : _pImpl(new Impl)
     }
 }
 
+GameMenu::~GameMenu() {}
+
 unique_ptr<PushButton> GameMenu::_createButton(const WOGButton* button
                                     , const WOGResources &resrc)
 {

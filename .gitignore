@@ -24,3 +24,7 @@ Makefile*
 *libs/*.lib
 src/extlibs/libs/*.lib
 start.bat
+
+*object_script.*
+src/opengoo/release/qrc_resources.cpp
+src/opengoo/debug/qrc_resources.cpp

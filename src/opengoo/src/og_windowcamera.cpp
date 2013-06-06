@@ -8,7 +8,7 @@ OGWindowCamera* OGWindowCamera::pInstance_ = 0;
 
 OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size
                                , const WOGCamera *cam)
-    : scene_(scene), target_(0), traveltime_(0), pause_(0), isScrolling_(true)
+    : target_(0), scene_(scene), traveltime_(0), pause_(0), isScrolling_(true)
 {
     pInstance_ = this;
 
@@ -26,7 +26,7 @@ OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size
     if (z == 0) z = 1;
     else z = 1 / z;
 
-    camera_ = auto_ptr<OGCamera>(new OGCamera(x, y, w, h, z));
+    camera_ = unique_ptr<OGCamera>(new OGCamera(x, y, w, h, z));
 }
 
 OGWindowCamera::~OGWindowCamera()

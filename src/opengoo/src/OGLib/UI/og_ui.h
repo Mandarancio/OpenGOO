@@ -1,6 +1,7 @@
 #ifndef OG_UI_H
 #define OG_UI_H
 
+#include <memory>
 #include "og_iui.h"
 
 namespace og {

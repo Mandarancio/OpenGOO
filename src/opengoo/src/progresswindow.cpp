@@ -1,7 +1,6 @@
 #include "progresswindow.h"
 #include "og_utils.h"
-#include <OGLabel>
-#include "continuebutton.h"
+
 
 using namespace og::ui;
 using namespace ogUtils;
@@ -49,6 +48,8 @@ ProgressWindow::ProgressWindow() : _pImpl(new Impl)
         label->setVisible(true);
     }
 }
+
+ProgressWindow::~ProgressWindow() {}
 
 void ProgressWindow::setBalls(int balls, int extraBalls)
 {

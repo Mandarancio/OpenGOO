@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include <OGPushButton>
+#include "OGLib/UI/og_ipushbutton.h"
 
 struct WOGButton;
 class WOGResources;
@@ -18,6 +19,7 @@ class GameMenu : public QObject
 
 public:
     GameMenu();
+    ~GameMenu();
 
 signals:
     void close();

@@ -2,6 +2,7 @@
 #define LEVEL_H
 
 #include <QObject>
+#include <memory>
 
 class QString;
 
