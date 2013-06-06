@@ -19,6 +19,7 @@ MOC_DIR = build/release
 #ATTENCTION
 #Lib Box2D must be in system folder and also the header files of it!
 INCLUDEPATH += ../extlibs/box2d
+INCLUDEPATH += ../extlibs/AES/src
 INCLUDEPATH += ../opengoo/src
 INCLUDEPATH += ../libs/logger/src
 INCLUDEPATH += src/GameEngine
@@ -33,6 +34,8 @@ LIBS += -L../libs/lib -llogger
 }
 
 LIBS += -L../extlibs/libs
+
+LIBS += -lAES
 
 !win32{
 LIBS += -lBox2D
@@ -111,6 +114,7 @@ HEADERS += \
     src/level.h \
     src/uidata.h \
     src/continuebutton.h \
+    src/GameConfiguration/decrypter.h
 
 SOURCES += \
     src/main.cpp \
@@ -146,6 +150,7 @@ SOURCES += \
     src/gamemenu.cpp \
     src/level.cpp \
     src/continuebutton.cpp \
+    src/GameConfiguration/decrypter.cpp
 
 
 # Game engine

@@ -19,9 +19,9 @@ struct GameMenu::Impl
 GameMenu::GameMenu() : _pImpl(new Impl)
 {
     unique_ptr<WOGScene> scene(
-                OGData::GetScene("./res/scenes/GameMenu.scene.xml"));
+                OGData::GetScene("./res/scenes/GameMenu.scene"));
     unique_ptr<WOGResources> resrc(
-                OGData::GetResources("./res/scenes/GameMenu.resrc.xml"));
+                OGData::GetResources("./res/scenes/GameMenu.resrc"));
 
     auto group = scene->GetButtonGroup("gamemenugroup");
 

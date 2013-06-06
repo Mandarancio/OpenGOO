@@ -49,7 +49,7 @@ OGConfig OGGameConfig::Parser()
     return config;
 }
 
-void OGGameConfig::Create(OGConfig & config)
+void OGGameConfig::Create(OGConfig &config)
 {
     QFile file(GetFilename());
     file.open(QIODevice::WriteOnly);
@@ -78,7 +78,7 @@ void OGGameConfig::Create(OGConfig & config)
     stream.writeStartElement("param");
     stream.writeAttribute("name", "fullscreen");
 
-    if (config.fullscreen) { stream.writeAttribute("value",  "true"); }
+    if (config.fullscreen) { stream.writeAttribute("value", "true"); }
     else { stream.writeAttribute("value",  "false"); }
 
     stream.writeEndElement(); // end fullscreen

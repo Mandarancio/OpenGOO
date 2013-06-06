@@ -21,6 +21,7 @@
 
 #include <QDir>
 #include <QApplication>
+#include <QDebug>
 
 bool Initialize(int argc, char** argv);
 void Clear();
@@ -44,7 +45,7 @@ int main(int argc, char** argv)
 bool Initialize(int argc, char** argv)
 {
     const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
-    const QString FILE_CONFIG = "./resources/config.xml";
+    const QString FILE_CONFIG = "./resources/config";
     const int FRAMERATE = 60;
 
     ogUtils::ogBackTracer();

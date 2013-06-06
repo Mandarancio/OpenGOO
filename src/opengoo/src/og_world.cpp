@@ -77,21 +77,26 @@ bool OGWorld::isExist(const QString &path_level)
 {
     QString path;
 
-    path = "./res/levels/" + path_level + "/" + path_level + ".level.xml";
+    path = "./res/levels/" + path_level + "/" + path_level + ".level";
 
-    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
+    if (!QFile::exists(path + ".xml") && !QFile::exists(path + ".bin"))
+    {
+        logDebug(QString("File %1 not found").arg(path)); return false;
+    }
 
-    path = "./res/levels/" + path_level + "/" + path_level  + ".scene.xml";
+    path = "./res/levels/" + path_level + "/" + path_level  + ".scene";
 
-    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
+    if (!QFile::exists(path + ".xml") && !QFile::exists(path + ".bin"))
+    {
+        logDebug(QString("File %1 not found").arg(path)); return false;
+    }
 
-    path = "./res/levels/" + path_level + "/" + path_level  + ".resrc.xml";
+    path = "./res/levels/" + path_level + "/" + path_level  + ".resrc";
 
-    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path)); return false; }
-
-    path = "./res/levels/" + path_level + "/" + path_level  + ".text.xml";
-
-    if (!QFile::exists(path)) { logDebug(QString("File %1 not found").arg(path));}
+    if (!QFile::exists(path + ".xml") && !QFile::exists(path + ".bin"))
+    {
+        logDebug(QString("File %1 not found").arg(path)); return false;
+    }
 
     return true;
 }
@@ -138,17 +143,17 @@ bool OGWorld::Load()
     {
         QString path;
 
-        path = "./res/levels/" + levelName_ + "/" + levelName_ + ".level.xml";
+        path = "./res/levels/" + levelName_ + "/" + levelName_ + ".level";
+
         if (!_LoadLevel(path)) { return false; }
 
-        path = "./res/levels/" + levelName_ + "/" + levelName_  + ".scene.xml";
+        path = "./res/levels/" + levelName_ + "/" + levelName_  + ".scene";
+
         if (!_LoadScene(path)) { return false; }
 
-        path = "./res/levels/" + levelName_ + "/" + levelName_  + ".resrc.xml";
-        if (!_LoadResources(path, false)) { return false; }
+        path = "./res/levels/" + levelName_ + "/" + levelName_  + ".resrc";
 
-        path = "./res/levels/" + levelName_ + "/" + levelName_  + ".text.xml";
-        _LoadText(path, false);
+        if (!_LoadResources(path, false)) { return false; }
     }
     else
     {
@@ -647,6 +652,7 @@ WOGBall* OGWorld::GetBallConfiguration(const QString &type)
     if (!configuration)
     {
         QString path = "./res/balls/" + type + "/balls.xml";
+
         configuration = LoadConf<WOGBall*, OGBallConfig> (path);
 
         if (configuration) { ballConfigurations_.insert(type, configuration); }
@@ -731,15 +737,14 @@ void OGWorld::_ClearScene()
 
     if (!buttons_.isEmpty())
     {
-        logDebug("Clear buttons");
+        logInfo("Clear buttons");
 
         while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
-
     }
 
     if (pCamera_)
     {
-        logDebug("Clear camera");
+        logInfo("Clear camera");
 
         delete pCamera_;
         pCamera_ = 0;
@@ -747,7 +752,7 @@ void OGWorld::_ClearScene()
 
     if (pPipe_)
     {
-        logDebug("Clear pipe");
+        logInfo("Clear pipe");
 
         delete pPipe_;
         pPipe_ = 0;

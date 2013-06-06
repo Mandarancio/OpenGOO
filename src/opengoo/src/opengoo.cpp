@@ -273,8 +273,28 @@ void OpenGOO::_MouseButtonDown(QMouseEvent* ev)
             else if (button->onclick() == "credits") { }
             else if (button->onclick() == "showselectprofile") { }
             else if (button->onclick() == "island1")
-            {                
+            {
                 _SetIsland("island1"); // Saves the name of island
+                LoadIsland(_GetIsland());
+            }
+            else if (button->onclick() == "island2")
+            {
+                _SetIsland("island2"); // Saves the name of island
+                LoadIsland(_GetIsland());
+            }
+            else if (button->onclick() == "island3")
+            {
+                _SetIsland("island3"); // Saves the name of island
+                LoadIsland(_GetIsland());
+            }
+            else if (button->onclick() == "island4")
+            {
+                _SetIsland("island4"); // Saves the name of island
+                LoadIsland(_GetIsland());
+            }
+            else if (button->onclick() == "island5")
+            {
+                _SetIsland("island5"); // Saves the name of island
                 LoadIsland(_GetIsland());
             }
             else if (!button->onclick().isEmpty())

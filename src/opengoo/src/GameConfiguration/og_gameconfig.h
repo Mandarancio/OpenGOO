@@ -17,7 +17,7 @@ class OGGameConfig : public OGXmlConfig
 public:
     OGGameConfig(const QString & filename);
     OGConfig Parser();
-    void Create(OGConfig & config); // Create new game configuration file
+    void Create(OGConfig &config); // Create new game configuration file
 };
 
 #endif // OG_GAMECONFIG_H

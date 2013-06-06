@@ -31,11 +31,11 @@ protected:
     QDomElement rootElement;
 
 private:
-    bool isOpen_;
+    bool isOpen_;    
     QString fileName_;
     QFile file_;
     QDomDocument domDoc_;
-    QString rootTag_;
+    QString rootTag_;   
 };
 
 #endif // OG_XMLCONFIG_H

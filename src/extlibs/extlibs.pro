@@ -7,3 +7,4 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS = box2d
+SUBDIRS = AES

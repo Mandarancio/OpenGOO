@@ -70,8 +70,6 @@ OGConfig ogUtils::ogReadConfig(const QString & filename)
 {
     // Read game configuration
 
-    QFile::exists(filename);
-
     OGGameConfig gameConfig(filename);
 
     OGConfig config;
@@ -84,9 +82,11 @@ OGConfig ogUtils::ogReadConfig(const QString & filename)
     else
     {
         logWarn("File " + filename + " not found");
+        config.fullscreen = false;
+        config.screen_width = 800;
+        config.screen_width = 600;
         gameConfig.Create(config);
     }
-
     return config;
 }
 

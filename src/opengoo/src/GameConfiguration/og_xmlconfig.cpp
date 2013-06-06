@@ -1,4 +1,6 @@
 #include "og_xmlconfig.h"
+#include "decrypter.h"
+#include <QFileInfo>
 
 OGXmlConfig::OGXmlConfig(const QString & filename)
 {
@@ -14,6 +16,10 @@ OGXmlConfig::~OGXmlConfig()
 bool OGXmlConfig::Open()
 {
     if (isOpen_) { return false; }
+
+    if (QFile::exists(fileName_ + ".xml")) fileName_ += ".xml";
+    else if (QFile::exists(fileName_ + ".bin")) fileName_ += ".bin";
+    else return false;
 
     file_.setFileName(fileName_);
 
@@ -36,7 +42,22 @@ void OGXmlConfig::Close()
 
 bool OGXmlConfig::Read()
 {
-    if (domDoc_.setContent(&file_))
+    QFileInfo fi(file_.fileName());
+    bool status = false;
+
+    if (fi.suffix() == "bin")
+    {
+        QByteArray cryptedData = file_.readAll();
+        auto xml_data = Decrypter().decrypt(cryptedData);
+        QString str(xml_data.data());
+        status = domDoc_.setContent(str);
+    }
+    else
+    {
+        status = domDoc_.setContent(&file_);
+    }
+
+    if (status)
     {
         rootElement = domDoc_.documentElement();
 
