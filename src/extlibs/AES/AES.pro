@@ -3,7 +3,7 @@ QT       -= core gui
 TEMPLATE = lib
 DESTDIR = ../libs
 
-CONFIG += static
+CONFIG += static warn_off
 
 HEADERS += \
     src/AES.h

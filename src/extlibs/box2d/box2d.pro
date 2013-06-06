@@ -5,7 +5,7 @@ QT       -= core gui
 TEMPLATE = lib
 DESTDIR = ../libs
 
-CONFIG += static
+CONFIG += static warn_off
 
 CONFIG(debug, debug|release) {
 TARGET      = Box2Dd

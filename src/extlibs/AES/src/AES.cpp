@@ -37,6 +37,10 @@
 #include <fstream>
 #include <iostream>
 
+#ifdef __GNUC__
+#include <cstring>
+#endif
+
 // todo - make faster 128 blocksize version with 128 blocksize hardcoded as necessary
 
 // internally data is stored in the state in order
