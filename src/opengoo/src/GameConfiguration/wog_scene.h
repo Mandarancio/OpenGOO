@@ -96,6 +96,16 @@ struct WOGRectangle : public WOGPObject
     float rotation;
 };
 
+struct WOGCompositeGeom : public WOGPObject
+{
+    QPointF position;
+    float rotation;
+    QList<WOGCircle*> circle;
+    QList<WOGRectangle*> rectangle;
+
+    ~WOGCompositeGeom();
+};
+
 struct WOGScene
 {
     float minx;
@@ -113,6 +123,7 @@ struct WOGScene
     QList<WOGLinearForceField*> linearforcefield;
     QList<WOGRadialForceField*> radialforcefield;
     QList<WOGParticle*> particle;
+    QList<WOGCompositeGeom*> compositegeom;
 
     ~WOGScene();
 

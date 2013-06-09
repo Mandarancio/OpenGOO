@@ -5,6 +5,12 @@ WOGButtonGroup::~WOGButtonGroup()
     while (!button.isEmpty()) { delete button.takeFirst(); }
 }
 
+WOGCompositeGeom::~WOGCompositeGeom()
+{
+    while (!circle.isEmpty()) { delete circle.takeFirst(); }
+    while (!rectangle.isEmpty()) { delete rectangle.takeFirst(); }
+}
+
 WOGScene::~WOGScene()
 {
     while (!button.isEmpty()) { delete button.takeFirst(); }
@@ -32,6 +38,8 @@ WOGScene::~WOGScene()
     }
 
     while (!particle.isEmpty()) { delete particle.takeFirst(); }
+
+    while (!compositegeom.isEmpty()) { delete compositegeom.takeFirst(); }
 }
 
 WOGButtonGroup* WOGScene::GetButtonGroup(const QString& id)

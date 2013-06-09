@@ -66,6 +66,10 @@ WOGScene* OGSceneConfig::Parser()
         {
             scene->rectangle << CreateRectanle(domElement);
         }
+        else if (domElement.tagName() == "compositegeom")
+        {
+            scene->compositegeom << CreateCompositeGeom(domElement);
+        }
 
         node = node.nextSibling();
     }
@@ -251,4 +255,29 @@ void OGSceneConfig::CreatePObject(WOGPObject* pobject
 
     pobject->tag = element.attribute("tag", "walkable");
     pobject->material = element.attribute("material");
+}
+
+WOGCompositeGeom* OGSceneConfig::CreateCompositeGeom(const QDomElement &el)
+{
+    WOGCompositeGeom* obj = new WOGCompositeGeom;
+    obj->position = StringToPoint(el.attribute("x"), el.attribute("y"));
+    obj->rotation = el.attribute("rotation").toFloat();
+    CreatePObject(obj, el);
+    QDomElement de;
+
+    for (QDomNode n = el.firstChild(); !n.isNull(); n = n.nextSibling())
+    {
+        de = n.toElement();
+
+        if (de.tagName() == "circle")
+        {
+            obj->circle << CreateCircle(de);
+        }
+        else if (de.tagName() == "rectangle")
+        {
+            obj->rectangle << CreateRectanle(de);
+        }
+    }
+
+    return obj;
 }

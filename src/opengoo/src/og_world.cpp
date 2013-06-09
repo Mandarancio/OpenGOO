@@ -425,6 +425,11 @@ void OGWorld::CreatePhysicsScene()
         }
     }
 
+    Q_FOREACH(WOGCompositeGeom *cg, scenedata()->compositegeom)
+    {
+        _CreateCompositeGeom(cg);
+    }
+
     Q_FOREACH(WOGBallInstance * ball, leveldata()->ball)
     {
         balls_ << _CreateBall(ball);
@@ -908,4 +913,35 @@ ptr_RForceField OGWorld::_CreateRadialForcefield(WOGRadialForceField* ff)
     rf->setForceatEdge(ff->forceatedge);
 
     return rf;
+}
+
+void OGWorld::_CreateCompositeGeom(WOGCompositeGeom* cg)
+{
+    bool dynamic = cg->dynamic;
+
+    Q_FOREACH(WOGCircle* circle, cg->circle)
+    {
+        circle->material = cg->material;
+        circle->tag = cg->tag;
+        circle->position += cg->position;
+
+        if (!dynamic)
+        {
+            circle->dynamic = false;
+            staticBodies_ << _CreateBody<OGCircle, WOGCircle>(circle);
+        }
+    }
+
+    Q_FOREACH(WOGRectangle* rect, cg->rectangle)
+    {
+        rect->material = cg->material;
+        rect->tag = cg->tag;
+        rect->position += cg->position;
+
+        if (!dynamic)
+        {
+            rect->dynamic =  false;
+            staticBodies_ << _CreateBody<OGRectangle, WOGRectangle>(rect);
+        }
+    }
 }

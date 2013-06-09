@@ -104,6 +104,8 @@ class OGWorld : public QObject
         void _CreateButton(const WOGButton &button, QList<OGSprite*>* sprites
                            , QList<OGButton*>* buttons);
 
+        void _CreateCompositeGeom(WOGCompositeGeom* cg);
+
         // Pipe
         OGIPipe* pPipe_;
         WOGPipe* _GetPipeData();

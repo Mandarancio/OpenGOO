@@ -18,6 +18,7 @@ private:
     WOGCircle* CreateCircle(const QDomElement & element);
     WOGLine* CreateLine(const QDomElement & element);
     WOGRectangle* CreateRectanle(const QDomElement & element);
+    WOGCompositeGeom* CreateCompositeGeom(const QDomElement &el);
 
     WOGLinearForceField* CreateLinearForceField(const QDomElement & element);
     WOGParticle* CreateParticle(const QDomElement & element);
