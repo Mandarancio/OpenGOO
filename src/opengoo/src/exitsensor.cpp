@@ -5,9 +5,9 @@
 
 using namespace og;
 
-ExitSensor::ExitSensor(const QString &id, const Circle &circle
+ExitSensor::ExitSensor(const Circle &circle
                        , const OGSensorFilter &filter)
-    : OGCircleSensor(id, circle)
+    : OGCircleSensor(circle)
     , balls_(0)
     , isClosed_(true)
 {

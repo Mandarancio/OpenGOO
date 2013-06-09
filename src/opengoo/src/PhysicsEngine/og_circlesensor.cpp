@@ -8,11 +8,10 @@
 
 using namespace og;
 
-OGCircleSensor::OGCircleSensor(const QString &id, const Circle &circle)
-    : OGSensor(id)
+OGCircleSensor::OGCircleSensor(const Circle &circle)
 {
     pBody_ = PEngine::GetInstance()->CreateCircle(circle);
-    pBody_->fixture->SetSensor(true);
+    pBody_->fixture->SetSensor(true);    
 }
 
 OGCircleSensor::~OGCircleSensor()

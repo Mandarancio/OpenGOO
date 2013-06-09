@@ -11,14 +11,15 @@ namespace og
 class OGCircleSensor : public og::OGSensor
 {
     public:
-        OGCircleSensor(const QString &id, const Circle &circle);
+        OGCircleSensor(const Circle &circle);
         ~OGCircleSensor();
         void SetCategory();
         void SetMask();
 
-    private:
+    protected:
         OGPCircle* pBody_;
 
+    private:
         Fixture* _GetFixture() const;
         QVector2D _GetPosition() const;
 

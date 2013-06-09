@@ -4,11 +4,18 @@
 #include "wog_scene.h"
 #include "wog_ball.h"
 #include <OGPhysicsEngine>
+#include "og_forcefield.h"
 
 #include <QCache>
 #include <QHash>
 #include <QList>
 #include <QPainter>
+
+#include <memory>
+
+typedef std::unique_ptr<physics::OGForceField> ptr_ForceField;
+typedef std::unique_ptr<physics::OGRadialForceField> ptr_RForceField;
+typedef std::unique_ptr<physics::OGLinearForceField> ptr_LForceField;
 
 struct WOGLevel;
 struct WOGText;
@@ -68,6 +75,7 @@ class OGWorld : public QObject
         QList<OGBall*> balls_;
         QHash<int, OGStrand*> strands_;
         QList<OGIBody*> staticBodies_;
+        std::vector<ptr_ForceField> _forceFilds;
 
         int strandId_;
         int ballId_;
@@ -87,7 +95,7 @@ class OGWorld : public QObject
         void _CreateStrand(WOGStrand* strand);
 
         // scene
-        void _CreateRadialForcefield();
+        ptr_RForceField _CreateRadialForcefield(WOGRadialForceField* ff);
         void _CreateParticle();
         void _CreateSceneLayer(const WOGSceneLayer &scenelayer
                                , QList<OGSprite*>* sprites);
@@ -145,6 +153,7 @@ class OGWorld : public QObject
         WOGResources* resrcdata() const { return pResourcesData_[0]; }
         OGIPipe* pipe() const { return pPipe_; }
         Exit* exit() const { return pExit_; }
+        const std::vector<ptr_ForceField> &forcefilds() const { return _forceFilds; }
 
         bool isLevelLoaded() const { return isLevelLoaded_; }
 

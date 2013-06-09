@@ -119,7 +119,7 @@ HEADERS += \
     src/level.h \
     src/uidata.h \
     src/continuebutton.h \
-    src/GameConfiguration/decrypter.h
+    src/og_forcefield.h
 
 SOURCES += \
     src/main.cpp \
@@ -155,7 +155,8 @@ SOURCES += \
     src/gamemenu.cpp \
     src/level.cpp \
     src/continuebutton.cpp \
-    src/GameConfiguration/decrypter.cpp
+    src/og_forcefield.cpp \
+    src/og_radialforcefield.cpp
 
 
 # Game engine
@@ -181,7 +182,6 @@ SOURCES += \
     src/PhysicsEngine/og_physicsshape.cpp \
     src/PhysicsEngine/og_physicsengine.cpp \
     src/PhysicsEngine/og_physicsbody.cpp \
-    src/PhysicsEngine/og_pcircle.cpp \
     src/PhysicsEngine/og_circlesensor.cpp \
     src/PhysicsEngine/og_contactlistener.cpp
 
@@ -241,7 +241,8 @@ SOURCES += \
     src/GameConfiguration/wog_resources.cpp \
     src/GameConfiguration/wog_material.cpp \
     src/GameConfiguration/wog_text.cpp \
-    src/GameConfiguration/wog_pipe.cpp
+    src/GameConfiguration/wog_pipe.cpp \
+    src/GameConfiguration/decrypter.cpp
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
@@ -266,7 +267,8 @@ HEADERS += \
     src/GameConfiguration/wog_island.h \
     src/GameConfiguration/wog_pipe.h \
     src/GameConfiguration/wog_exit.h \
-    src/GameConfiguration/wog_circle.h
+    src/GameConfiguration/wog_circle.h \
+    src/GameConfiguration/decrypter.h
 
 
 !win32{

@@ -40,7 +40,7 @@ class OGPhysicsEngine
         OGContactListener* GetContactListener();
 
         void AddSensor(OGSensor* sensor);
-        void RemoveSensor(const QString &id);
+        void RemoveSensor(OGSensor* sensor);
 
     private:
         static OGPhysicsEngine* pInstance_;

@@ -29,6 +29,7 @@
 #include "exit.h"
 #include "continuebutton.h"
 #include "og_fpscounter.h"
+#include "og_forcefield.h"
 
 #include <QMouseEvent>
 #include <QTime>
@@ -200,7 +201,15 @@ void OpenGOO::_Cycle()
     {
         int n = (lastTime_ * timeStep_) + 0.5f; // round
 
-        for (int i = 0; i < n; i++) { pWorld_->Update(); }
+        for (int i = 0; i < n; i++)
+        {
+            for (unsigned int j=0; j < pWorld_->forcefilds().size(); j++)
+            {
+                pWorld_->forcefilds()[j]->update();
+            }
+
+            pWorld_->Update();
+        }
     }
 
     if (isLevelExit_)

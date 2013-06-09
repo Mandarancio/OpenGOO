@@ -8,7 +8,7 @@ class OGBall;
 class ExitSensor : public og::OGCircleSensor
 {
     public:
-        ExitSensor(const QString &id, const Circle &circle
+        ExitSensor(const Circle &circle
                    , const og::OGSensorFilter &filter);
         ~ExitSensor() {}
 

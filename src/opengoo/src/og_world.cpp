@@ -435,6 +435,11 @@ void OGWorld::CreatePhysicsScene()
         _CreateStrand(strand);
     }
 
+    Q_FOREACH(WOGRadialForceField* ff, scenedata()->radialforcefield)
+    {
+        _forceFilds.push_back(std::move(_CreateRadialForcefield(ff)));
+    }
+
     _SetGravity();
 
     pPhysicsEngine_->SetSimulation(6, 2, 60);
@@ -684,6 +689,12 @@ void OGWorld::_ClearPhysics()
 {
     pPhysicsEngine_ = 0;
 
+    if (_forceFilds.size())
+    {
+        logInfo("Clear force fields");
+        _forceFilds.clear();
+    }
+
     logInfo("Clear strands");
 
     QHashIterator<int, OGStrand*> i(strands_);
@@ -884,4 +895,17 @@ inline WOGPipe* OGWorld::_GetPipeData() { return pLevelData_->pipe; }
 inline OpenGOO* OGWorld::_GetGame()
 {
     return OpenGOO::instance();
+}
+
+ptr_RForceField OGWorld::_CreateRadialForcefield(WOGRadialForceField* ff)
+{
+    float x = ff->center.x() / 10;
+    float y = ff->center.y() / 10;
+    float r = ff->radius / 10;
+    Circle c(QVector2D(x, y), r);
+    ptr_RForceField rf(new physics::OGRadialForceField(Circle(c)));
+    rf->setForceatCenter(ff->forceatcenter);
+    rf->setForceatEdge(ff->forceatedge);
+
+    return rf;
 }

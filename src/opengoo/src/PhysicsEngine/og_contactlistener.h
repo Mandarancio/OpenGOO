@@ -3,7 +3,9 @@
 
 #include <Box2D/Box2D.h>
 
-class QString;
+#include "og_sensor.h"
+
+#include <QList>
 
 namespace og
 {
@@ -12,16 +14,21 @@ class OGSensor;
 class OGContactListener : public b2ContactListener
 {
     public:
-        OGContactListener();
-        ~OGContactListener();
         void BeginContact(b2Contact* contact);
         void EndContact(b2Contact* contact);
-        void AddSensor(OGSensor* sensor);
-        void RemoveSensor(const QString &id);
+        void AddSensor(OGSensor* sensor) { _sensors << sensor; }
+        void RemoveSensor(OGSensor* sensor);
 
-    private:
-        struct OGContactListenerImpl* pImpl_;
+    private:                        
+        QList<OGSensor*> _sensors;
 };
+
+inline void OGContactListener::RemoveSensor(OGSensor* sensor)
+{
+    int i = _sensors.indexOf(sensor);
+    if (i != -1) _sensors.removeAt(i);
+}
+
 } // namespace og
 
 #endif // OG_CONTACTLISTENER_H

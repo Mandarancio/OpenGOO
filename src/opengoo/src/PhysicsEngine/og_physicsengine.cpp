@@ -109,9 +109,9 @@ void OGPhysicsEngine::AddSensor(OGSensor* sensor)
     pContactListener_->AddSensor(sensor);
 }
 
-void OGPhysicsEngine::RemoveSensor(const QString &id)
+void OGPhysicsEngine::RemoveSensor(OGSensor* sensor)
 {
-    pContactListener_->RemoveSensor(id);
+    pContactListener_->RemoveSensor(sensor);
 }
 
 void OGPhysicsEngine::_Init()

@@ -24,7 +24,7 @@ Exit::Exit(WOGLevelExit* exit) : _pImpl(new Impl)
     // [1] Create sensor
     Circle c = Circle(exit->pos, exit->radius) / 10.0f;
     OGSensorFilter f = {physics::EXIT, physics::BALL};
-    _pImpl->pSensor = new ExitSensor("levelExit", c, f);
+    _pImpl->pSensor = new ExitSensor(c, f);
 
     // [2] Add sensor
     PEngine::GetInstance()->AddSensor(_pImpl->pSensor);
@@ -36,7 +36,7 @@ Exit::Exit(WOGLevelExit* exit) : _pImpl(new Impl)
 
 Exit::~Exit()
 {
-    PEngine::GetInstance()->RemoveSensor(_pImpl->pSensor->id());
+    PEngine::GetInstance()->RemoveSensor(_pImpl->pSensor);
 
     delete _pImpl->pSensor;
 }
@@ -93,7 +93,7 @@ int Exit::Balls() const { return _pImpl->balls; }
 void Exit::Close()
 {
     _pImpl->isClosed = true;
-    PEngine::GetInstance()->RemoveSensor(_pImpl->pSensor->id());
+    PEngine::GetInstance()->RemoveSensor(_pImpl->pSensor);
     OpenGOO* game = OpenGOO::instance();
     QList<OGBall*> balls = game->GetWorld()->balls();
 

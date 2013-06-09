@@ -3,7 +3,6 @@
 
 #include "og_types.h"
 
-#include <QString>
 #include <QVector2D>
 
 namespace og
@@ -16,11 +15,8 @@ struct OGSensorFilter
 
 class OGSensor
 {
-    public:
-        OGSensor(const QString &id = QString()) : id_(id) {}
+    public:        
         virtual ~OGSensor() {}
-
-        const QString &id() const { return id_; }
 
         Fixture* GetFixture() const { return _GetFixture(); }
         QVector2D GetPosition() const { return _GetPosition(); }
@@ -33,8 +29,6 @@ class OGSensor
         void EndContact(Fixture* fixture) { _EndContact(fixture); }
 
     private:
-        QString id_;
-
         virtual Fixture* _GetFixture() const = 0;
         virtual QVector2D _GetPosition() const = 0;
 

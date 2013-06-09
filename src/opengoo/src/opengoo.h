@@ -17,11 +17,10 @@
 #include <QPoint>
 #include <QString>
 
-
-
 class OGWindowCamera;
 class OGBall;
-class OGWorld;
+//class OGWorld;
+#include "og_world.h"
 
 class QTime;
 

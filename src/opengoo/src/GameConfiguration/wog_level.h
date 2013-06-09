@@ -66,7 +66,7 @@ struct WOGLevel
     QList<WOGStrand*> strand;
     WOGPipe* pipe;
 
-    WOGLevel() : levelexit(0), pipe(0) { }
+    WOGLevel() : levelexit(nullptr), pipe(nullptr) { }
     ~WOGLevel();
 
     WOGCamera* GetCameraByAspect(const QString& aspect) const;
