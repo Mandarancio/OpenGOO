@@ -101,10 +101,20 @@ bool tablesInitialized = false;
 // get byte 0 to 3 from word a
 #define GetByte(a,n) ((unsigned char)((a) >> (n<<3)))
 
-//	bytes (a,b,c,d) -> (b,c,d,a) so low becomes high
-#define RotByte(a) _rotr(a,8)
 
-#define RotByteL(a) _rotl(a,8)
+inline unsigned int rotl(unsigned int x, int c)
+{
+    return (x << c) | (x >> (32 - c));
+}
+
+inline unsigned int rotr(unsigned int x, int c)
+{
+    return (x >> c) | (x << (32 - c));
+}
+//	bytes (a,b,c,d) -> (b,c,d,a) so low becomes high
+#define RotByte(a) rotr(a,8)
+
+#define RotByteL(a) rotl(a,8)
 
 // mult 2 elements using gf2_8_poly as a reduction
 inline unsigned char GF2_8_mult(unsigned char a, unsigned char b)
