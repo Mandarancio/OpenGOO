@@ -6,5 +6,5 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 
-SUBDIRS = box2d
-SUBDIRS = AES
+SUBDIRS = box2d \
+          AES
