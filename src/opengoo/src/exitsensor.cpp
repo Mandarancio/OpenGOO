@@ -29,10 +29,10 @@ void ExitSensor::_BeginContact(Fixture* fixture)
         {
             OGBall* ball = static_cast<OGBall*>(data->data);
 
-            if (ball->IsAttached())
+            if (ball->IsAttached() && !data->isAttachedOnEnter)
             {
                 balls_++;
-
+                data->isAttachedOnEnter=true;
                 if (balls_ == 1) _OpenPipe();
 
                 data->isTouching = true;
@@ -61,16 +61,17 @@ void ExitSensor::_EndContact(Fixture* fixture)
         {
             OGBall* ball = static_cast<OGBall*>(data->data);
 
-            if (ball->IsAttached())
+            if (data->isAttachedOnEnter)
             {
                 balls_--;
-
+                data->isAttachedOnEnter=false;
                 if (balls_ == 0) _ClosePipe();
 
                 data->isTouching = false;
             }
             else if (ball->IsSuckable())
             {
+                data->isTouching = false;
                 ball->SetSuction(false);
             }
         }

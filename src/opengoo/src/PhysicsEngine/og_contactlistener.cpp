@@ -37,12 +37,12 @@ void OGContactListener::EndContact(b2Contact* contact)
 
         if (fixtureA == fixture)
         {
-            sensor->BeginContact(fixtureB);
+            sensor->EndContact(fixtureB);
             break;
         }
         else if (fixtureB == fixture)
         {
-            sensor->BeginContact(fixtureA);
+            sensor->EndContact(fixtureA);
             break;
         }
     }

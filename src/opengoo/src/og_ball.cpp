@@ -127,6 +127,7 @@ OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
     OGUserData* data = new OGUserData;
     data->type = OGUserData::BALL;
     data->isTouching = false;
+    data->isAttachedOnEnter = false;
     data->data = this;
 
     return createCircle(x, y, radius, angle, &material_, true, mass, data);

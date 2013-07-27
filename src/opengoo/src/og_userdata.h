@@ -10,6 +10,7 @@ struct OGUserData
     void* data;
     int id;
     bool  isTouching;
+    bool  isAttachedOnEnter;
 
     static OGUserData* GetUserData(void* userdata)
     {
