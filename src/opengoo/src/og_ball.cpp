@@ -259,7 +259,7 @@ inline void OGBall::Move()
             Algorithm2();
         }
 
-        if (pTargetBall_->IsAttached())
+        if (pTargetBall_ && pTargetBall_->IsAttached())
         {
             SetClimbTarget(GetTarget());
             PerformClimb();
@@ -269,8 +269,11 @@ inline void OGBall::Move()
     else if (isWalking_)
     {
         FindTarget();
-        SetWalkTarget(GetTarget());
-        PerformWalk();
+        if (pTargetBall_)
+        {
+            SetWalkTarget(GetTarget());
+            PerformWalk();
+        } //What should they do when no target found?
     }
 }
 
@@ -278,7 +281,7 @@ inline bool OGBall::IsCanClimb()
 {
     b2Vec2 pos(GetTarget()->x(), GetTarget()->y());
 
-    if (fixture->TestPoint(pos) && pTargetBall_->IsAttached())
+    if (fixture->TestPoint(pos) && pTargetBall_ && pTargetBall_->IsAttached())
     {
         return true;
     }
