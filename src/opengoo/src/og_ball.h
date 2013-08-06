@@ -119,6 +119,8 @@ class OGBall : public og::OGPhysicsBody
         void SetId(int id) { id_ = id; }
         void SetTarget(OGBall* target);
         void SetTarget(float x, float y);
+        void SetOrigin(OGBall* target);
+        void SetOrigin(float x, float y);
         void SetExit(bool exit);
         void SetSuction(bool suction);
 
@@ -152,7 +154,9 @@ class OGBall : public og::OGPhysicsBody
         BallType type_;
         int id_;
         QPointF target_;
+        QPointF origin_;
         OGBall* pTargetBall_;
+        OGBall* pOriginBall_;
         QPointF curPos_;
         float towerMass_;
         QList<OGBall*> jointBalls_;
@@ -176,6 +180,7 @@ class OGBall : public og::OGPhysicsBody
         bool isExit_;
 
         QPointF* GetTarget() { return &target_; }
+        QPointF* GetOrigin() { return &origin_; }
         float GetAngle() const;
         QString GetType() const;
         float GetTowerMass() const { return towerMass_; }
@@ -225,6 +230,7 @@ class OGBall : public og::OGPhysicsBody
 
         void SetWalkTarget(QPointF* pos);
         void SetClimbTarget(QPointF* pos);
+        void SetClimbOrigin(QPointF* pos);
         void SetFlyTarget(QPointF* pos);
 
         void SetWalkSpeed(float speed);

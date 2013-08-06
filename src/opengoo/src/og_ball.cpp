@@ -57,6 +57,7 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     id_ = -1;
     isInit_ = false;
     pTargetBall_ = 0;
+    pOriginBall_ = 0;
     isSuction_ = false;
     isExit_ = false;
 
@@ -254,14 +255,17 @@ void OGBall::Update()
 inline void OGBall::Move()
 {
     if (isClimbing_)
-    {      
+    {
         if (IsCanClimb() && !isSuction_)
         {
             Algorithm2();
         }
 
-        if (pTargetBall_ && pTargetBall_->IsAttached())
+        if (pTargetBall_ && pTargetBall_->IsAttached() && pOriginBall_ && pOriginBall_->IsAttached())
         {
+            SetTarget(pTargetBall_);
+            SetOrigin(pOriginBall_);
+            SetClimbOrigin(GetOrigin());
             SetClimbTarget(GetTarget());
             PerformClimb();
         }
@@ -414,6 +418,18 @@ inline void OGBall::SetTarget(OGBall* target)
 {
     SetTarget(target->GetX(), target->GetY());
 }
+
+inline void OGBall::SetOrigin(float x, float y)
+{
+    origin_.setX(x);
+    origin_.setY(y);
+}
+
+inline void OGBall::SetOrigin(OGBall* target)
+{
+    SetOrigin(target->GetX(), target->GetY());
+}
+
 
 void OGBall::AddStrand()
 {
@@ -600,6 +616,9 @@ void OGBall::Algorithm2()
     {
         data = static_cast<OGUserData*>(b1->GetUserData());
         ball = static_cast<OGBall*>(data->data);
+        pClimbBehavior_->initNewTarget();
+        SetOrigin(pTargetBall_);
+        pOriginBall_=pTargetBall_;
         SetTarget(ball);
         pTargetBall_ = ball;
     }
@@ -666,6 +685,12 @@ inline void OGBall::SetClimbTarget(QPointF* pos)
 {
     pClimbBehavior_->SetTarget(*pos);
 }
+
+inline void OGBall::SetClimbOrigin(QPointF* pos)
+{
+    pClimbBehavior_->SetOrigin(*pos);
+}
+
 
 inline void OGBall::SetFlyTarget(QPointF* pos)
 {
