@@ -13,19 +13,26 @@ class OGBehavior
         void SetTarget(const QPointF &pos);
         void SetTarget(const QVector2D &pos);
         void SetSpeed(float s);
-
+        virtual void initNewTarget(){}
     protected:
         QVector2D position;
         float speed;
+    private:
+        virtual void onTargetChanged() {}
 };
 
 class OGIClimbBehavior : public OGBehavior
 {
     public:
         virtual ~OGIClimbBehavior() {}
-        void Climb() { _Climb(); }
-
+    void SetOrigin(float posx, float posy);
+    void SetOrigin(const QPointF &pos);
+    void SetOrigin(const QVector2D &pos);
+    void Climb() { _Climb(); }
+    protected:
+        QVector2D origin;
     private:
+        virtual void onOriginChanged() {}
         virtual void _Climb() = 0;
 };
 
