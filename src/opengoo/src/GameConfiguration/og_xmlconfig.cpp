@@ -16,11 +16,12 @@ OGXmlConfig::~OGXmlConfig()
 bool OGXmlConfig::Open()
 {
     if (isOpen_) { return false; }
-
-    if (QFile::exists(fileName_ + ".xml")) fileName_ += ".xml";
-    else if (QFile::exists(fileName_ + ".bin")) fileName_ += ".bin";
-    else return false;
-
+    if (!QFile::exists(fileName_))
+    {
+        if (QFile::exists(fileName_ + ".xml")) fileName_ += ".xml";
+            else if (QFile::exists(fileName_ + ".bin")) fileName_ += ".bin";
+                else return false;
+    }
     file_.setFileName(fileName_);
 
     if (file_.open(QIODevice::ReadOnly))
