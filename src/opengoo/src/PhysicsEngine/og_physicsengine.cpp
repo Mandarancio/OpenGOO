@@ -82,8 +82,11 @@ void OGPhysicsEngine::CreateJoint(OGPhysicsJoint* joint)
 
 void OGPhysicsEngine::DestroyJoint(OGPhysicsJoint* joint)
 {
-    pWorld_->DestroyJoint(joint->joint);
-    delete joint;
+    if (joint)
+    {
+        pWorld_->DestroyJoint(joint->joint);
+        delete joint;
+    }
 }
 
 OGPCircle* OGPhysicsEngine::CreateCircle(const Circle &circle)
