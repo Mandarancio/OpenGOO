@@ -142,7 +142,7 @@ void OGWindowCamera::_SetTarget()
     if (time == 0) velocity_.SetZero();
     else velocity_ = (finalPosition_ - initialPosition_) / time;
 
-    zoom_ = (target_->zoom() - camera_->zoom()) / time;
+    zoom_ = (target_->zoom() - poiList_.front().zoom()) / time;
 }
 
 void OGWindowCamera::SetLastPosition()
