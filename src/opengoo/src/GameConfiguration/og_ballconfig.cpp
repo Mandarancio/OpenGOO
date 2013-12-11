@@ -24,7 +24,7 @@ WOGBall* OGBallConfig::Parser()
 
         if (element.tagName() == "strand")
         {
-            obj->stand = CreateStrand_(element);
+            obj->strand = CreateStrand_(element);
         }
         else if (element.tagName() == "detachstrand")
         {

@@ -146,13 +146,13 @@ struct WOGBallDetachstrand
 struct WOGBall
 {
     WOGBallAttributes attribute;
-    WOGBallStrand* stand;
+    WOGBallStrand* strand;
     WOGBallDetachstrand* detachstrand;
 
-    WOGBall() : stand(0), detachstrand(0)  {}
+    WOGBall() : strand(0), detachstrand(0)  {}
     ~WOGBall()
     {
-        if (stand) { delete stand; }
+        if (strand) { delete strand; }
 
         if (detachstrand) { delete detachstrand; }
     }

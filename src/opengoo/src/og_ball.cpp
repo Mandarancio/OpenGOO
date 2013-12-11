@@ -455,8 +455,8 @@ void OGBall::ReleaseStrand()
 inline void OGBall::FindJointBalls()
 {
     float dist;
-    float minlen = pConfig_->stand->minlen;
-    float maxlen1 = pConfig_->stand->maxlen1;
+    float minlen = pConfig_->strand->minlen;
+    float maxlen1 = pConfig_->strand->maxlen1;
 
     jointBalls_.clear();
 
@@ -711,8 +711,8 @@ inline WOGBallShape* OGBall::GetShape() const
 QString OGBall::GetStrandType() const
 {
     QString str;
-    if (!pConfig_->stand) return str;
-    else return pConfig_->stand->type;
+    if (!pConfig_->strand) return str;
+    else return pConfig_->strand->type;
 }
 
 inline bool OGBall::IsDetachable() const { return pConfig_->attribute.player.detachable; }
