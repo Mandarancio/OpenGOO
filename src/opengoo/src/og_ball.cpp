@@ -710,7 +710,9 @@ inline WOGBallShape* OGBall::GetShape() const
 
 QString OGBall::GetStrandType() const
 {
-    return pConfig_->stand->type;
+    QString str;
+    if (!pConfig_->stand) return str;
+    else return pConfig_->stand->type;
 }
 
 inline bool OGBall::IsDetachable() const { return pConfig_->attribute.player.detachable; }
