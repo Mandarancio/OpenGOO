@@ -726,6 +726,10 @@ void OGWorld::_ClearPhysics()
 
     while (!staticBodies_.isEmpty()) { delete staticBodies_.takeFirst(); }
 
+    // delete compositgeom
+    while (!_cg.rectangle.isEmpty()) delete _cg.rectangle.takeFirst();
+    while (!_cg.circle.isEmpty()) delete _cg.circle.takeFirst();
+
     logInfo("Remove exit");
 
     if (pExit_)
@@ -917,31 +921,36 @@ ptr_RForceField OGWorld::_CreateRadialForcefield(WOGRadialForceField* ff)
 
 void OGWorld::_CreateCompositeGeom(WOGCompositeGeom* cg)
 {
-    bool dynamic = cg->dynamic;
-
-    Q_FOREACH(WOGCircle* circle, cg->circle)
+    foreach(auto circle, cg->circle)
     {
-        circle->material = cg->material;
-        circle->tag = cg->tag;
-        circle->position += cg->position;
+        auto wc = new WOGCircle;
+        *wc = *circle;
+        wc->material = cg->material;
+        wc->tag = cg->tag;
+        wc->position += cg->position;
+        wc->dynamic = cg->dynamic;
+        _cg.circle << wc;
 
-        if (!dynamic)
+        if (!wc->dynamic)
         {
-            circle->dynamic = false;
-            staticBodies_ << _CreateBody<OGCircle, WOGCircle>(circle);
+            staticBodies_ << _CreateBody<OGCircle, WOGCircle>(wc);
         }
     }
 
-    Q_FOREACH(WOGRectangle* rect, cg->rectangle)
-    {
-        rect->material = cg->material;
-        rect->tag = cg->tag;
-        rect->position += cg->position;
 
-        if (!dynamic)
+    foreach(auto rect, cg->rectangle)
+    {
+        auto wr = new WOGRectangle;
+        *wr = *rect;
+        wr->material = cg->material;;
+        wr->tag = cg->tag;
+        wr->position += cg->position;
+        wr->dynamic = cg->dynamic;
+        _cg.rectangle << wr;
+
+        if (!wr->dynamic)
         {
-            rect->dynamic =  false;
-            staticBodies_ << _CreateBody<OGRectangle, WOGRectangle>(rect);
+            staticBodies_ << _CreateBody<OGRectangle, WOGRectangle>(wr);
         }
     }
 }

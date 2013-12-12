@@ -80,6 +80,8 @@ class OGWorld : public QObject
         int strandId_;
         int ballId_;
 
+        WOGCompositeGeom _cg; // compositgeom
+
         bool _LoadFX(const QString &path);
         bool _LoadLevel(const QString path);
         bool _LoadMaterials(const QString &path);
