@@ -39,7 +39,7 @@ ProgressWindow::ProgressWindow() : _pImpl(new Impl)
 
     auto label = &_pImpl->labelBalls;
     {
-        int w = 120;
+        int w = 220;
         int h = 80;
         int x = frame->x() + 50;
         int y = frame->y() + 50;
