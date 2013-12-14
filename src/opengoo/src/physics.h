@@ -24,6 +24,7 @@ const uint16 CIRCLE = 0x0004;
 const uint16 RECTANGLE = 0x0008;
 const uint16 BALL = 0x0010;
 const uint16 EXIT = 0x0020;
+const uint16 SENSOR = 0x0040;
 const uint16 STATIC = LINE | CIRCLE | RECTANGLE;
 
 WOGScene* GetScene();

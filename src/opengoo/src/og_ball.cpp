@@ -9,7 +9,7 @@
 #include "og_ibody.h"
 #include "og_world.h"
 #include "opengoo.h"
-
+#include "ballsensor.h"
 #include <QLineF>
 #include <QPen>
 #include <QPainter>
@@ -61,6 +61,8 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     isSuction_ = false;
     isExit_ = false;
 
+    _isTouching = false;
+
     WOGBallShape* ballShape = GetShape();
 
     // Get position, angle and mass of ball
@@ -99,7 +101,15 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     pFlyBehavior_ = GetFlyBehavior();
 
     SetWalkSpeed(pConfig_->attribute.movement.walkspeed);
-    SetClimbSpeed(pConfig_->attribute.movement.climbspeed);
+    SetClimbSpeed(pConfig_->attribute.movement.climbspeed);    
+
+    if (pData_->discovered) _isSleeping = false;
+    else
+    {
+        body->SetFixedRotation(true);
+        _sensor = getSensor();
+        _isSleeping = true;
+    }
 }
 
 OGBall::~OGBall()
@@ -196,6 +206,21 @@ void OGBall::SetExit(bool exit)
 
 void OGBall::Update()
 {   
+    if (_isSleeping)
+    {
+        if (_isTouching)
+        {
+            _sensor.reset();
+            body->SetFixedRotation(false);
+            _isSleeping = false;
+            _isTouching = false;
+        }
+        else
+        {
+            _sensor->update();
+            return;
+        }
+    }
 
     SetCurrentPosition(GetBodyPosition());
 
@@ -516,6 +541,8 @@ void OGBall::FindTarget()
 
 void OGBall::MouseDown(const QPoint &pos)
 {
+    if (_isSleeping) return;
+
     const float K = 0.1f;
 
     isDragging_ = true;
@@ -532,6 +559,8 @@ void OGBall::MouseDown(const QPoint &pos)
 void OGBall::MouseUp(const QPoint &pos)
 {
     Q_UNUSED(pos)
+
+    if (_isSleeping) return;
 
     if (!isAttached_)
     {
@@ -740,4 +769,9 @@ OGIFlyBehavior* OGBall::GetFlyBehavior()
     if (!pFlyBehavior_) pFlyBehavior_ = new OGFly(this);
 
     return pFlyBehavior_;
+}
+
+std::unique_ptr<BallSensor> OGBall::getSensor()
+{
+    return std::unique_ptr<BallSensor>(new BallSensor(this));
 }

@@ -6,7 +6,8 @@
 class Circle
 {
 public:
-    Circle() : center_(0.0f, 0.0f), radius_(0.0f) {}
+    Circle(float x, float y, float radius)
+        : center_(x, y), radius_(radius) {}
     Circle(const QVector2D &center, float radius)
         : center_(center), radius_(radius) {}
     Circle(const QPointF &center, float radius)

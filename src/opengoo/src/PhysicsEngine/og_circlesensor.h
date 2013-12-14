@@ -13,8 +13,6 @@ class OGCircleSensor : public og::OGSensor
     public:
         OGCircleSensor(const Circle &circle);
         ~OGCircleSensor();
-        void SetCategory();
-        void SetMask();
 
     protected:
         OGPCircle* pBody_;

@@ -120,7 +120,8 @@ HEADERS += \
     src/uidata.h \
     src/continuebutton.h \
     src/og_forcefield.h \
-    src/ogapplication.h
+    src/ogapplication.h \
+    src/ballsensor.h
 
 SOURCES += \
     src/main.cpp \
@@ -158,7 +159,8 @@ SOURCES += \
     src/continuebutton.cpp \
     src/og_forcefield.cpp \
     src/og_radialforcefield.cpp \
-    src/ogapplication.cpp
+    src/ogapplication.cpp \
+    src/ballsensor.cpp
 
 
 # Game engine

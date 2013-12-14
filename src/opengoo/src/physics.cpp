@@ -46,7 +46,7 @@ OGPhysicsBody* createCircle(float x, float y, float radius
                               , material->bounce);
 
         filter.categoryBits = BALL;
-        filter.maskBits = STATIC | EXIT;
+        filter.maskBits = STATIC | EXIT | SENSOR;
         circle->fixture->SetFilterData(filter);
         circle->body->SetUserData(data);
     }

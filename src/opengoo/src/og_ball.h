@@ -74,6 +74,8 @@ class OGWorld;
 
 class QPainter;
 
+class BallSensor;
+
 class OGBall : public og::OGPhysicsBody
 {
     public:
@@ -100,6 +102,7 @@ class OGBall : public og::OGPhysicsBody
 
         b2Vec2 GetBodyPosition() const { return body->GetPosition(); }
         QVector2D GetCenter() const;
+        float getRadius() const { return shape->GetRadius(); }
 
         QString GetId() const;
         b2JointEdge* GetJoints() { return body->GetJointList(); }
@@ -137,7 +140,9 @@ class OGBall : public og::OGPhysicsBody
 
         friend class  OGStrand;
 
-    protected:
+        void touching() { _isTouching = true; }
+
+protected:
         enum BallType {C_BALL, R_BALL}; // C_ - circle R_ - rectangle
 
         enum BallEvent
@@ -237,9 +242,14 @@ class OGBall : public og::OGPhysicsBody
         void SetClimbSpeed(float speed);
 
     private:
+        bool _isSleeping;
+        bool _isTouching;
         OGWorld* _GetWorld();
         void _RemoveStrand(OGStrand* strand);
         void _CreateStrand(OGBall* b1, OGBall* b2);
+
+        std::unique_ptr<BallSensor> _sensor;
+        std::unique_ptr<BallSensor> getSensor();
 };
 
 #endif // OG_BALL_H
