@@ -137,6 +137,8 @@ void OpenGOO::_Start()
 void OpenGOO::_End()
 {
     _pFPS.reset();
+    pContinueBtn_.reset();
+    pProgressWnd_.reset();
 
     _RemoveLevel();
     _RemoveIsland();
