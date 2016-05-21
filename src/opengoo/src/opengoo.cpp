@@ -233,8 +233,6 @@ void OpenGOO::_Paint(QPainter* painter)
 
     if (pWorld_->isLevelLoaded())
     {
-        _SetBackgroundColor(pWorld_->scenedata()->backgroundcolor);
-
         painter->setWindow(pCamera_->rect());
 
         painter->setRenderHint(QPainter::HighQualityAntialiasing);
@@ -422,11 +420,9 @@ void OpenGOO::_SetDebug(bool debug)
     }
 }
 
-#include <qopengl.h>
-inline void OpenGOO::_SetBackgroundColor(const QColor &color)
+void OpenGOO::_SetBackgroundColor(const QColor &color)
 {
-    glClearColor(color.redF(), color.greenF(), color.blueF(), 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    OGGameEngine::getEngine()->getWindow()->setBackgroundColor(color, true);
 }
 
 void OpenGOO::_CreateContinueButton()
@@ -453,6 +449,8 @@ void OpenGOO::_LoadLevel(const QString &levelname)
 {
     if (!pWorld_->LoadLevel(levelname)) return;
     if (pWorld_->leveldata()->visualdebug) _SetDebug(true);
+
+    _SetBackgroundColor(pWorld_->scenedata()->backgroundcolor);
 
     pCamera_ = OGWindowCamera::instance();
     SetPause(false);

@@ -57,6 +57,8 @@ namespace og
             void addUI(ui::IUI* ui);
             void removeUI(ui::IUI* ui);
 
+            OGWindow* getWindow() const { return _pWindow.get(); }
+
         public slots:
             void setFrameRate(int framerate)
             { frameDelay_ = qRound(1000.0f / framerate); }

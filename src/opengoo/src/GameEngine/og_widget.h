@@ -25,6 +25,8 @@ namespace og
             void addUI(ui::IUI* ui);
             void removeUI(ui::IUI* ui);
 
+            void setBackgroundColor(const QColor& col, bool show);
+
         protected:
             void keyReleaseEvent(QKeyEvent* ev);
             void keyPressEvent(QKeyEvent* ev);

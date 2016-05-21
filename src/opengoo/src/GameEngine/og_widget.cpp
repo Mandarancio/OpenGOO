@@ -170,3 +170,11 @@ void OGWidget::paintEvent(QPaintEvent *ev)
 
     painter.end();
 }
+
+void OGWidget::setBackgroundColor(const QColor& col, bool show)
+{
+    auto p = palette();
+    p.setBrush(QPalette::Window, col);
+    setPalette(p);
+    setAutoFillBackground(show);
+}
