@@ -70,4 +70,6 @@ namespace og
 
 } // namespace og
 
+#define GE og::OGGameEngine::getEngine()
+
 #endif // OG_GAMEENGINE_H
