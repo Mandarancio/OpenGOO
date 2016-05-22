@@ -20,48 +20,48 @@ namespace og
     {
             Q_OBJECT
 
-            bool _isVideoModeSupported;
-            OGResourceManager* _pResourceManager;
-            std::unique_ptr<OGWindow> _pWindow;
+            bool m_isVideoModeSupported;
+            OGResourceManager* m_resourceManager;
+            std::unique_ptr<OGWindow> m_window;
 
-            QScreen* _getPrimaryScreen();            
+            QScreen* getPrimaryScreen();
 
             OGGameEngine(const OGGameEngine&);
             OGGameEngine& operator=(const OGGameEngine&);
 
         protected:
-            static OGGameEngine* gameEngine;
-            int width_, height_;
-            int frameDelay_;
-            bool fullscreen_;
-            OGGame* pGame;
+            static OGGameEngine* m_instance;
+            int m_width, m_height;
+            int m_frameDelay;
+            bool m_fullscreen;
+            OGGame* m_game;
 
-            bool eventFilter(QObject* obj, QEvent* event);
+            bool eventFilter(QObject* a_obj, QEvent* a_event);
 
         public:
-            OGGameEngine(OGGame* game, int width, int height
-                         , bool fullscreen = false);
+            OGGameEngine(OGGame* a_game, int a_width, int a_height
+                         , bool a_fullscreen = false);
             virtual ~OGGameEngine();
 
-            static OGGameEngine* getEngine() { return gameEngine; }
+            static OGGameEngine* getInstance() { return m_instance; }
             bool initialize();
 
-            int getWidth() const { return width_; }
-            int getHeight() const { return height_; }
-            int getFrameDelay() const { return frameDelay_; }
+            int getWidth() const { return m_width; }
+            int getHeight() const { return m_height; }
+            int getFrameDelay() const { return m_frameDelay; }
 
             OGPhysicsEngine* getPhysicsEngine();
 
             OGResourceManager* getResourceManager();
 
-            void addUI(ui::IUI* ui);
-            void removeUI(ui::IUI* ui);
+            void addUI(ui::IUI* a_ui);
+            void removeUI(ui::IUI* a_ui);
 
-            OGWindow* getWindow() const { return _pWindow.get(); }
+            OGWindow* getWindow() const { return m_window.get(); }
 
         public slots:
-            void setFrameRate(int framerate)
-            { frameDelay_ = qRound(1000.0f / framerate); }
+            void setFrameRate(int a_framerate)
+            { m_frameDelay = qRound(1000.0f / a_framerate); }
             void quit();
 
         private slots:
@@ -70,6 +70,6 @@ namespace og
 
 } // namespace og
 
-#define GE og::OGGameEngine::getEngine()
+#define GE og::OGGameEngine::getInstance()
 
 #endif // OG_GAMEENGINE_H

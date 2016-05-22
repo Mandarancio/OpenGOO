@@ -11,25 +11,25 @@
 
 using namespace og;
 
-OGGameEngine* OGGameEngine::gameEngine = 0;
+OGGameEngine* OGGameEngine::m_instance = 0;
 
-OGGameEngine::OGGameEngine(OGGame* game, int width, int height
-                           , bool fullscreen)
+OGGameEngine::OGGameEngine(OGGame* a_game, int a_width, int a_height
+                           , bool a_fullscreen)
 {
-    gameEngine = this;
-    width_ = width;
-    height_ = height;
-    frameDelay_ = 50;   // 20 FPS default
-    fullscreen_ = fullscreen;
-    _isVideoModeSupported = false;
-    pGame = game;
-    _pResourceManager = 0;
+    m_instance = this;
+    m_width = a_width;
+    m_height = a_height;
+    m_frameDelay = 50;   // 20 FPS default
+    m_fullscreen = a_fullscreen;
+    m_isVideoModeSupported = false;
+    m_game = a_game;
+    m_resourceManager = 0;
 }
 
 OGGameEngine::~OGGameEngine()
 {
 #ifdef Q_OS_WIN32
-    if (_isVideoModeSupported)
+    if (m_isVideoModeSupported)
     {
         OGVideoMode::returnDefaultMode();
     }
@@ -40,35 +40,35 @@ bool OGGameEngine::initialize()
 {
     qApp->installEventFilter(this);
 
-    _pWindow.reset(new OGWindow(pGame));
+    m_window.reset(new OGWindow(m_game));
 
-    QScreen* screen = _getPrimaryScreen();
+    QScreen* screen = getPrimaryScreen();
     int x = (screen->geometry().width() - getWidth()) / 2.0f;
     int y = (screen->geometry().height() - getHeight()) / 2.0f;
-    _pWindow->setGeometry(x, y, getWidth(), getHeight());
-    _pWindow->setFixedSize(getWidth(), getHeight());
+    m_window->setGeometry(x, y, getWidth(), getHeight());
+    m_window->setFixedSize(getWidth(), getHeight());
 
-    if (fullscreen_)
+    if (m_fullscreen)
     {
         //initialize video mode
 #ifdef Q_OS_WIN32
-        _isVideoModeSupported = OGVideoMode::testVideoMode(getWidth()
+        m_isVideoModeSupported = OGVideoMode::testVideoMode(getWidth()
                                 , getHeight());
 
-        if (_isVideoModeSupported)
+        if (m_isVideoModeSupported)
         {
             OGVideoMode::setVideoMode(getWidth(), getHeight());
 
-            _pWindow->showFullScreen();
+            m_window->showFullScreen();
         }
         else { logWarn("Video mode not supported"); }
 #else
-        _pWindow->show();
+        m_window->show();
 #endif // Q_OS_WIN32
     }
     else
     {
-        _pWindow->show();
+        m_window->show();
     }
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(gameExit()));
@@ -76,21 +76,21 @@ bool OGGameEngine::initialize()
     return true;
 }
 
-bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
+bool OGGameEngine::eventFilter(QObject* a_obj, QEvent* a_event)
 {
-    switch (event->type())
+    switch (a_event->type())
     {
         case QEvent::ApplicationActivate:
-            pGame->Activate();
-            _pWindow->setActive(true);
-            _pWindow->grabKeyboard();
+            m_game->Activate();
+            m_window->setActive(true);
+            m_window->grabKeyboard();
 
             return true;
 
         case QEvent::ApplicationDeactivate:
-            _pWindow->setActive(true);
-            pGame->Deactivate();
-            _pWindow->releaseKeyboard();
+            m_window->setActive(true);
+            m_game->Deactivate();
+            m_window->releaseKeyboard();
 
             return true;
 
@@ -98,14 +98,14 @@ bool OGGameEngine::eventFilter(QObject* obj, QEvent* event)
             break;
     }
 
-    return QObject::eventFilter(obj, event);
+    return QObject::eventFilter(a_obj, a_event);
 }
 
 void OGGameEngine::gameExit()
 {    
-    _pWindow->setActive(false);
-    pGame->End();
-    _pWindow.reset();
+    m_window->setActive(false);
+    m_game->End();
+    m_window.reset();
     QApplication::quit();
 }
 
@@ -116,27 +116,27 @@ OGPhysicsEngine* OGGameEngine::getPhysicsEngine()
 
 OGResourceManager* OGGameEngine::getResourceManager()
 {
-    if (!_pResourceManager) _pResourceManager = new OGResourceManager;
+    if (!m_resourceManager) m_resourceManager = new OGResourceManager;
 
-    return _pResourceManager;
+    return m_resourceManager;
 }
 
-void OGGameEngine::addUI(ui::IUI* ui)
+void OGGameEngine::addUI(ui::IUI* a_ui)
 {
-    _pWindow->addUI(ui);
+    m_window->addUI(a_ui);
 }
 
-void OGGameEngine::removeUI(ui::IUI* ui)
+void OGGameEngine::removeUI(ui::IUI* a_ui)
 {
-    _pWindow->removeUI(ui);
+    m_window->removeUI(a_ui);
 }
 
-QScreen* OGGameEngine::_getPrimaryScreen()
+QScreen* OGGameEngine::getPrimaryScreen()
 {
     return QApplication::primaryScreen();
 }
 
 void OGGameEngine::quit()
 {
-    _pWindow->close();
+    m_window->close();
 }

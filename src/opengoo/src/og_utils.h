@@ -47,7 +47,7 @@ inline OpenGOO* ogUtils::getGame() { return OpenGOO::instance(); }
 
 inline og::OGGameEngine* ogUtils::getGameEngine()
 {
-    return og::OGGameEngine::getEngine();
+    return og::OGGameEngine::getInstance();
 }
 
 #endif // OG_UTILS_H

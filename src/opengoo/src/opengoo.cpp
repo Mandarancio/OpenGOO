@@ -127,8 +127,8 @@ void OpenGOO::_Start()
         _pFPS.reset(new OGFPSCounter(QRect(20, 20, 40, 40)));
     }
 
-    width_ = OGGameEngine::getEngine()->getWidth();
-    height_ = OGGameEngine::getEngine()->getHeight();
+    width_ = OGGameEngine::getInstance()->getWidth();
+    height_ = OGGameEngine::getInstance()->getHeight();
 
     timeScrollStep_ = width_ / 1000.0f;
     timeStep_ = STEPS / 1000.0f;    
@@ -394,7 +394,7 @@ inline void OpenGOO::_ClearLayers()
     layers_.clear();
 }
 
-inline void OpenGOO::_Quit() { OGGameEngine::getEngine()->quit(); }
+inline void OpenGOO::_Quit() { OGGameEngine::getInstance()->quit(); }
 
 void OpenGOO::_Scroll()
 {
@@ -422,7 +422,7 @@ void OpenGOO::_SetDebug(bool debug)
 
 void OpenGOO::_SetBackgroundColor(const QColor &color)
 {
-    OGGameEngine::getEngine()->getWindow()->setBackgroundColor(color, true);
+    OGGameEngine::getInstance()->getWindow()->setBackgroundColor(color, true);
 }
 
 void OpenGOO::_CreateContinueButton()

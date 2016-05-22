@@ -532,8 +532,8 @@ void OGWorld::_CreateButton(const WOGButton &button, QList<OGSprite*>* sprites
 
 bool OGWorld::_CreateCamera()
 {
-    float w = og::OGGameEngine::getEngine()->getWidth();
-    float h = og::OGGameEngine::getEngine()->getHeight();
+    float w = og::OGGameEngine::getInstance()->getWidth();
+    float h = og::OGGameEngine::getInstance()->getHeight();
 
     if (w == 0) return false;
 

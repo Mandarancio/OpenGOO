@@ -17,7 +17,7 @@ int OGApplication::run(int argc, char **argv)
     {
         QApplication app(argc, argv);
 
-        if (OGGameEngine::getEngine()->initialize()) app.exec();
+        if (OGGameEngine::getInstance()->initialize()) app.exec();
     }
 
     clear();
@@ -99,5 +99,5 @@ bool OGApplication::initialize(int argc, char **argv)
 void OGApplication::clear()
 {
     OpenGOO::instance()->Destroy();
-    delete OGGameEngine::getEngine();
+    delete OGGameEngine::getInstance();
 }

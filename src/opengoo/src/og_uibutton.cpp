@@ -152,8 +152,8 @@ inline void OGUIButton::_SetUpImage(const QString &path)
     setWidth(w);
     setHeight(h);
 
-    w = og::OGGameEngine::getEngine()->getWidth();
-    h = og::OGGameEngine::getEngine()->getHeight();
+    w = og::OGGameEngine::getInstance()->getWidth();
+    h = og::OGGameEngine::getInstance()->getHeight();
 
     int x = qRound(w * 0.5f + config->position.x());
     int y = qRound(h * 0.5f - config->position.y());

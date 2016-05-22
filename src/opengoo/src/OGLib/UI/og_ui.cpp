@@ -15,12 +15,12 @@ struct UI::Impl
 UI::UI() : _pImpl(new Impl)
 {    
     _pImpl->visible = false;
-    OGGameEngine::getEngine()->addUI(this);
+    OGGameEngine::getInstance()->addUI(this);
 }
 
 UI::~UI()
 {
-    OGGameEngine::getEngine()->removeUI(this);
+    OGGameEngine::getInstance()->removeUI(this);
 }
 
 inline int UI::_x() const { return _pImpl->pos.x(); }
