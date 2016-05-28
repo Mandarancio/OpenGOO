@@ -49,7 +49,7 @@ namespace og
             OGGame* getGame() { return _pGame; }
 
         private slots:
-                void Update();
+            void Update();
 
         private:
             OGGame* _pGame;

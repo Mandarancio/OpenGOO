@@ -41,6 +41,10 @@ OGConfig OGGameConfig::Parser()
                 }
                 else { config.fullscreen = false; }
             }
+            else if (attribute == "refreshrate")
+            {
+                config.refreshrate = domElement.attribute("value").toInt();
+            }
         }
 
         node = node.nextSibling();

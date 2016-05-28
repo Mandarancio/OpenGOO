@@ -1,7 +1,7 @@
 #include "og_widget.h"
-#include "og_game.h"
-
 #include <QMouseEvent>
+#include "og_game.h"
+#include "og_gameengine.h"
 
 using namespace og;
 
@@ -19,8 +19,10 @@ OGWidget::OGWidget(OGGame* game)
 
 void OGWidget::setActive(bool active)
 {
-    if (active) _timer.start();
-    else _timer.stop();
+    if (active)
+        _timer.start(GE->getFrameDelay());
+    else
+        _timer.stop();
 }
 
 ui::UIList& OGWidget::uiList() { return _uiList; }
@@ -73,7 +75,7 @@ void OGWidget::showEvent(QShowEvent* ev)
     Q_UNUSED(ev)
 
     getGame()->Start();
-    _timer.start();
+    _timer.start(GE->getFrameDelay());
 }
 
 void OGWidget::resizeEvent(QResizeEvent* ev)

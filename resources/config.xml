@@ -3,4 +3,5 @@
     <param name="screen_width" value="800"/>
     <param name="screen_height" value="600"/>
     <param name="fullscreen" value="false"/>
+    <param name="refreshrate" value="60"/>
 </config>
