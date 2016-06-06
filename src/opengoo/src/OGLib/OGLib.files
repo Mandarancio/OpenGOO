@@ -1,0 +1,23 @@
+SOURCES += \
+    src/OGLib/UI/og_ui.cpp \
+    src/OGLib/UI/og_ipushbutton.cpp \
+    src/OGLib/UI/og_uipushbutton.cpp \
+    src/OGLib/UI/og_uilabel.cpp \
+    src/OGLib/UI/og_uiframe.cpp
+
+HEADERS += \
+    src/OGLib/circle.h \
+    src/OGLib/circlef.h \
+    src/OGLib/point.h \
+    src/OGLib/icamera.h \
+    src/OGLib/pointf.h \
+    src/OGLib/vector2d.h \
+    src/OGLib/util.h \
+    src/OGLib/size.h \
+    src/OGLib/rect.h \
+    src/OGLib/rectf.h\
+    src/OGLib/UI/og_ipushbutton.h \
+    src/OGLib/UI/og_ui.h \
+    src/OGLib/UI/og_uiframe.h \
+    src/OGLib/UI/og_uilabel.h \
+    src/OGLib/UI/og_uipushbutton.h

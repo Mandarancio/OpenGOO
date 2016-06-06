@@ -1,0 +1,18 @@
+SOURCES += \
+    src/PhysicsEngine/og_physicsshape.cpp \
+    src/PhysicsEngine/og_physicsengine.cpp \
+    src/PhysicsEngine/og_physicsbody.cpp \
+    src/PhysicsEngine/og_circlesensor.cpp \
+    src/PhysicsEngine/og_contactlistener.cpp
+
+HEADERS += \
+    src/PhysicsEngine/og_physicsshape.h \
+    src/PhysicsEngine/og_physicsengine.h \
+    src/PhysicsEngine/og_physicsbody.h \
+    src/PhysicsEngine/og_physicsjoint.h \
+    src/PhysicsEngine/og_pcircle.h \
+    src/PhysicsEngine/debug.h \
+    src/PhysicsEngine/common.h \
+    src/PhysicsEngine/og_sensor.h \
+    src/PhysicsEngine/og_contactlistener.h \
+    src/PhysicsEngine/og_circlesensor.h

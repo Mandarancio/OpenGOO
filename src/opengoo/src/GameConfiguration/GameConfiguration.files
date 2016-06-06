@@ -1,0 +1,44 @@
+SOURCES += \
+    src/GameConfiguration/og_gameconfig.cpp \
+    src/GameConfiguration/og_xmlconfig.cpp \
+    src/GameConfiguration/og_resourceconfig.cpp \
+    src/GameConfiguration/og_textconfig.cpp \
+    src/GameConfiguration/og_sceneconfig.cpp \
+    src/GameConfiguration/og_levelconfig.cpp \
+    src/GameConfiguration/og_materialconfig.cpp \
+    src/GameConfiguration/og_effectconfig.cpp \
+    src/GameConfiguration/og_ballconfig.cpp \
+    src/GameConfiguration/og_islandconfig.cpp \
+    src/GameConfiguration/wog_level.cpp \
+    src/GameConfiguration/wog_scene.cpp \
+    src/GameConfiguration/wog_resources.cpp \
+    src/GameConfiguration/wog_material.cpp \
+    src/GameConfiguration/wog_text.cpp \
+    src/GameConfiguration/wog_pipe.cpp \
+    src/GameConfiguration/decrypter.cpp
+
+HEADERS += \
+    src/GameConfiguration/og_gameconfig.h \
+    src/GameConfiguration/og_xmlconfig.h \
+    src/GameConfiguration/og_resourceconfig.h \
+    src/GameConfiguration/og_textconfig.h \
+    src/GameConfiguration/og_sceneconfig.h \
+    src/GameConfiguration/og_levelconfig.h \
+    src/GameConfiguration/og_materialconfig.h \
+    src/GameConfiguration/og_effectconfig.h \
+    src/GameConfiguration/og_ballconfig.h \
+    src/GameConfiguration/og_islandconfig.h \
+    src/GameConfiguration/wog_vobject.h \
+    src/GameConfiguration/wog_scene.h \
+    src/GameConfiguration/wog_pobject.h \
+    src/GameConfiguration/wog_level.h \
+    src/GameConfiguration/wog_resources.h \
+    src/GameConfiguration/wog_text.h \
+    src/GameConfiguration/wog_material.h \
+    src/GameConfiguration/wog_effects.h \
+    src/GameConfiguration/wog_ball.h \
+    src/GameConfiguration/wog_island.h \
+    src/GameConfiguration/wog_pipe.h \
+    src/GameConfiguration/wog_exit.h \
+    src/GameConfiguration/wog_circle.h \
+    src/GameConfiguration/decrypter.h

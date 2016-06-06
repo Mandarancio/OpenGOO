@@ -6,7 +6,7 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 
-SUBDIRS = src
-
-
-
+SUBDIRS = \
+          src/extlibs \
+          src/libs/logger \
+          src/opengoo

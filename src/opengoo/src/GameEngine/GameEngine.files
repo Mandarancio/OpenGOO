@@ -1,0 +1,15 @@
+SOURCES += \
+    src/GameEngine/og_gameengine.cpp \
+    src/GameEngine/og_widget.cpp \
+    src/GameEngine/og_videomode.cpp \
+    src/GameEngine/og_videomode_native.cpp \
+    src/GameEngine/og_resourcemanager.cpp
+
+HEADERS += \
+    src/GameEngine/og_gameengine.h \
+    src/GameEngine/og_widget.h \
+    src/GameEngine/og_videomode.h \
+    src/GameEngine/og_videomode_native.h \
+    src/GameEngine/og_game.h \
+    src/GameEngine/og_resourcemanager.h \
+    src/GameEngine/og_iui.h
