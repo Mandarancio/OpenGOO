@@ -7,7 +7,7 @@
 
 BallSensor::BallSensor(OGBall* b)
     : OGCircleSensor(Circle(b->GetCenter(), b->getRadius() + 5))
-    , _ball(b)
+    , m_ball(b)
 {
     SetCategory(physics::SENSOR);
     SetMask(physics::BALL);
@@ -33,7 +33,7 @@ void BallSensor::_BeginContact(Fixture *fixture)
 
             if (ball->IsAttached())
             {
-                _ball->touching();
+                m_ball->touching();
             }
         }
     }
@@ -41,5 +41,5 @@ void BallSensor::_BeginContact(Fixture *fixture)
 
 void BallSensor::update()
 {
-    pBody_->body->SetTransform(_ball->GetBodyPosition(), 0);
+    pBody_->body->SetTransform(m_ball->GetBodyPosition(), 0);
 }

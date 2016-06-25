@@ -1,6 +1,4 @@
-#ifndef BALLSENSOR_H
-#define BALLSENSOR_H
-
+#pragma once
 #include "PhysicsEngine/og_circlesensor.h"
 
 class OGBall;
@@ -14,11 +12,9 @@ public:
     void update();
 
 private:
-    OGBall* _ball;
+    OGBall* m_ball;
 
 private:
-    void _BeginContact(Fixture *fixture);
-    void _EndContact(Fixture *fixture) {}
+    void _BeginContact(Fixture* fixture);
+    void _EndContact(Fixture*) {}
 };
-
-#endif // BALLSENSOR_H
