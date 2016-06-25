@@ -1,5 +1,4 @@
-#ifndef WOG_VOBJECT_H
-#define WOG_VOBJECT_H
+#pragma once
 
 #include <QColor>
 #include <QPoint>
@@ -15,8 +14,6 @@ struct WOGVObject
     float alpha;
     QColor colorize;
 
-    WOGVObject() : alpha(1) {}
+    WOGVObject() : alpha(1.0f) {}
     virtual ~WOGVObject() {}
 };
-
-#endif // WOG_VOBJECT_H

@@ -1,5 +1,4 @@
-#ifndef OG_BALL_H
-#define OG_BALL_H
+#pragma once
 
 // Source http://goofans.com/developers/game-file-formats/balls-xml/states-and-events
 /*
@@ -251,5 +250,3 @@ protected:
         std::unique_ptr<BallSensor> _sensor;
         std::unique_ptr<BallSensor> getSensor();
 };
-
-#endif // OG_BALL_H
