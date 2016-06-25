@@ -1,14 +1,6 @@
-#ifndef OPENGOO_H
-#define OPENGOO_H
+#pragma once
 
 #include <memory>
-#include "GameEngine/og_game.h"
-#include "progresswindow.h"
-#include <OGIPushButton>
-#include "og_layer.h"
-#include "island.h"
-#include "level.h"
-#include "og_fpscounter.h"
 
 #include <QColor>
 #include <QList>
@@ -17,10 +9,19 @@
 #include <QPoint>
 #include <QString>
 
+#include "GameEngine/og_game.h"
+#include "progresswindow.h"
+#include <OGIPushButton>
+#include "og_layer.h"
+#include "island.h"
+#include "level.h"
+#include "og_fpscounter.h"
+#include "og_world.h"
+
+
 class OGWindowCamera;
 class OGBall;
-//class OGWorld;
-#include "og_world.h"
+
 
 class QTime;
 
@@ -53,6 +54,7 @@ class OpenGOO : public og::OGGame
         void LoadIsland(const QString &name);
 
         void AddSprite(float depth, OGSprite* sprite);
+        void AddSprite(OGSprite* sprite);
         void ClearSprites();
 
         void ReloadLevel();
@@ -164,5 +166,3 @@ private slots:
         void _closeContinueButton();
         void _closeProgressWindow();
 };
-
-#endif // OPENGOO_H

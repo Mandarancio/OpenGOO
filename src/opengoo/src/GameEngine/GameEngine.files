@@ -3,7 +3,8 @@ SOURCES += \
     src/GameEngine/og_widget.cpp \
     src/GameEngine/og_videomode.cpp \
     src/GameEngine/og_videomode_native.cpp \
-    src/GameEngine/og_resourcemanager.cpp
+    src/GameEngine/og_resourcemanager.cpp \
+    src/GameEngine/imagesource.cpp
 
 HEADERS += \
     src/GameEngine/og_gameengine.h \
@@ -12,4 +13,5 @@ HEADERS += \
     src/GameEngine/og_videomode_native.h \
     src/GameEngine/og_game.h \
     src/GameEngine/og_resourcemanager.h \
-    src/GameEngine/og_iui.h
+    src/GameEngine/og_iui.h \
+    src/GameEngine/imagesource.h

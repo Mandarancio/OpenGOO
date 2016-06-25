@@ -1,17 +1,17 @@
-#ifndef OG_WORLD_H
-#define OG_WORLD_H
+#pragma once
 
-#include "wog_scene.h"
-#include "wog_ball.h"
-#include <OGPhysicsEngine>
-#include "og_forcefield.h"
+#include <memory>
 
 #include <QCache>
 #include <QHash>
 #include <QList>
 #include <QPainter>
 
-#include <memory>
+#include "wog_scene.h"
+#include "wog_ball.h"
+#include <OGPhysicsEngine>
+#include "og_forcefield.h"
+#include "og_sprite.h"
 
 typedef std::unique_ptr<physics::OGForceField> ptr_ForceField;
 typedef std::unique_ptr<physics::OGRadialForceField> ptr_RForceField;
@@ -89,7 +89,6 @@ class OGWorld : public QObject
         bool _LoadScene(const QString &path);
         bool _LoadText(const QString &path, bool share);
 
-        QPixmap _CreatePixmap(OGSprite* sprite, const QString &image);
         OGSprite* _CreateSprite(const WOGVObject* vobject, const QString &image);
 
         // level
@@ -184,11 +183,11 @@ class OGWorld : public QObject
         void CreateStrand(OGBall* b1, OGBall* b2);
         void RemoveStrand(OGStrand* strand);
 
+        ImageSourcePtr CreateImageSource(const QString& a_id);
+
         void StartSearching();
         friend class OGPipe;        
 
     private slots:
         void findNearestAttachedBall();
 };
-
-#endif // OG_WORLD_H

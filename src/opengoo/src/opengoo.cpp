@@ -13,6 +13,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QMouseEvent>
+#include <QTime>
+#include <QDebug>
+
 #include "opengoo.h"
 #include "og_world.h"
 #include "flags.h"
@@ -30,10 +34,6 @@
 #include "continuebutton.h"
 #include "og_fpscounter.h"
 #include "og_forcefield.h"
-
-#include <QMouseEvent>
-#include <QTime>
-#include <QDebug>
 
 using namespace og;
 
@@ -64,6 +64,11 @@ void OpenGOO::AddSprite(float depth, OGSprite* sprite)
         l.Add(sprite);
         layers_.insert(depth, l);
     }
+}
+
+void OpenGOO::AddSprite(OGSprite* sprite)
+{
+    AddSprite(sprite->GetDepth(), sprite);
 }
 
 void OpenGOO::ClearSprites()
@@ -351,13 +356,13 @@ void OpenGOO::_MouseMove(QMouseEvent* ev)
     {
         if (button->TestPoint(mPos))
         {
-            button->up()->visible = false;
-            button->over()->visible = true;
+            button->up()->SetVisible(false);
+            button->over()->SetVisible(true);
         }
         else
         {
-            button->up()->visible = true;
-            button->over()->visible = false;
+            button->up()->SetVisible(true);
+            button->over()->SetVisible(false);
         }
     }
 

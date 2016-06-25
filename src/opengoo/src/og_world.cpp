@@ -1,3 +1,9 @@
+#include <memory>
+
+#include <QPainter>
+#include <QFile>
+#include <QTimer>
+
 #include "og_world.h"
 #include "logger.h"
 #include "og_pipe.h"
@@ -16,12 +22,6 @@
 
 #include <OGPhysicsEngine>
 #include <OGContactListener>
-
-#include <QPainter>
-#include <QFile>
-#include <QTimer>
-
-#include <memory>
 
 using namespace og;
 
@@ -58,13 +58,17 @@ OGWorld::~OGWorld()
 
     logInfo("Clear share data");
 
-    if (pResourcesData_[0]) { delete pResourcesData_[0]; }
+    if (pResourcesData_[0])
+        delete pResourcesData_[0];
 
-    if (pTextData_[0]) { delete pTextData_[0]; }
+    if (pTextData_[0])
+        delete pTextData_[0];
 
-    if (pMaterialData_) { delete pMaterialData_; }
+    if (pMaterialData_)
+        delete pMaterialData_;
 
-    if (pEffectsData_) { delete pEffectsData_; }
+    if (pEffectsData_)
+        delete pEffectsData_;
 
     delete pTimer_;
 
@@ -81,21 +85,24 @@ bool OGWorld::isExist(const QString &path_level)
 
     if (!QFile::exists(path + ".xml") && !QFile::exists(path + ".bin"))
     {
-        logDebug(QString("File %1 not found").arg(path)); return false;
+        logDebug(QString("File %1 not found").arg(path));
+        return false;
     }
 
     path = "./res/levels/" + path_level + "/" + path_level  + ".scene";
 
     if (!QFile::exists(path + ".xml") && !QFile::exists(path + ".bin"))
     {
-        logDebug(QString("File %1 not found").arg(path)); return false;
+        logDebug(QString("File %1 not found").arg(path));
+        return false;
     }
 
     path = "./res/levels/" + path_level + "/" + path_level  + ".resrc";
 
     if (!QFile::exists(path + ".xml") && !QFile::exists(path + ".bin"))
     {
-        logDebug(QString("File %1 not found").arg(path)); return false;
+        logDebug(QString("File %1 not found").arg(path));
+        return false;
     }
 
     return true;
@@ -114,15 +121,14 @@ bool OGWorld::Initialize()
 
     logInfo("Loading share data...");
 
-    QString path;
-
-    path = "./properties/materials.xml";
+    QString path = "./properties/materials.xml";
 
     _LoadMaterials(path);
 
     path = "./properties/resources.xml";
 
-    if (!_LoadResources(path, true)) { return false; }
+    if (!_LoadResources(path, true))
+        return false;
 
     path = "./properties/fx.xml";
 
@@ -130,7 +136,8 @@ bool OGWorld::Initialize()
 
     path = "./properties/text.xml";
 
-    if (!_LoadText(path, true)) { return false; }
+    if (!_LoadText(path, true))
+        return false;
 
     return true;
 }
@@ -141,23 +148,25 @@ bool OGWorld::Load()
 
     if (isExist(levelName_))
     {
-        QString path;
+        QString path = "./res/levels/" + levelName_ + "/" + levelName_ + ".level";
 
-        path = "./res/levels/" + levelName_ + "/" + levelName_ + ".level";
-
-        if (!_LoadLevel(path)) { return false; }
+        if (!_LoadLevel(path))
+            return false;
 
         path = "./res/levels/" + levelName_ + "/" + levelName_  + ".scene";
 
-        if (!_LoadScene(path)) { return false; }
+        if (!_LoadScene(path))
+            return false;
 
         path = "./res/levels/" + levelName_ + "/" + levelName_  + ".resrc";
 
-        if (!_LoadResources(path, false)) { return false; }
+        if (!_LoadResources(path, false))
+            return false;
     }
     else
     {
         logWarn(QString("Wrong level name: \"%1\"").arg(levelName_));
+
         return false;
     }
 
@@ -169,7 +178,8 @@ void OGWorld::Reload()
     _ClearPhysics();
     CreatePhysicsScene();
 
-    if (pPipe_) pPipe_->Close();
+    if (pPipe_)
+        pPipe_->Close();
 }
 
 template<class Target, class Config>
@@ -179,10 +189,13 @@ Target OGWorld::LoadConf(const QString &path)
 
     if (config.Open())
     {
-        if (config.Read()) { return config.Parser(); }
-        else { logWarn("File " + path + " is corrupted"); }
+        if (config.Read())
+            return config.Parser();
+        else
+            logWarn("File " + path + " is corrupted");
     }
-    else { logWarn("File " + path + " not found"); }
+    else
+        logWarn("File " + path + " not found");
 
     return 0;
 }
@@ -191,36 +204,45 @@ bool OGWorld::_LoadFX(const QString &path)
 {
     logInfo("effects file");
 
-    if (pEffectsData_) { return false; }
+    if (pEffectsData_)
+        return false;
 
     pEffectsData_ = LoadConf<WOGEffects*, OGEffectConfig> (path);
 
-    if (pEffectsData_) { return true; }
-    else { return false; }
+    if (pEffectsData_)
+        return true;
+    else
+        return false;
 }
 
 bool OGWorld::_LoadLevel(const QString path)
 {
     logInfo("level file");
 
-    if (pLevelData_) { return false; }
+    if (pLevelData_)
+        return false;
 
     pLevelData_ = LoadConf<WOGLevel*, OGLevelConfig> (path);
 
-    if (pLevelData_) { return true; }
-    else { return false; }
+    if (pLevelData_)
+        return true;
+    else
+        return false;
 }
 
 bool OGWorld::_LoadMaterials(const QString &path)
 {
     logInfo("material file");
 
-    if (pMaterialData_) { return false; }
+    if (pMaterialData_)
+        return false;
 
     pMaterialData_ = LoadConf<WOGMaterialList*, OGMaterialConfig> (path);
 
-    if (pMaterialData_) { return true; }
-    else { return false; }
+    if (pMaterialData_)
+        return true;
+    else
+        return false;
 }
 
 bool OGWorld::_LoadResources(const QString &path, bool share)
@@ -229,17 +251,25 @@ bool OGWorld::_LoadResources(const QString &path, bool share)
 
     WOGResources* data;
 
-    if (share) data = pResourcesData_[0];
-    else data = pResourcesData_[1];
+    if (share)
+        data = pResourcesData_[0];
+    else
+        data = pResourcesData_[1];
 
-    if (data) { return false; }
+    if (data)
+        return false;
 
-    if (share) { data = OGData::GetResources(path); }
-    else { data = OGData::GetResources(path); }
+    if (share)
+        data = OGData::GetResources(path);
+    else
+        data = OGData::GetResources(path);
 
-    if (!data) {  return false; }
-    else if (share) { pResourcesData_[0] = data; }
-    else { pResourcesData_[1] = data; }
+    if (!data)
+        return false;
+    else if (share)
+        pResourcesData_[0] = data;
+    else
+        pResourcesData_[1] = data;
 
     return true;
 }
@@ -248,12 +278,15 @@ bool OGWorld::_LoadScene(const QString &path)
 {
     logInfo("scene file");
 
-    if (pSceneData_) { return false; }
+    if (pSceneData_)
+        return false;
 
     pSceneData_ = OGData::GetScene(path);
 
-    if (pSceneData_) { return true; }
-    else { return false; }
+    if (pSceneData_)
+        return true;
+    else
+        return false;
 }
 
 bool OGWorld::_LoadText(const QString &path, bool share)
@@ -262,10 +295,13 @@ bool OGWorld::_LoadText(const QString &path, bool share)
 
     WOGText* data;
 
-    if (share) data = pTextData_[0];
-    else data = pTextData_[1];
+    if (share)
+        data = pTextData_[0];
+    else
+        data = pTextData_[1];
 
-    if (data) { return false; }
+    if (data)
+        return false;
 
     OGTextConfig config(path);
 
@@ -277,9 +313,12 @@ bool OGWorld::_LoadText(const QString &path, bool share)
         {
             data = config.Parser(language_);
 
-            if (!data) { status = false; }
-            else if (share) { pTextData_[0] = data; }
-            else { pTextData_[1] = data; }
+            if (!data)
+                status = false;
+            else if (share)
+                pTextData_[0] = data;
+            else
+                pTextData_[1] = data;
         }
         else
         {
@@ -361,7 +400,8 @@ void OGWorld::CreateScene()
         _CreateButton(*btn, &sprites_, &buttons_);
     }
 
-    if (!pPipe_) _CreatePipe();
+    if (!pPipe_)
+        _CreatePipe();
 
     // Create Z-order
     logInfo("Create Z-order");
@@ -404,25 +444,19 @@ void OGWorld::CreatePhysicsScene()
     Q_FOREACH(WOGCircle * circle, scenedata()->circle)
     {
         if (!circle->dynamic)
-        {
             staticBodies_ << _CreateBody<OGCircle, WOGCircle>(circle);
-        }
     }
 
     Q_FOREACH(WOGRectangle * rect, scenedata()->rectangle)
     {
         if (!rect->dynamic)
-        {
             staticBodies_ << _CreateBody<OGRectangle, WOGRectangle>(rect);
-        }
     }
 
     Q_FOREACH(WOGLine * line, scenedata()->line)
     {
         if (!line->dynamic)
-        {
             staticBodies_ << _CreateBody<OGLine, WOGLine>(line);
-        }
     }
 
     Q_FOREACH(WOGCompositeGeom *cg, scenedata()->compositegeom)
@@ -465,8 +499,6 @@ void OGWorld::_CreateSceneLayer(const WOGSceneLayer &scenelayer
                                 , QList<OGSprite*>* sprites)
 {
     OGSprite* sprite = _CreateSprite(&scenelayer, scenelayer.image);
-
-    sprite->visible = true;
     sprites->push_back(sprite);
 }
 
@@ -478,13 +510,9 @@ OGBall* OGWorld::_CreateBall(WOGBallInstance* ball)
     if (configuration)
     {
         if (configuration->attribute.core.shape->type == "circle")
-        {
             obj = new OGBall(ball, configuration);
-        }
         else if (configuration->attribute.core.shape->type == "rectangle")
-        {
             obj = new OGBall(ball, configuration);
-        }
     }
 
     return obj;
@@ -496,35 +524,41 @@ template<class Body, class Data> Body* OGWorld::_CreateBody(Data* data)
     QString id = data->material;
     WOGMaterial* material = materialdata()->GetMaterial(id);
 
-    if (material) { obj = new Body(data, material); }
-    else { logError(QString("Wrong material id: %1").arg(id)); }
+    if (material)
+        obj = new Body(data, material);
+    else
+        logError(QString("Wrong material id: %1").arg(id));
 
     return obj;
 }
 
-void OGWorld::_CreateButton(const WOGButton &button, QList<OGSprite*>* sprites
-                            , QList<OGButton*> *buttons)
+void OGWorld::_CreateButton(const WOGButton &button,
+                            QList<OGSprite*>* sprites,
+                            QList<OGButton*>* buttons)
 {
-    OGButton* btn;
-
-    btn = new OGButton;
-
     sprites->push_back(_CreateSprite(&button, button.up));
-    btn->position(button.position);
+    auto spr = sprites->last();
+
+    auto btn = new OGButton;
+    btn->setPosition(button.position);
     btn->onclick(button.onclick);
-    btn->up(sprites->last());
-    btn->size(btn->up()->size);
-    btn->up()->visible = true;
+    btn->up(spr);
+    QSize sz(btn->up()->GetScaledWidth(), btn->up()->GetScaledHeight());
+    btn->setSize(sz);
 
     sprites->push_back(_CreateSprite(&button, button.over));
-    btn->over(sprites->last());
-    btn->over()->visible = false;
+    spr = sprites->last();
+
+    btn->over(spr);
+    btn->over()->SetVisible(false);
 
     if (!button.disabled.isEmpty())
     {
         sprites->push_back(_CreateSprite(&button, button.disabled));
-        btn->disabled(sprites->last());
-        btn->disabled()->visible = false;
+        spr = sprites->last();
+
+        btn->disabled(spr);
+        btn->disabled()->SetVisible(false);
     }
 
     buttons->push_back(btn);
@@ -535,20 +569,23 @@ bool OGWorld::_CreateCamera()
     float w = og::OGGameEngine::getInstance()->getWidth();
     float h = og::OGGameEngine::getInstance()->getHeight();
 
-    if (w == 0) return false;
+    if (w == 0)
+        return false;
 
     float aspect = h / w;
     WOGCamera* cam;
 
-    if (aspect == 0.75f) cam =  pLevelData_->GetCameraByAspect("normal");
-    else cam = pLevelData_->GetCameraByAspect("widescreen");
+    if (aspect == 0.75f)
+        cam =  pLevelData_->GetCameraByAspect("normal");
+    else
+        cam = pLevelData_->GetCameraByAspect("widescreen");
 
-    if (!cam || cam->poi.isEmpty()) return false;
+    if (!cam || cam->poi.isEmpty())
+        return false;
 
     Rect scene = RectF(pSceneData_->maxx, pSceneData_->maxy
                        , pSceneData_->minx, pSceneData_->miny).ToRect();
     Size size(w, h);
-
 
     pCamera_ = new OGWindowCamera(scene, size, cam);
 
@@ -567,70 +604,31 @@ void OGWorld::_CreatePipe()
     }
 }
 
-QPixmap OGWorld::_CreatePixmap(OGSprite* sprite, const QString &image)
+ImageSourcePtr OGWorld::CreateImageSource(const QString& a_id)
 {
-    QImage source(pResourcesData_[1]->GetResource(WOGResource::IMAGE
-                  , image) + ".png");
-
-    QTransform transform;
-
-    transform.rotate((-1.0)*sprite->rotation);
-    QImage tmpImage(source.transformed(transform, Qt::SmoothTransformation));
-    QImage target(tmpImage.size(), QImage::Format_ARGB32_Premultiplied);
-
-    // Set the size of sprite
-    transform.scale(sprite->scale.x(), sprite->scale.y());
-    QImage tmpImage2 =
-        QImage(source.size(), QImage::Format_Mono).transformed(transform);
-
-    sprite->size = tmpImage2.size();
-
-    // Colorize sprite
-    QPainter painter(&target);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform);
-    painter.setCompositionMode(QPainter::CompositionMode_Source);
-    painter.fillRect(target.rect(), Qt::transparent);
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    painter.drawImage(target.rect(), tmpImage, tmpImage.rect());
-
-    if (!source.hasAlphaChannel())
-    {
-        painter.setCompositionMode(QPainter::CompositionMode_Multiply);
-        painter.fillRect(target.rect(), sprite->colorize);
-    }
-    else
-    {
-        painter.setCompositionMode(QPainter::CompositionMode_SourceAtop);
-        painter.fillRect(target.rect(), sprite->colorize);
-        painter.setCompositionMode(QPainter::CompositionMode_Multiply);
-        painter.drawImage(target.rect(), tmpImage, tmpImage.rect());
-    }
-
-    painter.end();
-
-    return QPixmap::fromImage(target);
+    auto file = pResourcesData_[1]->GetResource(WOGResource::IMAGE,
+                                                a_id) + ".png";
+    return std::make_shared<ImageSource>(file);
 }
 
 OGSprite* OGWorld::_CreateSprite(const WOGVObject* vobject
                                  , const QString &image)
 {
-    qreal x, y;
-    OGSprite* sprite;
+    auto x = vobject->position.x();
+    auto y = -vobject->position.y();
 
-    sprite = new OGSprite;
-    sprite->scale = vobject->scale;
-    sprite->rotation = vobject->rotation;
-    sprite->colorize = vobject->colorize;
-    sprite->alpha = vobject->alpha;
-    sprite->depth = vobject->depth;    
-    sprite->image = _CreatePixmap(sprite, image);
+    auto src = CreateImageSource(image);
+    auto sprite = std::unique_ptr<OGSprite>(new OGSprite(x, y, src));
+    sprite->SetScaleX(vobject->scale.x());
+    sprite->SetScaleY(vobject->scale.y());
+    sprite->SetAngle(vobject->rotation);
+    sprite->CenterOrigin();
 
-    // Set sprite position
-    x = vobject->position.x() - sprite->size.width() * 0.5;
-    y = (vobject->position.y() + sprite->size.height() * 0.5) * (-1.0);
-    sprite->position = QPointF(x, y);
+    sprite->SetColorize(vobject->colorize);
+    sprite->SetAlpha(vobject->alpha);
+    sprite->SetDepth(vobject->depth);
 
-    return sprite;
+    return sprite.release();
 }
 
 void OGWorld::_CreateStrand(WOGStrand* strand)
@@ -640,15 +638,19 @@ void OGWorld::_CreateStrand(WOGStrand* strand)
 
     Q_FOREACH(OGBall * ball, balls_)
     {
-        if (strand->gb1 == ball->GetId()) { b1 = ball; }
-        else if (strand->gb2 == ball->GetId()) { b2 = ball; }
+        if (strand->gb1 == ball->GetId())
+            b1 = ball;
+        else if (strand->gb2 == ball->GetId())
+            b2 = ball;
 
         if (b1 && b2)
         {
             b1->Attache(b2);
 
-            if (b1->id() == -1) { b1->SetId(ballId_++); }
-            if (b2->id() == -1) { b2->SetId(ballId_++); }
+            if (b1->id() == -1)
+                b1->SetId(ballId_++);
+            if (b2->id() == -1)
+                b2->SetId(ballId_++);
 
             break;
         }
@@ -665,7 +667,8 @@ WOGBall* OGWorld::GetBallConfiguration(const QString &type)
 
         configuration = LoadConf<WOGBall*, OGBallConfig> (path);
 
-        if (configuration) { ballConfigurations_.insert(type, configuration); }
+        if (configuration)
+            ballConfigurations_.insert(type, configuration);
     }
 
     return  configuration;
@@ -720,15 +723,20 @@ void OGWorld::_ClearPhysics()
 
     logInfo("Clear balls");
 
-    while (!balls_.empty()) { delete balls_.takeFirst(); }
+    while (!balls_.empty())
+        delete balls_.takeFirst();
 
     logInfo("Clear static bodies");
 
-    while (!staticBodies_.isEmpty()) { delete staticBodies_.takeFirst(); }
+    while (!staticBodies_.isEmpty())
+        delete staticBodies_.takeFirst();
 
     // delete compositgeom
-    while (!_cg.rectangle.isEmpty()) delete _cg.rectangle.takeFirst();
-    while (!_cg.circle.isEmpty()) delete _cg.circle.takeFirst();
+    while (!_cg.rectangle.isEmpty())
+        delete _cg.rectangle.takeFirst();
+
+    while (!_cg.circle.isEmpty())
+        delete _cg.circle.takeFirst();
 
     logInfo("Remove exit");
 
@@ -752,14 +760,16 @@ void OGWorld::_ClearScene()
     {
         logInfo("Clear sprites");
 
-        while (!sprites_.isEmpty()) { delete sprites_.takeFirst(); }
+        while (!sprites_.isEmpty())
+            delete sprites_.takeFirst();
     }
 
     if (!buttons_.isEmpty())
     {
         logInfo("Clear buttons");
 
-        while (!buttons_.isEmpty()) { delete buttons_.takeFirst(); }
+        while (!buttons_.isEmpty())
+            delete buttons_.takeFirst();
     }
 
     if (pCamera_)
@@ -781,8 +791,11 @@ void OGWorld::_ClearScene()
 
 void OGWorld::CreateStrand(OGBall* b1, OGBall* b2)
 {
-    if (b1->id() == -1) { b1->SetId(ballId_++); }
-    if (b2->id() == -1) { b2->SetId(ballId_++); }
+    if (b1->id() == -1)
+        b1->SetId(ballId_++);
+
+    if (b2->id() == -1)
+        b2->SetId(ballId_++);
 
     OGStrand* obj = new OGStrand(b1, b2, strandId_);
     strands_.insert(strandId_, obj);
@@ -791,7 +804,8 @@ void OGWorld::CreateStrand(OGBall* b1, OGBall* b2)
 
 void OGWorld::findNearestAttachedBall()
 {
-    if (leveldata()->levelexit == 0) { return; }
+    if (leveldata()->levelexit == 0)
+        return;
 
     qreal dx, dy, x2, y2, length, tmpLength;
     bool isInit = false;
@@ -830,14 +844,16 @@ void OGWorld::findNearestAttachedBall()
 
 void OGWorld::Update()
 {
-    if (pPhysicsEngine_) { pPhysicsEngine_->Simulate(); }
+    if (pPhysicsEngine_)
+        pPhysicsEngine_->Simulate();
 }
 
 bool OGWorld::LoadLevel(const QString &levelname)
 {
     SetLevelname(levelname);
 
-    if (!Load()) { return false; }
+    if (!Load())
+        return false;
 
     CreateScene();
 
@@ -885,7 +901,7 @@ void OGWorld::_CreateZOrder()
 #else
     Q_FOREACH (OGSprite* sprite, sprites_)
     {
-        _GetGame()->AddSprite(sprite->depth, sprite);
+        _GetGame()->AddSprite(sprite->GetDepth(), sprite);
     }
 #endif
 }
@@ -895,11 +911,20 @@ void OGWorld::_InsertSprite(OGSprite* sprite)
     sprites_ << sprite;
 }
 
-void OGWorld::RemoveStrand(OGStrand* strand) { delete strands_.take(strand->id()); }
+void OGWorld::RemoveStrand(OGStrand* strand)
+{
+    delete strands_.take(strand->id());
+}
 
-inline void  OGWorld::StartSearching() { pTimer_->start(1000); }
+inline void  OGWorld::StartSearching()
+{
+    pTimer_->start(1000);
+}
 
-inline WOGPipe* OGWorld::_GetPipeData() { return pLevelData_->pipe; }
+inline WOGPipe* OGWorld::_GetPipeData()
+{
+    return pLevelData_->pipe;
+}
 
 inline OpenGOO* OGWorld::_GetGame()
 {
@@ -932,9 +957,7 @@ void OGWorld::_CreateCompositeGeom(WOGCompositeGeom* cg)
         _cg.circle << wc;
 
         if (!wc->dynamic)
-        {
             staticBodies_ << _CreateBody<OGCircle, WOGCircle>(wc);
-        }
     }
 
 
@@ -949,8 +972,6 @@ void OGWorld::_CreateCompositeGeom(WOGCompositeGeom* cg)
         _cg.rectangle << wr;
 
         if (!wr->dynamic)
-        {
             staticBodies_ << _CreateBody<OGRectangle, WOGRectangle>(wr);
-        }
     }
 }

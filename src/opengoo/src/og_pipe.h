@@ -1,42 +1,35 @@
-#ifndef OG_PIPE_H
-#define OG_PIPE_H
+#pragma once
 
-#include "og_ipipe.h"
+#include <memory>
 
 #include <QPointF>
 #include <QString>
+#include <QImage>
+
+#include "og_ipipe.h"
+#include "og_sprite.h"
+
 
 struct WOGPipe;
-
-class WOGResources;
-
-struct OGSprite;
-
 class OGWorld;
-
 class QPainter;
-class QImage;
 
 class OGPipe : public OGIPipe
 {
-        OGSprite* pCapClosed_;
-        OGSprite* pCapOpen_;
+    enum
+    {
+        closed,
+        open
+    };
 
-        virtual void _Close();
-        virtual void _Open();
-        virtual void _Painter(QPainter* painter) { Q_UNUSED(painter); }
+    OGSprite* m_cap[2];
 
-        OGWorld* _GetWorld();
-        QImage* _GetImage(const QString &id);
-        void _InsertSprite(OGSprite* sprite);
-        WOGResources* _GetResourceManager();
-        OGSprite* _CreateCap(WOGPipe* pipe, const QString &id, bool visible);
-        OGSprite* _CreateBend(const QString &type, const QPointF &p1
-                              , const QPointF &p2, const QPointF &p3
-                              , float depth);
+    virtual void _Close();
+    virtual void _Open();
+    virtual void _Painter(QPainter*) {}
 
-    public:
-        OGPipe(WOGPipe* pipe);
+    OGWorld* GetWorld();
+
+public:
+    OGPipe(WOGPipe* a_pipe);
 };
-
-#endif // OG_PIPE_H

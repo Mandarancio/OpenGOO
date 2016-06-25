@@ -108,7 +108,8 @@ HEADERS += \
     src/continuebutton.h \
     src/og_forcefield.h \
     src/ogapplication.h \
-    src/ballsensor.h
+    src/ballsensor.h \
+    src/spritefactory.h
 
 SOURCES += \
     src/main.cpp \
@@ -147,7 +148,9 @@ SOURCES += \
     src/og_forcefield.cpp \
     src/og_radialforcefield.cpp \
     src/ogapplication.cpp \
-    src/ballsensor.cpp
+    src/ballsensor.cpp \
+    src/og_sprite.cpp \
+    src/spritefactory.cpp
 
 
 include(src/GameEngine/GameEngine.files)

@@ -74,30 +74,31 @@ void OGUIButton::SetOverImage(const QString &path)
 
 void OGUIButton::Paint(QPainter* painter)
 {
-    QImage* img;
-
     if (pImpl_->sprites.upImage != 0)
     {
-        QPixmap* pm = 0;
-
         if (pImpl_->isOver)
         {
             if (pImpl_->sprites.overImage != 0)
             {
-                pm = &pImpl_->sprites.overImage->image;
+                pImpl_->sprites.overImage->Paint(*painter, *this);
             }
         }
-        else pm = &pImpl_->sprites.upImage->image;
-
-        if (pm) painter->drawPixmap(*this, *pm, pm->rect());
+        else
+            pImpl_->sprites.upImage->Paint(*painter, *this);
 
         return;
     }
 
-    if (pImpl_->isOver) img = &pImpl_->overImg;
-    else img = &pImpl_->upImg;
+    QImage* img;
 
-    if (img) { painter->drawImage(*this, *img, img->rect()); }
+    if (pImpl_->isOver)
+        img = &pImpl_->overImg;
+    else
+        img = &pImpl_->upImg;
+
+    if (img) {
+        painter->drawImage(*this, *img, img->rect());
+    }
 
 
 

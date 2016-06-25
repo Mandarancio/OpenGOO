@@ -35,8 +35,8 @@ public:
     void onclick(const QString & onclick) { onclick_ = onclick; }
     void onmouseEnter(const QString & onmouseenter) { onmouseenter_ = onmouseenter ;}
     void onmouseExit(const QString & onmouseexit) { onmouseexit_ = onmouseexit; }
-    void position(const QPointF position) { position_ = position; }
-    void size(const QSize & size) { size_ = size; }    
+    void setPosition(const QPointF a_position) { position_ = a_position; }
+    void setSize(const QSize& a_size) { size_ = a_size; }
 
     bool TestPoint(const QPoint& pos)
     {
