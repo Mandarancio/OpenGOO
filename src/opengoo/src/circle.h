@@ -1,5 +1,4 @@
-#ifndef CIRCLE_H
-#define CIRCLE_H
+#pragma once
 
 #include <QVector2D>
 
@@ -25,5 +24,3 @@ private:
     QVector2D center_;
     float radius_;
 };
-
-#endif // CIRCLE_H

@@ -40,9 +40,6 @@ unix:!symbian {
 HEADERS += \
     src/loggerevent.h
 
-SOURCES += \
-    src/loggerevent.cpp
-
 HEADERS += \
     src/loggerappender.h
 

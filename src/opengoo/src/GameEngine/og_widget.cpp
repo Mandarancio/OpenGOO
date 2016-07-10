@@ -1,5 +1,6 @@
-#include "og_widget.h"
 #include <QMouseEvent>
+
+#include "og_widget.h"
 #include "og_game.h"
 #include "og_gameengine.h"
 
@@ -25,17 +26,25 @@ void OGWidget::setActive(bool active)
         _timer.stop();
 }
 
-ui::UIList& OGWidget::uiList() { return _uiList; }
+ui::UIList& OGWidget::uiList()
+{
+    return _uiList;
+}
 
-const ui::UIList& OGWidget::uiList() const { return _uiList; }
+const ui::UIList& OGWidget::uiList() const
+{
+    return _uiList;
+}
 
 int OGWidget::findUI(ui::IUI* ui)
 {
-    if (uiList().isEmpty()) return -1;
+    if (uiList().isEmpty())
+        return -1;
 
     for (int i = 0; i < uiList().size(); i++)
     {
-        if (ui == uiList().at(i)) return i;
+        if (ui == uiList().at(i))
+            return i;
     }
 
     return -1;
@@ -43,14 +52,16 @@ int OGWidget::findUI(ui::IUI* ui)
 
 void OGWidget::addUI(ui::IUI* ui)
 {
-    if (findUI(ui) == -1) uiList().append(ui);
+    if (findUI(ui) == -1)
+        uiList().append(ui);
 }
 
 void OGWidget::removeUI(ui::IUI* ui)
 {
     int i = findUI(ui);
 
-    if (i != -1) uiList().removeAt(i);
+    if (i != -1)
+        uiList().removeAt(i);
 }
 
 void OGWidget::Update()
@@ -70,17 +81,14 @@ void OGWidget::keyPressEvent(QKeyEvent* ev)
     getGame()->KeyDown(ev);
 }
 
-void OGWidget::showEvent(QShowEvent* ev)
+void OGWidget::showEvent(QShowEvent*)
 {
-    Q_UNUSED(ev)
-
     getGame()->Start();
     _timer.start(GE->getFrameDelay());
 }
 
-void OGWidget::resizeEvent(QResizeEvent* ev)
+void OGWidget::resizeEvent(QResizeEvent*)
 {
-    Q_UNUSED(ev)
 }
 
 void OGWidget::mousePressEvent(QMouseEvent* ev)
@@ -93,7 +101,8 @@ void OGWidget::mousePressEvent(QMouseEvent* ev)
             {
                 uiList().at(i)->onMouseDown(ev);
 
-                if (ev->isAccepted()) return;
+                if (ev->isAccepted())
+                    return;
             }
         }
     }
@@ -113,7 +122,8 @@ void OGWidget::mouseReleaseEvent(QMouseEvent* ev)
             {
                 uiList().at(i)->onMouseUp(ev);
 
-                if (ev->isAccepted()) return;
+                if (ev->isAccepted())
+                    return;
             }
         }
     }
@@ -133,7 +143,8 @@ void OGWidget::mouseMoveEvent(QMouseEvent* ev)
             {
                 uiList().at(i)->mouseMove(ev);
 
-                if (ev->isAccepted()) return;
+                if (ev->isAccepted())
+                    return;
             }
         }
     }
@@ -148,14 +159,10 @@ void OGWidget::wheelEvent(QWheelEvent* ev)
     getGame()->MouseWheel(ev);
 }
 
-void OGWidget::paintEvent(QPaintEvent *ev)
+void OGWidget::paintEvent(QPaintEvent*)
 {
-    Q_UNUSED(ev)
-
     QPainter painter;
-
     painter.begin(this);
-
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
     getGame()->Paint(&painter);
@@ -166,7 +173,8 @@ void OGWidget::paintEvent(QPaintEvent *ev)
     {
         for (int i = 0; i < uiList().size(); i++)
         {
-            if (uiList().at(i)->isVisible()) uiList().at(i)->Paint(&painter);
+            if (uiList().at(i)->isVisible())
+                uiList().at(i)->Paint(&painter);
         }
     }
 

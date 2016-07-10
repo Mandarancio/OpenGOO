@@ -1,11 +1,11 @@
-#ifndef OG_WIDGET_H
-#define OG_WIDGET_H
+#pragma once
 
 #include <QGLWidget>
-#include "og_iui.h"
-
 #include <QHash>
 #include <QTimer>
+
+#include "og_iui.h"
+
 
 class QString;
 
@@ -31,14 +31,14 @@ namespace og
             void keyReleaseEvent(QKeyEvent* ev);
             void keyPressEvent(QKeyEvent* ev);
 
-            void showEvent(QShowEvent* ev);
-            void resizeEvent(QResizeEvent* ev);
+            void showEvent(QShowEvent*);
+            void resizeEvent(QResizeEvent*);
             void mousePressEvent(QMouseEvent* ev);
             void mouseReleaseEvent(QMouseEvent* ev);
             void mouseMoveEvent(QMouseEvent* ev);
             void wheelEvent(QWheelEvent* ev);
 
-            void paintEvent(QPaintEvent* ev);
+            void paintEvent(QPaintEvent*);
 
             ui::UIList& uiList();
             const ui::UIList& uiList() const;
@@ -58,5 +58,3 @@ namespace og
     };
 
 } // namespace og
-
-#endif // OG_WIDGET_H

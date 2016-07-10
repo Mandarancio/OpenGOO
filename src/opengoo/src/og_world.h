@@ -12,10 +12,14 @@
 #include <OGPhysicsEngine>
 #include "og_forcefield.h"
 #include "og_sprite.h"
+#include "GameEngine/entity.h"
+#include "radialforcefield.h"
+#include "GameEngine/scene.h"
 
-typedef std::unique_ptr<physics::OGForceField> ptr_ForceField;
-typedef std::unique_ptr<physics::OGRadialForceField> ptr_RForceField;
-typedef std::unique_ptr<physics::OGLinearForceField> ptr_LForceField;
+
+typedef std::unique_ptr<ForceField> ForceFieldPtr;
+typedef std::unique_ptr<RadialForceField> RadialForceFieldPtr;
+typedef std::unique_ptr<LinearForceField> LinearForceFieldPtr;
 
 struct WOGLevel;
 struct WOGText;
@@ -28,9 +32,8 @@ struct WOGLevelExit;
 
 class WOGResources;
 
-struct OGSprite;
+class OGSprite;
 
-class OGIPipe;
 class Exit;
 
 class OGBall;
@@ -41,10 +44,15 @@ class OpenGOO;
 
 class QTimer;
 
-class OGWorld : public QObject
+class EntityFactory;
+
+typedef QList<OGSprite*> OGSpriteList;
+
+class OGWorld : public QObject, public og::Scene
 {
         Q_OBJECT
 
+        EntityFactory& m_factory;
         WOGLevel* pLevelData_;
         WOGScene* pSceneData_;
         WOGResources* pResourcesData_[2];
@@ -57,7 +65,6 @@ class OGWorld : public QObject
         OGBall* pNearestBall_;
 
         // Exit
-        Exit* pExit_;
         float xExit_;
         float yExit_;
 
@@ -69,13 +76,15 @@ class OGWorld : public QObject
 
         QList<OGButton*> buttons_;
 
-        QList<OGSprite*> sprites_;
-        void _InsertSprite(OGSprite* sprite);
+        OGSpriteList sprites_;
+        QList<EntityPtr> m_update;
+        QList<EntityPtr> m_added[2];
+        int m_num_added;
 
         QList<OGBall*> balls_;
         QHash<int, OGStrand*> strands_;
         QList<OGIBody*> staticBodies_;
-        std::vector<ptr_ForceField> _forceFilds;
+        std::vector<ForceFieldPtr> _forceFilds;
 
         int strandId_;
         int ballId_;
@@ -96,21 +105,19 @@ class OGWorld : public QObject
         void _CreateStrand(WOGStrand* strand);
 
         // scene
-        ptr_RForceField _CreateRadialForcefield(WOGRadialForceField* ff);
+        RadialForceFieldPtr _CreateRadialForcefield(WOGRadialForceField* ff);
         void _CreateParticle();
         void _CreateSceneLayer(const WOGSceneLayer &scenelayer
-                               , QList<OGSprite*>* sprites);
+                               , OGSpriteList* sprites);
 
         void _CreateButtongroup();
-        void _CreateButton(const WOGButton &button, QList<OGSprite*>* sprites
+        void _CreateButton(const WOGButton &button, OGSpriteList* sprites
                            , QList<OGButton*>* buttons);
 
         void _CreateCompositeGeom(WOGCompositeGeom* cg);
 
         // Pipe
-        OGIPipe* pPipe_;
-        WOGPipe* _GetPipeData();
-        void _CreatePipe();
+        WOGPipe* GetPipeData();
 
         template<class Body, class Data> Body* _CreateBody(Data* data);
 
@@ -120,7 +127,7 @@ class OGWorld : public QObject
         bool _CreateCamera();
 
         bool isPhysicsEngine_;
-        og::OGPhysicsEngine* pPhysicsEngine_;
+        og::physics::PhysicsEngine* pPhysicsEngine_;
 
         void CreatePhysicsScene();
         bool _InitializePhysics();
@@ -134,8 +141,14 @@ class OGWorld : public QObject
 
         OpenGOO* _GetGame();
 
+        og::physics::PhysicsEngine* GetPhisicsEngine();
+
+        OGIBody* AddStaticBody(OGIBody* a_body);
+
     public:
-        OGWorld(const QString &levelname = QString(), QObject* parent = 0);
+        OGWorld(EntityFactory& a_factory,
+                const QString &levelname = QString(),
+                QObject* parent = 0);
         virtual ~OGWorld();
 
         static bool isExist(const QString &path_level);
@@ -143,7 +156,7 @@ class OGWorld : public QObject
         // Get properties
         const QList<OGBall*>& balls() const { return balls_; }
         const QList<OGButton*>& buttons() const { return buttons_; }
-        const QList<OGSprite*>& sprites() const { return sprites_; }
+        const OGSpriteList& sprites() const { return sprites_; }
         const QHash<int, OGStrand*>& strands() const { return strands_; }
         QList<OGIBody*>& staticbodies() { return staticBodies_; }
         const QString &language() const { return language_; }
@@ -154,9 +167,13 @@ class OGWorld : public QObject
         OGBall* nearestball() { return pNearestBall_; }
         WOGText* textdata() { return pTextData_[0]; }
         WOGResources* resrcdata() const { return pResourcesData_[0]; }
-        OGIPipe* pipe() const { return pPipe_; }
-        Exit* exit() const { return pExit_; }
-        const std::vector<ptr_ForceField> &forcefilds() const { return _forceFilds; }
+
+        const std::vector<ForceFieldPtr> &forcefilds() const { return _forceFilds; }
+
+        ForceField& GetForceField(int i)
+        {
+            return *_forceFilds[i];
+        }
 
         bool isLevelLoaded() const { return isLevelLoaded_; }
 
@@ -177,6 +194,8 @@ class OGWorld : public QObject
 
         void Update();
 
+        virtual void Render(QPainter& a_p);
+
         template<class Target, class Config>
         Target LoadConf(const QString &path);
 
@@ -185,8 +204,11 @@ class OGWorld : public QObject
 
         ImageSourcePtr CreateImageSource(const QString& a_id);
 
+        EntityPtr AddEntity(EntityPtr a_e);
+
         void StartSearching();
-        friend class OGPipe;        
+
+        void _InsertSprite(OGSprite* sprite);
 
     private slots:
         void findNearestAttachedBall();

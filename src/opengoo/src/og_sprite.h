@@ -8,13 +8,14 @@
 #include "wog_vobject.h"
 
 #include "GameEngine/imagesource.h"
+#include "GameEngine/graphic.h"
 
 
 typedef std::shared_ptr<og::ImageSource> ImageSourcePtr;
 
 class QPainter;
 
-class OGSprite
+class OGSprite : public og::Graphic
 {    
     QVector2D m_position;
     ImageSourcePtr m_source;
@@ -45,6 +46,7 @@ class OGSprite
     }
 
 public:
+    typedef std::shared_ptr<OGSprite> OGSpritePtr;
 
     OGSprite()
     {
@@ -66,6 +68,12 @@ public:
     void Paint(QPainter* p);
 
     void Paint(QPainter& p, const QRectF& a_target);
+
+    void Render(QPainter& a_painter, const QVector2D& a_pos);
+
+    void Update()
+    {
+    }
 
     void SetAngle(float a_angle)
     {
@@ -183,5 +191,10 @@ public:
     void SetColorize(const QColor& a_color)
     {
        m_colorize = a_color;
+    }
+
+    static OGSpritePtr Create(ImageSourcePtr a_source)
+    {
+        return std::make_shared<OGSprite>(a_source);
     }
 };

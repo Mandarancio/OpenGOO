@@ -3,7 +3,7 @@
 
 class OGBall;
 
-class BallSensor : public og::OGCircleSensor
+class BallSensor : public og::physics::CircleSensor
 {
 public:
     BallSensor(OGBall* b);
@@ -15,6 +15,6 @@ private:
     OGBall* m_ball;
 
 private:
-    void _BeginContact(Fixture* fixture);
-    void _EndContact(Fixture*) {}
+    void BeginContact(Fixture* a_fixture);
+    void EndContact(Fixture*) {}
 };

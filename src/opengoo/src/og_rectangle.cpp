@@ -6,7 +6,7 @@
 OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
     : OGIBody(rect, material)
 {
-    OGPhysicsBody* obj;
+    PhysicsBody* obj;
 
     QPointF position = rect->position;
     QSizeF size = rect->size;
@@ -18,7 +18,7 @@ OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
         OGUserData* data = new OGUserData;
         data->type = OGUserData::GEOM;
         data->data = this;
-        obj = createRectangle(position, size, angle, material, false, 0
+        obj = PhysicsFactory::createRectangle(position, size, angle, material, false, 0
                               , data);
     }
 
@@ -32,7 +32,8 @@ void OGRectangle::_Draw(QPainter* p)
     if (debug_)
     {
         const b2Transform& xf = fixture->GetBody()->GetTransform();
-        b2PolygonShape* rect = static_cast<b2PolygonShape*>(shape->shape);
+        assert(shape->GetType() == og::physics::Shape::e_polygon);
+        b2PolygonShape* rect = static_cast<b2PolygonShape*>(shape->GetShape());
         int vertexCount = rect->m_vertexCount;
 
         b2Vec2 v;

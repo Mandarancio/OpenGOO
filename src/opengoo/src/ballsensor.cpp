@@ -1,17 +1,17 @@
 #include "ballsensor.h"
-#include "og_ball.h"
+#include "entities/og_ball.h"
 #include "physics.h"
 #include "og_userdata.h"
 
 #include <OGPhysicsEngine>
 
 BallSensor::BallSensor(OGBall* b)
-    : OGCircleSensor(Circle(b->GetCenter(), b->getRadius() + 5))
+    : CircleSensor(Circle(b->GetCenter(), b->getRadius() + 5), nullptr)
     , m_ball(b)
 {
-    SetCategory(physics::SENSOR);
-    SetMask(physics::BALL);
-    PEngine::GetInstance()->AddSensor(this);
+    SetCategory(PhysicsFactory::SENSOR);
+    SetMask(PhysicsFactory::BALL);
+    PE->AddSensor(this);
 }
 
 BallSensor::~BallSensor()
@@ -19,27 +19,24 @@ BallSensor::~BallSensor()
     PEngine::GetInstance()->RemoveSensor(this);
 }
 
-void BallSensor::_BeginContact(Fixture *fixture)
+void BallSensor::BeginContact(Fixture* a_fixture)
 {
-    auto data = fixture->GetBody()->GetUserData();
+    auto ud = a_fixture->GetBody()->GetUserData();
 
-    if (data)
+    if (!ud)
+        return;
+
+    auto data = static_cast<OGUserData*>(ud);
+    assert(data->IsBall());
+    auto ball = data->ToBall();
+
+    if (ball->IsAttached())
     {
-        auto ud = OGUserData::GetUserData(data);
-
-        if (ud->data)
-        {
-            auto ball = static_cast<OGBall*>(ud->data);
-
-            if (ball->IsAttached())
-            {
-                m_ball->touching();
-            }
-        }
+        m_ball->touching();
     }
 }
 
 void BallSensor::update()
 {
-    pBody_->body->SetTransform(m_ball->GetBodyPosition(), 0);
+    m_ball->body->SetTransform(m_ball->GetBodyPosition(), 0);
 }

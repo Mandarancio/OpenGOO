@@ -182,5 +182,5 @@ inline const QString &OGUIButton::_GetOnClick() const
 
 inline QString OGUIButton::_GetText(QString &str)
 {
-    return OpenGOO::instance()->GetWorld()->textdata()->GetString(str);
+    return OpenGOO::GetInstance()->GetWorld()->textdata()->GetString(str);
 }

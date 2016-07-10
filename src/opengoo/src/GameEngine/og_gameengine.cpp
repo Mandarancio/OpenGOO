@@ -1,6 +1,5 @@
 #include "og_gameengine.h"
 #include "og_resourcemanager.h"
-#include "PhysicsEngine/og_physicsengine.h"
 #include "og_game.h"
 
 #include <QApplication>
@@ -109,9 +108,9 @@ void OGGameEngine::gameExit()
     QApplication::quit();
 }
 
-OGPhysicsEngine* OGGameEngine::getPhysicsEngine()
+PEngine* OGGameEngine::getPhysicsEngine()
 {
-    return OGPhysicsEngine::GetInstance();
+    return PE;
 }
 
 OGResourceManager* OGGameEngine::getResourceManager()

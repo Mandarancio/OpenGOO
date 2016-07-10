@@ -24,26 +24,34 @@
 #include <logger.h>
 #include "og_windowcamera.h"
 #include "og_ballconfig.h"
-#include "og_ball.h"
 #include "og_sprite.h"
 #include "og_ibody.h"
 #include "og_strand.h"
 #include "og_button.h"
-#include "og_pipe.h"
-#include "exit.h"
 #include "continuebutton.h"
 #include "og_fpscounter.h"
 #include "og_forcefield.h"
+#include "entityfactory.h"
+
+namespace
+{
+EntityFactory g_entityFactory;
+}
 
 using namespace og;
 
 OpenGOO* OpenGOO::pInstance_ = 0;
 
-OpenGOO* OpenGOO::instance()
+OpenGOO* OpenGOO::GetInstance()
 {
     if (!pInstance_) pInstance_ = new OpenGOO;
 
     return pInstance_;
+}
+
+OpenGOO::OpenGOO()
+{
+    m_entityFactory = &g_entityFactory;
 }
 
 void OpenGOO::Destroy()
@@ -83,22 +91,22 @@ void OpenGOO::SetLevelName(const QString &levelname)
     levelName_ = levelname;
 }
 
-void OpenGOO::OpenPipe()
-{
-    pWorld_->pipe()->Open();
-}
+//void OpenGOO::OpenPipe()
+//{
+//    pWorld_->pipe()->Open();
+//}
 
-void OpenGOO::ClosePipe()
-{
-    pWorld_->pipe()->Close();
-}
+//void OpenGOO::ClosePipe()
+//{
+//    pWorld_->pipe()->Close();
+//}
 
-void OpenGOO::ShowProgress()
-{
-    pContinueBtn_.reset();
-    pWorld_->exit()->Close();
-    _InitProgressWindow();
-}
+//void OpenGOO::ShowProgress()
+//{
+//    pContinueBtn_.reset();
+//    pWorld_->exit()->Close();
+//    _InitProgressWindow();
+//}
 
 void OpenGOO::SetLanguage(const QString &language) { language_ = language; }
 
@@ -114,7 +122,7 @@ void OpenGOO::_Start()
     //initialize randseed
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
 
-    pWorld_ = new OGWorld;
+    pWorld_ = new OGWorld(*GetEntityFactory());
 
     if (language_.isEmpty()) pWorld_->SetLanguage("en");
     else pWorld_->SetLanguage(language_);
@@ -200,10 +208,10 @@ void OpenGOO::_Cycle()
         ball->Update();
     }
 
-    if (pWorld_->exit() && !pProgressWnd_)
-    {
-        pWorld_->exit()->Update();
-    }
+//    if (pWorld_->exit() && !pProgressWnd_)
+//    {
+//        pWorld_->exit()->Update();
+//    }
 
     {
         int n = (lastTime_ * timeStep_) + 0.5f; // round
@@ -212,24 +220,24 @@ void OpenGOO::_Cycle()
         {
             for (unsigned int j=0; j < pWorld_->forcefilds().size(); j++)
             {
-                pWorld_->forcefilds()[j]->update();
+                pWorld_->GetForceField(j).Update();
             }
 
             pWorld_->Update();
         }
     }
 
-    if (isLevelExit_)
-    {
-        balls_ = pWorld_->exit()->Balls();
+//    if (isLevelExit_)
+//    {
+//        balls_ = pWorld_->exit()->Balls();
 
-        if (balls_ >= ballsRequired_ && !isContinue_)
-        {
-            isContinue_ = true;
-            _CreateContinueButton();
-            pLevel_->hideButton();
-        }
-    }
+//        if (balls_ >= ballsRequired_ && !isContinue_)
+//        {
+//            isContinue_ = true;
+//            _CreateContinueButton();
+//            pLevel_->hideButton();
+//        }
+//    }
 }
 
 void OpenGOO::_Paint(QPainter* painter)
@@ -243,12 +251,9 @@ void OpenGOO::_Paint(QPainter* painter)
         painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
         // Paint a scene
-        QMutableMapIterator<float, OGLayer> i(layers_);
-
-        while (i.hasNext())
+        for (auto it = layers_.begin(); it != layers_.end(); ++it)
         {
-            i.next();
-            i.value().Paint(painter);
+            (*it).Paint(*painter);
         }
 
         Q_FOREACH(OGIBody * body, pWorld_->staticbodies())
@@ -270,6 +275,8 @@ void OpenGOO::_Paint(QPainter* painter)
         {
             visualDebug(painter, pWorld_, pCamera_->zoom());
         }
+
+        pWorld_->Render(*painter);
     }
 }
 
@@ -460,14 +467,14 @@ void OpenGOO::_LoadLevel(const QString &levelname)
     pCamera_ = OGWindowCamera::instance();
     SetPause(false);
 
-    if (pWorld_->exit())
-    {
-        isLevelExit_ = true;
-        balls_ = 0;
-        ballsRequired_ = pWorld_->leveldata()->ballsrequired;
-        isContinue_ = false;
-    }
-    else { isLevelExit_ = false; }
+//    if (pWorld_->exit())
+//    {
+//        isLevelExit_ = true;
+//        balls_ = 0;
+//        ballsRequired_ = pWorld_->leveldata()->ballsrequired;
+//        isContinue_ = false;
+//    }
+//    else { isLevelExit_ = false; }
 }
 
 void OpenGOO::_CloseLevel()

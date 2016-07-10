@@ -8,7 +8,7 @@ struct WOGPObject;
 
 class QPainter;
 
-class OGIBody : public og::OGPhysicsBody
+class OGIBody : public og::PhysicsBody
 {
     WOGPObject* data_;
     WOGMaterial* material_;

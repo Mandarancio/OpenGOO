@@ -1,16 +1,21 @@
-#ifndef OG_PCIRCLE_H
-#define OG_PCIRCLE_H
+#pragma once
 
 #include "og_physicsbody.h"
 #include "circle.h"
 
 namespace og
 {
-class OGPCircle : public OGPhysicsBody
+class OGPCircle : public PhysicsBody
 {
 public:
-    OGPCircle(const Circle &circle) : OGPhysicsBody(circle.center()) {}
-};
-} // namespace og
+    OGPCircle(const Circle &circle)
+        : PhysicsBody(circle.center())
+    {
+    }
 
-#endif // OG_PCIRCLE_H
+    void SetRadius(float32 a_radius)
+    {
+        shape->SetRadius(a_radius);
+    }
+};
+}

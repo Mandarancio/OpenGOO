@@ -43,7 +43,7 @@ og::ui::PushButton* createButton(const QPoint &pos, const UIData &data);
 OpenGOO* getGame();
 }
 
-inline OpenGOO* ogUtils::getGame() { return OpenGOO::instance(); }
+inline OpenGOO* ogUtils::getGame() { return OpenGOO::GetInstance(); }
 
 inline og::OGGameEngine* ogUtils::getGameEngine()
 {

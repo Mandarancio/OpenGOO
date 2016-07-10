@@ -5,7 +5,7 @@
 OGLine::OGLine(WOGLine *line, WOGMaterial* material)
     : OGIBody(line, material)
 {
-    OGPhysicsBody* obj;
+    PhysicsBody* obj;
 
     QPointF anchor = line->anchor;
     QPointF normal = line->normal;
@@ -15,7 +15,7 @@ OGLine::OGLine(WOGLine *line, WOGMaterial* material)
         OGUserData* data = new OGUserData;
         data->type = OGUserData::GEOM;
         data->data = this;
-        obj = createLine(anchor, normal, material, false, data);
+        obj = PhysicsFactory::createLine(anchor, normal, material, false, data);
     }
 
     body = obj->body;

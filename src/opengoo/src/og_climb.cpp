@@ -5,10 +5,10 @@ using namespace og;
 
 struct OGClimbImpl
 {
-    OGPhysicsBody* pBody;
+    PhysicsBody* pBody;
 };
 
-OGClimb::OGClimb(OGPhysicsBody* body)
+OGClimb::OGClimb(PhysicsBody* body)
 {
     pImpl_ = new OGClimbImpl;
     pImpl_->pBody = body;

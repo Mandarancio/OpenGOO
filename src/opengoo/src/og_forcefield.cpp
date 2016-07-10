@@ -1,26 +1,47 @@
+#include <functional>
+
 #include "og_forcefield.h"
 #include "og_userdata.h"
 
-using namespace physics;
 
-void OGForceField::begin(Fixture* fixture)
+void ForceField::AddBody(b2Body* a_body)
 {
-    b2Body* body = fixture->GetBody();
-    void* ud = body->GetUserData();
-    OGUserData* data = OGUserData::GetUserData(ud);
-
-    if (data && data->type == OGUserData::BALL) bodies << body;
+    assert(a_body != nullptr);
+    assert(m_bodies.indexOf(a_body) == -1);
+    m_bodies.push_back(a_body);
 }
 
-void OGForceField::end(Fixture* fixture)
+void ForceField::RemoveBody(b2Body* a_body)
 {
-    b2Body* body = fixture->GetBody();
-    void* ud = body->GetUserData();
-    OGUserData* data = OGUserData::GetUserData(ud);
+    assert(a_body != nullptr);
+    int i = m_bodies.indexOf(a_body);
+    assert(m_bodies.indexOf(a_body) != -1);
+    m_bodies.removeAt(i);
+}
 
-    if (data && data->type == OGUserData::BALL)
-    {
-        int i = bodies.indexOf(body);
-        bodies.removeAt(i);
-    }
+void ForceField::ProccessFixture(Fixture* a_fixture, ForceFieldMemFn a_callback)
+{
+    assert(a_fixture != nullptr);
+    auto body = a_fixture->GetBody();
+    auto ud = body->GetUserData();
+
+    if (!ud)
+        return;
+
+    auto data = static_cast<OGUserData*>(ud);
+
+    if (data->IsBall())
+        CALL_MEMBER_FN(*this, a_callback)(body);
+}
+
+void ForceField::Begin(Fixture* a_fixture)
+{
+    assert(a_fixture != nullptr);
+    ProccessFixture(a_fixture, &ForceField::AddBody);
+}
+
+void ForceField::End(Fixture* a_fixture)
+{
+    assert(a_fixture != nullptr);
+    ProccessFixture(a_fixture, &ForceField::RemoveBody);
 }

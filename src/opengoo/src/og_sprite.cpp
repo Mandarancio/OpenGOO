@@ -36,6 +36,26 @@ void OGSprite::Paint(QPainter& p, const QRectF& a_target)
     m_source->Render(p, a_target, m_clipRect);
 }
 
+void OGSprite::Render(QPainter& a_painter, const QVector2D& a_pos)
+{
+    QPointF target(-m_offsetX, -m_offsetY);
+    auto sx = m_scale * m_scaleX;
+    auto sy = m_scale * m_scaleY;
+
+    a_painter.save();
+    a_painter.translate(a_pos.x(), a_pos.y());
+
+    if (GetAngle() != 0)
+        a_painter.rotate(GetAngle());
+
+    a_painter.scale(sx, sy);
+    a_painter.setOpacity(m_alpha);
+
+    m_source->Render(a_painter, target, m_clipRect);
+
+    a_painter.restore();
+}
+
 void OGSprite::CenterOrigin()
 {
     m_offsetX = m_source->GetWidth() / 2.0f;

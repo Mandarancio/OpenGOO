@@ -1,0 +1,13 @@
+SOURCES += \
+    src/entities/cap.cpp \
+    src/entities/exit.cpp \
+    src/entities/gamecontroller.cpp \
+    src/entities/og_ball.cpp \
+    src/entities/og_pipe.cpp
+
+HEADERS += \
+    src/entities/cap.h \
+    src/entities/exit.h \
+    src/entities/gamecontroller.h \
+    src/entities/og_ball.h \
+    src/entities/og_pipe.h

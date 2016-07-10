@@ -1,7 +1,7 @@
-#ifndef OG_PHYSICSJOINT_H
-#define OG_PHYSICSJOINT_H
+#pragma once
 
 #include "common.h"
+
 
 namespace og
 {
@@ -14,5 +14,3 @@ struct OGPhysicsJoint
     ~OGPhysicsJoint() { delete jointdef; }
 };
 }
-
-#endif // OG_PHYSICSJOINT_H

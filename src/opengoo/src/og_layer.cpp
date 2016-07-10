@@ -1,7 +1,7 @@
+#include <QPainter>
+
 #include "og_layer.h"
 #include "og_sprite.h"
-
-#include <QPainter>
 
 OGLayer::OGLayer()
 {
@@ -17,10 +17,10 @@ void OGLayer::Add(OGSprite *sprite)
     spriteList_.append(sprite);
 }
 
-void OGLayer::Paint(QPainter* painter)
+void OGLayer::Paint(QPainter& a_painter)
 {
-    Q_FOREACH (OGSprite* s, spriteList_)
+    for (int i = 0; i < spriteList_.size(); ++i)
     {
-        s->Paint(painter);
+        spriteList_[i]->Paint(&a_painter);
     }
 }

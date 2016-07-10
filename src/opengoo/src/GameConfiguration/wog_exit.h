@@ -1,5 +1,4 @@
-#ifndef WOG_EXIT_H
-#define WOG_EXIT_H
+#pragma once
 
 #include <QString>
 #include <QPointF>
@@ -11,5 +10,3 @@ struct WOGLevelExit
     float radius;
     QString filter;
 };
-
-#endif // WOG_EXIT_H

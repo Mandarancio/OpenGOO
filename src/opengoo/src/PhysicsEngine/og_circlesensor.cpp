@@ -1,52 +1,69 @@
+#include <QString>
+
 #include "og_circlesensor.h"
 #include "circle.h"
 
 #include <OGPhysicsEngine>
 #include <OGPCircle>
 
-#include <QString>
+#include "GameEngine/entity.h"
 
-using namespace og;
-
-OGCircleSensor::OGCircleSensor(const Circle &circle)
+namespace og
 {
-    pBody_ = PEngine::GetInstance()->CreateCircle(circle);
-    pBody_->fixture->SetSensor(true);    
+namespace physics
+{
+CircleSensor::CircleSensor(const Circle& a_circle, Entity* a_entity)
+{
+    assert(a_entity);
+    m_entity = a_entity;
+    m_body.reset(PE->CreateCircle(a_circle));
+    m_body->fixture->SetSensor(true);    
 }
 
-OGCircleSensor::~OGCircleSensor()
+CircleSensor::~CircleSensor()
 {
-    delete pBody_;
 }
 
-Fixture* OGCircleSensor::_GetFixture() const
+Fixture* CircleSensor::GetFixture() const
 {
-    return pBody_->fixture;
+    return m_body->fixture;
 }
 
-QVector2D OGCircleSensor::_GetPosition() const
+QVector2D CircleSensor::GetPosition() const
 {
-    return pBody_->GetPosition();
+    return m_body->GetPosition();
 }
 
-void OGCircleSensor::_SetCategory(unsigned short category)
+void CircleSensor::SetCategory(UShort category)
 {
-    b2Filter filter = pBody_->fixture->GetFilterData();
+    auto filter = m_body->fixture->GetFilterData();
     filter.categoryBits = category;
-    pBody_->fixture->SetFilterData(filter);
+    m_body->fixture->SetFilterData(filter);
 }
 
-void OGCircleSensor::_SetMask(unsigned short mask)
+void CircleSensor::SetMask(UShort mask)
 {
-    b2Filter filter = pBody_->fixture->GetFilterData();
+    b2Filter filter = m_body->fixture->GetFilterData();
     filter.maskBits = mask;
-    pBody_->fixture->SetFilterData(filter);
+    m_body->fixture->SetFilterData(filter);
 }
 
-void OGCircleSensor::_SetFilter(const OGSensorFilter &filter)
+void CircleSensor::SetFilter(const SensorFilter& filter)
 {
     b2Filter f;
     f.categoryBits = filter.category;
     f.maskBits = filter.mask;
-    pBody_->fixture->SetFilterData(f);
+    m_body->fixture->SetFilterData(f);
+}
+
+void CircleSensor::BeginContact(Fixture* a_fixture)
+{
+    m_entity->OnTriggerEnter(a_fixture);
+}
+
+void CircleSensor::EndContact(Fixture* a_fixture)
+{
+    m_entity->OnTriggerExit(a_fixture);
+}
+}
 }

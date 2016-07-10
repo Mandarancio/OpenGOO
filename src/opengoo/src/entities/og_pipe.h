@@ -8,7 +8,8 @@
 
 #include "og_ipipe.h"
 #include "og_sprite.h"
-
+#include "cap.h"
+#include "entityfactory.h"
 
 struct WOGPipe;
 class OGWorld;
@@ -22,7 +23,7 @@ class OGPipe : public OGIPipe
         open
     };
 
-    OGSprite* m_cap[2];
+    EntityPtr m_cap;
 
     virtual void _Close();
     virtual void _Open();
@@ -31,5 +32,5 @@ class OGPipe : public OGIPipe
     OGWorld* GetWorld();
 
 public:
-    OGPipe(WOGPipe* a_pipe);
+    OGPipe(const WOGPipe& a_pipe, EntityFactory& a_efactory);
 };

@@ -7,7 +7,7 @@
 class OGWalk : public OGIWalkBehavior
 {
 public:
-    OGWalk(og::OGPhysicsBody* body);
+    OGWalk(og::PhysicsBody* body);
     ~OGWalk();
 
 private:

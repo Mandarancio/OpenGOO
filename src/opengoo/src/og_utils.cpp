@@ -101,7 +101,7 @@ OGUserData* ogUtils::ogGetUserData(void* userdata)
 
 QPixmap* ogUtils::getImage(const QString & id)
 {
-    OGWorld* world = OpenGOO::instance()->GetWorld();
+    OGWorld* world = OpenGOO::GetInstance()->GetWorld();
     WOGResources* resrc = world->resrcdata();
 
     return new QPixmap(resrc->GetImage(id));
@@ -109,7 +109,7 @@ QPixmap* ogUtils::getImage(const QString & id)
 
 QString ogUtils::getText(const QString & id)
 {
-    OGWorld* world = OpenGOO::instance()->GetWorld();
+    OGWorld* world = OpenGOO::GetInstance()->GetWorld();
     WOGText* text = world->textdata();
 
     return text->GetString(id);

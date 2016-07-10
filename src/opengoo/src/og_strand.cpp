@@ -1,17 +1,16 @@
 #include "og_strand.h"
 #include <OGPhysicsEngine>
 #include "og_userdata.h"
-#include "physics.h"
-
 #include <QPainter>
 #include <QVector2D>
+
+#include "physics.h"
 
 using namespace og;
 
 OGStrand::~OGStrand()
 {
-    OGPhysicsEngine* physicsEngine = OGPhysicsEngine::GetInstance();
-    physicsEngine->DestroyJoint(strand_);
+    PE->DestroyJoint(strand_);
 
     b1_->ReleaseStrand();
     b2_->ReleaseStrand();
@@ -31,7 +30,7 @@ OGStrand::OGStrand(OGBall* gb1, OGBall* gb2, int id)
             data->type = OGUserData::STRAND;
             data->data = this;
 
-            strand_ = createJoint(b1_, b2_, data);
+            strand_ = PhysicsFactory::createJoint(b1_, b2_, data);
             b1_->body->SetFixedRotation(true);
             b2_->body->SetFixedRotation(true);
             b1_->AddStrand();

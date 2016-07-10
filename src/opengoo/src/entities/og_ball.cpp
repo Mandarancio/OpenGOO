@@ -18,17 +18,17 @@
 
 using namespace og;
 
-inline float LengthSquared(float x1, float y1, float x2, float y2);
-inline float LengthSquared(const QPointF* p1, const QPointF* p2);
+//inline float LengthSquared(float x1, float y1, float x2, float y2);
+//inline float LengthSquared(const QPointF* p1, const QPointF* p2);
 
-float LengthSquared(const QPointF* p1, const QPointF* p2)
-{
-    return LengthSquared(p1->x(), p1->y(), p2->x(), p2->y());
-}
-
-float LengthSquared(float x1, float y1, float x2, float y2)
+inline static float LengthSquared(float x1, float y1, float x2, float y2)
 {
     return qPow((x2 - x1), 2.0f) + qPow((y2 - y1), 2.0f);
+}
+
+inline static float LengthSquared(const QPointF* p1, const QPointF* p2)
+{
+    return LengthSquared(p1->x(), p1->y(), p2->x(), p2->y());
 }
 
 OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
@@ -72,9 +72,10 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     float mass = pConfig_->attribute.core.mass;
     int v = ballShape->variation * 100; // convert the variation to a percentage
 
-    if (v > 100) { v = 100; }
+    if (v > 100)
+        v = 100;
 
-    OGPhysicsBody* obj = 0;
+    PhysicsBody* obj = 0;
 
     if (ballShape->type == "circle")
     {
@@ -103,7 +104,8 @@ OGBall::OGBall(WOGBallInstance* data, WOGBall* configuration)
     SetWalkSpeed(pConfig_->attribute.movement.walkspeed);
     SetClimbSpeed(pConfig_->attribute.movement.climbspeed);    
 
-    if (pData_->discovered) _isSleeping = false;
+    if (pData_->discovered)
+        _isSleeping = false;
     else
     {
         body->SetFixedRotation(true);
@@ -126,14 +128,15 @@ QVector2D OGBall::GetCenter() const
     return QVector2D(pos.x, pos.y);
 }
 
-OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
+PhysicsBody* OGBall::CreateCircle(float x, float y, float angle
                                     , float mass, WOGBallShape* shape
                                     , int variation)
 {
     WOGCircleBall* obj = static_cast<WOGCircleBall*>(shape);
     float radius = obj->radius;
 
-    if (variation >= 1) { radius += radius * (qrand() % variation) * 0.01f; }
+    if (variation >= 1)
+        radius += radius * (qrand() % variation) * 0.01f;
 
     OGUserData* data = new OGUserData;
     data->type = OGUserData::BALL;
@@ -141,10 +144,10 @@ OGPhysicsBody* OGBall::CreateCircle(float x, float y, float angle
     data->isAttachedOnEnter = false;
     data->data = this;
 
-    return createCircle(x, y, radius, angle, &material_, true, mass, data);
+    return PhysicsFactory::createCircle(x, y, radius, angle, &material_, true, mass, data);
 }
 
-OGPhysicsBody* OGBall::CreateReactangle(float x, float y, float angle
+PhysicsBody* OGBall::CreateReactangle(float x, float y, float angle
                                         , float mass, WOGBallShape* shape
                                         , int variation)
 {
@@ -158,7 +161,7 @@ OGPhysicsBody* OGBall::CreateReactangle(float x, float y, float angle
         h += h * (qrand() % variation) * 0.01f;
     }
 
-    return createRectangle(x, y, w, h, angle, &material_, true, mass, 0);
+    return PhysicsFactory::createRectangle(x, y, w, h, angle, &material_, true, mass, 0);
 }
 
 inline void OGBall::SetBodyPosition(float x, float y)
@@ -180,16 +183,25 @@ void OGBall::Detache()
         joints = joints->next;
     }
 
-    while (!strands.isEmpty()) { _RemoveStrand(strands.takeFirst()); }
+    while (!strands.isEmpty())
+    {
+        _RemoveStrand(strands.takeFirst());
+    }
 
     body->SetAwake(false);
 }
 
-void OGBall::Attache(OGBall* ball) { _CreateStrand(this, ball); }
+void OGBall::Attache(OGBall* ball)
+{
+    _CreateStrand(this, ball);
+}
 
 void OGBall::Attache()
 {
-    while (!jointBalls_.isEmpty()) { Attache(jointBalls_.takeFirst()); }
+    while (!jointBalls_.isEmpty())
+    {
+        Attache(jointBalls_.takeFirst());
+    }
 }
 
 void OGBall::SetCurrentPosition(const b2Vec2 &pos)
@@ -218,6 +230,7 @@ void OGBall::Update()
         else
         {
             _sensor->update();
+
             return;
         }
     }
@@ -274,7 +287,8 @@ void OGBall::Update()
         }
     }
 
-    if ((isClimbing_ || isWalking_) && !isMarked_) { Move(); }
+    if ((isClimbing_ || isWalking_) && !isMarked_)
+        Move();
 }
 
 inline void OGBall::Move()
@@ -282,11 +296,10 @@ inline void OGBall::Move()
     if (isClimbing_)
     {
         if (IsCanClimb() && !isSuction_)
-        {
             Algorithm2();
-        }
 
-        if (pTargetBall_ && pTargetBall_->IsAttached() && pOriginBall_ && pOriginBall_->IsAttached())
+        if (pTargetBall_ && pTargetBall_->IsAttached() &&
+                pOriginBall_ && pOriginBall_->IsAttached())
         {
             SetTarget(pTargetBall_);
             SetOrigin(pOriginBall_);
@@ -294,11 +307,13 @@ inline void OGBall::Move()
             SetClimbTarget(GetTarget());
             PerformClimb();
         }
-        else { isClimbing_ = false; }
+        else
+            isClimbing_ = false;
     }
     else if (isWalking_)
     {
         FindTarget();
+
         if (pTargetBall_)
         {
             SetWalkTarget(GetTarget());
@@ -312,10 +327,9 @@ inline bool OGBall::IsCanClimb()
     b2Vec2 pos(GetTarget()->x(), GetTarget()->y());
 
     if (fixture->TestPoint(pos) && pTargetBall_ && pTargetBall_->IsAttached())
-    {
         return true;
-    }
-    else { return false; }
+    else
+        return false;
 }
 
 // TODO need a new algorithm
@@ -334,7 +348,8 @@ inline bool OGBall::IsOnWalkableGeom(b2ContactEdge* edge)
             {
                 geom = static_cast<OGIBody*>(data->data);
 
-                if (geom->walkable()) { return true; }
+                if (geom->walkable())
+                    return true;
             }
         }
 
@@ -348,7 +363,8 @@ void OGBall::Paint(QPainter* painter, bool debug)
 {
     Q_UNUSED(debug)
 
-    if (isExit()) return;
+    if (isExit())
+        return;
 
     float posX, posY, radius, angle;
     QLineF line;
@@ -428,9 +444,7 @@ void OGBall::SetSuction(bool suction)
     isSuction_ = suction;
 
     if (suction)
-    {
         isClimbing_ = false;
-    }
 }
 
 inline void OGBall::SetTarget(float x, float y)
@@ -464,7 +478,8 @@ void OGBall::AddStrand()
     {
         isAttached_ = true;
 
-        if (!IsDetachable()) { isDraggable_ = false; }
+        if (!IsDetachable())
+            isDraggable_ = false;
     }
 }
 
@@ -495,15 +510,14 @@ inline void OGBall::FindJointBalls()
             {
                 jointBalls_ << ball;
 
-                if (jointBalls_.size() == GetMaxStrands()) { break; }
+                if (jointBalls_.size() == GetMaxStrands())
+                    break;
             }
         }
     }
 
     if (GetMaxStrands() >= 2 && jointBalls_.size() < 2)
-    {
         jointBalls_.clear();
-    }
 }
 
 void OGBall::FindTarget()
@@ -533,7 +547,9 @@ void OGBall::FindTarget()
         }
     }
 
-    if (nearestBall != 0) SetTarget(nearestBall);
+    if (nearestBall != 0)
+        SetTarget(nearestBall);
+
     pTargetBall_ = nearestBall;
 }
 
@@ -541,7 +557,8 @@ void OGBall::FindTarget()
 
 void OGBall::MouseDown(const QPoint &pos)
 {
-    if (_isSleeping) return;
+    if (_isSleeping)
+        return;
 
     const float K = 0.1f;
 
@@ -560,12 +577,14 @@ void OGBall::MouseUp(const QPoint &pos)
 {
     Q_UNUSED(pos)
 
-    if (_isSleeping) return;
+    if (_isSleeping)
+        return;
 
     if (!isAttached_)
-    {
-        while (!jointBalls_.isEmpty()) { Attache(jointBalls_.takeFirst()); }
-    }
+        while (!jointBalls_.isEmpty())
+        {
+            Attache(jointBalls_.takeFirst());
+        }
 
     isDragging_ = false;
     body->SetAwake(true);
@@ -580,8 +599,10 @@ void OGBall::MouseMove(const QPoint &pos)
 
     SetBodyPosition(x, y);
 
-    if (IsAttached()) { Detache(); }
-    else if (GetMaxStrands() > 0) { FindJointBalls(); }
+    if (IsAttached())
+        Detache();
+    else if (GetMaxStrands() > 0)
+        FindJointBalls();
 }
 
 void OGBall::SetMarked(bool status)
@@ -589,9 +610,8 @@ void OGBall::SetMarked(bool status)
     isMarked_ = status;
 
     if (isMarked_)
-    {
-        if (isWalking_ || isClimbing_) { body->SetAwake(false); }
-    }
+        if (isWalking_ || isClimbing_)
+            body->SetAwake(false);
 }
 
 bool OGBall::TestPoint(const QPoint &pos)
@@ -606,7 +626,8 @@ bool OGBall::TestPoint(const QPoint &pos)
 
 void OGBall::Algorithm2()
 {
-    if (_GetWorld()->nearestball() == 0) return;
+    if (_GetWorld()->nearestball() == 0)
+        return;
 
     OGUserData* data;
     float dist1, dist2;
@@ -681,7 +702,7 @@ inline float OGBall::Distance(OGBall* b)
 
 inline OGWorld* OGBall::_GetWorld()
 {
-    return OpenGOO::instance()->GetWorld();
+    return OpenGOO::GetInstance()->GetWorld();
 }
 
 void OGBall::_RemoveStrand(OGStrand* strand)
@@ -698,12 +719,28 @@ void OGBall::_CreateStrand(OGBall* b1, OGBall* b2)
 
 OGUserData* OGBall::GetUserData()
 {
-    return OGUserData::GetUserData(body->GetUserData());
+    auto ud = body->GetUserData();
+
+    if (!ud)
+       return nullptr;
+
+    return static_cast<OGUserData*>(ud);
 }
 
-inline void OGBall::PerformWalk() { pWalkBehavior_->Walk(); }
-inline void OGBall::PerformClimb() { pClimbBehavior_->Climb(); }
-inline void OGBall::PerformFly() { pFlyBehavior_->Fly(); }
+inline void OGBall::PerformWalk()
+{
+    pWalkBehavior_->Walk();
+}
+
+inline void OGBall::PerformClimb()
+{
+    pClimbBehavior_->Climb();
+}
+
+inline void OGBall::PerformFly()
+{
+    pFlyBehavior_->Fly();
+}
 
 inline void OGBall::SetWalkTarget(QPointF* pos)
 {
@@ -720,17 +757,30 @@ inline void OGBall::SetClimbOrigin(QPointF* pos)
     pClimbBehavior_->SetOrigin(*pos);
 }
 
-
 inline void OGBall::SetFlyTarget(QPointF* pos)
 {
     pFlyBehavior_->SetTarget(*pos);
 }
 
-inline void OGBall::SetWalkSpeed(float speed) { pWalkBehavior_->SetSpeed(speed); }
-inline void OGBall::SetClimbSpeed(float speed) { pClimbBehavior_->SetSpeed(speed); }
+inline void OGBall::SetWalkSpeed(float speed)
+{
+    pWalkBehavior_->SetSpeed(speed);
+}
 
-inline float OGBall::GetAngle() const { return pData_->angle; }
-inline QString OGBall::GetType() const { return pData_->type; }
+inline void OGBall::SetClimbSpeed(float speed)
+{
+    pClimbBehavior_->SetSpeed(speed);
+}
+
+inline float OGBall::GetAngle() const
+{
+    return pData_->angle;
+}
+
+inline QString OGBall::GetType() const
+{
+    return pData_->type;
+}
 
 inline WOGBallShape* OGBall::GetShape() const
 {
@@ -740,33 +790,48 @@ inline WOGBallShape* OGBall::GetShape() const
 QString OGBall::GetStrandType() const
 {
     QString str;
-    if (!pConfig_->strand) return str;
-    else return pConfig_->strand->type;
+
+    if (!pConfig_->strand)
+        return str;
+    else
+        return pConfig_->strand->type;
 }
 
-inline bool OGBall::IsDetachable() const { return pConfig_->attribute.player.detachable; }
+inline bool OGBall::IsDetachable() const
+{
+    return pConfig_->attribute.player.detachable;
+}
 
-QString OGBall::GetId() const { return pData_->id; }
+QString OGBall::GetId() const
+{
+    return pData_->id;
+}
 
-int OGBall::GetMaxStrands() const { return pConfig_->attribute.core.strands; }
+int OGBall::GetMaxStrands() const
+{
+    return pConfig_->attribute.core.strands;
+}
 
 OGIWalkBehavior* OGBall::GetWalkBehavior()
 {
-    if (!pWalkBehavior_) pWalkBehavior_ = new OGWalk(this);
+    if (!pWalkBehavior_)
+        pWalkBehavior_ = new OGWalk(this);
 
     return pWalkBehavior_;
 }
 
 OGIClimbBehavior* OGBall::GetClimbBehavior()
 {
-    if (!pClimbBehavior_) pClimbBehavior_ = new OGClimb(this);
+    if (!pClimbBehavior_)
+        pClimbBehavior_ = new OGClimb(this);
 
     return pClimbBehavior_;
 }
 
 OGIFlyBehavior* OGBall::GetFlyBehavior()
 {
-    if (!pFlyBehavior_) pFlyBehavior_ = new OGFly(this);
+    if (!pFlyBehavior_)
+        pFlyBehavior_ = new OGFly(this);
 
     return pFlyBehavior_;
 }

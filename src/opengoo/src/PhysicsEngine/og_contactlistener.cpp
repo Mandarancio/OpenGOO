@@ -1,23 +1,28 @@
 #include "og_contactlistener.h"
 
-using namespace og;
-
-void OGContactListener::BeginContact(b2Contact* contact)
+namespace og
 {
-    b2Fixture* fixtureA = contact->GetFixtureA();
-    b2Fixture* fixtureB = contact->GetFixtureB();   
+namespace physics
+{
+void ContactListener::BeginContact(b2Contact* a_contact)
+{
+    auto fixtureA = a_contact->GetFixtureA();
+    auto fixtureB = a_contact->GetFixtureB();
+    Fixture* fixture;
+    Sensor* sensor;
 
-    for (int i=0; i < _sensors.size(); i++)
+    for (int i = 0; i < m_sensors.size(); ++i)
     {
-        OGSensor* sensor = _sensors.at(i);
-        b2Fixture* fixture = sensor->GetFixture();
+        sensor = m_sensors[i];
+        fixture = sensor->GetFixture();
 
         if (fixtureA == fixture)
         {
             sensor->BeginContact(fixtureB);
             break;
         }
-        else if (fixtureB == fixture)
+
+        if (fixtureB == fixture)
         {
             sensor->BeginContact(fixtureA);
             break;
@@ -25,25 +30,38 @@ void OGContactListener::BeginContact(b2Contact* contact)
     }
 }
 
-void OGContactListener::EndContact(b2Contact* contact)
+void ContactListener::EndContact(b2Contact* a_contact)
 {
-    b2Fixture* fixtureA = contact->GetFixtureA();
-    b2Fixture* fixtureB = contact->GetFixtureB();
+    auto fixtureA = a_contact->GetFixtureA();
+    auto fixtureB = a_contact->GetFixtureB();
+    b2Fixture* fixture;
+    Sensor* sensor;
 
-    for (int i=0; i < _sensors.size(); i++)
+    for (int i = 0; i < m_sensors.size(); ++i)
     {
-        OGSensor* sensor = _sensors.at(i);
-        b2Fixture* fixture = sensor->GetFixture();
+        sensor = m_sensors[i];
+        fixture = sensor->GetFixture();
 
         if (fixtureA == fixture)
         {
             sensor->EndContact(fixtureB);
             break;
         }
-        else if (fixtureB == fixture)
+
+        if (fixtureB == fixture)
         {
             sensor->EndContact(fixtureA);
             break;
         }
     }
+}
+
+void ContactListener::RemoveSensor(Sensor* a_sensor)
+{
+    int i = m_sensors.indexOf(a_sensor);
+
+    if (i != -1)
+        m_sensors.removeAt(i);
+}
+}
 }

@@ -75,7 +75,7 @@ class QPainter;
 
 class BallSensor;
 
-class OGBall : public og::OGPhysicsBody
+class OGBall : public og::PhysicsBody
 {
     public:
         OGBall(WOGBallInstance* data, WOGBall* configuration);
@@ -201,11 +201,11 @@ protected:
 
         void SetBodyPosition(float x, float y);
 
-        og::OGPhysicsBody* CreateCircle(float x, float y, float angle
+        og::PhysicsBody* CreateCircle(float x, float y, float angle
                                     , float mass, WOGBallShape* shape
                                     , int variation);
 
-        og::OGPhysicsBody* CreateReactangle(float x, float y, float angle
+        og::PhysicsBody* CreateReactangle(float x, float y, float angle
                                         , float mass, WOGBallShape* shape
                                         , int variation);
 

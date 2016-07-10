@@ -21,11 +21,13 @@
 
 class OGWindowCamera;
 class OGBall;
-
+class EntityFactory;
 
 class QTime;
 
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
+
+typedef EntityFactory* EntityFactoryPtr;
 
 class OpenGOO : public og::OGGame
 {
@@ -34,7 +36,7 @@ class OpenGOO : public og::OGGame
     Q_DISABLE_COPY(OpenGOO)
 
     public:
-        static OpenGOO* instance();
+        static OpenGOO* GetInstance();
 
         void Destroy();
 
@@ -68,12 +70,20 @@ class OpenGOO : public og::OGGame
 
         void loadLevel(const QString &levelname);
 
+        EntityFactory* GetEntityFactory()
+        {
+            return m_entityFactory;
+        }
+
     private:
-        OpenGOO() {}
-        ~OpenGOO() {}
+        OpenGOO();
+        ~OpenGOO()
+        {
+        }
 
         static OpenGOO* pInstance_;
 
+        EntityFactoryPtr m_entityFactory;
         OGWorld* pWorld_;
         std::unique_ptr<OGFPSCounter> _pFPS;
         OGWindowCamera* pCamera_;
@@ -159,6 +169,8 @@ class OpenGOO : public og::OGGame
 
         std::unique_ptr<og::ui::IPushButton> pContinueBtn_;
         void _CreateContinueButton();
+
+
 
 private slots:
         void _backToMainMenu();

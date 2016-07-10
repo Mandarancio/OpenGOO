@@ -1,5 +1,4 @@
-#ifndef OG_TYPES_H
-#define OG_TYPES_H
+#pragma once
 
 #ifndef BOX2D_H
 #include <Box2D/Box2D.h>
@@ -11,4 +10,5 @@ class b2Contact;
 typedef b2Fixture Fixture ;
 typedef b2Contact Contact;
 
-#endif // OG_TYPES_H
+typedef unsigned short UShort;
+

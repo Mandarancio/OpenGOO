@@ -9,7 +9,7 @@
 OGCircle::OGCircle(WOGCircle* circle, WOGMaterial* material)
     : OGIBody(circle, material)
 {
-    OGPhysicsBody* obj;
+    PhysicsBody* obj;
 
     QPointF position = circle->position;
     float32 radius = circle->radius;
@@ -20,7 +20,7 @@ OGCircle::OGCircle(WOGCircle* circle, WOGMaterial* material)
         OGUserData* data = new OGUserData;
         data->type = OGUserData::GEOM;
         data->data = this;
-        obj = createCircle(position, radius, 0, material, false, 0, data);
+        obj = PhysicsFactory::createCircle(position, radius, 0, material, false, 0, data);
     }
 
     body = obj->body;

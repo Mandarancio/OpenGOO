@@ -6,13 +6,11 @@
 
 #include "og_world.h"
 #include "logger.h"
-#include "og_pipe.h"
 #include "og_data.h"
 #include "og_circle.h"
-#include "exit.h"
 #include "og_rectangle.h"
 #include "og_line.h"
-#include "og_ball.h"
+#include "entities/og_ball.h"
 #include "og_button.h"
 #include "GameEngine/og_gameengine.h"
 #include "og_windowcamera.h"
@@ -23,10 +21,16 @@
 #include <OGPhysicsEngine>
 #include <OGContactListener>
 
+#include "gamedata.h"
+#include "entityfactory.h"
+
 using namespace og;
 
-OGWorld::OGWorld(const QString &levelname, QObject* parent)
-    : QObject(parent)
+OGWorld::OGWorld(EntityFactory& a_factory,
+                 const QString &levelname,
+                 QObject* parent)
+    : QObject(parent),
+      m_factory(a_factory)
 {
     levelName_ = levelname;
 
@@ -40,16 +44,15 @@ OGWorld::OGWorld(const QString &levelname, QObject* parent)
     pEffectsData_ = 0;
     pTimer_ = 0;
     pCamera_ = 0;
-    pPipe_ = 0;
     pNearestBall_ = 0;
     pPhysicsEngine_ = 0;
-    pExit_ = 0;
 
     strandId_ = 0;
     ballId_ = 0;
 
     isPhysicsEngine_ = false;
     isLevelLoaded_ = false;
+    m_num_added = 0;
 }
 
 OGWorld::~OGWorld()
@@ -74,7 +77,7 @@ OGWorld::~OGWorld()
 
     logInfo("Destroy physics engine");
 
-    OGPhysicsEngine::DestroyInstance();
+    og::physics::PhysicsEngine::DestroyInstance();
 }
 
 bool OGWorld::isExist(const QString &path_level)
@@ -177,9 +180,6 @@ void OGWorld::Reload()
 {
     _ClearPhysics();
     CreatePhysicsScene();
-
-    if (pPipe_)
-        pPipe_->Close();
 }
 
 template<class Target, class Config>
@@ -372,22 +372,33 @@ void OGWorld::_ClearLocalData()
     }
 }
 
+og::physics::PhysicsEngine* OGWorld::GetPhisicsEngine()
+{
+    if (!pPhysicsEngine_)
+        pPhysicsEngine_ = PE;
+
+    return pPhysicsEngine_;
+}
+
 void OGWorld::CreateScene()
 {
+    logInfo("Creating physics");
+    GetPhisicsEngine();
+
     logInfo("Create scene");
 
     logInfo("Create scenelayers");
 
-    Q_FOREACH(WOGSceneLayer * sceneLayer, scenedata()->sceneLayer)
+    foreach (auto sceneLayer, scenedata()->sceneLayer)
     {
         _CreateSceneLayer(*sceneLayer, &sprites_);
     }
 
     logInfo("Create buttongroups");
 
-    Q_FOREACH(WOGButtonGroup * btnGroup, scenedata()->buttongroup)
+    foreach (auto btnGroup, scenedata()->buttongroup)
     {
-        Q_FOREACH(WOGButton * btn, btnGroup->button)
+        foreach (auto btn, btnGroup->button)
         {
             _CreateButton(*btn, &sprites_ , &buttons_);
         }
@@ -395,18 +406,18 @@ void OGWorld::CreateScene()
 
     logInfo("Create buttons");
 
-    Q_FOREACH(WOGButton * btn, scenedata()->button)
+    foreach (auto btn, scenedata()->button)
     {
         _CreateButton(*btn, &sprites_, &buttons_);
     }
 
-    if (!pPipe_)
-        _CreatePipe();
+    GameData gd;
+    gd.efactory = &m_factory;
+    gd.pipe = GetPipeData();
+    gd.levelexit = leveldata()->levelexit;
+    gd.ballsrequired = leveldata()->ballsrequired;
 
-    // Create Z-order
-    logInfo("Create Z-order");
-
-    _CreateZOrder();
+    AddEntity(m_factory.CreateGameController(gd));
 
     if (!pCamera_)
     {
@@ -426,55 +437,59 @@ void OGWorld::CreateScene()
     }
 
     CreatePhysicsScene();
+
+    // Create Z-order
+    logInfo("Create Z-order");
+
+    _CreateZOrder();
+}
+
+OGIBody* OGWorld::AddStaticBody(OGIBody* a_body)
+{
+    assert(a_body);
+    staticBodies_.push_back(a_body);
+
+    return a_body;
 }
 
 void OGWorld::CreatePhysicsScene()
 {
     logInfo("Creating physics");
 
-    pPhysicsEngine_ = OGPhysicsEngine::GetInstance();
-
-    if (!pExit_ && leveldata()->levelexit != 0)
-    {
-        logInfo("Creating exit");
-
-        pExit_ = new Exit(leveldata()->levelexit);
-    }
-
-    Q_FOREACH(WOGCircle * circle, scenedata()->circle)
+    foreach (auto circle, scenedata()->circle)
     {
         if (!circle->dynamic)
-            staticBodies_ << _CreateBody<OGCircle, WOGCircle>(circle);
+            AddStaticBody(_CreateBody<OGCircle, WOGCircle>(circle));
     }
 
-    Q_FOREACH(WOGRectangle * rect, scenedata()->rectangle)
+    foreach (auto rect, scenedata()->rectangle)
     {
         if (!rect->dynamic)
-            staticBodies_ << _CreateBody<OGRectangle, WOGRectangle>(rect);
+            AddStaticBody(_CreateBody<OGRectangle, WOGRectangle>(rect));
     }
 
-    Q_FOREACH(WOGLine * line, scenedata()->line)
+    foreach (auto line, scenedata()->line)
     {
         if (!line->dynamic)
-            staticBodies_ << _CreateBody<OGLine, WOGLine>(line);
+            AddStaticBody(_CreateBody<OGLine, WOGLine>(line));
     }
 
-    Q_FOREACH(WOGCompositeGeom *cg, scenedata()->compositegeom)
+    foreach (auto cg, scenedata()->compositegeom)
     {
         _CreateCompositeGeom(cg);
     }
 
-    Q_FOREACH(WOGBallInstance * ball, leveldata()->ball)
+    foreach (auto ball, leveldata()->ball)
     {
-        balls_ << _CreateBall(ball);
+        balls_.push_back(_CreateBall(ball));
     }
 
-    Q_FOREACH(WOGStrand * strand, leveldata()->strand)
+    foreach (auto strand, leveldata()->strand)
     {
         _CreateStrand(strand);
     }
 
-    Q_FOREACH(WOGRadialForceField* ff, scenedata()->radialforcefield)
+    foreach (auto ff, scenedata()->radialforcefield)
     {
         _forceFilds.push_back(std::move(_CreateRadialForcefield(ff)));
     }
@@ -496,7 +511,7 @@ void OGWorld::CreatePhysicsScene()
 }
 
 void OGWorld::_CreateSceneLayer(const WOGSceneLayer &scenelayer
-                                , QList<OGSprite*>* sprites)
+                                , OGSpriteList* sprites)
 {
     OGSprite* sprite = _CreateSprite(&scenelayer, scenelayer.image);
     sprites->push_back(sprite);
@@ -533,7 +548,7 @@ template<class Body, class Data> Body* OGWorld::_CreateBody(Data* data)
 }
 
 void OGWorld::_CreateButton(const WOGButton &button,
-                            QList<OGSprite*>* sprites,
+                            OGSpriteList* sprites,
                             QList<OGButton*>* buttons)
 {
     sprites->push_back(_CreateSprite(&button, button.up));
@@ -590,18 +605,6 @@ bool OGWorld::_CreateCamera()
     pCamera_ = new OGWindowCamera(scene, size, cam);
 
     return true;
-}
-
-void OGWorld::_CreatePipe()
-{
-    WOGPipe* pipe = _GetPipeData();
-
-    if (pipe)
-    {
-        logInfo("Create pipe");
-
-        pPipe_ = new OGPipe(pipe);
-    }
 }
 
 ImageSourcePtr OGWorld::CreateImageSource(const QString& a_id)
@@ -676,7 +679,7 @@ WOGBall* OGWorld::GetBallConfiguration(const QString &type)
 
 bool OGWorld::_InitializePhysics()
 {
-    return OGPhysicsEngine::GetInstance()->Initialize(0, -10, true);
+    return PE->Initialize(0, -10, true);
 }
 
 void OGWorld::_SetGravity()
@@ -687,7 +690,7 @@ void OGWorld::_SetGravity()
         {
             float x = scenedata()->linearforcefield.last()->force.x();
             float y = scenedata()->linearforcefield.last()->force.y();
-            OGPhysicsEngine::GetInstance()->SetGravity(x, y);
+            PE->SetGravity(x, y);
         }
     }
 }
@@ -740,16 +743,10 @@ void OGWorld::_ClearPhysics()
 
     logInfo("Remove exit");
 
-    if (pExit_)
-    {
-        delete pExit_;
-        pExit_ = 0;
-    }
-
     strandId_ = 0;
     ballId_ = 0;
 
-    OGPhysicsEngine::GetInstance()->Reload();
+    PE->Reload();
 
     isLevelLoaded_ = false;
 }
@@ -780,13 +777,7 @@ void OGWorld::_ClearScene()
         pCamera_ = 0;
     }
 
-    if (pPipe_)
-    {
-        logInfo("Clear pipe");
-
-        delete pPipe_;
-        pPipe_ = 0;
-    }
+    m_update.clear();
 }
 
 void OGWorld::CreateStrand(OGBall* b1, OGBall* b2)
@@ -846,6 +837,36 @@ void OGWorld::Update()
 {
     if (pPhysicsEngine_)
         pPhysicsEngine_->Simulate();
+
+    for (int i = 0; i < m_update.size(); ++i)
+    {
+        m_update[i]->Update();
+    }
+
+    if (!m_added[m_num_added].isEmpty())
+    {
+        auto& added = m_added[m_num_added];
+        m_num_added = ++m_num_added % 2;
+
+        for (int i = 0;  i < added.size(); ++i)
+        {
+            m_update.push_back(std::move(added[i]));
+            m_update.back()->SetScene(this);
+            m_update.back()->Added();
+        }
+
+        added.clear();
+
+        _CreateZOrder();
+    }
+}
+
+void OGWorld::Render(QPainter& a_p)
+{
+    for (int i = 0; i < m_update.size(); ++i)
+    {
+        m_update[i]->Render(a_p);
+    }
 }
 
 bool OGWorld::LoadLevel(const QString &levelname)
@@ -899,7 +920,7 @@ void OGWorld::_CreateZOrder()
     }
 
 #else
-    Q_FOREACH (OGSprite* sprite, sprites_)
+    foreach (OGSprite* sprite, sprites_)
     {
         _GetGame()->AddSprite(sprite->GetDepth(), sprite);
     }
@@ -908,7 +929,8 @@ void OGWorld::_CreateZOrder()
 
 void OGWorld::_InsertSprite(OGSprite* sprite)
 {
-    sprites_ << sprite;
+    assert(sprite);
+    sprites_.append(sprite);
 }
 
 void OGWorld::RemoveStrand(OGStrand* strand)
@@ -921,23 +943,23 @@ inline void  OGWorld::StartSearching()
     pTimer_->start(1000);
 }
 
-inline WOGPipe* OGWorld::_GetPipeData()
+inline WOGPipe* OGWorld::GetPipeData()
 {
     return pLevelData_->pipe;
 }
 
 inline OpenGOO* OGWorld::_GetGame()
 {
-    return OpenGOO::instance();
+    return OpenGOO::GetInstance();
 }
 
-ptr_RForceField OGWorld::_CreateRadialForcefield(WOGRadialForceField* ff)
+RadialForceFieldPtr OGWorld::_CreateRadialForcefield(WOGRadialForceField* ff)
 {
     float x = ff->center.x() / 10;
     float y = ff->center.y() / 10;
     float r = ff->radius / 10;
     Circle c(QVector2D(x, y), r);
-    ptr_RForceField rf(new physics::OGRadialForceField(Circle(c)));
+    RadialForceFieldPtr rf(new RadialForceField(Circle(c)));
     rf->setForceatCenter(ff->forceatcenter);
     rf->setForceatEdge(ff->forceatedge);
 
@@ -974,4 +996,11 @@ void OGWorld::_CreateCompositeGeom(WOGCompositeGeom* cg)
         if (!wr->dynamic)
             staticBodies_ << _CreateBody<OGRectangle, WOGRectangle>(wr);
     }
+}
+
+EntityPtr OGWorld::AddEntity(EntityPtr a_e)
+{
+    m_added[m_num_added].push_back(a_e);
+
+    return a_e;
 }

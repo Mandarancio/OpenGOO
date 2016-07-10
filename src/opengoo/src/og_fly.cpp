@@ -4,10 +4,10 @@ using namespace og;
 
 struct OGFlyImpl
 {
-    OGPhysicsBody* pBody;
+    PhysicsBody* pBody;
 };
 
-OGFly::OGFly(OGPhysicsBody* body)
+OGFly::OGFly(PhysicsBody* body)
 {
     pImpl_ = new OGFlyImpl;
     pImpl_->pBody = body;

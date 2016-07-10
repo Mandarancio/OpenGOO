@@ -1,14 +1,10 @@
-#ifndef OG_LAYER_H
-#define OG_LAYER_H
-
+#pragma once
 #include <QList>
 
-struct OGSprite;
+class OGSprite;
+class QPainter;
 
 typedef QList<OGSprite*> OGSpriteList;
-
-
-class QPainter;
 
 class OGLayer
 {
@@ -17,10 +13,8 @@ public:
     ~OGLayer();
 
     void Add(OGSprite* sprite);
-    void Paint(QPainter* painter);
+    void Paint(QPainter& a_painter);
 
 private:
     OGSpriteList spriteList_;
 };
-
-#endif // OG_LAYER_H

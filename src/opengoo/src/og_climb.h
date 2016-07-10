@@ -7,7 +7,7 @@
 class OGClimb : public OGIClimbBehavior
 {
     public:
-        OGClimb(og::OGPhysicsBody* body);
+        OGClimb(og::PhysicsBody* body);
         ~OGClimb();
         void initNewTarget();
     private:

@@ -1,30 +1,40 @@
-#ifndef OG_CIRCLESENSOR_H
-#define OG_CIRCLESENSOR_H
+#pragma once
+
+#include <memory>
 
 #include "og_sensor.h"
 #include "og_pcircle.h"
+
 
 class Circle;
 
 namespace og
 {
-class OGCircleSensor : public og::OGSensor
+class Entity;
+
+namespace physics
 {
+class CircleSensor : public Sensor
+{
+    typedef std::unique_ptr<OGPCircle> OGPCirclePtr;
+    OGPCirclePtr m_body;
+    Entity* m_entity;
+
     public:
-        OGCircleSensor(const Circle &circle);
-        ~OGCircleSensor();
+        CircleSensor(const Circle& a_circle, Entity* a_entity);
+        ~CircleSensor();
 
-    protected:
-        OGPCircle* pBody_;
+        Fixture* GetFixture() const;
+        QVector2D GetPosition() const;
 
-    private:
-        Fixture* _GetFixture() const;
-        QVector2D _GetPosition() const;
+        void SetCategory(UShort category);
+        void SetMask(UShort mask);
+        void SetFilter(const SensorFilter& filte);
 
-        void _SetCategory(unsigned short category);
-        void _SetMask(unsigned short mask);
-        void _SetFilter(const OGSensorFilter &filte);
+protected:
+        void BeginContact(Fixture* a_fixture);
+
+        void EndContact(Fixture* a_fixture);
 };
 }
-
-#endif // OG_CIRCLESENSOR_H
+}

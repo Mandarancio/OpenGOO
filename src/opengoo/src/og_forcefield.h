@@ -1,57 +1,43 @@
-#ifndef OG_FORCEFIELD_H
-#define OG_FORCEFIELD_H
-
-#include <PhysicsEngine>
-#include "PhysicsEngine/og_circlesensor.h"
+#pragma once
 
 #include <QList>
 
-namespace physics
+#include <PhysicsEngine>
+#include "og_types.h"
+
+#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
+
+
+class ForceField
 {
-class OGForceField
-{    
-public:
-    virtual ~OGForceField() {}
-    void update() { _update(); }
-
-protected:
-    float dampeningfactor;
-    QList<b2Body*> bodies;
-
-    void begin(Fixture*);
-    void end(Fixture*);
-
-private:    
-    virtual void _update() = 0;
-};
-
-class OGRadialForceField : public OGForceField, og::OGCircleSensor
-{
-    float _forceatcenter;
-    float _forceatedge;
-    float _sqrradius;
+    typedef void (ForceField::*ForceFieldMemFn)(b2Body*);
 
 public:
-    OGRadialForceField(const Circle &c);
+    typedef QList<b2Body*> BodyList;
 
-    ~OGRadialForceField()
+    virtual ~ForceField()
     {
-        og::OGPhysicsEngine::GetInstance()->RemoveSensor(this);
     }
 
-    void setForceatCenter(float fc) { _forceatcenter = fc * -1; }
-    void setForceatEdge(float fe) { _forceatedge = (fe * -1) / _sqrradius; }
+    virtual void Update()
+    {
+    }
+
+    void AddBody(b2Body* a_body);
+    void RemoveBody(b2Body* a_body);
+
+protected:
+     void Begin(Fixture* a_fixture);
+     void End(Fixture* a_fixture);
 
 private:
-    void _BeginContact(Fixture* fixture) { begin(fixture);}
-    void _EndContact(Fixture* fixture) { end(fixture); }
-    void _update();
+    void ProccessFixture(Fixture* a_fixture, ForceFieldMemFn a_callback);
+
+protected:
+    float m_dampeningfactor;
+    BodyList m_bodies;
 };
 
-class OGLinearForceField : public OGForceField
+class LinearForceField : public ForceField
 {
 };
-
-} // namespace physics
-
-#endif // OG_FORCEFIELD_H

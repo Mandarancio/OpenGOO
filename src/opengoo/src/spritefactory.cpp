@@ -9,7 +9,7 @@
 
 WOGResources* SpriteFactory::GetResourceManager()
 {
-    return OpenGOO::instance()->GetWorld()->resrcdata();
+    return OpenGOO::GetInstance()->GetWorld()->resrcdata();
 }
 
 ImageSourcePtr SpriteFactory::CreateImageSource(const QString& a_id)

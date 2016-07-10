@@ -60,8 +60,8 @@ win32: {
         HEADERS += src/backtracer_win32.h
         SOURCES += src/backtracer_win32.cpp
         release: {
-            QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
-            QMAKE_LFLAGS   += /DEBUG
+#            QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
+#            QMAKE_LFLAGS   += /DEBUG
         }
     }
 }
@@ -78,7 +78,6 @@ HEADERS += \
     src/og_sprite.h \
     src/og_windowcamera.h \        
     src/og_strand.h \
-    src/og_ball.h \
     src/og_circle.h \
     src/og_ibody.h \
     src/og_rectangle.h \
@@ -90,14 +89,11 @@ HEADERS += \
     src/og_fpscounter.h \
     src/og_utils.h \
     src/og_ipipe.h \
-    src/og_pipe.h \
     src/og_behavior.h \
     src/og_walk.h \
     src/og_climb.h \
     src/og_fly.h \
     src/og_types.h \
-    src/exitsensor.h \
-    src/exit.h \
     src/progresswindow.h \
     src/og_layer.h \
     src/island.h \
@@ -109,7 +105,11 @@ HEADERS += \
     src/og_forcefield.h \
     src/ogapplication.h \
     src/ballsensor.h \
-    src/spritefactory.h
+    src/spritefactory.h \
+    src/entityfactory.h \
+    src/gamedata.h \
+    src/exiteventlistener.h \
+    src/radialforcefield.h
 
 SOURCES += \
     src/main.cpp \
@@ -120,7 +120,6 @@ SOURCES += \
     src/visualdebug.cpp \
     src/og_windowcamera.cpp \
     src/og_strand.cpp \
-    src/og_ball.cpp \
     src/og_circle.cpp \
     src/og_ibody.cpp \
     src/og_rectangle.cpp \
@@ -131,13 +130,10 @@ SOURCES += \
     src/fpscounter.cpp \
     src/og_fpscounter.cpp \
     src/og_utils.cpp \
-    src/og_pipe.cpp \   
     src/og_behavior.cpp \
     src/og_walk.cpp \
     src/og_climb.cpp \
     src/og_fly.cpp \
-    src/exitsensor.cpp \
-    src/exit.cpp \
     src/progresswindow.cpp \
     src/og_layer.cpp \
     src/island.cpp \
@@ -146,17 +142,19 @@ SOURCES += \
     src/level.cpp \
     src/continuebutton.cpp \
     src/og_forcefield.cpp \
-    src/og_radialforcefield.cpp \
     src/ogapplication.cpp \
     src/ballsensor.cpp \
     src/og_sprite.cpp \
-    src/spritefactory.cpp
+    src/spritefactory.cpp \
+    src/entityfactory.cpp \
+    src/radialforcefield.cpp
 
 
 include(src/GameEngine/GameEngine.files)
 include(src/PhysicsEngine/PhysicsEngine.files)
 include(src/OGLib/OGLib.files)
 include(src/GameConfiguration/GameConfiguration.files)
+include(src/entities/entities.files)
 
 
 !win32 {

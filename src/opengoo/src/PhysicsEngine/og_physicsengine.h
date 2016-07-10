@@ -1,66 +1,71 @@
-#ifndef OG_PHYSICSENGINE_H
-#define OG_PHYSICSENGINE_H
+#pragma once
+
+#include <memory>
 
 #include "common.h"
 #include "debug.h"
+
 
 class Circle;
 
 namespace og
 {
-
-class OGPCircle;
-struct OGPhysicsBody;
+struct PhysicsBody;
 struct OGPhysicsJoint;
+class OGPCircle;
 
-class OGContactListener;
-class OGSensor;
-
-class OGPhysicsEngine
+namespace physics
 {
-    public:
-        static OGPhysicsEngine* GetInstance(void);
-        static void DestroyInstance(void);
+class Sensor;
+class ContactListener;
 
-        bool Initialize(float x, float y, bool sleep);
-        void Reload();
-        void SetGravity(float x, float y);
+class PhysicsEngine
+{
+    static PhysicsEngine* m_instance;
+    std::unique_ptr<ContactListener> m_contactListener;
+    std::unique_ptr<b2World> m_world;
+    b2Vec2 m_gravity;
+    float32 m_timeStep;
+    int32 m_velocityIterations;
+    int32 m_positionIterations;
+    bool m_isSleep;
 
-        void SetSleep(bool sleep) { isSleep_ = sleep; }
+    PhysicsEngine();
+    ~PhysicsEngine();
 
-        void CreateBody(OGPhysicsBody*  body);
-        OGPCircle* CreateCircle(const Circle &circle);
+    void Init();
+    void Release();
 
-        void CreateJoint(OGPhysicsJoint* joint);
-        void DestroyJoint(OGPhysicsJoint* joint);
+public:
+    static PhysicsEngine* GetInstance();
+    static void DestroyInstance();
 
-        void Simulate();
-        void SetSimulation(int velIter, int posIter, int steps);
+    bool Initialize(float a_x, float a_y, bool a_sleep);
+    void Reload();
+    void SetGravity(float a_x, float a_y);
 
-        OGContactListener* GetContactListener();
+    void SetSleep(bool a_sleep)
+    {
+        m_isSleep = a_sleep;
+    }
 
-        void AddSensor(OGSensor* sensor);
-        void RemoveSensor(OGSensor* sensor);
+    void CreateBody(og::PhysicsBody*  a_body);
+    OGPCircle* CreateCircle(const Circle& a_circle);
 
-    private:
-        static OGPhysicsEngine* pInstance_;
-        b2World* pWorld_;
-        b2Vec2 gravity_;
-        float32 timeStep_;
-        int32 velocityIterations_;
-        int32 positionIterations_;
-        bool isSleep_;
+    void CreateJoint(og::OGPhysicsJoint* a_joint);
+    void DestroyJoint(og::OGPhysicsJoint* a_joint);
 
-        OGContactListener* pContactListener_;
+    void Simulate();
+    void SetSimulation(int a_velIter, int a_posIter, int a_steps);
 
-        OGPhysicsEngine();
-        ~OGPhysicsEngine();
+    ContactListener* GetContactListener();
 
-        void _Init();
-        void _Release();
+    void AddSensor(Sensor* a_sensor);
+    void RemoveSensor(Sensor* a_sensor);
 };
-} // namespace og
+}
+}
 
-typedef og::OGPhysicsEngine PEngine;
+typedef og::physics::PhysicsEngine PEngine;
 
-#endif // OG_PHYSICSENGINE_H
+#define PE og::physics::PhysicsEngine::GetInstance()

@@ -7,7 +7,7 @@
 class OGFly : public OGIFlyBehavior
 {
     public:
-        OGFly(og::OGPhysicsBody* body);
+        OGFly(og::PhysicsBody* body);
         ~OGFly();
 
     private:

@@ -2,7 +2,7 @@
 #define OG_STRAND_H
 
 #include <OGPhysicsJoint>
-#include "og_ball.h"
+#include "entities/og_ball.h"
 
 class QPainter;
 

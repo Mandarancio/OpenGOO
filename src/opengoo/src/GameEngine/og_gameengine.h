@@ -1,10 +1,11 @@
-#ifndef OG_GAMEENGINE_H
-#define OG_GAMEENGINE_H
+#pragma once
 
 #include <QObject>
 #include <memory>
 
 #include "og_widget.h"
+#include "PhysicsEngine/og_physicsengine.h"
+
 
 typedef og::OGWidget OGWindow;
 
@@ -50,7 +51,7 @@ namespace og
             int getHeight() const { return m_height; }
             int getFrameDelay() const { return m_frameDelay; }
 
-            OGPhysicsEngine* getPhysicsEngine();
+            PEngine* getPhysicsEngine();
 
             OGResourceManager* getResourceManager();
 
@@ -61,15 +62,14 @@ namespace og
 
         public slots:
             void setFrameRate(int a_framerate)
-            { m_frameDelay = qRound(1000.0f / a_framerate); }
+            {
+                m_frameDelay = qRound(1000.0f / a_framerate);
+            }
             void quit();
 
         private slots:
             void gameExit();
     };
-
-} // namespace og
+}
 
 #define GE og::OGGameEngine::getInstance()
-
-#endif // OG_GAMEENGINE_H

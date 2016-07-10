@@ -1,11 +1,12 @@
-#include "og_world.h"
-#include "wog_level.h"
-#include "og_ball.h"
-#include "flags.h"
-
 #include <QPainter>
 #include <QTime>
 #include <QVector2D>
+
+#include "og_world.h"
+#include "wog_level.h"
+#include "entities/og_ball.h"
+#include "flags.h"
+
 
 extern OGBall* _nearestBall;
 extern OGBall* _selectedBall;

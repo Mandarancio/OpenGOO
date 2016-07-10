@@ -5,10 +5,10 @@ using namespace og;
 
 struct OGWalkImpl
 {
-    OGPhysicsBody* pBody;
+    PhysicsBody* pBody;
 };
 
-OGWalk::OGWalk(OGPhysicsBody* body)
+OGWalk::OGWalk(PhysicsBody* body)
 {
     pImpl_ = new OGWalkImpl;
     pImpl_->pBody = body;

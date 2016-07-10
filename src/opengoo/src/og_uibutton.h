@@ -7,7 +7,7 @@
 
 struct WOGButton;
 
-struct OGSprite;
+class OGSprite;
 
 class QImage;
 class QPainter;

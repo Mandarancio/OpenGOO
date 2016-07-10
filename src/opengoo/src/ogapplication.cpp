@@ -71,7 +71,7 @@ bool OGApplication::initialize(int argc, char **argv)
     OGConfig config = ogUtils::ogReadConfig(FILE_CONFIG);
 
     OGGameEngine* gameEngine = 0;
-    OpenGOO* game = OpenGOO::instance();
+    OpenGOO* game = OpenGOO::GetInstance();
     game->SetLevelName(levelName);
     game->SetLanguage(config.language);
 
@@ -98,6 +98,6 @@ bool OGApplication::initialize(int argc, char **argv)
 
 void OGApplication::clear()
 {
-    OpenGOO::instance()->Destroy();
+    OpenGOO::GetInstance()->Destroy();
     delete OGGameEngine::getInstance();
 }
