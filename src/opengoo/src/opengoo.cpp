@@ -208,36 +208,12 @@ void OpenGOO::_Cycle()
         ball->Update();
     }
 
-//    if (pWorld_->exit() && !pProgressWnd_)
-//    {
-//        pWorld_->exit()->Update();
-//    }
-
+    for (unsigned int j=0; j < pWorld_->forcefilds().size(); j++)
     {
-        int n = (lastTime_ * timeStep_) + 0.5f; // round
-
-        for (int i = 0; i < n; i++)
-        {
-            for (unsigned int j=0; j < pWorld_->forcefilds().size(); j++)
-            {
-                pWorld_->GetForceField(j).Update();
-            }
-
-            pWorld_->Update();
-        }
+        pWorld_->GetForceField(j).Update();
     }
 
-//    if (isLevelExit_)
-//    {
-//        balls_ = pWorld_->exit()->Balls();
-
-//        if (balls_ >= ballsRequired_ && !isContinue_)
-//        {
-//            isContinue_ = true;
-//            _CreateContinueButton();
-//            pLevel_->hideButton();
-//        }
-//    }
+    pWorld_->Update();
 }
 
 void OpenGOO::_Paint(QPainter* painter)
