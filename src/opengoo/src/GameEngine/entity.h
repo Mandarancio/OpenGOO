@@ -79,12 +79,11 @@ public:
     {
     }
 
-
     virtual void OnTriggerEnter(Fixture* /*a_fixture*/)
     {
     }
 
-    void OnTriggerExit(Fixture* /*a_fixture*/)
+    virtual void OnTriggerExit(Fixture* /*a_fixture*/)
     {
     }
 
