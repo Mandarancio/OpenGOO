@@ -8,35 +8,51 @@
 #include "PhysicsEngine/og_sensor.h"
 #include "og_ball.h"
 
+
 struct WOGLevelExit;
 struct ExitEventListener;
 
-typedef QList<OGBall*> BallList;
-
 class Exit : public og::Entity
 {
-    struct Impl;
-    std::unique_ptr<Impl> _pImpl;
+    typedef void(Exit::*ExitMemFn)(OGUserData&, OGBall*);
+    typedef QList<OGBall*> BallList;
+    typedef std::unique_ptr<og::physics::Sensor> SensorPtr;
+
     ExitEventListener* m_listener;
-    std::unique_ptr<og::physics::Sensor> m_sensor;
+    SensorPtr m_sensor;
     BallList m_balls;
-    int m_ball;
+    BallList m_remove;
     bool m_isClosed;
 
     Exit(const Exit&);
     Exit& operator=(const Exit&);
 
-public:
-    Exit(const WOGLevelExit& a_exit, ExitEventListener* a_listener);
-    ~Exit();
-
     void Update();
 
-    int GetBalls() const;
+    void AddBall(OGUserData& a_data, OGBall* a_ball);
 
-    void Close();
+    void RemoveBall(OGUserData& a_data, OGBall* a_ball);
 
-    void OnTriggerEnter(Fixture* a_fixture);
+    void ProcessFixture(Fixture* a_fixture, ExitMemFn a_callback);
 
-    void OnTriggerExit(Fixture* a_fixture);
+    void OnTriggerEnter(Fixture* a_fixture)
+    {
+        ProcessFixture(a_fixture, &Exit::AddBall);
+    }
+
+    void OnTriggerExit(Fixture* a_fixture)
+    {
+        ProcessFixture(a_fixture, &Exit::RemoveBall);
+    }
+
+    OGBall* GetBall(int a_i)
+    {
+        assert(a_i >= 0 && a_i < m_balls.size());
+        return m_balls[a_i];
+    }
+
+public:
+    Exit(const WOGLevelExit& a_exit, ExitEventListener* a_listener);
+
+    ~Exit();
 };
