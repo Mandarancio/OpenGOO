@@ -1,5 +1,4 @@
-#ifndef OG_WINDOWCAMERA_H
-#define OG_WINDOWCAMERA_H
+#pragma once
 
 #include "og_camera.h"
 #include "og_poi.h"
@@ -38,8 +37,7 @@ class OGWindowCamera
         void _SetTarget();                
 
     public:
-        OGWindowCamera(const Rect &scene, const Size& size
-                       , const WOGCamera* cam);
+        OGWindowCamera(const Rect &scene, const Size& size, const WOGCamera* cam);
         ~OGWindowCamera();
 
         static OGWindowCamera* instance();
@@ -58,5 +56,3 @@ class OGWindowCamera
 
         void Update(int time);
 };
-
-#endif // OG_WINDOWCAMERA_H

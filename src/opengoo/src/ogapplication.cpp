@@ -37,6 +37,7 @@ bool OGApplication::initialize(int argc, char **argv)
     ogUtils::ogLogger();
 
     QString levelName;
+    bool isCrt = false;
 
     //Check for the run parameters
     for (int i = 1; i < argc; i++)
@@ -48,10 +49,20 @@ bool OGApplication::initialize(int argc, char **argv)
             flag |= DEBUG;
             logWarn("DEBUG MODE ON");
         }
-        if (!arg.compare("--fps", Qt::CaseInsensitive)) { flag |= FPS; }
+        if (!arg.compare("--fps", Qt::CaseInsensitive))
+        {
+            flag |= FPS;
+        }
+        if (!arg.compare("--crt", Qt::CaseInsensitive))
+        {
+            isCrt = true;
+        }
         else if (!arg.compare("--level", Qt::CaseInsensitive))
         {
-            if (++i < argc) { levelName = QString(argv[i]); }
+            if (++i < argc)
+            {
+                levelName = QString(argv[i]);
+            }
         }
     }
 
@@ -97,28 +108,17 @@ bool OGApplication::initialize(int argc, char **argv)
         ogUtils::ogSaveConfig(config, PROPERTIES_DIR + "/" + FILE_CONFIG);
     }
 
-    OGGameEngine* gameEngine = 0;
-    OpenGOO* game = OpenGOO::instance();
+    int refreshrate = config.refreshrate;
+
+    if (refreshrate == 0)
+        refreshrate = FRAMERATE;
+
+    auto game = OpenGOO::instance();
     game->SetLevelName(levelName);
     game->SetLanguage(config.language);
 
-#ifdef Q_OS_WIN32
-    gameEngine = new OGGameEngine(game, config.screen_width
-                                  , config.screen_height
-                                  , config.fullscreen);
-#else
-    gameEngine = new OGGameEngine(game, config.screen_width
-                                  , config.screen_height
-                                  , false);
-#endif //   Q_OS_WIN32
-
-    if (gameEngine == 0) { return false; }
-
-    int refreshrate = config.refreshrate;
-
-    if (refreshrate == 0) refreshrate = FRAMERATE;
-
-    gameEngine->setFrameRate(refreshrate);
+    auto engine = new OGGameEngine(game, config, isCrt);
+    (void) engine;
 
     return true;
 }

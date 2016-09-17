@@ -4,10 +4,9 @@
 using namespace std;
 using namespace oglib;
 
-OGWindowCamera* OGWindowCamera::pInstance_ = 0;
+OGWindowCamera* OGWindowCamera::pInstance_ = nullptr;
 
-OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size
-                               , const WOGCamera *cam)
+OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size, const WOGCamera *cam)
     : target_(0), scene_(scene), traveltime_(0), pause_(0), isScrolling_(true)
 {
     pInstance_ = this;
@@ -31,7 +30,7 @@ OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size
 
 OGWindowCamera::~OGWindowCamera()
 {
-    pInstance_ = 0;
+    pInstance_ = nullptr;
 }
 
 OGWindowCamera* OGWindowCamera::instance()
@@ -76,11 +75,22 @@ void OGWindowCamera::ScrollRight(int shift)
 }
 
 QPoint OGWindowCamera::windowToLogical(const QPoint &p)
-{     
-    int a = RoundF(p.x() * camera_->zoom() - camera_->width() * 0.5f);
-    int b = RoundF(p.y() * camera_->zoom() - camera_->height() * 0.5f);
+{
+    auto px = p.x();
+    auto py = p.y();
+
+    if (!GE->isCrt())
+    {
+        auto window = GE->getWindow();
+        px *= camera_->width() / (float)window->width();
+        py *= camera_->height() / (float)window->height();
+    }
+
+    int a = RoundF(px * camera_->zoom() - camera_->width() * 0.5f);
+    int b = RoundF(py * camera_->zoom() - camera_->height() * 0.5f);
     int x = camera_->x() + a;
     int y = camera_->y() - b;
+
     return QPoint(x, y);
 }
 

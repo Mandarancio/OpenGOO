@@ -37,7 +37,7 @@
 
 using namespace og;
 
-OpenGOO* OpenGOO::pInstance_ = 0;
+OpenGOO* OpenGOO::pInstance_ = nullptr;
 
 OpenGOO* OpenGOO::instance()
 {
@@ -234,13 +234,9 @@ void OpenGOO::_Cycle()
 
 void OpenGOO::_Paint(QPainter* painter)
 {
-    painter->setViewport(0, 0, width_, height_);
-
     if (pWorld_->isLevelLoaded())
     {
         painter->setWindow(pCamera_->rect());
-
-        painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
         // Paint a scene
         QMutableMapIterator<float, OGLayer> i(layers_);
@@ -347,14 +343,12 @@ void OpenGOO::_MouseMove(QMouseEvent* ev)
 
     curMousePos_ = ev->pos();
 
-    QPoint mPos(ev->pos());
-
-    mPos = pCamera_->windowToLogical(mPos);
-    lastMousePos_ = mPos;
+    QPoint pos = pCamera_->windowToLogical(ev->pos());
+    lastMousePos_ = pos;
 
     Q_FOREACH(OGButton * button, pWorld_->buttons())
     {
-        if (button->TestPoint(mPos))
+        if (button->TestPoint(pos))
         {
             button->up()->SetVisible(false);
             button->over()->SetVisible(true);
@@ -370,7 +364,7 @@ void OpenGOO::_MouseMove(QMouseEvent* ev)
     {
         Q_FOREACH(OGBall * ball, pWorld_->balls())
         {
-            if (ball->TestPoint(mPos))
+            if (ball->TestPoint(pos))
             {
                 _pSelectedBall = ball;
                 _pSelectedBall->SetMarked(true);
@@ -380,9 +374,9 @@ void OpenGOO::_MouseMove(QMouseEvent* ev)
     }
     else if (_pSelectedBall->IsDragging())
     {
-        _pSelectedBall->MouseMove(mPos);
+        _pSelectedBall->MouseMove(pos);
     }
-    else if (!_pSelectedBall->TestPoint(mPos))
+    else if (!_pSelectedBall->TestPoint(pos))
     {
         _pSelectedBall->SetMarked(false);
         _ClearSelectedBall();
