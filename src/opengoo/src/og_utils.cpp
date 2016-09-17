@@ -66,28 +66,31 @@ void ogUtils::ogLogger()
     qInstallMessageHandler(ogMessageHandler);
 }
 
-OGConfig ogUtils::ogReadConfig(const QString & filename)
+bool ogUtils::ogLoadConfig(OGConfig& config, const QString& filename)
 {
-    // Read game configuration
-
     OGGameConfig gameConfig(filename);
 
-    OGConfig config;
+    if (!gameConfig.Open())
+    {
+        logWarn("Could not open file:" + filename);
+        return false;
+    }
 
-    if (gameConfig.Open())
+    if (!gameConfig.Read())
     {
-        if (gameConfig.Read()) { config = gameConfig.Parser(); }
-        else {logWarn("File " + filename + " is corrupted"); }
+        logWarn("Could not read file:" + filename);
+        return false;
     }
-    else
-    {
-        logWarn("File " + filename + " not found");
-        config.fullscreen = false;
-        config.screen_width = 800;
-        config.screen_width = 600;
-        gameConfig.Create(config);
-    }
-    return config;
+
+    config = gameConfig.Parser();
+
+    return true;
+}
+
+void ogUtils::ogSaveConfig(OGConfig& config, const QString & filename)
+{
+    OGGameConfig gameConfig(filename);
+    gameConfig.Create(config);
 }
 
 OGUserData* ogUtils::ogGetUserData(void* userdata)

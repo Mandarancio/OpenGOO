@@ -28,7 +28,9 @@ int OGApplication::run(int argc, char **argv)
 bool OGApplication::initialize(int argc, char **argv)
 {
     const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
-    const QString FILE_CONFIG = "./resources/config";
+    const QString RESOURCES_DIR = "res";
+    const QString PROPERTIES_DIR = "properties";
+    const QString FILE_CONFIG = "config.txt";
     const int FRAMERATE = 60;
 
     ogUtils::ogBackTracer();
@@ -54,9 +56,9 @@ bool OGApplication::initialize(int argc, char **argv)
     }
 
     //CHECK FOR GAME DIR IN HOME DIRECTORY
-    QDir dir(GAMEDIR);
+    QDir dir;
     //If the game dir doesn't exist create it
-    if (!dir.exists())
+    if (!dir.exists(GAMEDIR))
     {
         if (flag & DEBUG) logWarn("Game dir doesn't exist!");
         dir.mkdir(GAMEDIR);
@@ -68,7 +70,32 @@ bool OGApplication::initialize(int argc, char **argv)
     }
     else if (flag & DEBUG) logWarn("Game dir exist!");
 
-    OGConfig config = ogUtils::ogReadConfig(FILE_CONFIG);
+    if (!dir.exists(RESOURCES_DIR))
+    {
+        logError(RESOURCES_DIR + " directory not found");
+        return false;
+    }
+
+    if (!dir.exists(PROPERTIES_DIR))
+    {
+        logError(PROPERTIES_DIR + " directory not found");
+        return false;
+    }
+
+    OGConfig config;
+    auto isLoaded = ogUtils::ogLoadConfig(config, PROPERTIES_DIR + "/" + FILE_CONFIG);
+    if (!isLoaded)
+    {
+        logWarn("Could not load config file:" + FILE_CONFIG);
+        config.fullscreen = false;
+        config.screen_width = 800;
+        config.screen_height = 600;
+        config.refreshrate = 60;
+        config.language = "en";
+
+        logInfo("Saving config file...");
+        ogUtils::ogSaveConfig(config, PROPERTIES_DIR + "/" + FILE_CONFIG);
+    }
 
     OGGameEngine* gameEngine = 0;
     OpenGOO* game = OpenGOO::GetInstance();

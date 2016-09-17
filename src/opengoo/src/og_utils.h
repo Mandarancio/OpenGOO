@@ -24,7 +24,8 @@ void ogLogger();
 
 void ogMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 
-OGConfig ogReadConfig(const QString & filename);
+bool ogLoadConfig(OGConfig& config, const QString & filename);
+void ogSaveConfig(OGConfig& config, const QString & filename);
 
 OGUserData* ogGetUserData(void* userdata);
 
