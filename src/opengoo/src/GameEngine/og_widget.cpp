@@ -164,10 +164,12 @@ void OGWidget::paintEvent(QPaintEvent*)
     QPainter painter;
     painter.begin(this);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    if (GE->isCrt())
+        painter.setViewport(0, 0, GE->getWidth(), GE->getHeight());
+    else
+        painter.setViewport(0, 0, width(), height());
 
     getGame()->Paint(&painter);
-
-    painter.setWindow(0, 0, width(), height());
 
     if (!uiList().isEmpty())
     {

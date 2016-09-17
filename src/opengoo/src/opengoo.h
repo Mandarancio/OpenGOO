@@ -170,8 +170,6 @@ class OpenGOO : public og::OGGame
         std::unique_ptr<og::ui::IPushButton> pContinueBtn_;
         void _CreateContinueButton();
 
-
-
 private slots:
         void _backToMainMenu();
         void _backToIsland();

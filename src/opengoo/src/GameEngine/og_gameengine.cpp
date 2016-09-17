@@ -1,6 +1,7 @@
 #include "og_gameengine.h"
 #include "og_resourcemanager.h"
 #include "og_game.h"
+#include "og_gameconfig.h"
 
 #include <QApplication>
 #include <QScreen>
@@ -10,29 +11,27 @@
 
 using namespace og;
 
-OGGameEngine* OGGameEngine::m_instance = 0;
+OGGameEngine* OGGameEngine::m_instance = nullptr;
 
-OGGameEngine::OGGameEngine(OGGame* a_game, int a_width, int a_height
-                           , bool a_fullscreen)
+OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config, bool a_crt)
 {
     m_instance = this;
-    m_width = a_width;
-    m_height = a_height;
-    m_frameDelay = 50;   // 20 FPS default
-    m_fullscreen = a_fullscreen;
-    m_isVideoModeSupported = false;
     m_game = a_game;
-    m_resourceManager = 0;
+    m_width = a_config.screen_width;
+    m_height = a_config.screen_height;
+    m_fullscreen = a_config.fullscreen;
+    m_frameDelay = 1000.0f / a_config.refreshrate;
+    m_crt = a_crt;
+    m_isVideoModeSupported = false;
+    m_resourceManager = nullptr;
 }
 
 OGGameEngine::~OGGameEngine()
 {
-#ifdef Q_OS_WIN32
     if (m_isVideoModeSupported)
     {
         OGVideoMode::returnDefaultMode();
     }
-#endif // Q_OS_WIN32
 }
 
 bool OGGameEngine::initialize()
@@ -49,21 +48,26 @@ bool OGGameEngine::initialize()
 
     if (m_fullscreen)
     {
-        //initialize video mode
-#ifdef Q_OS_WIN32
-        m_isVideoModeSupported = OGVideoMode::testVideoMode(getWidth()
-                                , getHeight());
-
-        if (m_isVideoModeSupported)
+        if (m_crt)
         {
-            OGVideoMode::setVideoMode(getWidth(), getHeight());
+            m_isVideoModeSupported = OGVideoMode::testVideoMode(getWidth(), getHeight());
 
+            if (m_isVideoModeSupported)
+            {
+                OGVideoMode::setVideoMode(getWidth(), getHeight());
+
+                m_window->showFullScreen();
+            }
+            else
+            {
+                logWarn("Video mode not supported");
+                m_window->show();
+            }
+        }
+        else
+        {
             m_window->showFullScreen();
         }
-        else { logWarn("Video mode not supported"); }
-#else
-        m_window->show();
-#endif // Q_OS_WIN32
     }
     else
     {

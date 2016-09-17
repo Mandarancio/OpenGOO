@@ -10,6 +10,7 @@
 typedef og::OGWidget OGWindow;
 
 class QScreen;
+struct OGConfig;
 
 namespace og
 {
@@ -35,13 +36,14 @@ namespace og
             int m_width, m_height;
             int m_frameDelay;
             bool m_fullscreen;
+            bool m_crt;
             OGGame* m_game;
 
             bool eventFilter(QObject* a_obj, QEvent* a_event);
 
         public:
-            OGGameEngine(OGGame* a_game, int a_width, int a_height
-                         , bool a_fullscreen = false);
+            OGGameEngine(OGGame* a_game, const OGConfig& a_config, bool a_crt = false);
+
             virtual ~OGGameEngine();
 
             static OGGameEngine* getInstance() { return m_instance; }
@@ -60,11 +62,13 @@ namespace og
 
             OGWindow* getWindow() const { return m_window.get(); }
 
-        public slots:
-            void setFrameRate(int a_framerate)
+            bool isCrt() const
             {
-                m_frameDelay = qRound(1000.0f / a_framerate);
+                return m_crt;
             }
+
+        public slots:
+            void setFrameRate(int a_framerate) { m_frameDelay = qRound(1000.0f / a_framerate); }
             void quit();
 
         private slots:

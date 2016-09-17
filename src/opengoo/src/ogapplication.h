@@ -1,5 +1,4 @@
-#ifndef OGAPPLICATION_H
-#define OGAPPLICATION_H
+#pragma once
 
 class OGApplication
 {
@@ -10,5 +9,3 @@ private:
     bool initialize(int argc, char** argv);
     void clear();
 };
-
-#endif // OGAPPLICATION_H
