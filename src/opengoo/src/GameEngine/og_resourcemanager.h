@@ -1,26 +1,39 @@
-#ifndef OG_RESOURCEMANAGER_H
-#define OG_RESOURCEMANAGER_H
+#pragma once
+
+#include <QHash>
+#include <QString>
+
+#include "wog_ball.h"
+#include "imagesource.h"
 
 class WOGResources;
-
-class QImage;
-class QString;
 
 namespace og
 {
 class OGResourceManager
 {
+    typedef std::unique_ptr<WOGBall> WOGBallPtr;
+    typedef std::shared_ptr<WOGBall> WOGBallSPtr;
+    typedef std::shared_ptr<ImageSource> ImageSourceSPtr;
+    typedef std::shared_ptr<WOGResources> WOGResourcesSPtr;
+
 public:
     OGResourceManager();
     ~OGResourceManager();
 
-    bool ParseResourceFile(const QString &filename);
+    bool ParseResourceFile(const QString& a_filename);
 
-    QImage* GetImage(const QString &id);
+    WOGBall* GetBallByType(const QString& a_type);
+
+    ImageSourceSPtr GetImageSourceById(const QString& a_id);
 
 private:
-    WOGResources* src_;
-};
-} // namespace og
+    template<typename T>
+    bool Load(T& a_ball, const QString& a_filename);
 
-#endif // OG_RESOURCEMANAGER_H
+private:
+    QHash<QString, WOGResourcesSPtr> m_resources;
+    QHash<QString, WOGBallSPtr> m_balls;
+    QHash<QString, ImageSourceSPtr> m_imageSources;
+};
+}
