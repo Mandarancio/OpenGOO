@@ -11,5 +11,9 @@ public:
     }
 
     virtual EntityPtr AddEntity(EntityPtr a_e) = 0;
+
+    virtual void OnMouseDown(const QPoint& a_point) = 0;
+
+    virtual void OnMouseUp(const QPoint& a_point) = 0;
 };
 }
