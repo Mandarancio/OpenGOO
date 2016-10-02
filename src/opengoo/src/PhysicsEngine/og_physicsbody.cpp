@@ -67,6 +67,13 @@ QVector2D PhysicsBody::GetPosition() const
     return QVector2D(x, y);
 }
 
+void PhysicsBody::SetPosition(const QVector2D& a_position)
+{
+    b2Vec2 p(a_position.x(), a_position.y());
+    auto angle = 0.0f;
+    body->SetTransform(p, angle);
+}
+
 void PhysicsBody::ApplyForce(const QVector2D &force, const QVector2D &point)
 {
     b2Vec2 f(force.x(), force.y());

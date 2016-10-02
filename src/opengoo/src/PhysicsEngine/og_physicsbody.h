@@ -7,8 +7,9 @@ class QVector2D;
 
 namespace og
 {
-struct PhysicsBody
+class PhysicsBody
 {
+public:
     enum Type
     {
         CIRCLE,
@@ -30,6 +31,7 @@ struct PhysicsBody
     QVector2D GetPosition() const;
     float GetX() const { return body->GetPosition().x; }
     float GetY() const { return body->GetPosition().y; }
+    void SetPosition(const QVector2D& a_position);
 
     QVector2D GetVelocity() const;
     void SetVelocity(const QVector2D &v);
@@ -42,5 +44,25 @@ struct PhysicsBody
     void ApplyForce(const b2Vec2 &force, const b2Vec2 &point);
 
     void SetSensor(bool sensor);
+
+    const physics::Shape& GetShape() const
+    {
+        return *shape;
+    }
+
+    void SetActive(bool a_flag)
+    {
+        body->SetActive(a_flag);
+    }
+
+    bool IsActive() const
+    {
+        return body->IsActive();
+    }
+
+    void SetAwake(bool a_flag)
+    {
+        return body->SetAwake(a_flag);
+    }
 };
 }
