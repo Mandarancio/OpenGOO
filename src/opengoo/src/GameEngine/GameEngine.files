@@ -4,6 +4,8 @@ SOURCES += \
     src/GameEngine/og_videomode.cpp \
     src/GameEngine/og_videomode_native.cpp \
     src/GameEngine/og_resourcemanager.cpp \
+    src/GameEngine/Colliders/circlecollider.cpp \
+    src/GameEngine/input.cpp \
     src/GameEngine/imagesource.cpp
 
 HEADERS += \
@@ -17,4 +19,7 @@ HEADERS += \
     src/GameEngine/entity.h \
     src/GameEngine/graphic.h \
     src/GameEngine/imagesource.h \
+    src/GameEngine/Colliders/collider.h \
+    src/GameEngine/Colliders/circlecollider.h \
+    src/GameEngine/input.h \
     src/GameEngine/scene.h
