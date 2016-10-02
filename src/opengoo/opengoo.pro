@@ -109,7 +109,7 @@ HEADERS += \
     src/entityfactory.h \
     src/gamedata.h \
     src/exiteventlistener.h \
-    src/radialforcefield.h
+    src/ijointbuilder.h
 
 SOURCES += \
     src/main.cpp \
@@ -147,7 +147,6 @@ SOURCES += \
     src/og_sprite.cpp \
     src/spritefactory.cpp \
     src/entityfactory.cpp \
-    src/radialforcefield.cpp
 
 
 include(src/GameEngine/GameEngine.files)
