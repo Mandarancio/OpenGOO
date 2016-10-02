@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QVector2D>
+
 #include "common.h"
 
 namespace og
@@ -8,7 +10,14 @@ namespace physics
 {
 class Shape
 {
-    typedef std::unique_ptr<b2Shape> TShapePtr;
+    typedef std::unique_ptr<b2Shape> ShapeUPtr;
+
+public:
+    struct Transform
+    {
+        QVector2D position;
+        float angle;
+    };
 
 public:
     enum Type
@@ -62,8 +71,10 @@ public:
         return (GetType() == e_polygon);
     }
 
+    bool TestPoint(const Transform& a_transform, const QVector2D& a_point) const;
+
 private:
-    TShapePtr m_shape;
+    ShapeUPtr m_shape;
     Type m_type;
 };
 }
