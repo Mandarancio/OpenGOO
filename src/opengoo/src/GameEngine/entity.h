@@ -8,7 +8,7 @@
 #include "graphic.h"
 
 #include "og_types.h"
-
+#include "Colliders/collider.h"
 
 namespace og
 {
@@ -20,6 +20,7 @@ class Entity
     QVector2D m_position;
     bool m_visible;
     Scene* m_scene;
+    std::shared_ptr<Collider> m_collider;
 
     Entity(const Entity&);
     Entity& operator=(const Entity&);
@@ -44,6 +45,7 @@ public:
         : m_position(a_x, a_y)
     {
         m_visible = false;
+        m_scene = nullptr;
     }
 
     virtual ~Entity()
@@ -87,6 +89,14 @@ public:
     {
     }
 
+    virtual void OnMouseDown()
+    {
+    }
+
+    virtual void OnMouseUp()
+    {
+    }
+
     void SetScene(Scene* a_scene)
     {
         m_scene = a_scene;
@@ -95,6 +105,26 @@ public:
     Scene* GetScene() const
     {
         return m_scene;
+    }
+
+    const Collider* GetCollider() const
+    {
+        return m_collider.get();
+    }
+
+    void SetCollider(std::shared_ptr<Collider> a_collider)
+    {
+        m_collider = a_collider;
+    }
+
+    void SetPosition(const QVector2D& a_position)
+    {
+        m_position = a_position;
+    }
+
+    const QVector2D& GetPosition() const
+    {
+        return m_position;
     }
 };
 }
