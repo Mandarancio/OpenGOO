@@ -50,7 +50,7 @@ void Exit::Update()
 
         if (userData && userData->isTouching)
         {
-            QVector2D&& position = GetBall(i)->GetCenter();
+            QVector2D position = GetBall(i)->GetPhyPosition();
             QVector2D v = center - position;
 
             float force = 40.0f;
@@ -60,12 +60,12 @@ void Exit::Update()
 
             v.normalize();
             v *= force;
-            GetBall(i)->ApplyForce(v, position);
+            GetBall(i)->GetBody()->ApplyForce(v, position);
         }
 
         if (GetBall(i)->isSuction())
         {
-            QVector2D&& position = GetBall(i)->GetCenter();
+            QVector2D position = GetBall(i)->GetPhyPosition();
             float lq = (center - position).lengthSquared();
 
             if (lq <= 1.0f)
