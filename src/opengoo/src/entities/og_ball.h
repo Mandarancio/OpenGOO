@@ -52,14 +52,13 @@
 
 #include <OGPhysicsBody>
 #include "wog_material.h"
-//#include "og_ibody.h"
-//#include "wog_level.h"
-//#include "wog_ball.h"
+#include "GameEngine/entity.h"
 
 struct WOGLevelExit;
 struct WOGBallInstance;
 struct WOGBall;
 struct WOGBallShape;
+struct WOGCircleBall;
 
 struct OGUserData;
 
@@ -75,11 +74,14 @@ class QPainter;
 
 class BallSensor;
 
-class OGBall : public og::PhysicsBody
+class OGBall : public og::Entity
 {
     public:
-        OGBall(WOGBallInstance* data, WOGBall* configuration);
-        virtual ~OGBall();
+        class Builder;
+
+    public:
+        OGBall(const WOGBallInstance* a_data, const WOGBall* a_conf);
+        ~OGBall();
 
         // Get properties
         int id() const { return id_; }
@@ -99,12 +101,12 @@ class OGBall : public og::PhysicsBody
         bool isExit() const { return isExit_; }
         bool isSuction() const { return isSuction_; }
 
-        b2Vec2 GetBodyPosition() const { return body->GetPosition(); }
-        QVector2D GetCenter() const;
-        float getRadius() const { return shape->GetRadius(); }
+        const QVector2D GetPhyPosition() const;
+        float GetPhyRadius() const { return GetBody()->shape->GetRadius(); }
+        float GetPhyAngle() const { return GetBody()->body->GetAngle(); }
 
         QString GetId() const;
-        b2JointEdge* GetJoints() { return body->GetJointList(); }
+        b2JointEdge* GetJoints() { return GetBody()->body->GetJointList(); }
         int GetMaxStrands() const;
         OGUserData* GetUserData();
 
@@ -129,7 +131,9 @@ class OGBall : public og::PhysicsBody
         void Attache(OGBall* ball);
 
         void Paint(QPainter* painter, bool debug = false);
+        void Render(QPainter& a_painter);
         void Update();
+        void OldUpdate();
         void Select();
         bool TestPoint(const QPoint &pos);
 
@@ -141,6 +145,23 @@ class OGBall : public og::PhysicsBody
 
         void touching() { _isTouching = true; }
 
+        og::PhysicsBody* GetBody() const
+        {
+            return m_body.get();
+        }
+
+        const QString& GetName() const
+        {
+            return m_name;
+        }
+
+private:
+        void OnMouseDown();
+
+        void OnMouseUp();
+
+        void Added();
+
 protected:
         enum BallType {C_BALL, R_BALL}; // C_ - circle R_ - rectangle
 
@@ -151,8 +172,8 @@ protected:
             , MARKER
         };
 
-        WOGBallInstance* pData_;
-        WOGBall* pConfig_;
+        const WOGBallInstance* m_data;
+        const WOGBall* m_config;
         WOGMaterial material_;
         int numberStrands_;
         BallType type_;
@@ -186,12 +207,12 @@ protected:
         QPointF* GetTarget() { return &target_; }
         QPointF* GetOrigin() { return &origin_; }
         float GetAngle() const;
-        QString GetType() const;
+
         float GetTowerMass() const { return towerMass_; }
         WOGBallShape* GetShape() const;
         QString GetStrandType() const;
         QPointF* GetCurrentPosition() { return &curPos_; }
-        void SetCurrentPosition(const b2Vec2 &pos);
+        void SetCurrentPosition(const QVector2D& a_pos);
 
         float DistanceSquared(OGBall* b1, OGBall* b2) const;
         float DistanceSquared(OGBall* b);
@@ -201,13 +222,9 @@ protected:
 
         void SetBodyPosition(float x, float y);
 
-        og::PhysicsBody* CreateCircle(float x, float y, float angle
-                                    , float mass, WOGBallShape* shape
-                                    , int variation);
+        og::PhysicsBody* CreateCircle(float x, float y, float angle, float mass, const WOGCircleBall& shape, int variation);
 
-        og::PhysicsBody* CreateReactangle(float x, float y, float angle
-                                        , float mass, WOGBallShape* shape
-                                        , int variation);
+        og::PhysicsBody* CreateReactangle(float x, float y, float angle, float mass, WOGBallShape* shape, int variation);
 
         void AddStrand();
         void ReleaseStrand();
@@ -249,4 +266,30 @@ protected:
 
         std::unique_ptr<BallSensor> _sensor;
         std::unique_ptr<BallSensor> getSensor();
+        std::shared_ptr<og::PhysicsBody> m_body;
+        QString m_name;
+};
+
+class OGBall::Builder
+{
+public:
+    Builder& SetBallDef(const WOGBall* a_ballDef)
+    {
+        m_ballDef = a_ballDef;
+        return *this;
+    }
+
+    Builder& SetInstDef(const WOGBallInstance& a_instDef)
+    {
+        m_instDef = &a_instDef;
+        return *this;
+    }
+
+    std::shared_ptr<OGBall> Build()
+    {
+        return std::make_shared<OGBall>(m_instDef, m_ballDef);
+    }
+
+    const WOGBallInstance* m_instDef;
+    const WOGBall* m_ballDef;
 };
