@@ -1,15 +1,31 @@
 #include <memory>
 
+#include <Box2D/Box2D.h>
+
+#include "PhysicsEngine/distancejoint.h"
+
+#include "GameEngine/og_gameengine.h"
+#include "GameEngine/Colliders/circlecollider.h"
+
 #include "opengoo.h"
 #include "entityfactory.h"
 #include "spritefactory.h"
 
-#include "entities/cap.h"
 #include "wog_pipe.h"
-#include "entities/og_pipe.h"
-#include "entities/gamecontroller.h"
+#include "wog_scene.h"
+#include "wog_level.h"
 
+#include "physics.h"
+
+#include "entities/cap.h"
+#include "entities/gamecontroller.h"
 #include "entities/exit.h"
+#include "entities/radialforcefield.h"
+#include "entities/og_pipe.h"
+#include "entities/og_ball.h"
+#include "entities/strand.h"
+
+#include "ijointbuilder.h"
 
 #define CAP_OPEN "IMAGE_GLOBAL_PIPE_CAP_OPEN_"
 #define CAP_CLOSED "IMAGE_GLOBAL_PIPE_CAP_CLOSED_"
@@ -96,4 +112,104 @@ EntityPtr EntityFactory::CreateExit(const WOGLevelExit& a_exit,
                                 ExitEventListener* a_listener)
 {
     return std::make_shared<Exit>(a_exit, a_listener);
+}
+
+EntityPtr EntityFactory::CreateRadialForceField(const WOGRadialForceField& a_field)
+{
+    return RadialForceField::Builder()
+            .SetCenter(a_field.center)
+            .SetRadius(a_field.radius)
+            .SetForceAtCenter(a_field.forceatcenter)
+            .SetForceAtEdge(a_field.forceatedge)
+            .SetCategory(PhysicsFactory::SENSOR)
+            .SetMask(PhysicsFactory::BALL)
+            .Build();
+}
+
+EntityPtr EntityFactory::CreateBall(const WOGBallInstance& a_ball)
+{
+    auto ballDef = GE->getResourceManager()->GetBallByType(a_ball.type);
+    if (!ballDef)
+        return nullptr;
+
+    auto ball = OGBall::Builder().SetInstDef(a_ball).SetBallDef(ballDef).Build();
+    auto shape = ballDef->attribute.core.shape;
+    switch (shape->type)
+    {
+    case WOGBallShape::e_circle:
+        ball->SetCollider(std::make_shared<og::CircleCollider>(static_cast<WOGCircleBall&>(*shape).radius, ball.get()));
+        break;
+    default:
+        assert(false);
+    }
+
+    ball->GetBody()->SetActive(false);
+
+    return ball;
+}
+
+struct JointBuilder : IJointBuilder
+{
+    JointBuilder()
+    {
+        m_ball1 = nullptr;
+        m_ball2 = nullptr;
+    }
+
+    JointBuilder& SetType(const QString& a_type)
+    {
+        m_type = a_type;
+        return *this;
+    }
+
+    JointBuilder& SetBall1(OGBall& a_ball)
+    {
+        m_ball1 = a_ball.GetBody();
+        return *this;
+    }
+
+    JointBuilder& SetBall2(OGBall& a_ball)
+    {
+        m_ball2 = a_ball.GetBody();
+        return *this;
+    }
+
+    JointUPtr Build()
+    {
+        if (m_type == "spring")
+            return JointUPtr(new og::physics::DistanceJoint(m_ball1, m_ball2, (OGUserData*)nullptr));
+
+        assert(false);
+        return nullptr;
+    }
+
+    og::PhysicsBody* m_ball1;
+    og::PhysicsBody* m_ball2;
+    QString m_type;
+};
+
+EntityPtr EntityFactory::CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2)
+{
+    auto& ball1 = static_cast<OGBall&>(*a_ball1);
+    auto& ball2 = static_cast<OGBall&>(*a_ball2);
+
+    auto rm = GE->getResourceManager();
+
+    auto ballDef1 = rm->GetBallByType(ball1.GetName());
+    auto ballDef2 = rm->GetBallByType(ball2.GetName());
+
+    if(!ballDef1->strand || !ballDef2->strand)
+        return nullptr;
+
+    if(ballDef1->strand->type != ballDef2->strand->type)
+        return nullptr;
+
+    auto src = rm->GetImageSourceById(ballDef1->strand->image);
+    auto spr = OGSprite::Create(src);
+    spr->SetOffsetX(src->GetWidth() * 0.5f);
+
+    JointBuilder builder;
+    builder.SetBall1(ball1).SetBall2(ball2).SetType(ballDef1->strand->type);
+
+    return std::make_shared<Strand>(spr, builder);
 }
