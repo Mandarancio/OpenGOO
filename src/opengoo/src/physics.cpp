@@ -10,9 +10,11 @@
 #include <OGPhysicsEngine>
 #include <OGPhysicsBody>
 #include <OGPhysicsJoint>
+#include "PhysicsEngine/distancejoint.h"
 
 
-float PhysicsFactory::K = 0.1f;
+float PhysicsFactory::MetersToPixels = 32.0f;
+float PhysicsFactory::PixelsToMeters = 1.0f / PhysicsFactory::MetersToPixels;
 uint16 PhysicsFactory::LINE = 0x0002;
 uint16 PhysicsFactory::CIRCLE = 0x0004;
 uint16 PhysicsFactory::RECTANGLE = 0x0008;
@@ -44,19 +46,19 @@ og::PhysicsBody* PhysicsFactory::createCircle(float x,
 {
     b2Filter filter;
 
-    auto circle = new og::PhysicsBody(x * K, y * K, dynamic, angle);
+    auto circle = new og::PhysicsBody(x * PixelsToMeters, y * PixelsToMeters, dynamic, angle);
 
     PE->CreateBody(circle);
     circle->CreateShape(og::physics::Shape::e_circle);
     circle->shape->SetPosition(0.0f, 0.0f);
-    circle->shape->SetRadius(radius * K);
+    circle->shape->SetRadius(radius * PixelsToMeters);
 
     if (dynamic)
     {
-        float density = (mass * K) / (M_PI * radius * radius * K * K);
+        auto r = radius * PixelsToMeters;
+        float density = (mass * PixelsToMeters) / (M_PI * r * r);
 
-        circle->CreateFixture(density, material->friction * 0.01f
-                              , material->bounce);
+        circle->CreateFixture(density, material->friction * 0.01f, material->bounce);
 
         filter.categoryBits = BALL;
         filter.maskBits = STATIC | EXIT | SENSOR;
@@ -65,8 +67,7 @@ og::PhysicsBody* PhysicsFactory::createCircle(float x,
     }
     else
     {
-        circle->CreateFixture(0.0f, material->friction * 0.01f
-                              , material->bounce);
+        circle->CreateFixture(0.0f, material->friction * 0.01f, material->bounce);
 
         filter.categoryBits = CIRCLE;
         filter.maskBits = BALL;
@@ -85,14 +86,14 @@ og::PhysicsBody* PhysicsFactory::createLine(const QPointF &anchor,
 {
     float x1, x2, y1, y2, length, angle;
 
-    x1 = anchor.x() * K * 0.5f;
-    y1 = anchor.y() * K * 0.5f;
+    x1 = anchor.x() * PixelsToMeters * 0.5f;
+    y1 = anchor.y() * PixelsToMeters * 0.5f;
 
     //0.55 = (length + 10%)/2
 
     float wScene = og::global::sceneWidth();
     float hScene = og::global::sceneHeight();
-    length = qMax(wScene, hScene) * 0.55f * K;
+    length = qMax(wScene, hScene) * 0.55f * PixelsToMeters;
 
     x2 = x1 + normal.x();
     y2 = y1 + normal.y();
@@ -162,15 +163,15 @@ og::PhysicsBody* PhysicsFactory::createRectangle(float x,
 {
     b2Filter filter;
 
-    auto rect = new og::PhysicsBody(x * K, y * K , dynamic, angle);
+    auto rect = new og::PhysicsBody(x * PixelsToMeters, y * PixelsToMeters , dynamic, angle);
 
     PE->CreateBody(rect);
     rect->CreateShape(og::physics::Shape::e_polygon);
-    rect->shape->SetAsBox(width * K * 0.5f, height * K * 0.5f);
+    rect->shape->SetAsBox(width * PixelsToMeters * 0.5f, height * PixelsToMeters * 0.5f);
 
     if (dynamic)
     {
-        float density = (mass * K) / (width * height * K * K);
+        float density = (mass * PixelsToMeters) / (width * height * PixelsToMeters * PixelsToMeters);
 
         rect->CreateFixture(density, material->friction * 0.01f
                             , material->bounce);
@@ -197,21 +198,14 @@ og::PhysicsBody* PhysicsFactory::createRectangle(float x,
     return rect;
 }
 
-og::OGPhysicsJoint* PhysicsFactory::createJoint(og::PhysicsBody* b1,
+og::physics::Joint* PhysicsFactory::createJoint(og::PhysicsBody* b1,
                                                 og::PhysicsBody* b2,
                                                 OGUserData* data)
 {
-    auto joint = new og::OGPhysicsJoint;
-    auto jointDef = new b2DistanceJointDef;
-    jointDef->frequencyHz = 1.5f;
-    jointDef->dampingRatio = 0.9f;
-
-    jointDef->Initialize(b1->body, b2->body
-                         , b1->body->GetPosition(), b2->body->GetPosition());
-
-    joint->jointdef = jointDef;
-    PE->CreateJoint(joint);
-    joint->joint->SetUserData(data);
+    auto joint = new og::physics::DistanceJoint(b1, b2, data);
+    //TODO add frequencyHz & dampingRatio
+//    jointDef->frequencyHz = 1.5f;
+//    jointDef->dampingRatio = 0.9f;
 
     return joint;
 }

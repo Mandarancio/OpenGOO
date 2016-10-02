@@ -6,7 +6,7 @@
 #include <OGPhysicsEngine>
 
 BallSensor::BallSensor(OGBall* b)
-    : CircleSensor(Circle(b->GetCenter(), b->getRadius() + 5), nullptr)
+    : CircleSensor(Circle(b->GetPhyPosition(), b->GetPhyRadius() + 5), nullptr)
     , m_ball(b)
 {
     SetCategory(PhysicsFactory::SENSOR);
@@ -38,5 +38,7 @@ void BallSensor::BeginContact(Fixture* a_fixture)
 
 void BallSensor::update()
 {
-    m_ball->body->SetTransform(m_ball->GetBodyPosition(), 0);
+    auto p = m_ball->GetPhyPosition();
+    b2Vec2 pos(p.x(), p.y());
+    m_ball->GetBody()->body->SetTransform(pos, 0);
 }

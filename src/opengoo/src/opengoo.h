@@ -10,6 +10,8 @@
 #include <QString>
 
 #include "GameEngine/og_game.h"
+#include "GameEngine/scene.h"
+
 #include "progresswindow.h"
 #include <OGIPushButton>
 #include "og_layer.h"
@@ -73,6 +75,16 @@ class OpenGOO : public og::OGGame
         EntityFactory* GetEntityFactory()
         {
             return m_entityFactory;
+        }
+
+        og::Scene* GetScene() const
+        {
+            return static_cast<og::Scene*>(pWorld_);
+        }
+
+        const OGWindowCamera* GetCamera() const
+        {
+            pCamera_;
         }
 
     private:

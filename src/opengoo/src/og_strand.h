@@ -10,7 +10,7 @@ class OGStrand
 {
     OGBall* b1_;
     OGBall* b2_;
-    og::OGPhysicsJoint* strand_;
+    og::physics::Joint* strand_;
     QString type_;
     int id_;
 

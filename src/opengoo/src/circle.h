@@ -20,6 +20,11 @@ public:
         return  Circle(center_ / divisor, radius_ / divisor);
     }
 
+    friend const Circle operator * (const Circle& lhs, float factor)
+    {
+        return Circle(lhs.center_ * factor, lhs.radius_ * factor);
+    }
+
 private:
     QVector2D center_;
     float radius_;

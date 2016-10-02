@@ -30,9 +30,9 @@ OGStrand::OGStrand(OGBall* gb1, OGBall* gb2, int id)
             data->type = OGUserData::STRAND;
             data->data = this;
 
-            strand_ = PhysicsFactory::createJoint(b1_, b2_, data);
-            b1_->body->SetFixedRotation(true);
-            b2_->body->SetFixedRotation(true);
+            strand_ = PhysicsFactory::createJoint(b1_->GetBody(), b2_->GetBody(), data);
+            b1_->GetBody()->body->SetFixedRotation(true);
+            b2_->GetBody()->body->SetFixedRotation(true);
             b1_->AddStrand();
             b2_->AddStrand();
         }
@@ -48,14 +48,14 @@ void OGStrand::Paint(QPainter* painter, bool debug)
 
     int x1, y1, x2, y2;
 
-    const qreal K = 10.0;
-
     if (b1_ && b2_)
     {
-        x1 = b1_->GetX()*K;
-        y1 = b1_->GetY()*K*(-1.0);
-        x2 = b2_->GetX()*K;
-        y2 = b2_->GetY()*K*(-1.0);
+        auto p1 = b1_->GetPhyPosition();
+        auto p2 = b1_->GetPhyPosition();
+        x1 = p1.x() * PhysicsFactory::MetersToPixels;
+        y1 = p1.y() * PhysicsFactory::MetersToPixels * (-1.0);
+        x2 = p2.x() * PhysicsFactory::MetersToPixels;
+        y2 = p2.y() * PhysicsFactory::MetersToPixels * (-1.0);
 
         QPen pen(Qt::yellow,  2.0);
         painter->save();        
@@ -67,9 +67,7 @@ void OGStrand::Paint(QPainter* painter, bool debug)
 
 float OGStrand::GetLenghth()
 {
-    QVector2D v1 = b1_->GetPosition();
-    QVector2D v2 = b2_->GetPosition();
-    float l = (v1 - v2).length();
+    QVector2D v = b1_->GetPhyPosition() - b2_->GetPhyPosition();
 
-    return l;
+    return v.length();;
 }

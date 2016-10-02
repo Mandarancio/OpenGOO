@@ -256,11 +256,11 @@ void OpenGOO::_MouseButtonDown(QMouseEvent* ev)
 {
     if (isPause() || !pCamera_ || pProgressWnd_) return;
 
-    QPoint mPos = pCamera_->windowToLogical(ev->pos());
+    QPoint pos = pCamera_->windowToLogical(ev->pos());
 
     Q_FOREACH(OGButton * button, pWorld_->buttons())
     {
-        if (button->TestPoint(mPos))
+        if (button->TestPoint(pos))
         {
             if (button->onclick() == "quit") { _Quit(); }
             else if (button->onclick() == "credits") { }
@@ -306,18 +306,23 @@ void OpenGOO::_MouseButtonDown(QMouseEvent* ev)
 
     if (_pSelectedBall && _pSelectedBall->IsDraggable())
     {
-        _pSelectedBall->MouseDown(mPos);
+        _pSelectedBall->MouseDown(pos);
     }
+
+    GetScene()->OnMouseDown(pos);
 }
 
 void OpenGOO::_MouseButtonUp(QMouseEvent* ev)
 {
-    if (isPause() || !pCamera_ || pProgressWnd_) return;
+    if (isPause() || !pCamera_ || pProgressWnd_)
+        return;
+
+    auto pos = pCamera_->windowToLogical(ev->pos());
 
     if (_pSelectedBall && _pSelectedBall->IsDragging() && pCamera_)
-    {
-        _pSelectedBall->MouseUp(pCamera_->windowToLogical(ev->pos()));
-    }
+        _pSelectedBall->MouseUp(pos);
+
+    GetScene()->OnMouseUp(pos);
 }
 
 void OpenGOO::_MouseMove(QMouseEvent* ev)

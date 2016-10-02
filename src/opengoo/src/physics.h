@@ -28,7 +28,8 @@ float sceneHeight();
 class PhysicsFactory
 {
 public:
-    static float K;
+    static float MetersToPixels;
+    static float PixelsToMeters;
 
     // categories
     static uint16 LINE;
@@ -64,7 +65,7 @@ public:
                                               float mass = 0,
                                               OGUserData* data = 0);
 
-    static og::OGPhysicsJoint* createJoint(og::PhysicsBody* b1,
+    static og::physics::Joint* createJoint(og::PhysicsBody* b1,
                                            og::PhysicsBody* b2,
                                            OGUserData* data);
 };

@@ -6,6 +6,7 @@
 #include "wog_level.h"
 #include "entities/og_ball.h"
 #include "flags.h"
+#include "physics.h"
 
 
 extern OGBall* _nearestBall;
@@ -13,7 +14,6 @@ extern OGBall* _selectedBall;
 
 namespace visual_debug
 {
-const qreal K = 10.0;
 bool _initImages = true;
 QList<QImage> _images;
 const qreal DEGREE = 57.2957795;
@@ -34,9 +34,9 @@ void visualDebug(QPainter* painter, OGWorld* world, qreal zoom)
     {
         qreal x, y;
 
-        QPointF pos = world->nearestball()->GetPosition().toPointF();
-        x = pos.x() * K;
-        y = pos.y() * K * (-1);
+        QPointF pos = world->nearestball()->GetPhyPosition().toPointF();
+        x = pos.x() * PhysicsFactory::MetersToPixels;
+        y = pos.y() * PhysicsFactory::MetersToPixels * (-1);
 
         pen.setColor(Qt::green);
         painter->setPen(pen);
