@@ -1,4 +1,4 @@
 #include "PhysicsEngine/og_physicsengine.h"
 #include "PhysicsEngine/og_physicsbody.h"
-#include "PhysicsEngine/og_physicsjoint.h"
+#include "PhysicsEngine/joint.h"
 #include "PhysicsEngine/og_pcircle.h"
