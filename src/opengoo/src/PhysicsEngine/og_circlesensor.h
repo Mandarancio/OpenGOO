@@ -27,6 +27,7 @@ public:
 
     Fixture* GetFixture() const;
     QVector2D GetPosition() const;
+    float GetRadius() const;
 
     void SetCategory(UShort category);
     void SetMask(UShort mask);

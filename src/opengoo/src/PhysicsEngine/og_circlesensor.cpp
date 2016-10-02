@@ -13,10 +13,10 @@ namespace og
 namespace physics
 {
 CircleSensor::CircleSensor(const Circle& a_circle, Entity* a_entity)
+    : m_body(PE->CreateCircle(a_circle))
+    , m_entity(a_entity)
 {
     assert(a_entity);
-    m_entity = a_entity;
-    m_body.reset(PE->CreateCircle(a_circle));
     m_body->fixture->SetSensor(true);    
 }
 
@@ -32,6 +32,11 @@ Fixture* CircleSensor::GetFixture() const
 QVector2D CircleSensor::GetPosition() const
 {
     return m_body->GetPosition();
+}
+
+float CircleSensor::GetRadius() const
+{
+    return m_body->shape->GetRadius();
 }
 
 void CircleSensor::SetCategory(UShort category)
