@@ -3,6 +3,8 @@ SOURCES += \
     src/entities/exit.cpp \
     src/entities/gamecontroller.cpp \
     src/entities/og_ball.cpp \
+    src/entities/radialforcefield.cpp \
+    src/entities/strand.cpp \
     src/entities/og_pipe.cpp
 
 HEADERS += \
@@ -10,4 +12,6 @@ HEADERS += \
     src/entities/exit.h \
     src/entities/gamecontroller.h \
     src/entities/og_ball.h \
+    src/entities/radialforcefield.h \
+    src/entities/strand.h \
     src/entities/og_pipe.h
