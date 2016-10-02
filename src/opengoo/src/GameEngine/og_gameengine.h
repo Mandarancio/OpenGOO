@@ -5,6 +5,7 @@
 
 #include "og_widget.h"
 #include "PhysicsEngine/og_physicsengine.h"
+#include "og_resourcemanager.h"
 
 
 typedef og::OGWidget OGWindow;
@@ -16,14 +17,13 @@ namespace og
 {
     class OGGame;
     class OGPhysicsEngine;
-    class OGResourceManager;
 
     class OGGameEngine : public QObject
     {
             Q_OBJECT
 
             bool m_isVideoModeSupported;
-            OGResourceManager* m_resourceManager;
+            std::unique_ptr<OGResourceManager> m_resourceManager;
             std::unique_ptr<OGWindow> m_window;
 
             QScreen* getPrimaryScreen();

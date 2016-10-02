@@ -1,5 +1,4 @@
 #include "og_gameengine.h"
-#include "og_resourcemanager.h"
 #include "og_game.h"
 #include "og_gameconfig.h"
 
@@ -119,9 +118,10 @@ PEngine* OGGameEngine::getPhysicsEngine()
 
 OGResourceManager* OGGameEngine::getResourceManager()
 {
-    if (!m_resourceManager) m_resourceManager = new OGResourceManager;
+    if (!m_resourceManager)
+        m_resourceManager.reset(new OGResourceManager);
 
-    return m_resourceManager;
+    return m_resourceManager.get();
 }
 
 void OGGameEngine::addUI(ui::IUI* a_ui)
