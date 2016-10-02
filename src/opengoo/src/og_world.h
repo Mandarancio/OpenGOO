@@ -13,12 +13,10 @@
 #include "og_forcefield.h"
 #include "og_sprite.h"
 #include "GameEngine/entity.h"
-#include "radialforcefield.h"
 #include "GameEngine/scene.h"
 
 
 typedef std::unique_ptr<ForceField> ForceFieldPtr;
-typedef std::unique_ptr<RadialForceField> RadialForceFieldPtr;
 typedef std::unique_ptr<LinearForceField> LinearForceFieldPtr;
 
 struct WOGLevel;
@@ -100,12 +98,7 @@ class OGWorld : public QObject, public og::Scene
 
         OGSprite* _CreateSprite(const WOGVObject* vobject, const QString &image);
 
-        // level
-        OGBall* _CreateBall(WOGBallInstance* ball);
-        void _CreateStrand(WOGStrand* strand);
-
         // scene
-        RadialForceFieldPtr _CreateRadialForcefield(WOGRadialForceField* ff);
         void _CreateParticle();
         void _CreateSceneLayer(const WOGSceneLayer &scenelayer
                                , OGSpriteList* sprites);
@@ -182,8 +175,6 @@ class OGWorld : public QObject, public og::Scene
         void SetLevelname(const QString &levelname) { levelName_ = levelname; }
         void SetLanguage(const QString &language) { language_ = language; }
 
-        WOGBall* GetBallConfiguration(const QString &type);
-
         void CreateScene();
 
         bool Initialize();
@@ -209,6 +200,11 @@ class OGWorld : public QObject, public og::Scene
         void StartSearching();
 
         void _InsertSprite(OGSprite* sprite);
+
+    private:
+        void OnMouseDown(const QPoint& a_point);
+
+        void OnMouseUp(const QPoint& a_point);
 
     private slots:
         void findNearestAttachedBall();

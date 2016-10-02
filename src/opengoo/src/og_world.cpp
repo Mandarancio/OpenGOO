@@ -249,6 +249,8 @@ bool OGWorld::_LoadResources(const QString &path, bool share)
 {
     logInfo("resources file");
 
+    GE->getResourceManager()->ParseResourceFile(path);
+
     WOGResources* data;
 
     if (share)
@@ -479,19 +481,30 @@ void OGWorld::CreatePhysicsScene()
         _CreateCompositeGeom(cg);
     }
 
-    foreach (auto ball, leveldata()->ball)
+    if (!leveldata()->ball.empty())
     {
-        balls_.push_back(_CreateBall(ball));
+        logInfo("Creating balls");
+
+        QHash<QString, EntityPtr> balls;
+        foreach (auto ball, leveldata()->ball)
+        {
+            balls[ball->id] = AddEntity(m_factory.CreateBall(*ball));
+        }
+
+        foreach (auto strand, leveldata()->strand)
+        {
+           auto e = m_factory.CreateStrand(balls[strand->gb1], balls[strand->gb2]);
+           if (e)
+               AddEntity(e);
+        }
     }
 
-    foreach (auto strand, leveldata()->strand)
-    {
-        _CreateStrand(strand);
-    }
+    if (!scenedata()->radialforcefield.isEmpty())
+        logInfo("Creating radialforcefields");
 
     foreach (auto ff, scenedata()->radialforcefield)
     {
-        _forceFilds.push_back(std::move(_CreateRadialForcefield(ff)));
+        AddEntity(m_factory.CreateRadialForceField(*ff));
     }
 
     _SetGravity();
@@ -515,22 +528,6 @@ void OGWorld::_CreateSceneLayer(const WOGSceneLayer &scenelayer
 {
     OGSprite* sprite = _CreateSprite(&scenelayer, scenelayer.image);
     sprites->push_back(sprite);
-}
-
-OGBall* OGWorld::_CreateBall(WOGBallInstance* ball)
-{
-    OGBall* obj = 0;
-    WOGBall* configuration = GetBallConfiguration(ball->type);
-
-    if (configuration)
-    {
-        if (configuration->attribute.core.shape->type == "circle")
-            obj = new OGBall(ball, configuration);
-        else if (configuration->attribute.core.shape->type == "rectangle")
-            obj = new OGBall(ball, configuration);
-    }
-
-    return obj;
 }
 
 template<class Body, class Data> Body* OGWorld::_CreateBody(Data* data)
@@ -634,49 +631,6 @@ OGSprite* OGWorld::_CreateSprite(const WOGVObject* vobject
     return sprite.release();
 }
 
-void OGWorld::_CreateStrand(WOGStrand* strand)
-{
-    OGBall* b1 = 0;
-    OGBall* b2 = 0;
-
-    Q_FOREACH(OGBall * ball, balls_)
-    {
-        if (strand->gb1 == ball->GetId())
-            b1 = ball;
-        else if (strand->gb2 == ball->GetId())
-            b2 = ball;
-
-        if (b1 && b2)
-        {
-            b1->Attache(b2);
-
-            if (b1->id() == -1)
-                b1->SetId(ballId_++);
-            if (b2->id() == -1)
-                b2->SetId(ballId_++);
-
-            break;
-        }
-    }
-}
-
-WOGBall* OGWorld::GetBallConfiguration(const QString &type)
-{
-    WOGBall* configuration = ballConfigurations_.object(type);
-
-    if (!configuration)
-    {
-        QString path = "./res/balls/" + type + "/balls.xml";
-
-        configuration = LoadConf<WOGBall*, OGBallConfig> (path);
-
-        if (configuration)
-            ballConfigurations_.insert(type, configuration);
-    }
-
-    return  configuration;
-}
-
 bool OGWorld::_InitializePhysics()
 {
     return PE->Initialize(0, -10, true);
@@ -694,7 +648,6 @@ void OGWorld::_SetGravity()
         }
     }
 }
-
 
 void OGWorld::_ClearPhysics()
 {
@@ -808,8 +761,9 @@ void OGWorld::findNearestAttachedBall()
             if (!isInit)
             {
                 pNearestBall_ = ball;
-                x2 = pNearestBall_->GetX();
-                y2 = pNearestBall_->GetY();
+                auto pos = pNearestBall_->GetPhyPosition();
+                x2 = pos.x();
+                y2 = pos.y();
                 dx = xExit_ - x2;
                 dy = yExit_ - y2;
                 length = dx * dx + dy * dy;
@@ -817,8 +771,9 @@ void OGWorld::findNearestAttachedBall()
             }
             else
             {
-                x2 = ball->GetX();
-                y2 = ball->GetY();
+                auto pos = pNearestBall_->GetPhyPosition();
+                x2 = pos.x();
+                y2 = pos.y();
                 dx = xExit_ - x2;
                 dy = yExit_ - y2;
                 tmpLength = dx * dx + dy * dy;
@@ -892,8 +847,8 @@ void OGWorld::CloseLevel()
 {
     logInfo("Close level");
 
-    _ClearPhysics();
     _ClearScene();
+    _ClearPhysics();
     _ClearLocalData();
 }
 
@@ -953,19 +908,6 @@ inline OpenGOO* OGWorld::_GetGame()
     return OpenGOO::GetInstance();
 }
 
-RadialForceFieldPtr OGWorld::_CreateRadialForcefield(WOGRadialForceField* ff)
-{
-    float x = ff->center.x() / 10;
-    float y = ff->center.y() / 10;
-    float r = ff->radius / 10;
-    Circle c(QVector2D(x, y), r);
-    RadialForceFieldPtr rf(new RadialForceField(Circle(c)));
-    rf->setForceatCenter(ff->forceatcenter);
-    rf->setForceatEdge(ff->forceatedge);
-
-    return rf;
-}
-
 void OGWorld::_CreateCompositeGeom(WOGCompositeGeom* cg)
 {
     foreach(auto circle, cg->circle)
@@ -1003,4 +945,36 @@ EntityPtr OGWorld::AddEntity(EntityPtr a_e)
     m_added[m_num_added].push_back(a_e);
 
     return a_e;
+}
+
+void OGWorld::OnMouseDown(const QPoint& a_point)
+{
+    QVector2D point(a_point);
+    for (auto it = m_update.cbegin(); it != m_update.cend(); ++it)
+    {
+        if (auto col = (*it)->GetCollider())
+        {
+            if (col->OverlapPoint(point))
+            {
+                (*it)->OnMouseDown();
+                break;
+            }
+        }
+    }
+}
+
+void OGWorld::OnMouseUp(const QPoint& a_point)
+{
+    QVector2D point(a_point);
+    for (auto it = m_update.cbegin(); it != m_update.cend(); ++it)
+    {
+        if (auto col = (*it)->GetCollider())
+        {
+            if (col->OverlapPoint(point))
+            {
+                (*it)->OnMouseUp();
+                break;
+            }
+        }
+    }
 }
