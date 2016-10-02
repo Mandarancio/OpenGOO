@@ -10,14 +10,14 @@ class Circle;
 
 namespace og
 {
-struct PhysicsBody;
-struct OGPhysicsJoint;
+class PhysicsBody;
 class OGPCircle;
 
 namespace physics
 {
 class Sensor;
 class ContactListener;
+class Joint;
 
 class PhysicsEngine
 {
@@ -52,8 +52,8 @@ public:
     void CreateBody(og::PhysicsBody*  a_body);
     OGPCircle* CreateCircle(const Circle& a_circle);
 
-    void CreateJoint(og::OGPhysicsJoint* a_joint);
-    void DestroyJoint(og::OGPhysicsJoint* a_joint);
+    void CreateJoint(og::physics::Joint* a_joint);
+    void DestroyJoint(og::physics::Joint* a_joint);
 
     void Simulate();
     void SetSimulation(int a_velIter, int a_posIter, int a_steps);

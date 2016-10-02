@@ -1,5 +1,5 @@
 #include "og_physicsengine.h"
-#include "og_physicsjoint.h"
+#include "joint.h"
 #include "og_pcircle.h"
 #include "og_contactlistener.h"
 
@@ -78,18 +78,31 @@ void PhysicsEngine::CreateBody(PhysicsBody* a_body)
     a_body->body = m_world->CreateBody(&a_body->bodydef);
 }
 
-void PhysicsEngine::CreateJoint(OGPhysicsJoint* a_joint)
+void PhysicsEngine::CreateJoint(Joint* a_joint)
 {
-    a_joint->joint = m_world->CreateJoint(a_joint->jointdef);
-}
-
-void PhysicsEngine::DestroyJoint(OGPhysicsJoint* a_joint)
-{
+    assert(a_joint);
     if (!a_joint)
         return;
 
-    m_world->DestroyJoint(a_joint->joint);
-    delete a_joint;
+    assert(a_joint->m_jointdef);
+    if (!a_joint->m_jointdef)
+        return;
+
+    a_joint->m_joint = m_world->CreateJoint(a_joint->m_jointdef);
+}
+
+void PhysicsEngine::DestroyJoint(Joint* a_joint)
+{
+    assert(a_joint);
+    if (!a_joint)
+        return;
+
+    assert(a_joint->m_joint);
+    if (!a_joint->m_joint)
+        return;
+
+    m_world->DestroyJoint(a_joint->m_joint);
+    a_joint->m_joint = nullptr;
 }
 
 OGPCircle* PhysicsEngine::CreateCircle(const Circle& a_circle)
