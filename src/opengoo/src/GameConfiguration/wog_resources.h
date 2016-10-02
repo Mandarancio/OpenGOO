@@ -1,9 +1,7 @@
-#ifndef WOG_RESOURCES_H
-#define WOG_RESOURCES_H
+#pragma once
 
 #include <QString>
 #include <QList>
-#include <QDebug>
 
 struct WOGResource
 {
@@ -22,21 +20,24 @@ struct WOGResourceGroup
     ~WOGResourceGroup();
 };
 
+class OGResourceConfig;
+
 class WOGResources
 {
 public:
+    typedef OGResourceConfig Conf;
+
+public:
     QList<WOGResourceGroup*> group;
 
-    QString GetResource(WOGResource::Type type, const QString & id
-                        , const QString & groupid=QString()) const;
+    QString GetResource(WOGResource::Type type, const QString& id
+                        , const QString& groupid=QString()) const;
 
-    QString GetImage(const QString & id
-                     , const QString & groupid=QString()) const
+    QString GetImage(const QString& id
+                     , const QString& groupid=QString()) const
     {
         return GetResource(WOGResource::IMAGE, id, groupid);
     }
 
     ~WOGResources();
 };
-
-#endif // WOG_RESOURCES_H

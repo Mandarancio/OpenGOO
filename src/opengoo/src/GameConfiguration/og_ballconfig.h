@@ -22,7 +22,7 @@ private:
     void _CreateLevelInteraction(WOGBall* ball);
     WOGBallStrand* CreateStrand_(const QDomElement & element);
     WOGBallDetachstrand* CreateDetachstrand_(const QDomElement & element);
-    WOGBallShape* StringToShape(const QString & shape);
+    std::shared_ptr<WOGBallShape> StringToShape(const QString & shape);
 };
 
 #endif // OG_BALLCONFIG_H

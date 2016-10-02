@@ -175,40 +175,29 @@ WOGBallDetachstrand* OGBallConfig::CreateDetachstrand_(
     return obj;
 }
 
-WOGBallShape* OGBallConfig::StringToShape(const QString & shape)
+std::shared_ptr<WOGBallShape> OGBallConfig::StringToShape(const QString & shape)
 {
-    QStringList list = shape.split(",");
+    auto list = shape.split(",");
+    if (list.isEmpty())
+        return nullptr;
 
-    if (!list.isEmpty())
+    auto type = list[0];
+    if (type == "circle")
     {
-        float variation = 0;
+        auto diameter = (list.size() > 1) ? list[1].toFloat() : 0.0f;
+        auto variation = (list.size() > 2) ? list[2].toFloat() : 0.0f;
 
-        if (list.first() == "circle")
-        {
-            WOGCircleBall* obj;
-
-            if (list.size() == 3) { variation =  list.last().toFloat(); }
-
-            float diameter = list.at(1).toFloat();
-            obj = new WOGCircleBall(diameter, variation);
-
-            return obj;
-        }
-        else if (list.first() == "rectangle")
-        {
-            WOGRectangleBall* obj;
-
-            if (list.size() == 4) { variation =  list.last().toFloat(); }
-
-            float width = list.at(1).toFloat();
-            float heigth = list.at(2).toFloat();
-            obj = new WOGRectangleBall(width, heigth, variation);
-
-            return obj;
-        }
+        return std::make_shared<WOGCircleBall>(diameter, variation);
     }
 
-    return 0;
+    if (type == "rectangle")
+    {
+        auto width = (list.size() > 1) ? list[1].toFloat() : 0.0f;
+        auto heigth = (list.size() > 2) ? list[2].toFloat() : 0.0f;
+        auto variation = (list.size() > 3) ? list[3].toFloat() : 0.0f;
+
+        return std::make_shared<WOGRectangleBall>(width, heigth, variation);
+    }
 }
 
 void OGBallConfig::_CreateLevelInteraction(WOGBall* ball)

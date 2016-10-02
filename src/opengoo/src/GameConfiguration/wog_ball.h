@@ -9,11 +9,22 @@
 
 struct WOGBallShape
 {
-    QString type;
+    enum Type
+    {
+        e_unknown,
+        e_circle,
+        e_rectangle
+    };
+
     float variation;
 
-    WOGBallShape(QString shapetype, float variation=0)
-        : type(shapetype), variation(variation) {}
+    WOGBallShape(float variation)
+        : variation(variation)
+    {
+        type = e_unknown;
+    }
+
+    Type type;
 };
 
 struct WOGCircleBall : public WOGBallShape
@@ -21,8 +32,9 @@ struct WOGCircleBall : public WOGBallShape
     float radius;
 
     WOGCircleBall(float diameter=0, float variation=0)
-        : WOGBallShape("circle", variation)
+        : WOGBallShape(variation)
     {
+        type = e_circle;
         radius = diameter*0.5f;
     }
 };
@@ -33,13 +45,16 @@ struct WOGRectangleBall : public WOGBallShape
     float height;
 
     WOGRectangleBall(float width=0, float height=0, float variation=0)
-        : WOGBallShape("rectangle", variation), width(width), height(height){}
+        : WOGBallShape(variation), width(width), height(height)
+    {
+        type = e_rectangle;
+    }
 };
 
 struct WOGBallCoreAttributes
 {
     QString name;
-    WOGBallShape* shape;
+    std::shared_ptr<WOGBallShape> shape;
     float mass;
     int strands;
     QString material;
@@ -143,8 +158,12 @@ struct WOGBallDetachstrand
     float maxlen;
 };
 
+class OGBallConfig;
+
 struct WOGBall
 {
+    typedef OGBallConfig Conf;
+
     WOGBallAttributes attribute;
     WOGBallStrand* strand;
     WOGBallDetachstrand* detachstrand;
