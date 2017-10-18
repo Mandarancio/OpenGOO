@@ -1,8 +1,7 @@
-#ifndef WOG_MATERIAL_H
-#define WOG_MATERIAL_H
+#pragma once
 
-#include <QList>
 #include <QString>
+#include <QList>
 
 struct WOGMaterial
 {
@@ -13,16 +12,12 @@ struct WOGMaterial
     int stickiness;
 };
 
-struct WOGMaterialList
-{
-    QList<WOGMaterial*> material;
+typedef QList<WOGMaterial> WOGMaterialList;
 
-    ~WOGMaterialList()
-    {
-        while (!material.isEmpty()) { delete material.takeFirst(); }
-    }
+// TODO Remove
+//struct WOGMaterialList
+//{
+//    QList<WOGMaterial> material;
 
-    WOGMaterial* GetMaterial(const QString & id);
-};
-
-#endif // WOG_MATERIAL_H
+//    WOGMaterial* GetMaterial(const QString& id);
+//};

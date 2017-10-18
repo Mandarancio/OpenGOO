@@ -11,14 +11,17 @@
 #include "og_userdata.h"
 #include <OGPushButton>
 #include "opengoo.h"
-#include "og_world.h"
-#include "wog_resources.h"
-#include "wog_text.h"
-
+#include "og_gameconfig.h"
+#include "uidata.h"
 
 #include <QFile>
 
-void ogUtils::ogBackTracer()
+namespace og
+{
+namespace utils
+{
+
+void backTracer()
 {
 #ifndef Q_OS_WIN32
     BackTracer(SIGSEGV);
@@ -30,7 +33,7 @@ void ogUtils::ogBackTracer()
 #endif
 }
 
-void ogUtils::ogMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
 
@@ -51,9 +54,10 @@ void ogUtils::ogMessageHandler(QtMsgType type, const QMessageLogContext &context
     }
 }
 
-void ogUtils::ogLogger()
+void logger()
 {
     ConsoleAppender* con_apd;
+    freopen ("log.txt", "w", stdout);
     con_apd  = new ConsoleAppender(LoggerEngine::LevelInfo, stdout, "%d - <%l> - %m%n");
     LoggerEngine::addAppender(con_apd);
     con_apd  = new ConsoleAppender(LoggerEngine::LevelDebug     |
@@ -63,10 +67,10 @@ void ogUtils::ogLogger()
                                    LoggerEngine::LevelException |
                                    LoggerEngine::LevelFatal, stdout, "%d - <%l> - %m [%f:%i]%n");
     LoggerEngine::addAppender(con_apd);
-    qInstallMessageHandler(ogMessageHandler);
+    qInstallMessageHandler(messageHandler);
 }
 
-bool ogUtils::ogLoadConfig(OGConfig& config, const QString& filename)
+bool loadConfig(OGConfig& config, const QString& filename)
 {
     OGGameConfig gameConfig(filename);
 
@@ -87,38 +91,25 @@ bool ogUtils::ogLoadConfig(OGConfig& config, const QString& filename)
     return true;
 }
 
-void ogUtils::ogSaveConfig(OGConfig& config, const QString & filename)
+void saveConfig(OGConfig& config, const QString & filename)
 {
     OGGameConfig gameConfig(filename);
     gameConfig.Create(config);
 }
 
-OGUserData* ogUtils::ogGetUserData(void* userdata)
+QPixmap* getImage(const QString & /*id*/)
 {
-    OGUserData* data = 0;
-
-    if (userdata) data = static_cast<OGUserData*>(userdata);
-
-    return data;
+    assert(false);
+    return nullptr;
 }
 
-QPixmap* ogUtils::getImage(const QString & id)
+QString getText(const QString & /*id*/)
 {
-    OGWorld* world = OpenGOO::GetInstance()->GetWorld();
-    WOGResources* resrc = world->resrcdata();
-
-    return new QPixmap(resrc->GetImage(id));
+    assert(false);
+    return "";
 }
 
-QString ogUtils::getText(const QString & id)
-{
-    OGWorld* world = OpenGOO::GetInstance()->GetWorld();
-    WOGText* text = world->textdata();
-
-    return text->GetString(id);
-}
-
-std::unique_ptr<UIData> ogUtils::getUIData(const QString & id)
+std::unique_ptr<UIData> getUIData(const QString & id)
 {    
     QFile file(":/ui/resources.xml");
     file.open(QIODevice::ReadOnly);
@@ -155,26 +146,10 @@ std::unique_ptr<UIData> ogUtils::getUIData(const QString & id)
     return data;
 }
 
-template<class T> T* ogUtils::createUI(const QPoint & pos, const UIData & data)
+std::unique_ptr<ui::PushButton> createPushButton(const QPoint &pos, const UIData& data)
 {
-    using namespace og::ui;
-
-    T* ui = new T;
-
-    ui->setPosition(pos.x(), pos.y());
-    ui->setSize(data.width, data.height);
-    ui->setUpImage(getImage(data.up));
-    ui->setOverImage(getImage(data.over));
-    ui->setText(getText(data.text));
-
-    return ui;
+    return createUI<ui::PushButton>(pos, data);
 }
 
-og::ui::PushButton* ogUtils::createButton(const QPoint &pos
-                                          , const UIData &data)
-{
-    using namespace og::ui;
-
-    return createUI<PushButton> (pos, data);
-}
-
+} // ns:utils
+} // ns:og

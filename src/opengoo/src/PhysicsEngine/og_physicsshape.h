@@ -8,6 +8,8 @@ namespace og
 {
 namespace physics
 {
+class PhysicsEngine;
+
 class Shape
 {
     typedef std::unique_ptr<b2Shape> ShapeUPtr;

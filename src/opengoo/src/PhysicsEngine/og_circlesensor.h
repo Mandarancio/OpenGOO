@@ -14,6 +14,8 @@ class Entity;
 
 namespace physics
 {
+class PhysicsEngine;
+
 class CircleSensor : public Sensor
 {
     typedef std::unique_ptr<OGPCircle> OGPCirclePtr;
@@ -22,7 +24,7 @@ class CircleSensor : public Sensor
     Entity* m_entity;
 
 public:
-    CircleSensor(const Circle& a_circle, Entity* a_entity);
+    CircleSensor(og::physics::PhysicsEngine& a_physicEngine, const Circle& a_circle, Entity* a_entity);
     ~CircleSensor();
 
     Fixture* GetFixture() const;

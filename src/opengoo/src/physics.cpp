@@ -23,23 +23,32 @@ uint16 PhysicsFactory::EXIT = 0x0020;
 uint16 PhysicsFactory::SENSOR = 0x0040;
 uint16 PhysicsFactory::STATIC = LINE | CIRCLE | RECTANGLE;
 
-og::PhysicsBody* PhysicsFactory::createCircle(const QPointF &position,
-                                            float radius,
-                                            float angle,
-                                            WOGMaterial* material,
-                                            bool dynamic,
-                                            float mass,
-                                            OGUserData* data)
+og::PhysicsBody* PhysicsFactory::createCircle(og::physics::PhysicsEngine& a_physicEngine,
+                                              const QPointF &position,
+                                              float radius,
+                                              float angle,
+                                              const WOGMaterial& material,
+                                              bool dynamic,
+                                              float mass,
+                                              OGUserData* data)
 {
-    return createCircle(position.x(), position.y(), radius, angle, material
-                        , dynamic, mass, data);
+    return createCircle(a_physicEngine,
+                        position.x(),
+                        position.y(),
+                        radius,
+                        angle,
+                        material,
+                        dynamic,
+                        mass,
+                        data);
 }
 
-og::PhysicsBody* PhysicsFactory::createCircle(float x,
+og::PhysicsBody* PhysicsFactory::createCircle(og::physics::PhysicsEngine& a_physicEngine,
+                                              float x,
                                             float y,
                                             float radius,
                                             float angle,
-                                            WOGMaterial* material,
+                                            const WOGMaterial& material,
                                             bool dynamic,
                                             float mass,
                                             OGUserData* data)
@@ -48,7 +57,7 @@ og::PhysicsBody* PhysicsFactory::createCircle(float x,
 
     auto circle = new og::PhysicsBody(x * PixelsToMeters, y * PixelsToMeters, dynamic, angle);
 
-    PE->CreateBody(circle);
+    a_physicEngine.CreateBody(circle);
     circle->CreateShape(og::physics::Shape::e_circle);
     circle->shape->SetPosition(0.0f, 0.0f);
     circle->shape->SetRadius(radius * PixelsToMeters);
@@ -58,7 +67,7 @@ og::PhysicsBody* PhysicsFactory::createCircle(float x,
         auto r = radius * PixelsToMeters;
         float density = (mass * PixelsToMeters) / (M_PI * r * r);
 
-        circle->CreateFixture(density, material->friction * 0.01f, material->bounce);
+        circle->CreateFixture(density, material.friction * 0.01f, material.bounce);
 
         filter.categoryBits = BALL;
         filter.maskBits = STATIC | EXIT | SENSOR;
@@ -67,7 +76,7 @@ og::PhysicsBody* PhysicsFactory::createCircle(float x,
     }
     else
     {
-        circle->CreateFixture(0.0f, material->friction * 0.01f, material->bounce);
+        circle->CreateFixture(0.0f, material.friction * 0.01f, material.bounce);
 
         filter.categoryBits = CIRCLE;
         filter.maskBits = BALL;
@@ -78,11 +87,12 @@ og::PhysicsBody* PhysicsFactory::createCircle(float x,
     return circle;
 }
 
-og::PhysicsBody* PhysicsFactory::createLine(const QPointF &anchor,
-                          const QPointF &normal,
-                          WOGMaterial* material,
-                          bool dynamic,
-                          OGUserData* data)
+og::PhysicsBody* PhysicsFactory::createLine(og::physics::PhysicsEngine& a_physicEngine,
+                                            const QPointF &anchor,
+                                              const QPointF &normal,
+                                              const WOGMaterial& material,
+                                              bool dynamic,
+                                              OGUserData* data)
 {
     float x1, x2, y1, y2, length, angle;
 
@@ -113,19 +123,17 @@ og::PhysicsBody* PhysicsFactory::createLine(const QPointF &anchor,
 
     auto line = new og::PhysicsBody(x1, y1, dynamic, 0);
 
-    PE->CreateBody(line);
+    a_physicEngine.CreateBody(line);
     line->CreateShape(og::physics::Shape::e_edge);
     line->shape->Set(p1.x(), p1.y(), p2.x(), p2.y());
 
     if (dynamic)
     {
-        line->CreateFixture(0.0f, material->friction * 0.01f
-                            , material->bounce);
+        line->CreateFixture(0.0f, material.friction * 0.01f, material.bounce);
     }
     else
     {
-        line->CreateFixture(0.0f, material->friction * 0.01f
-                            , material->bounce);
+        line->CreateFixture(0.0f, material.friction * 0.01f, material.bounce);
 
         b2Filter filter;
 
@@ -138,34 +146,43 @@ og::PhysicsBody* PhysicsFactory::createLine(const QPointF &anchor,
     return line;
 }
 
-og::PhysicsBody* PhysicsFactory::createRectangle(const QPointF &position,
-                                               const QSizeF &size,
-                                               qreal angle,
-                                               WOGMaterial* material,
-                                               bool dynamic,
-                                               float mass,
-                                               OGUserData* data)
+og::PhysicsBody* PhysicsFactory::createRectangle(og::physics::PhysicsEngine& a_physicEngine,
+                                                 const QPointF &position,
+                                                 const QSizeF &size,
+                                                 float angle,
+                                                 const WOGMaterial& material,
+                                                 bool dynamic,
+                                                 float mass,
+                                                 OGUserData* data)
 {
-    return createRectangle(position.x(), position.y(), size.width()
-                           , size.height(), angle, material, dynamic, mass
-                           , data);
+    return createRectangle(a_physicEngine,
+                           position.x(),
+                           position.y(),
+                           size.width(),
+                           size.height(),
+                           angle,
+                           material,
+                           dynamic,
+                           mass,
+                           data);
 }
 
-og::PhysicsBody* PhysicsFactory::createRectangle(float x,
-                               float y,
-                               float width,
-                               float height,
-                               float angle,
-                               WOGMaterial* material,
-                               bool dynamic,
-                               float mass,
-                               OGUserData* data)
+og::PhysicsBody* PhysicsFactory::createRectangle(og::physics::PhysicsEngine& a_physicEngine,
+                                                 float x,
+                                                 float y,
+                                                 float width,
+                                                 float height,
+                                                 float angle,
+                                                 const WOGMaterial& material,
+                                                 bool dynamic,
+                                                 float mass,
+                                                 OGUserData* data)
 {
     b2Filter filter;
 
     auto rect = new og::PhysicsBody(x * PixelsToMeters, y * PixelsToMeters , dynamic, angle);
 
-    PE->CreateBody(rect);
+    a_physicEngine.CreateBody(rect);
     rect->CreateShape(og::physics::Shape::e_polygon);
     rect->shape->SetAsBox(width * PixelsToMeters * 0.5f, height * PixelsToMeters * 0.5f);
 
@@ -173,11 +190,7 @@ og::PhysicsBody* PhysicsFactory::createRectangle(float x,
     {
         float density = (mass * PixelsToMeters) / (width * height * PixelsToMeters * PixelsToMeters);
 
-        rect->CreateFixture(density, material->friction * 0.01f
-                            , material->bounce);
-
-        rect->CreateFixture(density, material->friction * 0.01f
-                            , material->bounce);
+        rect->CreateFixture(density, material.friction * 0.01f, material.bounce);
 
         filter.categoryBits = BALL;
         filter.maskBits = STATIC;
@@ -186,8 +199,7 @@ og::PhysicsBody* PhysicsFactory::createRectangle(float x,
     }
     else
     {
-        rect->CreateFixture(0.0f, material->friction * 0.01f
-                            , material->bounce);
+        rect->CreateFixture(0.0f, material.friction * 0.01f, material.bounce);
 
         filter.categoryBits = RECTANGLE;
         filter.maskBits = BALL;
@@ -198,11 +210,12 @@ og::PhysicsBody* PhysicsFactory::createRectangle(float x,
     return rect;
 }
 
-og::physics::Joint* PhysicsFactory::createJoint(og::PhysicsBody* b1,
+og::physics::Joint* PhysicsFactory::createJoint(og::physics::PhysicsEngine& a_physicEngine,
+                                                og::PhysicsBody* b1,
                                                 og::PhysicsBody* b2,
                                                 OGUserData* data)
 {
-    auto joint = new og::physics::DistanceJoint(b1, b2, data);
+    auto joint = new og::physics::DistanceJoint(a_physicEngine, b1, b2, data);
     //TODO add frequencyHz & dampingRatio
 //    jointDef->frequencyHz = 1.5f;
 //    jointDef->dampingRatio = 0.9f;
@@ -230,23 +243,16 @@ namespace og
 {
 namespace global
 {
-WOGScene* GetScene()
-{       
-    return OpenGOO::GetInstance()->GetWorld()->scenedata();
-}
 
 float sceneWidth()
 {
-    WOGScene* scene = GetScene();
-
-    return scene->maxx - scene->minx;
+    return OpenGOO::GetInstance()->GetWorld()->GetWidth(); // scene->maxx - scene->minx;
 }
 
 float sceneHeight()
 {
-    WOGScene* scene = GetScene();
-
-    return scene->maxy - scene->miny;
+    return OpenGOO::GetInstance()->GetWorld()->GetHeight(); //scene->maxy - scene->miny;
 }
+
 }
 }

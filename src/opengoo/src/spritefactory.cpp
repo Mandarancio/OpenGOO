@@ -5,32 +5,23 @@
 #include "wog_resources.h"
 
 #include "spritefactory.h"
+#include <GameEngine/og_gameengine.h>
 
-
-WOGResources* SpriteFactory::GetResourceManager()
-{
-    return OpenGOO::GetInstance()->GetWorld()->resrcdata();
-}
 
 ImageSourcePtr SpriteFactory::CreateImageSource(const QString& a_id)
-{
-    WOGResources* rm = GetResourceManager();
-    QString filename = rm->GetImage(a_id) + ".png";
-
-    return std::make_shared<og::ImageSource>(filename);
+{    
+    return GE->getResourceManager()->GetImageSourceById(a_id);
 }
 
-OGSprite* SpriteFactory::CreateCap(WOGPipe* a_pipe,
-                                   const QString& a_id,
-                                   bool a_visible)
+OGSprite* SpriteFactory::CreateCap(WOGPipe* a_pipe, const QString& a_id, bool a_visible)
 {
     auto src = CreateImageSource(a_id);
 
-    if (!src || a_pipe->vertex->size() < 2)
+    if (!src || a_pipe->vertex.size() < 2)
         return nullptr;
 
-    QPointF p1 = a_pipe->vertex->at(0);
-    QPointF p2 = a_pipe->vertex->at(1);
+    QPointF p1 = a_pipe->vertex[0];
+    QPointF p2 = a_pipe->vertex[1];
     auto v = p2 - p1;
     float angle = (v.x() == 0 ? (v.y() > 0 ? 0 : 180) : (v.x() > 0 ? 90 : -90));
 

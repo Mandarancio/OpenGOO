@@ -1,12 +1,8 @@
-#ifndef OG_UIPUSHBUTTON_H
-#define OG_UIPUSHBUTTON_H
+#pragma once
 
 #include "og_ipushbutton.h"
 
-#include <QObject>
-
 class QPixmap;
-class QString;
 
 namespace og
 {
@@ -51,7 +47,5 @@ private:
     void _onMouseUp(QMouseEvent* ev);
     void _mouseMove(QMouseEvent* ev);
 };
-} // namespace ui
-} // namespace og
-
-#endif // OG_UIPUSHBUTTON_H
+} // ns:ui
+} // ns:og

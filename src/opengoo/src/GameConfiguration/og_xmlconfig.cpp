@@ -2,34 +2,38 @@
 #include "decrypter.h"
 #include <QFileInfo>
 
-OGXmlConfig::OGXmlConfig(const QString & filename)
-{
-    fileName_ = filename;
-    isOpen_ = false;
-}
-
-OGXmlConfig::~OGXmlConfig()
-{
-    Close();
-}
-
 bool OGXmlConfig::Open()
 {
-    if (isOpen_) { return false; }
+    if (isOpen_)
+    {
+        return false;
+    }
+
     if (!QFile::exists(fileName_))
     {
-        if (QFile::exists(fileName_ + ".xml")) fileName_ += ".xml";
-            else if (QFile::exists(fileName_ + ".bin")) fileName_ += ".bin";
-                else return false;
+        if (QFile::exists(fileName_ + ".xml"))
+        {
+            fileName_ += ".xml";
+        }
+        else if (QFile::exists(fileName_ + ".bin"))
+        {
+            fileName_ += ".bin";
+        }
+        else
+        {
+            return false;
+        }
     }
+
     file_.setFileName(fileName_);
 
-    if (file_.open(QIODevice::ReadOnly))
+    if (!file_.open(QIODevice::ReadOnly))
     {
-        isOpen_ = true;
-        return true;
+        return false;
     }
-    else { return false; }
+
+    isOpen_ = true;
+    return true;
 }
 
 void OGXmlConfig::Close()
@@ -62,7 +66,10 @@ bool OGXmlConfig::Read()
     {
         rootElement = domDoc_.documentElement();
 
-        if (rootElement.tagName() == rootTag_) { return true; }
+        if (rootElement.tagName() == rootTag_)
+        {
+            return true;
+        }
     }
 
     return false;
@@ -76,7 +83,10 @@ QPointF OGXmlConfig::StringToPoint(const QString & position)
     {
         return QPointF(pos.at(0).toDouble(), pos.at(1).toDouble());
     }
-    else { return QPointF(); }
+    else
+    {
+        return QPointF();
+    }
 }
 
 QPointF OGXmlConfig::StringToPoint(const QString & x, const QString & y)
@@ -90,17 +100,12 @@ QColor OGXmlConfig::StringToColor(const QString & color)
     
     if (list.size() == 3)
     {
-        return QColor(list.at(0).toInt()
-                      , list.at(1).toInt()
-                      , list.at(2).toInt());
+        return QColor(list.at(0).toInt(), list.at(1).toInt(), list.at(2).toInt());
     }
-    else { return QColor(); }
-}
-
-bool OGXmlConfig::StringToBool(const QString & value)
-{
-    if (value == "true") { return true; }
-    else { return false; }
+    else
+    {
+        return QColor();
+    }
 }
 
 QSizeF OGXmlConfig::StringToSize(const QString width, const QString height)

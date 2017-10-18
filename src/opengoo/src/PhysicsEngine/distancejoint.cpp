@@ -7,18 +7,22 @@ namespace og
 {
 namespace physics
 {
-DistanceJoint::DistanceJoint(og::PhysicsBody* a_b1, og::PhysicsBody* a_b2, OGUserData* a_data)
+DistanceJoint::DistanceJoint(og::physics::PhysicsEngine& a_physicEngine,
+                             og::PhysicsBody* a_b1,
+                             og::PhysicsBody* a_b2,
+                             OGUserData* a_data)
+    : m_physicEngine(a_physicEngine)
 {
     b2DistanceJointDef def;
     def.Initialize(a_b1->body, a_b2->body, a_b1->body->GetPosition(), a_b2->body->GetPosition());
     m_jointdef = &def;
-    PE->CreateJoint(this);
+    m_physicEngine.CreateJoint(this);
     m_joint->SetUserData(a_data);
 }
 
 DistanceJoint::~DistanceJoint()
 {
-    PE->DestroyJoint(this);
+    m_physicEngine.DestroyJoint(this);
 }
 }
 }

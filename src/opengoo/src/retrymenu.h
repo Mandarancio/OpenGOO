@@ -1,10 +1,6 @@
-#ifndef RETRYMENU_H
-#define RETRYMENU_H
+#pragma once
 
-#include <memory>
 #include <QObject>
-
-#include "OGLib/UI/og_ipushbutton.h"
 
 class RetryMenu : public QObject
 {
@@ -21,10 +17,8 @@ signals:
 
 private:
     struct Impl;
-    std::unique_ptr<Impl> _pImpl;
+    std::unique_ptr<Impl> mImpl;
 
 private slots:
-    void _ok();
+    void ok();
 };
-
-#endif // RETRYMENU_H

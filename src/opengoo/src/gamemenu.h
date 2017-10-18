@@ -1,15 +1,6 @@
-#ifndef GAMEMENU_H
-#define GAMEMENU_H
+#pragma once
 
 #include <QObject>
-
-#include <OGPushButton>
-#include "OGLib/UI/og_ipushbutton.h"
-
-struct WOGButton;
-class WOGResources;
-
-class QPixmap;
 
 class GameMenu : public QObject
 {
@@ -27,15 +18,9 @@ signals:
 
 private:
     struct Impl;
-    std::unique_ptr<Impl> _pImpl;
-
-    std::unique_ptr<og::ui::PushButton> _createButton(const WOGButton* button
-                                      , const WOGResources &resrc);
-    QPixmap* _getImage(const QString &id, const WOGResources &resrc);
+    std::unique_ptr<Impl> mImpl;
 
 private slots:
-    void _restart();
-    void _ocdcriteria();
+    void restart();
+    void ocdcriteria();
 };
-
-#endif // GAMEMENU_H

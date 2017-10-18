@@ -1,5 +1,4 @@
-#ifndef OG_POI_H
-#define OG_POI_H
+#pragma once
 
 #include "OGLib/pointf.h"
 #include "wog_level.h"
@@ -11,13 +10,13 @@ using namespace oglib;
 class OGPoi
 {
     public:
-        OGPoi(const WOGPoi* poi)
+        OGPoi(const WOGPoi& poi)
         {
-            pos_.SetX(poi->position.x());
-            pos_.SetY(poi->position.y());
-            traveltime_ = poi->traveltime * 1000;
-            pause_ = poi->pause * 1000;
-            zoom_ = poi->zoom;
+            pos_.SetX(poi.position.x());
+            pos_.SetY(poi.position.y());
+            traveltime_ = poi.traveltime * 1000;
+            pause_ = poi.pause * 1000;
+            zoom_ = poi.zoom;
             if (zoom_ == 0) zoom_ = 1;
             zoom_ = 1 / zoom_;
         }
@@ -36,5 +35,3 @@ class OGPoi
 };
 
 typedef std::vector<OGPoi> PoiList;
-
-#endif // OG_POI_H

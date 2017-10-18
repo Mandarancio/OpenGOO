@@ -1,19 +1,25 @@
 #include "og_materialconfig.h"
 
-#include <QDebug>
-
-OGMaterialConfig::OGMaterialConfig(const QString & filename)
-    : OGXmlConfig(filename)
+struct OGMaterialConfigHelper
 {
-    SetRootTag("materials");
+    static void LoadMaterial(WOGMaterial& aMaterial, const QDomElement& element);
+};
+
+void OGMaterialConfigHelper::LoadMaterial(WOGMaterial& aMaterial, const QDomElement& element)
+{
+    aMaterial.bounce = element.attribute("bounce").toFloat();
+    aMaterial.friction = element.attribute("friction").toFloat();
+    aMaterial.id = element.attribute("id");
+    aMaterial.minbouncevel = element.attribute("minbouncevel").toFloat();
+    aMaterial.stickiness = element.attribute("stickiness").toInt();
 }
 
-WOGMaterialList* OGMaterialConfig::Parser()
+WOGMaterialList OGMaterialConfig::Parser()
 {    
     QDomNode node;
     QDomElement element;
 
-    WOGMaterialList* obj = new WOGMaterialList;
+    WOGMaterialList obj;
     node = rootElement.firstChild();
 
     while(!node.isNull())
@@ -22,23 +28,12 @@ WOGMaterialList* OGMaterialConfig::Parser()
 
         if (element.tagName() == "material")
         {
-            obj->material << CreateMaterial(element);
+            obj.push_back(WOGMaterial());
+            OGMaterialConfigHelper::LoadMaterial(obj.back(), element);
         }
 
         node = node.nextSibling();
     }
-
-    return obj;
-}
-
-WOGMaterial* OGMaterialConfig::CreateMaterial(const QDomElement & element)
-{
-    WOGMaterial* obj = new WOGMaterial;
-    obj->bounce = element.attribute("bounce").toFloat();
-    obj->friction = element.attribute("friction").toFloat();
-    obj->id = element.attribute("id");
-    obj->minbouncevel = element.attribute("minbouncevel").toFloat();
-    obj->stickiness = element.attribute("stickiness").toInt();
 
     return obj;
 }

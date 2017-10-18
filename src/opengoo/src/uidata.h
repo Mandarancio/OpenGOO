@@ -1,5 +1,4 @@
-#ifndef UIDATA_H
-#define UIDATA_H
+#pragma once
 
 #include <QString>
 
@@ -11,5 +10,3 @@ struct UIData
     QString over;
     QString text;
 };
-
-#endif // UIDATA_H

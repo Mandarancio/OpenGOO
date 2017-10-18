@@ -64,5 +64,10 @@ public:
     {
         return body->SetAwake(a_flag);
     }
+
+    bool IsAwake() const
+    {
+        return body->IsAwake();
+    }
 };
 }

@@ -9,11 +9,17 @@
 
 #include "wog_scene.h"
 #include "wog_ball.h"
+
 #include <OGPhysicsEngine>
 #include "og_forcefield.h"
 #include "og_sprite.h"
+
 #include "GameEngine/entity.h"
 #include "GameEngine/scene.h"
+
+#include "SoundEngine/music.h"
+
+#include "entityfactory.h"
 
 
 typedef std::unique_ptr<ForceField> ForceFieldPtr;
@@ -21,7 +27,6 @@ typedef std::unique_ptr<LinearForceField> LinearForceFieldPtr;
 
 struct WOGLevel;
 struct WOGText;
-struct WOGMaterialList;
 struct WOGEffects;
 struct WOGBallInstance;
 struct WOGStrand;
@@ -40,172 +45,198 @@ class OGStrand;
 class OGIBody;
 class OpenGOO;
 
-class QTimer;
-
 class EntityFactory;
+class PhysicsEngineFactory;
 
 typedef QList<OGSprite*> OGSpriteList;
 
-class OGWorld : public QObject, public og::Scene
+class OGWorld : public og::Scene
 {
-        Q_OBJECT
+        EntityFactory& m_entityFactory;
+        std::unique_ptr<og::physics::PhysicsEngine> m_physicsEngine;
 
-        EntityFactory& m_factory;
-        WOGLevel* pLevelData_;
-        WOGScene* pSceneData_;
-        WOGResources* pResourcesData_[2];
-        WOGText* pTextData_[2];
-        WOGMaterialList* pMaterialData_;
-        WOGEffects* pEffectsData_;
+//        WOGLevel* pLevelData_;
+//        WOGScene* pSceneData_;
+//        WOGResources* pResourcesData_[2];
+//        WOGText* pTextData_[2];
+//        WOGMaterialList* pMaterialData_;
+//        WOGEffects* pEffectsData_;
 
-        QCache<QString, WOGBall> ballConfigurations_;
+//        QCache<QString, WOGBall> ballConfigurations_;
 
-        OGBall* pNearestBall_;
+//        OGBall* pNearestBall_;
 
-        // Exit
-        float xExit_;
-        float yExit_;
+//        // Exit
+//        float xExit_;
+//        float yExit_;
 
-        QTimer* pTimer_;
+        QString m_language;
+        QColor m_backgroundColor;
+//        bool isLevelLoaded_;
 
-        QString levelName_;
-        QString language_;
-        bool isLevelLoaded_;
+//        QList<OGButton*> buttons_;
 
-        QList<OGButton*> buttons_;
-
-        OGSpriteList sprites_;
+//        OGSpriteList sprites_;
         QList<EntityPtr> m_update;
         QList<EntityPtr> m_added[2];
         int m_num_added;
 
-        QList<OGBall*> balls_;
-        QHash<int, OGStrand*> strands_;
-        QList<OGIBody*> staticBodies_;
-        std::vector<ForceFieldPtr> _forceFilds;
+//        QList<OGBall*> balls_;
+//        QHash<int, OGStrand*> strands_;
+//        QList<OGIBody*> staticBodies_;
+//        std::vector<ForceFieldPtr> _forceFilds;
 
-        int strandId_;
-        int ballId_;
+//        int strandId_;
+//        int ballId_;
 
-        WOGCompositeGeom _cg; // compositgeom
+//        WOGCompositeGeom _cg; // compositgeom
 
-        bool _LoadFX(const QString &path);
-        bool _LoadLevel(const QString path);
-        bool _LoadMaterials(const QString &path);
-        bool _LoadResources(const QString &path, bool share);
-        bool _LoadScene(const QString &path);
-        bool _LoadText(const QString &path, bool share);
+//        bool _LoadFX(const QString &path);
+//        bool _LoadLevel(const QString path);
+//        bool _LoadMaterials(const QString &path);
+//        bool _LoadResources(const QString &path, bool share);
+//        bool _LoadScene(const QString &path);
+//        bool _LoadText(const QString &path, bool share);
 
-        OGSprite* _CreateSprite(const WOGVObject* vobject, const QString &image);
+//        OGSprite* _CreateSprite(const WOGVObject* vobject, const QString &image);
 
-        // scene
-        void _CreateParticle();
-        void _CreateSceneLayer(const WOGSceneLayer &scenelayer
-                               , OGSpriteList* sprites);
+//        // scene
+//        void _CreateParticle();
+//        void _CreateSceneLayer(const WOGSceneLayer &scenelayer
+//                               , OGSpriteList* sprites);
 
-        void _CreateButtongroup();
-        void _CreateButton(const WOGButton &button, OGSpriteList* sprites
-                           , QList<OGButton*>* buttons);
+//        void _CreateButtongroup();
+//        void _CreateButton(const WOGButton &button, OGSpriteList* sprites
+//                           , QList<OGButton*>* buttons);
 
-        void _CreateCompositeGeom(WOGCompositeGeom* cg);
+//        void _CreateCompositeGeom(WOGCompositeGeom* cg);
 
-        // Pipe
-        WOGPipe* GetPipeData();
+//        // Pipe
+//        WOGPipe* GetPipeData();
 
-        template<class Body, class Data> Body* _CreateBody(Data* data);
+//        void _CreateLabel();
 
-        void _CreateLabel();
+//        class OGWindowCamera* pCamera_;
+//        bool _CreateCamera();
 
-        class OGWindowCamera* pCamera_;
-        bool _CreateCamera();
+//        bool isPhysicsEngine_;
 
-        bool isPhysicsEngine_;
-        og::physics::PhysicsEngine* pPhysicsEngine_;
+//        void CreatePhysicsScene();
+//        bool _InitializePhysics();
+//        void _SetGravity();
+//        void _ClearPhysics();
 
-        void CreatePhysicsScene();
-        bool _InitializePhysics();
-        void _SetGravity();
-        void _ClearPhysics();
+//        void _ClearScene();
+//        void _ClearLocalData();
 
-        void _ClearScene();
-        void _ClearLocalData();
+//        void _CreateZOrder();
 
-        void _CreateZOrder();
+//        OpenGOO* _GetGame();
 
-        OpenGOO* _GetGame();
-
-        og::physics::PhysicsEngine* GetPhisicsEngine();
-
-        OGIBody* AddStaticBody(OGIBody* a_body);
-
-    public:
-        OGWorld(EntityFactory& a_factory,
-                const QString &levelname = QString(),
-                QObject* parent = 0);
-        virtual ~OGWorld();
-
-        static bool isExist(const QString &path_level);
-
-        // Get properties
-        const QList<OGBall*>& balls() const { return balls_; }
-        const QList<OGButton*>& buttons() const { return buttons_; }
-        const OGSpriteList& sprites() const { return sprites_; }
-        const QHash<int, OGStrand*>& strands() const { return strands_; }
-        QList<OGIBody*>& staticbodies() { return staticBodies_; }
-        const QString &language() const { return language_; }
-        WOGLevel* leveldata() const { return pLevelData_; }
-        WOGMaterialList* materialdata() { return pMaterialData_; }
-        const QString &levelname() const { return levelName_; }
-        WOGScene* scenedata() const { return pSceneData_; }
-        OGBall* nearestball() { return pNearestBall_; }
-        WOGText* textdata() { return pTextData_[0]; }
-        WOGResources* resrcdata() const { return pResourcesData_[0]; }
-
-        const std::vector<ForceFieldPtr> &forcefilds() const { return _forceFilds; }
-
-        ForceField& GetForceField(int i)
+        og::physics::PhysicsEngine* GetPhysicsEngine()
         {
-            return *_forceFilds[i];
+            return m_physicsEngine.get();
         }
 
-        bool isLevelLoaded() const { return isLevelLoaded_; }
+//        OGIBody* AddStaticBody(OGIBody* a_body);
+
+//        template<class Body>
+//        Body* _CreateBody(const typename Body::Data& data)
+//        {
+//            auto material = materialdata()->GetMaterial(data.material);
+//            if (!material)
+//                std::runtime_error(qPrintable("Wrong material id:" + data.material));
+
+//            return new Body(GetPhysicsEngine(), data, *material);
+//        }
+
+    public:
+        OGWorld(PhysicsEngineFactory& a_physicsEngineFactory, EntityFactory& a_factory, const QString& a_levelname, const QString& a_language);
+
+        ~OGWorld();
+
+        const QColor& GetBackgroundColor() const;
+
+        float GetWidth() const;
+
+        float GetHeight() const;
 
 
-        // Set properties
-        void SetLevelname(const QString &levelname) { levelName_ = levelname; }
-        void SetLanguage(const QString &language) { language_ = language; }
+//        // Get properties
+//        const QList<OGBall*>& balls() const { return balls_; }
 
-        void CreateScene();
+//        const QList<OGButton*>& buttons() const { return buttons_; }
 
-        bool Initialize();
+//        const OGSpriteList& sprites() const { return sprites_; }
+
+//        const QHash<int, OGStrand*>& strands() const { return strands_; }
+
+//        QList<OGIBody*>& staticbodies() { return staticBodies_; }
+
+//        const QString &language() const { return language_; }
+
+//        WOGLevel* leveldata() const { return pLevelData_; }
+
+//        WOGMaterialList* materialdata() { return pMaterialData_; }
+
+//        const QString &levelname() const { return levelName_; }
+
+//        WOGScene* scenedata() const { return pSceneData_; }
+
+//        OGBall* nearestball() { return pNearestBall_; }
+
+//        WOGText* textdata() { return pTextData_[0]; }
+
+//        WOGResources* resrcdata() const { return pResourcesData_[0]; }
+
+//        const std::vector<ForceFieldPtr> &forcefilds() const { return _forceFilds; }
+
+//        ForceField& GetForceField(int i) { return *_forceFilds[i]; }
+
+//        bool isLevelLoaded() const { return isLevelLoaded_; }
+
+//        // Set properties
+////        void SetLevelname(const QString &levelname) { levelName_ = levelname; }
+
+////        void SetLanguage(const QString &language) { language_ = language; }
+
+//        void CreateScene();
+
+//        bool Initialize();
         bool Load();
-        bool LoadLevel(const QString &levelname);
-        void Reload();
-        void CloseLevel();
+//        bool LoadLevel();
+//        void Reload();
+//        void CloseLevel();
 
         void Update();
 
-        virtual void Render(QPainter& a_p);
+        void Render(QPainter& a_p);
 
-        template<class Target, class Config>
-        Target LoadConf(const QString &path);
+//        template<class Target, class Config>
+//        Target LoadConf(const QString &path);
 
+//        TODO why this here?
         void CreateStrand(OGBall* b1, OGBall* b2);
         void RemoveStrand(OGStrand* strand);
 
-        ImageSourcePtr CreateImageSource(const QString& a_id);
-
         EntityPtr AddEntity(EntityPtr a_e);
 
-        void StartSearching();
-
-        void _InsertSprite(OGSprite* sprite);
+//        void _InsertSprite(OGSprite* sprite);
 
     private:
         void OnMouseDown(const QPoint& a_point);
 
         void OnMouseUp(const QPoint& a_point);
 
-    private slots:
-        void findNearestAttachedBall();
+        void OnMouseMove(const QPoint& a_point);
+
+        int GetCount() const
+        {
+            return m_update.size();
+        }
+
+//        MusicSPtr GetMusic(const QString& aId);
+
+//    private slots:
+//        void findNearestAttachedBall();
 };

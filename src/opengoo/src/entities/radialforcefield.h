@@ -14,10 +14,11 @@ public:
 
 public:
     RadialForceField(
-        const Circle& a_c,
-        float a_forceatcenter,
-        float a_forceatedge,
-        const og::physics::SensorFilter& a_filter);
+            og::physics::PhysicsEngine& a_physicEngine,
+            const Circle& a_c,
+            float a_forceatcenter,
+            float a_forceatedge,
+            const og::physics::SensorFilter& a_filter);
 
 private:
     void OnTriggerEnter(Fixture* a_fixture);
@@ -38,6 +39,7 @@ private:
     float m_forceatedge;
     BallList m_balls;
     BallList m_remove;
+    og::physics::PhysicsEngine& m_physicEngine;
 };
 
 class RadialForceField::Builder
@@ -47,15 +49,17 @@ class RadialForceField::Builder
     float m_forceatcenter;
     float m_forceatedge;
     og::physics::SensorFilter m_filter;
+    og::physics::PhysicsEngine& m_physicEngine;
 
 public:
-    Builder()
+    Builder(og::physics::PhysicsEngine& a_physicEngine)
+        : m_radius(0.0f)
+        , m_forceatcenter(0.0f)
+        , m_forceatedge(0.0f)
+        , m_physicEngine(a_physicEngine)
     {
         m_filter.category = 0;
         m_filter.mask = 0;
-        m_radius = 0.0f;
-        m_forceatcenter = 0.0f;
-        m_forceatedge = 0.0f;
     }
 
     Builder& SetCenter(const QPointF& a_center)
@@ -102,6 +106,6 @@ public:
 
     std::shared_ptr<RadialForceField> Build()
     {
-        return std::make_shared<RadialForceField>(Circle(m_center, m_radius), m_forceatcenter, m_forceatedge, m_filter);
+        return std::make_shared<RadialForceField>(m_physicEngine, Circle(m_center, m_radius), m_forceatcenter, m_forceatedge, m_filter);
     }
 };

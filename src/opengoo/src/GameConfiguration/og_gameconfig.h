@@ -8,21 +8,30 @@ struct OGConfig
     int screen_height;
     int refreshrate;
     bool fullscreen;
+    bool isCrt;
     QString language;
+    QString levelName;
 
     OGConfig()
+        : screen_width(0)
+        , screen_height(0)
+        , refreshrate(0)
+        , fullscreen(false)
+        , isCrt(false)
     {
-        fullscreen = false;
-        refreshrate = 0;
-        screen_height = 0;
-        screen_width = 0;
     }
 };
 
 class OGGameConfig : public OGXmlConfig
 {
 public:
-    OGGameConfig(const QString & filename);
+    OGGameConfig(const QString& filename)
+        :OGXmlConfig(filename)
+    {
+        SetRootTag("config");
+    }
+
     OGConfig Parser();
-    void Create(OGConfig &config); // Create new game configuration file
+
+    void Create(OGConfig& config); // Create new game configuration file
 };

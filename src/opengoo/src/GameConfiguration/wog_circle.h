@@ -1,5 +1,4 @@
-#ifndef WOG_CIRCLE_H
-#define WOG_CIRCLE_H
+#pragma once
 
 #include "wog_pobject.h"
 
@@ -10,5 +9,3 @@ struct WOGCircle : public WOGPObject
     QPointF position;
     float radius;
 };
-
-#endif // WOG_CIRCLE_H

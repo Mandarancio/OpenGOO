@@ -1,12 +1,8 @@
-#ifndef WOG_LEVEL_H
-#define WOG_LEVEL_H
+#pragma once
 
 #include "wog_exit.h"
 #include "wog_pipe.h"
 
-#include <QPointF>
-#include <QString>
-#include <QList>
 #include <QColor>
 
 struct WOGPoi
@@ -19,13 +15,10 @@ struct WOGPoi
 
 struct WOGCamera
 {
-    QString aspect;
     QPointF endpos;
     float endzoom;
-    QList<WOGPoi*> poi;
-
-    WOGCamera() : aspect("normal"), endpos(), endzoom(1) {}
-    ~WOGCamera();
+    QString aspect;
+    QVector<WOGPoi> poi;
 };
 
 struct WOGMusic { QString id; };
@@ -50,26 +43,19 @@ struct WOGStrand
 
 struct WOGLevel
 {
+    QColor textcolor;
     int ballsrequired;
     bool letterboxed;
     bool visualdebug;
     bool autobounds;
-    QColor textcolor;
     bool texteffects;
     float timebugprobability;
     bool strandgeom;
     bool allowskip;
-    QList<WOGCamera*> camera;
     WOGMusic music;
-    QList<WOGBallInstance*> ball;
-    WOGLevelExit* levelexit;
-    QList<WOGStrand*> strand;
-    WOGPipe* pipe;
-
-    WOGLevel() : levelexit(nullptr), pipe(nullptr) { }
-    ~WOGLevel();
-
-    WOGCamera* GetCameraByAspect(const QString& aspect) const;
+    QVector<WOGStrand> strand;
+    QVector<WOGCamera> camera;
+    QVector<WOGBallInstance> ball;
+    std::pair<WOGLevelExit, bool> levelexit;
+    std::pair<WOGPipe, bool> pipe;
 };
-
-#endif // WOG_LEVEL_H

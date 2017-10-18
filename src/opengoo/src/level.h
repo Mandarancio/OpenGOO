@@ -1,10 +1,6 @@
-#ifndef LEVEL_H
-#define LEVEL_H
+#pragma once
 
 #include <QObject>
-#include <memory>
-
-class QString;
 
 class Level : public QObject
 {
@@ -13,7 +9,7 @@ class Level : public QObject
     Q_DISABLE_COPY(Level)
 
 public:
-    Level(const QString &levelname);
+    Level(const QString& levelname);
     ~Level();
 
     void reload();
@@ -26,14 +22,12 @@ signals:
 
 private:
     struct Impl;
-    std::unique_ptr<Impl> _pImpl;
+    std::unique_ptr<Impl> mImpl;
 
 private slots:
-   void _retryButton();
-   void _menuButton();
+   void retryButton();
+   void menuButton();
 
-   void _retryMenu();
-   void _gameMenu();
+   void retryMenu();
+   void gameMenu();
 };
-
-#endif // LEVEL_H

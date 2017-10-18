@@ -25,6 +25,8 @@ INCLUDEPATH += src/GameEngine
 INCLUDEPATH += src/GameConfiguration
 INCLUDEPATH += src/include
 
+
+
 CONFIG(debug, debug|release) {
     LIBS += -L../libs/lib -lloggerd
 } else {
@@ -109,7 +111,9 @@ HEADERS += \
     src/entityfactory.h \
     src/gamedata.h \
     src/exiteventlistener.h \
-    src/ijointbuilder.h
+    src/ijointbuilder.h \
+    src/physicsenginefactory.h \
+    src/sceneloader.h
 
 SOURCES += \
     src/main.cpp \
@@ -124,7 +128,7 @@ SOURCES += \
     src/og_ibody.cpp \
     src/og_rectangle.cpp \
     src/og_line.cpp \
-    src/og_uibutton.cpp \
+#    src/og_uibutton.cpp \
     src/og_data.cpp \
     src/og_camera.cpp \
     src/fpscounter.cpp \
@@ -147,13 +151,21 @@ SOURCES += \
     src/og_sprite.cpp \
     src/spritefactory.cpp \
     src/entityfactory.cpp \
+    src/sceneloader.cpp
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio -lsfml-system
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio-d -lsfml-system-d
+else:unix: LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio
+
+INCLUDEPATH += $$PWD/../extlibs/SFML-2.3.2/include
+DEPENDPATH += $$PWD/../extlibs/SFML-2.3.2/include
 
 include(src/GameEngine/GameEngine.files)
 include(src/PhysicsEngine/PhysicsEngine.files)
 include(src/OGLib/OGLib.files)
 include(src/GameConfiguration/GameConfiguration.files)
 include(src/entities/entities.files)
+include(src/SoundEngine/SoundEngine.files)
 
 
 !win32 {

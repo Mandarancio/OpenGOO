@@ -1,5 +1,4 @@
-#ifndef PROGRESSWINDOW_H
-#define PROGRESSWINDOW_H
+#pragma once
 
 #include <QObject>
 #include <memory>
@@ -26,5 +25,3 @@ private:
     struct Impl;
     std::unique_ptr<Impl> _pImpl;
 };
-
-#endif // PROGRESSWINDOW_H

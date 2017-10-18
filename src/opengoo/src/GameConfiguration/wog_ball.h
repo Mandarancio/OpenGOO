@@ -1,11 +1,12 @@
-#ifndef WOG_BALL_H
-#define WOG_BALL_H
-
+#pragma once
 // Ball definition file
 // source http://goofans.com/developers/game-file-formats/balls-xml
 
-#include <QString>
+//#include <QString>
+#include <QStringList>
 #include <QColor>
+#include <QVector2D>
+#include <QMap>
 
 struct WOGBallShape
 {
@@ -158,6 +159,23 @@ struct WOGBallDetachstrand
     float maxlen;
 };
 
+struct WOGPart
+{
+    QString name;
+    QString image;
+    QVector2D origin;
+    int layer;
+    QString state;
+    float scale;
+    bool rotate;
+    QString stretch;
+    bool eye;
+    QString pupil;
+    int pupilinset;
+    int xrange;
+    int yrange;
+};
+
 class OGBallConfig;
 
 struct WOGBall
@@ -167,8 +185,10 @@ struct WOGBall
     WOGBallAttributes attribute;
     WOGBallStrand* strand;
     WOGBallDetachstrand* detachstrand;
+    QList<WOGPart> parts;
+    QMap<QString, QStringList> sounds;
 
-    WOGBall() : strand(0), detachstrand(0)  {}
+    WOGBall() : strand(nullptr), detachstrand(nullptr)  {}
     ~WOGBall()
     {
         if (strand) { delete strand; }
@@ -176,5 +196,3 @@ struct WOGBall
         if (detachstrand) { delete detachstrand; }
     }
 };
-
-#endif // WOG_BALL_H

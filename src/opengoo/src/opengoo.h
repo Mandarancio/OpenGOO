@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <QColor>
+#include <QDateTime>
 #include <QList>
 #include <QHash>
 #include <QMap>
@@ -29,7 +30,7 @@ class QTime;
 
 void visualDebug(QPainter* painter, OGWorld* world, qreal zoom);
 
-typedef EntityFactory* EntityFactoryPtr;
+typedef std::unique_ptr<EntityFactory> EntityFactoryPtr;
 
 class OpenGOO : public og::OGGame
 {
@@ -37,15 +38,18 @@ class OpenGOO : public og::OGGame
 
     Q_DISABLE_COPY(OpenGOO)
 
+    static const char* types[];
+    static const char* exts[];
+
     public:
         static OpenGOO* GetInstance();
 
         void Destroy();
 
-        OGWorld* GetWorld() { return pWorld_; }
+        OGWorld* GetWorld() { return static_cast<OGWorld*>(GetScene()); }
+
         OGBall* GetNearestBall();
 
-        void SetLevelName(const QString &levelname);
         void SetLanguage(const QString &language);                
 
         void OpenPipe();
@@ -72,39 +76,58 @@ class OpenGOO : public og::OGGame
 
         void loadLevel(const QString &levelname);
 
-        EntityFactory* GetEntityFactory()
+        void GotoScene(const QString& a_scene)
         {
-            return m_entityFactory;
+            m_gotoScene = a_scene;
+        }
+
+        EntityFactory& GetEntityFactory() const
+        {
+            return *m_entityFactory;
         }
 
         og::Scene* GetScene() const
         {
-            return static_cast<og::Scene*>(pWorld_);
+            return m_scene.get();
         }
 
-        const OGWindowCamera* GetCamera() const
+        OGWindowCamera& GetCamera() const
         {
-            pCamera_;
+            return *pCamera_;
         }
+
+    static void SetDebug(OGWorld&, bool);
 
     private:
-        OpenGOO();
-        ~OpenGOO()
-        {
-        }
+        OpenGOO() {}
+        ~OpenGOO() {}
 
+        static bool LevelIsExists(const QString& a_name);
+
+    private:
         static OpenGOO* pInstance_;
 
         EntityFactoryPtr m_entityFactory;
-        OGWorld* pWorld_;
+        std::shared_ptr<og::Scene> m_scene;
         std::unique_ptr<OGFPSCounter> _pFPS;
         OGWindowCamera* pCamera_;
 
-        OGBall* _pSelectedBall;
-        void _ClearSelectedBall() { _pSelectedBall = 0; }
+        bool mSceneIsLoaded;
 
-        QString levelName_;
-        QString language_;
+    private:
+        std::shared_ptr<og::Scene> CreateScene();
+
+        std::shared_ptr<og::Scene> SetScene(std::shared_ptr<og::Scene> a_scene)
+        {
+            assert(a_scene && "a_scene is nullptr");
+
+            m_scene = a_scene;
+
+            return a_scene;
+        }
+
+    private:
+        QString m_language;
         QString _currentIsland;
 
         int width_;
@@ -113,8 +136,7 @@ class OpenGOO : public og::OGGame
         float timeStep_;
         float timeScrollStep_;        
 
-        QTime* pGameTime_;
-        int lastTime_;
+        QDateTime lastTime_;
 
         bool _pause;
 
@@ -127,6 +149,7 @@ class OpenGOO : public og::OGGame
         int balls_;
         int ballsRequired_;
 
+    private:
         void _Start();
         void _End();
 
@@ -144,16 +167,18 @@ class OpenGOO : public og::OGGame
         void _KeyDown(QKeyEvent* ev);
         void _KeyUp(QKeyEvent* ev) { Q_UNUSED(ev)}
 
+        void LoadScene(og::Scene* a_scene);
+
+    private:
         // Layers
         QMap<float, OGLayer> layers_;
 
+    private:
         void _ClearLayers();
 
-        void _Quit();
+        void _Quit();        
 
-        void _SetDebug(bool debug);
-
-        void _Scroll();
+        void Scroll();
         void _SetBackgroundColor(const QColor &color);        
 
         // Main menu
@@ -162,24 +187,44 @@ class OpenGOO : public og::OGGame
         void _CloseMainMenu();
 
         // Island
+    private:
         std::unique_ptr<Island> pIsland;
-        QString _GetIsland();
-        void _SetIsland(const QString &name);
+
+    private:
+        QString _GetIsland() const
+        {
+            return _currentIsland;
+        }
+
+        void _SetIsland(const QString &name)
+        {
+             _currentIsland = name;
+        }
+
         void _CreateIsland(const QString &name);
         void _RemoveIsland();
 
         // Level
+    private:
         std::unique_ptr<Level> pLevel_;
+
+    private:
         void _CreateLevel(const QString &levelname);
-        void _LoadLevel(const QString &levelname);
+        bool _LoadLevel(OGWorld* a_world, const QString&);
         void _RemoveLevel();
         void _CloseLevel();
 
+   private:
         std::unique_ptr<ProgressWindow> pProgressWnd_;
+
+   private:
         void _InitProgressWindow();
         void _SaveProgress();
 
+   private:
         std::unique_ptr<og::ui::IPushButton> pContinueBtn_;
+
+   private:
         void _CreateContinueButton();
 
 private slots:
@@ -187,4 +232,10 @@ private slots:
         void _backToIsland();
         void _closeContinueButton();
         void _closeProgressWindow();
+
+private:
+        QString m_gotoScene;
+        QString m_previousScene;
 };
+
+#define GAME OpenGOO::GetInstance()

@@ -1,19 +1,24 @@
-#ifndef OG_CIRCLE_H
-#define OG_CIRCLE_H
+#pragma once
 
 #include "og_ibody.h"
 
 struct WOGCircle;
-
 class QPainter;
 
 class OGCircle : public OGIBody
 {
-        void _Draw(QPainter* p);
+    void _Draw(QPainter* p);
 
-    public:
-        OGCircle(WOGCircle* circle, WOGMaterial* material);
-        virtual ~OGCircle() {}
+public:
+    typedef WOGCircle Data;
+
+public:
+    /// throws std::logic_error
+    OGCircle(og::physics::PhysicsEngine& a_physicEngine, const WOGCircle& a_circle, const WOGMaterial& a_material);
+
+    virtual ~OGCircle()
+    {
+    }
+
+
 };
-
-#endif // OG_CIRCLE_H

@@ -1,5 +1,4 @@
-#ifndef OG_LINE_H
-#define OG_LINE_H
+#pragma once
 
 #include "og_ibody.h"
 #include "wog_scene.h"
@@ -7,8 +6,13 @@
 class OGLine : public OGIBody
 {
 public:
-    OGLine(WOGLine* line, WOGMaterial* material);
-    virtual ~OGLine() {}
-};
+    typedef WOGLine Data;
 
-#endif // OG_LINE_H
+public:
+    /// throws std::logic_error
+    OGLine(og::physics::PhysicsEngine& a_physicEngine, const WOGLine& line, const WOGMaterial& material);
+
+    virtual ~OGLine()
+    {
+    }
+};

@@ -8,13 +8,58 @@ OGBallConfig::OGBallConfig(const QString &filename)
     SetRootTag("ball");
 }
 
+//struct WOGPart
+//{
+//    QString name;
+//    QString image;
+//    QVector2D origin;
+//    int layer;
+//    QString state;
+//    float scale;
+//    bool rotate;
+//    QString stretch;
+//    bool eye;
+//    QString pupil;
+//    int pupilinset;
+//    int xrange;
+//    int yrange;
+//};
+
+void OGBallConfig::LoadPartAttr(const QString& a_attrName, const QString& a_attrValue, WOGPart& a_part)
+{
+    if (a_attrName == "name")
+    {
+        a_part.name = a_attrValue;
+    }
+    else if (a_attrName == "image")
+    {
+        a_part.image = a_attrValue;
+    }
+}
+
+void OGBallConfig::LoadPart(const QDomElement& a_el, WOGPart& a_part)
+{
+    auto attributes = a_el.attributes();
+    for (int i = 0; i < attributes.size(); ++i)
+    {
+        auto item = attributes.item(i);
+        auto attr = item.toAttr();
+        LoadPartAttr(attr.name(), attr.value(), a_part);
+    }
+}
+
+void LoadSounds(WOGBall& a_ball, const QDomElement& a_el)
+{
+    a_ball.sounds[a_el.attribute("event")] = a_el.attribute("id").split(",");
+}
+
 WOGBall* OGBallConfig::Parser()
 {
     QDomElement element;
 
-    WOGBall* obj = new WOGBall;
+    auto obj = std::unique_ptr<WOGBall>(new WOGBall);
 
-    CreateAttributes_(obj);
+    CreateAttributes_(obj.get());
 
     QDomNode node = rootElement.firstChild();
 
@@ -32,11 +77,12 @@ WOGBall* OGBallConfig::Parser()
         }
         else if (element.tagName() == "part")
         {
-
+            WOGPart part;
+            LoadPart(element, part);
+            obj->parts.push_back(part);
         }
         else if (element.tagName() == "marker")
         {
-
         }
         else if (element.tagName() == "shadow")
         {
@@ -52,7 +98,7 @@ WOGBall* OGBallConfig::Parser()
         }
         else if (element.tagName() == "sound")
         {
-
+            LoadSounds(*obj, element);
         }
         else if (element.tagName() == "sinvariance")
         {
@@ -62,7 +108,7 @@ WOGBall* OGBallConfig::Parser()
         node = node.nextSibling();
     }
 
-    return obj;
+    return obj.release();
 }
 
 void OGBallConfig::CreateAttributes_(WOGBall* ball)
@@ -198,6 +244,8 @@ std::shared_ptr<WOGBallShape> OGBallConfig::StringToShape(const QString & shape)
 
         return std::make_shared<WOGRectangleBall>(width, heigth, variation);
     }
+
+    return nullptr;
 }
 
 void OGBallConfig::_CreateLevelInteraction(WOGBall* ball)

@@ -16,10 +16,10 @@ OGPipe::OGPipe(const WOGPipe& a_pipe, EntityFactory& a_efactory)
     auto halfPipeWidth = src->GetHeight() * 0.5f;
     auto verteces = a_pipe.vertex;
 
-    for (int i = 0; i < verteces->size() - 1; i++)
+    for (int i = 0; i < verteces.size() - 1; i++)
     {
-        QPointF p1 = verteces->at(i);
-        QPointF p2 = verteces->at(i + 1);
+        QPointF p1 = verteces[i];
+        QPointF p2 = verteces[i + 1];
         auto v = p2 - p1;
         float x = p1.x();
         float y = -p1.y();
@@ -38,7 +38,8 @@ OGPipe::OGPipe(const WOGPipe& a_pipe, EntityFactory& a_efactory)
 
             spr->SetDepth(a_pipe.depth);
 
-            GetWorld()->_InsertSprite(spr);
+//            FIXME
+//            GetWorld()->_InsertSprite(spr);
         }
         else
         {
@@ -51,16 +52,17 @@ OGPipe::OGPipe(const WOGPipe& a_pipe, EntityFactory& a_efactory)
 
             spr->SetDepth(a_pipe.depth);
 
-            GetWorld()->_InsertSprite(spr);
+//            FIXME
+//            GetWorld()->_InsertSprite(spr);
         }
     }
 
-    assert(verteces->size() > 2);
-    for (int i = 0; i < verteces->size() - 2; i++)
+    assert(verteces.size() > 2);
+    for (int i = 0; i < verteces.size() - 2; i++)
     {
-        QPointF p1 = verteces->at(i);
-        QPointF p2 = verteces->at(i + 1);
-        QPointF p3 = verteces->at(i + 2);
+        QPointF p1 = verteces[i];
+        QPointF p2 = verteces[i + 1];
+        QPointF p3 = verteces[i + 2];
 
         auto bend = a_efactory.CreateBend(type, p1, p2, p3, a_pipe.depth);
         GetWorld()->AddEntity(bend);

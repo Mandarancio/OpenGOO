@@ -13,9 +13,10 @@ class OGStrand
     og::physics::Joint* strand_;
     QString type_;
     int id_;
+    og::physics::PhysicsEngine& m_physicEngine;
 
 public:
-    OGStrand(OGBall* gb1, OGBall* gb2, int id);
+    OGStrand(og::physics::PhysicsEngine& a_physicEngine, OGBall* gb1, OGBall* gb2, int id);
     virtual ~OGStrand();
 
     int id() const { return id_; }

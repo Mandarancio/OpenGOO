@@ -11,7 +11,7 @@ OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size, const WOGCam
 {
     pInstance_ = this;
 
-    Q_FOREACH(WOGPoi* poi, cam->poi)
+    foreach (const auto& poi, cam->poi)
     {
         poiList_.push_back(OGPoi(poi));
     }
@@ -74,10 +74,10 @@ void OGWindowCamera::ScrollRight(int shift)
     camera_->MoveRight(pos);
 }
 
-QPoint OGWindowCamera::windowToLogical(const QPoint &p)
+const QPoint OGWindowCamera::windowToLogical(const QPoint &p)
 {
-    auto px = p.x();
-    auto py = p.y();
+    float px = p.x();
+    float py = p.y();
 
     if (!GE->isCrt())
     {
@@ -86,8 +86,9 @@ QPoint OGWindowCamera::windowToLogical(const QPoint &p)
         py *= camera_->height() / (float)window->height();
     }
 
-    int a = RoundF(px * camera_->zoom() - camera_->width() * 0.5f);
-    int b = RoundF(py * camera_->zoom() - camera_->height() * 0.5f);
+    // FIXME don't work zoom
+    int a = RoundF(px * 1 /*camera_->zoom()*/ - camera_->width() * 0.5f);
+    int b = RoundF(py * 1 /*camera_->zoom()*/ - camera_->height() * 0.5f);
     int x = camera_->x() + a;
     int y = camera_->y() - b;
 

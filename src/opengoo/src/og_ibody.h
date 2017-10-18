@@ -1,5 +1,4 @@
-#ifndef OG_IBODY_H
-#define OG_IBODY_H
+#pragma once
 
 #include <OGPhysicsBody>
 
@@ -10,8 +9,8 @@ class QPainter;
 
 class OGIBody : public og::PhysicsBody
 {
-    WOGPObject* data_;
-    WOGMaterial* material_;
+    const WOGPObject& data_;
+    const WOGMaterial& material_;
 
     bool walkable_;    
 
@@ -32,11 +31,11 @@ protected:
     OGBodyType m_type;
     bool debug_;
 
-    WOGPObject* GetData() { return data_; }
-    WOGMaterial* GetMaterial() { return material_; }
+    const WOGPObject& GetData() const { return data_; }
+    const WOGMaterial& GetMaterial() const { return material_; }
 
 public:
-    OGIBody(WOGPObject* data, WOGMaterial* material);
+    OGIBody(const WOGPObject& data, const WOGMaterial& material);
     virtual ~OGIBody() {}       
 
     bool walkable() const { return walkable_; }
@@ -45,5 +44,3 @@ public:
 
     void Draw(QPainter* p) { _Draw(p); }
 };
-
-#endif // OG_IBODY_H

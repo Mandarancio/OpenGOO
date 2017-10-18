@@ -4,12 +4,12 @@
 
 #include <QStringList>
 
-OGIBody::OGIBody(WOGPObject* data, WOGMaterial* material)
+OGIBody::OGIBody(const WOGPObject& data, const WOGMaterial& material)
     : data_(data), material_(material), debug_(false)
 {
     walkable_ = false;
 
-    QStringList tags = data_->tag.split(",");
+    QStringList tags = data_.tag.split(",");
 
     Q_FOREACH(QString tag, tags)
     {

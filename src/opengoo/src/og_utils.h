@@ -1,54 +1,58 @@
-#ifndef OG_UTILS_H
-#define OG_UTILS_H
+#pragma once
 
-#include "og_gameconfig.h"
 #include <consoleappender.h>
 
-#include "OGLib/circlef.h"
-
-#include <OGPushButton>
-#include "GameEngine/og_gameengine.h"
-#include "uidata.h"
-#include "opengoo.h"
-
 struct OGUserData;
+struct OGConfig;
+struct UIData;
 
-class OGContactListener;
+namespace og
+{
+namespace ui
+{
+class PushButton;
+}
 
-namespace ogUtils
+namespace utils
 {
 
-void ogBackTracer();
+void backTracer();
+void logger();
 
-void ogLogger();
+void messageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 
-void ogMessageHandler(QtMsgType, const QMessageLogContext &, const QString&);
+bool loadConfig(OGConfig& config, const QString & filename);
+void saveConfig(OGConfig& config, const QString & filename);
 
-bool ogLoadConfig(OGConfig& config, const QString & filename);
-void ogSaveConfig(OGConfig& config, const QString & filename);
+inline OGUserData* getUserData(void* userdata)
+{
+    return userdata ? static_cast<OGUserData*>(userdata) : nullptr;
+}
 
-OGUserData* ogGetUserData(void* userdata);
-
-OGContactListener* ogGetContactListener();
-
-QPixmap* getImage(const QString & id);
-QString getText(const QString &id);
-
-og::OGGameEngine* getGameEngine();
+QPixmap* getImage(const QString& id); // TODO Remove
+QString getText(const QString&id); // TODO Remove
 
 std::unique_ptr<UIData> getUIData(const QString &id);
 
-template<class T> T* createUI(const QPoint &pos, const UIData &data);
-og::ui::PushButton* createButton(const QPoint &pos, const UIData &data);
-
-OpenGOO* getGame();
-}
-
-inline OpenGOO* ogUtils::getGame() { return OpenGOO::GetInstance(); }
-
-inline og::OGGameEngine* ogUtils::getGameEngine()
+template<class T> std::unique_ptr<T> createUI(const QPoint& pos, const UIData& data)
 {
-    return og::OGGameEngine::getInstance();
+    auto ui = std::unique_ptr<T>(new T);
+
+    ui->setPosition(pos.x(), pos.y());
+    ui->setSize(data.width, data.height);
+    ui->setUpImage(getImage(data.up));
+    ui->setOverImage(getImage(data.over));
+    ui->setText(getText(data.text));
+
+    return ui;
 }
 
-#endif // OG_UTILS_H
+std::unique_ptr<og::ui::PushButton> createPushButton(const QPoint &pos, const UIData &data);
+
+template<typename T, size_t N> inline size_t array_size(T (&)[N])
+{
+    return N;
+}
+
+} // ns:utils
+} // ns:og

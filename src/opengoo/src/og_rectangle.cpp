@@ -3,24 +3,23 @@
 #include "og_world.h"
 #include "og_userdata.h"
 
-OGRectangle::OGRectangle(WOGRectangle* rect, WOGMaterial* material)
-    : OGIBody(rect, material)
+OGRectangle::OGRectangle(og::physics::PhysicsEngine& a_physicEngine,
+                         const WOGRectangle& a_rect,
+                         const WOGMaterial& a_material)
+    : OGIBody(a_rect, a_material)
 {
-    PhysicsBody* obj;
+    if (a_rect.dynamic)
+        throw std::logic_error("WOGRectangle is dynamic");
 
-    QPointF position = rect->position;
-    QSizeF size = rect->size;
-    qreal angle = rect->rotation;
+    auto position = a_rect.position;
+    auto size = a_rect.size;
+    auto angle = a_rect.rotation;
 
-    if (!rect->dynamic)
-    {
-        m_type =  OGIBody::S_RECTANGLE;
-        OGUserData* data = new OGUserData;
-        data->type = OGUserData::GEOM;
-        data->data = this;
-        obj = PhysicsFactory::createRectangle(position, size, angle, material, false, 0
-                              , data);
-    }
+    m_type =  OGIBody::S_RECTANGLE;
+    auto data = new OGUserData;
+    data->type = OGUserData::GEOM;
+    data->data = this;
+    auto obj = PhysicsFactory::createRectangle(a_physicEngine, position, size, angle, a_material, false, 0, data);
 
     body = obj->body;
     fixture = obj->fixture;

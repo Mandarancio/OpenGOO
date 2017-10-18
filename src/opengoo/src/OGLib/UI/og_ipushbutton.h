@@ -1,5 +1,4 @@
-#ifndef OG_IPUSHBUTTON_H
-#define OG_IPUSHBUTTON_H
+#pragma once
 
 #include "og_ui.h"
 
@@ -48,7 +47,7 @@ private:
     virtual void _setOverImage(QPixmap* pm) = 0;
 };
 
-} // namespace ui
-} // namespace og
+typedef std::unique_ptr<IPushButton> IPushButtonUPtr;
 
-#endif // OG_IPUSHBUTTON_H
+} // ns:ui
+} // ns:og

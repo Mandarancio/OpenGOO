@@ -1,7 +1,6 @@
-#ifndef WOG_PIPE_H
-#define WOG_PIPE_H
+#pragma once
 
-#include <QList>
+#include <QVector>
 #include <QPointF>
 #include <QString>
 
@@ -10,10 +9,5 @@ struct WOGPipe
     QString id;
     QString type;
     float depth;
-    QList<QPointF>* vertex;
-
-    WOGPipe();
-    ~WOGPipe();
+    QVector<QPointF> vertex;
 };
-
-#endif // WOG_PIPE_H

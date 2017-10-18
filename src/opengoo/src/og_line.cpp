@@ -2,23 +2,24 @@
 #include "physics.h"
 #include "og_userdata.h"
 
-OGLine::OGLine(WOGLine *line, WOGMaterial* material)
+OGLine::OGLine(og::physics::PhysicsEngine& a_physicEngine, const WOGLine& line, const WOGMaterial& material)
     : OGIBody(line, material)
 {
-    PhysicsBody* obj;
+    if (line.dynamic)
+        throw std::logic_error("WOGLine is not static");
 
-    QPointF anchor = line->anchor;
-    QPointF normal = line->normal;
+    auto& anchor = line.anchor;
+    auto& normal = line.normal;
 
-    if (!line->dynamic)
-    {
-        OGUserData* data = new OGUserData;
-        data->type = OGUserData::GEOM;
-        data->data = this;
-        obj = PhysicsFactory::createLine(anchor, normal, material, false, data);
-    }
+    auto data = new OGUserData;
+    data->type = OGUserData::GEOM;
+    data->data = this;
+
+    auto obj = PhysicsFactory::createLine(a_physicEngine, anchor, normal, material, false, data);
 
     body = obj->body;
     fixture = obj->fixture;
     shape = obj->shape;
+
+    delete obj;
 }

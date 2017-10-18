@@ -1,5 +1,4 @@
-#ifndef WOG_SCENE_H
-#define WOG_SCENE_H
+#pragma once
 
 #include "wog_pobject.h"
 #include "wog_vobject.h"
@@ -28,6 +27,11 @@ struct WOGSceneLayer : public WOGVObject
     QString image;
     QString anim;
     float animspeed;
+
+    WOGSceneLayer()
+        : animspeed(1.0f)
+    {
+    }
 };
 
 struct WOGRadialForceField
@@ -100,10 +104,8 @@ struct WOGCompositeGeom : public WOGPObject
 {
     QPointF position;
     float rotation;
-    QList<WOGCircle*> circle;
-    QList<WOGRectangle*> rectangle;
-
-    ~WOGCompositeGeom();
+    QList<WOGCircle> circle;
+    QList<WOGRectangle> rectangle;
 };
 
 struct WOGScene
@@ -130,5 +132,3 @@ struct WOGScene
     WOGButtonGroup* GetButtonGroup(const QString& id);
     WOGButton* FindButton(const QString &id);
 };
-
-#endif // WOG_SCENE_H

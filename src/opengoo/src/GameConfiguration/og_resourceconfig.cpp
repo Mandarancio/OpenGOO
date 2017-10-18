@@ -1,63 +1,34 @@
 #include "og_resourceconfig.h"
+#include "wog_resources.h"
 
-OGResourceConfig::OGResourceConfig(const QString & filename)
-    : OGXmlConfig(filename)
+WOGResource* OGResourceConfig::CreateResource(const QDomElement& element, ResourceType aType)
 {
-    SetRootTag("ResourceManifest");
-}
-
-WOGResources* OGResourceConfig::Parser(QString groupid)
-{
-    WOGResources* resources;
-    QDomNode node;
-    QDomElement element;
-
-    defaultPath_ = "./";
-    defaultIdPrefix_ = "";
-    resources = new WOGResources;
-    node = rootElement.firstChild();
-
-    while(!node.isNull())
-    {
-        element = node.toElement();
-
-        if (element.tagName() == "Resources")
-        {                        
-            if (groupid.isEmpty() || element.attribute("id") == groupid)
-            {
-                resources->group << CreateResourceGroup(element);
-            }            
-        }
-
-        node = node.nextSibling();
-    }
-
-    return resources;
-}
-
-WOGResource* OGResourceConfig::CreateResource(const QDomElement & element
-                                              , WOGResource::Type type
-                                              )
-{
-    WOGResource* obj;
-
-    obj = new WOGResource;
-    obj->type = type;
+    auto obj = std::unique_ptr<WOGResource>(new WOGResource);
     obj->id = defaultIdPrefix_ + element.attribute("id");
     obj->path = defaultPath_ + element.attribute("path");
 
-    return obj;
+    switch (aType)
+    {
+    case Image:
+        obj->type = WOGResource::IMAGE;
+        break;
+    case Sound:
+        obj->type = WOGResource::SOUND;
+        break;
+    case Font:
+        obj->type = WOGResource::FONT;
+        break;
+    }
+
+    return obj.release();
 }
 
-WOGResourceGroup* OGResourceConfig::CreateResourceGroup(
-        const QDomElement & element
-        )
+WOGResourceGroup* OGResourceConfig::CreateResourceGroup(const QDomElement& element)
 {
-    WOGResourceGroup*  obj;
     QDomNode node;
     QDomElement resElement;
 
-    obj = new WOGResourceGroup;
+    auto obj = std::unique_ptr<WOGResourceGroup>(new WOGResourceGroup);
     obj->id = element.attribute("id");
     node = element.firstChild();
 
@@ -72,22 +43,47 @@ WOGResourceGroup* OGResourceConfig::CreateResourceGroup(
         }
         else if (resElement.tagName() == "Image")
         {
-            obj->resource << CreateResource(resElement
-                                             , WOGResource::IMAGE);
+            obj->resource << CreateResource(resElement, Image);
         }
         else if (resElement.tagName() == "Sound")
         {
-            obj->resource << CreateResource(resElement
-                                             , WOGResource::SOUND);
+            obj->resource << CreateResource(resElement, Sound);
         }
         else if (resElement.tagName() == "font")
         {
-            obj->resource << CreateResource(resElement
-                                             , WOGResource::FONT);
+            obj->resource << CreateResource(resElement, Font);
         }
 
         node = node.nextSibling();
     }
 
-    return obj;
+    return obj.release();
+}
+
+WOGResources* OGResourceConfig::Parser()
+{
+    QDomNode node;
+    QDomElement element;
+
+    defaultPath_ = "./";
+    defaultIdPrefix_ = "";
+    auto resources = std::unique_ptr<WOGResources>(new WOGResources);
+    node = rootElement.firstChild();
+
+    while(!node.isNull())
+    {
+        element = node.toElement();
+
+        if (element.tagName() == "Resources")
+        {                        
+            if (mGroupId.isEmpty() || element.attribute("id") == mGroupId)
+            {
+                resources->group << CreateResourceGroup(element);
+            }            
+        }
+
+        node = node.nextSibling();
+    }
+
+    return resources.release();
 }

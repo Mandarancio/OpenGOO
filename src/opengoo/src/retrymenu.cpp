@@ -1,47 +1,47 @@
 #include "retrymenu.h"
+#include "GameEngine/og_gameengine.h"
+#include <OGPushButton>
+#include "opengoo.h"
+#include "uidata.h"
 #include "og_utils.h"
 
-using namespace og::ui;
-using namespace ogUtils;
-using namespace std;
+using namespace og;
 
 struct RetryMenu::Impl
 {
-    unique_ptr<IPushButton> okBtn;
-    unique_ptr<IPushButton> cancelBtn;
+    ui::IPushButtonUPtr okBtn;
+    ui::IPushButtonUPtr cancelBtn;
 };
 
-RetryMenu::RetryMenu() : _pImpl(new Impl)
+RetryMenu::RetryMenu() : mImpl(new Impl)
 {    
-    auto ge = getGameEngine();
-
-    // Creates the OK button
     {
-        auto data = getUIData("OK_BUTTON");
-        int x = ge->getWidth() / 2 - (10 + data->width);
-        int y = ge->getHeight() / 2;
-        _pImpl->okBtn.reset(createButton(QPoint(x, y), *data));
-        auto btn = _pImpl->okBtn.get();
-        connect(btn, SIGNAL(pressed()), this, SLOT(_ok()));
+        auto data = utils::getUIData("OK_BUTTON");
+        auto offset = 10 + data->width;
+        auto pos = QPoint(GE->getWidth() / 2 - offset, GE->getHeight() / 2);
+        mImpl->okBtn = std::move(utils::createPushButton(pos, *data));
+        auto btn = mImpl->okBtn.get();
+        connect(btn, SIGNAL(pressed()), this, SLOT(ok()));
         btn->setVisible(true);
     }
 
-    // Creates the cancel button
     {
-        auto data = getUIData("CANCEL_BUTTON");
-        int x = ge->getWidth() / 2 + 10;
-        int y = ge->getHeight() / 2;
-        _pImpl->cancelBtn.reset(createButton(QPoint(x, y), *data));
-        auto btn = _pImpl->cancelBtn.get();
+        auto data = utils::getUIData("CANCEL_BUTTON");
+        auto offset = 10;
+        auto pos = QPoint(GE->getWidth() / 2 + offset, GE->getHeight() / 2);
+        mImpl->cancelBtn = std::move(utils::createPushButton(pos, *data));
+        auto btn = mImpl->cancelBtn.get();
         connect(btn, SIGNAL(pressed()), this, SIGNAL(close()));
         btn->setVisible(true);
     }
 }
 
-RetryMenu::~RetryMenu() {}
-
-void RetryMenu::_ok()
+RetryMenu::~RetryMenu()
 {
-    getGame()->ReloadLevel();
+}
+
+void RetryMenu::ok()
+{
+    GAME->ReloadLevel();
     emit close();
 }

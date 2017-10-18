@@ -6,26 +6,29 @@
 
 #include <QPainter>
 
-OGCircle::OGCircle(WOGCircle* circle, WOGMaterial* material)
-    : OGIBody(circle, material)
+OGCircle::OGCircle(og::physics::PhysicsEngine& a_physicEngine, const WOGCircle& a_circle, const WOGMaterial& a_material)
+    : OGIBody(a_circle, a_material)
 {
-    PhysicsBody* obj;
+    if (a_circle.dynamic)
+        throw std::logic_error("WOGCircle is dynamic");
 
-    QPointF position = circle->position;
-    float32 radius = circle->radius;
+    auto& position = a_circle.position;
+    auto radius = a_circle.radius;
 
-    if (!circle->dynamic)
-    {
-        m_type =  OGIBody::S_CIRCLE;
-        OGUserData* data = new OGUserData;
-        data->type = OGUserData::GEOM;
-        data->data = this;
-        obj = PhysicsFactory::createCircle(position, radius, 0, material, false, 0, data);
-    }
+    auto obj = PhysicsFactory::createCircle(a_physicEngine,
+                                            position,
+                                            radius,
+                                            0,
+                                            a_material,
+                                            false,
+                                            0,
+                                            new OGUserData(OGUserData::GEOM, this));
 
     body = obj->body;
     fixture = obj->fixture;
     shape = obj->shape;
+
+    delete obj;
 }
 
 void OGCircle::_Draw(QPainter* p)

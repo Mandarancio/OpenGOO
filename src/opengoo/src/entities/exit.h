@@ -24,6 +24,8 @@ class Exit : public og::Entity
     BallList m_remove;
     bool m_isClosed;
 
+    og::physics::PhysicsEngine& m_physicEngine;
+
     Exit(const Exit&);
     Exit& operator=(const Exit&);
 
@@ -52,7 +54,7 @@ class Exit : public og::Entity
     }
 
 public:
-    Exit(const WOGLevelExit& a_exit, ExitEventListener* a_listener);
+    Exit(og::physics::PhysicsEngine& a_physicEngine, const WOGLevelExit& a_exit, ExitEventListener* a_listener);
 
     ~Exit();
 };

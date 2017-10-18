@@ -1,7 +1,6 @@
 #include "og_physicsengine.h"
 #include "joint.h"
 #include "og_pcircle.h"
-#include "og_contactlistener.h"
 
 #include "circle.h"
 
@@ -9,56 +8,18 @@ namespace og
 {
 namespace physics
 {
-PhysicsEngine* PhysicsEngine::m_instance = nullptr;
 
-PhysicsEngine::PhysicsEngine()
+PhysicsEngine::PhysicsEngine(float a_x, float a_y, bool a_sleep)
+    : m_contactListener(new ContactListener)
+    , m_world(new b2World(b2Vec2(a_x, a_y)))
 {
-    m_isSleep = false;
-}
-
-PhysicsEngine::~PhysicsEngine()
-{
-    Release();
-}
-
-PhysicsEngine* PhysicsEngine::GetInstance()
-{
-    if (!m_instance)
-        m_instance = new PhysicsEngine;
-
-    return m_instance;
-}
-
-void PhysicsEngine::DestroyInstance()
-{
-    if (m_instance)
-        delete m_instance;
-
-    m_instance = nullptr;
-}
-
-bool PhysicsEngine::Initialize(float a_x, float a_y, bool a_sleep)
-{
-    if (m_world)
-        return true;
-
-    m_gravity.Set(a_x, a_y);
-    m_isSleep = a_sleep;
-    Init();
-
-    return true;
-}
-
-void PhysicsEngine::Reload()
-{
-    Release();
-    Init();
+    m_world->SetAllowSleeping(a_sleep);
+    m_world->SetContactListener(m_contactListener.get());
 }
 
 void PhysicsEngine::SetGravity(float a_x, float a_y)
 {
-    m_gravity.Set(a_x, a_y);
-    m_world->SetGravity(m_gravity);
+    m_world->SetGravity(b2Vec2(a_x, a_y));
 }
 
 void PhysicsEngine::SetSimulation(int a_velIter, int a_posIter, int a_steps)
@@ -80,27 +41,11 @@ void PhysicsEngine::CreateBody(PhysicsBody* a_body)
 
 void PhysicsEngine::CreateJoint(Joint* a_joint)
 {
-    assert(a_joint);
-    if (!a_joint)
-        return;
-
-    assert(a_joint->m_jointdef);
-    if (!a_joint->m_jointdef)
-        return;
-
     a_joint->m_joint = m_world->CreateJoint(a_joint->m_jointdef);
 }
 
 void PhysicsEngine::DestroyJoint(Joint* a_joint)
 {
-    assert(a_joint);
-    if (!a_joint)
-        return;
-
-    assert(a_joint->m_joint);
-    if (!a_joint->m_joint)
-        return;
-
     m_world->DestroyJoint(a_joint->m_joint);
     a_joint->m_joint = nullptr;
 }
@@ -116,14 +61,6 @@ OGPCircle* PhysicsEngine::CreateCircle(const Circle& a_circle)
     return body;
 }
 
-ContactListener* PhysicsEngine::GetContactListener()
-{
-    if (!m_contactListener)
-        m_contactListener.reset(new ContactListener);
-
-    return m_contactListener.get();
-}
-
 void PhysicsEngine::AddSensor(Sensor* a_sensor)
 {
     m_contactListener->AddSensor(a_sensor);
@@ -134,17 +71,5 @@ void PhysicsEngine::RemoveSensor(Sensor* a_sensor)
     m_contactListener->RemoveSensor(a_sensor);
 }
 
-void PhysicsEngine::Init()
-{
-    m_world.reset(new b2World(m_gravity));
-    m_world->SetAllowSleeping(m_isSleep);
-    m_world->SetContactListener(GetContactListener());
-}
-
-void PhysicsEngine::Release()
-{
-    m_world.reset();
-    m_contactListener.reset();
-}
 }
 }

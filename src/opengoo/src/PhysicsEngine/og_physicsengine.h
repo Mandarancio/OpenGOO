@@ -5,6 +5,7 @@
 #include "common.h"
 #include "debug.h"
 
+#include "og_contactlistener.h"
 
 class Circle;
 
@@ -21,51 +22,36 @@ class Joint;
 
 class PhysicsEngine
 {
-    static PhysicsEngine* m_instance;
     std::unique_ptr<ContactListener> m_contactListener;
     std::unique_ptr<b2World> m_world;
-    b2Vec2 m_gravity;
     float32 m_timeStep;
     int32 m_velocityIterations;
     int32 m_positionIterations;
-    bool m_isSleep;
-
-    PhysicsEngine();
-    ~PhysicsEngine();
-
-    void Init();
-    void Release();
 
 public:
-    static PhysicsEngine* GetInstance();
-    static void DestroyInstance();
 
-    bool Initialize(float a_x, float a_y, bool a_sleep);
-    void Reload();
+    PhysicsEngine(float a_x, float a_y, bool a_sleep);
+
     void SetGravity(float a_x, float a_y);
 
-    void SetSleep(bool a_sleep)
-    {
-        m_isSleep = a_sleep;
-    }
-
-    void CreateBody(og::PhysicsBody*  a_body);
+    void CreateBody(og::PhysicsBody* a_body);
     OGPCircle* CreateCircle(const Circle& a_circle);
 
     void CreateJoint(og::physics::Joint* a_joint);
     void DestroyJoint(og::physics::Joint* a_joint);
 
     void Simulate();
-    void SetSimulation(int a_velIter, int a_posIter, int a_steps);
-
-    ContactListener* GetContactListener();
+    void SetSimulation(int a_velIter, int a_posIter, int a_steps);    
 
     void AddSensor(Sensor* a_sensor);
     void RemoveSensor(Sensor* a_sensor);
+
+private:
+
+    PhysicsEngine(const PhysicsEngine&);
+    PhysicsEngine& operator=(const PhysicsEngine&);
 };
 }
 }
 
 typedef og::physics::PhysicsEngine PEngine;
-
-#define PE og::physics::PhysicsEngine::GetInstance()

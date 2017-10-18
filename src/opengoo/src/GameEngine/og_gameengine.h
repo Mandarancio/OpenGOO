@@ -28,8 +28,7 @@ namespace og
 
             QScreen* getPrimaryScreen();
 
-            OGGameEngine(const OGGameEngine&);
-            OGGameEngine& operator=(const OGGameEngine&);
+            Q_DISABLE_COPY(OGGameEngine)
 
         protected:
             static OGGameEngine* m_instance;
@@ -42,7 +41,7 @@ namespace og
             bool eventFilter(QObject* a_obj, QEvent* a_event);
 
         public:
-            OGGameEngine(OGGame* a_game, const OGConfig& a_config, bool a_crt = false);
+            OGGameEngine(OGGame* a_game, const OGConfig& a_config);
 
             virtual ~OGGameEngine();
 
@@ -52,8 +51,6 @@ namespace og
             int getWidth() const { return m_width; }
             int getHeight() const { return m_height; }
             int getFrameDelay() const { return m_frameDelay; }
-
-            PEngine* getPhysicsEngine();
 
             OGResourceManager* getResourceManager();
 

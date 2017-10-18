@@ -1,46 +1,46 @@
 #include "level.h"
 #include "retrymenu.h"
 #include "gamemenu.h"
+#include "GameEngine/og_gameengine.h"
+#include <OGPushButton>
+#include "opengoo.h"
+#include "uidata.h"
 #include "og_utils.h"
 
 #include <QString>
 
-using namespace og::ui;
-using namespace ogUtils;
-using namespace std;
+using namespace og;
 
 struct Level::Impl
 {    
-    unique_ptr<IPushButton> pMenuBtn;
-    unique_ptr<IPushButton> pRetryBtn;
-    unique_ptr<GameMenu> pGameMenu;
-    unique_ptr<RetryMenu> pRetryMenu;
+    ui::IPushButtonUPtr menuBtn;
+    ui::IPushButtonUPtr retryBtn;
+    std::unique_ptr<GameMenu> gameMenu;
+    std::unique_ptr<RetryMenu> retryMenu;
 };
 
-Level::Level(const QString &levelname) : _pImpl(new Impl)
+Level::Level(const QString &/*levelname*/) : mImpl(new Impl)
 {    
-    getGame()->_LoadLevel(levelname);
-
-    auto ge = getGameEngine();
+//    getGame()->_LoadLevel(levelname);
 
     // Creates the menu button
     {
-        auto data = getUIData("MENU_BUTTON");
-        int x = ge->getWidth() - (data->width + 20);
-        int y = ge->getHeight() - (data->height + 20);
-        _pImpl->pMenuBtn.reset(createButton(QPoint(x,y), *data));
-        auto btn = _pImpl->pMenuBtn.get();
-        connect(btn, SIGNAL(pressed()), this, SLOT(_menuButton()));        
+        auto data = utils::getUIData("MENU_BUTTON");
+        int x = GE->getWidth() - (data->width + 20);
+        int y = GE->getHeight() - (data->height + 20);
+        mImpl->menuBtn = std::move(utils::createPushButton(QPoint(x,y), *data));
+        auto btn = mImpl->menuBtn.get();
+        connect(btn, SIGNAL(pressed()), this, SLOT(menuButton()));
     }
 
     // Creates the retry button
     {
-        auto data = getUIData("RETRY_BUTTON");
+        auto data = utils::getUIData("RETRY_BUTTON");
         int x = 20;
-        int y = ge->getHeight() - (data->height + 20);
-        _pImpl->pRetryBtn.reset(createButton(QPoint(x,y), *data));
-        auto btn = _pImpl->pRetryBtn.get();
-        connect(btn, SIGNAL(pressed()), this, SLOT(_retryButton()));
+        int y = GE->getHeight() - (data->height + 20);
+        mImpl->retryBtn = std::move(utils::createPushButton(QPoint(x,y), *data));
+        auto btn = mImpl->retryBtn.get();
+        connect(btn, SIGNAL(pressed()), this, SLOT(retryButton()));
     }
 
     showButton();
@@ -48,51 +48,50 @@ Level::Level(const QString &levelname) : _pImpl(new Impl)
 
 Level::~Level()
 {
-    getGame()->_CloseLevel();
-    getGame()->_ClearSelectedBall();
+    GAME->_CloseLevel();
 }
 
-void Level::_retryButton()
+void Level::retryButton()
 {
-    getGame()->SetPause(true);
+    GAME->SetPause(true);
     hideButton();
-    _pImpl->pRetryMenu.reset(new RetryMenu);
-    auto menu = _pImpl->pRetryMenu.get();
-    connect(menu, SIGNAL(close()), this, SLOT(_retryMenu()));
+    mImpl->retryMenu.reset(new RetryMenu);
+    auto menu = mImpl->retryMenu.get();
+    connect(menu, SIGNAL(close()), this, SLOT(retryMenu()));
 }
 
-void Level::_retryMenu()
+void Level::retryMenu()
 {
-    _pImpl->pRetryMenu.reset();
+    mImpl->retryMenu.reset();
     showButton();
-    getGame()->SetPause(false);
+    GAME->SetPause(false);
 }
 
-void Level::_menuButton()
+void Level::menuButton()
 {
-    getGame()->SetPause(true);
+    GAME->SetPause(true);
     hideButton();
-    _pImpl->pGameMenu.reset(new GameMenu);
-    auto menu = _pImpl->pGameMenu.get();
-    connect(menu, SIGNAL(close()), this, SLOT(_gameMenu()));
+    mImpl->gameMenu.reset(new GameMenu);
+    auto menu = mImpl->gameMenu.get();
+    connect(menu, SIGNAL(close()), this, SLOT(gameMenu()));
     connect(menu, SIGNAL(backToIsland()), this, SIGNAL(closeLevel()));
 }
 
-void Level::_gameMenu()
+void Level::gameMenu()
 {
-    _pImpl->pGameMenu.reset();
+    mImpl->gameMenu.reset();
     showButton();
-    getGame()->SetPause(false);
+    GAME->SetPause(false);
 }
 
 void Level::hideButton()
 {
-    _pImpl->pMenuBtn->setVisible(false);
-    _pImpl->pRetryBtn->setVisible(false);
+    mImpl->menuBtn->setVisible(false);
+    mImpl->retryBtn->setVisible(false);
 }
 
 void Level::showButton()
 {
-    _pImpl->pMenuBtn->setVisible(true);
-    _pImpl->pRetryBtn->setVisible(true);
+    mImpl->menuBtn->setVisible(true);
+    mImpl->retryBtn->setVisible(true);
 }

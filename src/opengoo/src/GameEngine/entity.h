@@ -16,36 +16,29 @@ class Scene;
 
 class Entity
 {
-    GraphicPtr m_graphic;
     QVector2D m_position;
-    bool m_visible;
-    Scene* m_scene;
+    GraphicPtr m_graphic;
     std::shared_ptr<Collider> m_collider;
+    Scene* m_scene;
+    bool m_visible;
+    QString m_name;
 
     Entity(const Entity&);
     Entity& operator=(const Entity&);
 
 public:
-    Entity(const QVector2D& a_position, GraphicPtr a_graphic)
+    Entity(const QVector2D& a_position, GraphicPtr a_graphic = nullptr)
         : m_position(a_position)
+        , m_graphic(a_graphic)
     {
-        m_graphic = a_graphic;
-        m_visible = true;
-        m_scene = nullptr;
+        Init();
     }
 
-    Entity(float a_x, float a_y, GraphicPtr a_graphic)
+    Entity(float a_x, float a_y, GraphicPtr a_graphic = nullptr)
         : m_position(a_x, a_y)
+        , m_graphic(a_graphic)
     {
-        m_graphic = a_graphic;
-        m_visible = true;
-    }
-
-    Entity(float a_x, float a_y)
-        : m_position(a_x, a_y)
-    {
-        m_visible = false;
-        m_scene = nullptr;
+        Init();
     }
 
     virtual ~Entity()
@@ -60,6 +53,11 @@ public:
     {
         if (m_visible)
             m_graphic->Render(a_painter, m_position);
+    }
+
+    GraphicPtr GetGraphic() const
+    {
+        return m_graphic;
     }
 
     void SetGraphic(GraphicPtr a_g)
@@ -115,6 +113,7 @@ public:
     void SetCollider(std::shared_ptr<Collider> a_collider)
     {
         m_collider = a_collider;
+        m_collider->SetEntity(this);
     }
 
     void SetPosition(const QVector2D& a_position)
@@ -125,6 +124,23 @@ public:
     const QVector2D& GetPosition() const
     {
         return m_position;
+    }
+
+    void SetName(const QString& a_name)
+    {
+        m_name = a_name;
+    }
+
+    const QString& GetName() const
+    {
+        return m_name;
+    }
+
+private:
+    void Init()
+    {
+        m_visible = m_graphic ? true : false;
+        m_scene = nullptr;
     }
 };
 }

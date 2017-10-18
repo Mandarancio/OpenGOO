@@ -12,8 +12,8 @@ namespace og
 {
 namespace physics
 {
-CircleSensor::CircleSensor(const Circle& a_circle, Entity* a_entity)
-    : m_body(PE->CreateCircle(a_circle))
+CircleSensor::CircleSensor(og::physics::PhysicsEngine& a_physicEngine, const Circle& a_circle, Entity* a_entity)
+    : m_body(a_physicEngine.CreateCircle(a_circle))
     , m_entity(a_entity)
 {
     assert(a_entity);

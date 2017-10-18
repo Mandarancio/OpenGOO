@@ -12,11 +12,14 @@
 using namespace og;
 
 OGResourceManager::OGResourceManager()
-{    
+    : m_file("og-log.txt")
+{
+    m_previous = audio::SoundUtil::SetStreamBuffer(m_file.rdbuf());
 }
 
 OGResourceManager::~OGResourceManager()
 {
+    audio::SoundUtil::SetStreamBuffer(m_previous);
 }
 
 bool OGResourceManager::ParseResourceFile(const QString& a_filename)
@@ -109,4 +112,75 @@ WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
     m_balls[a_type] = sp;
 
     return sp.get();
+}
+
+og::audio::SoundSource* OGResourceManager::AddSoundSource(const QString a_id)
+{
+    static int count = 0;
+
+    foreach (auto& res, m_resources)
+    {
+        auto filename = res->GetSound(a_id);
+        if (!filename.isEmpty())
+        {
+            filename.append(".ogg");
+            auto it = m_soundSources.insert(a_id, og::audio::SoundSource(filename.toStdString()));
+            ++count;
+            qDebug() << count << " id:" << a_id;
+            return &(it.value());
+        }
+    }
+
+    return nullptr;
+}
+
+const og::audio::SoundSource* OGResourceManager::GetSoundSource(const QString& a_id)
+{
+    auto it = m_soundSources.find(a_id);
+    if (it != m_soundSources.end())
+    {
+        return &it.value();
+    }
+
+    return AddSoundSource(a_id);
+}
+
+SoundSPtr OGResourceManager::GetSound(const QString& a_id)
+{
+    auto it = m_soundSources.find(a_id);
+    if (it != m_soundSources.end())
+    {
+//        qDebug() << ++count;
+        return std::make_shared<og::audio::Sound>(it.value());
+    }
+
+    if (auto src = AddSoundSource(a_id))
+    {
+//        qDebug() << ++count;
+        return std::make_shared<og::audio::Sound>(*src);
+    }
+
+    return nullptr;
+}
+
+MusicSPtr OGResourceManager::GetMusic(const QString& a_id)
+{
+    if (m_Music.id == a_id)
+    {
+        return m_Music.audio;
+    }
+
+    foreach (auto& res, m_resources)
+    {
+        auto filename = res->GetSound(a_id);
+        if (!filename.isEmpty())
+        {
+            m_Music.id = filename;
+            filename.append(".ogg");
+            m_Music.audio = std::make_shared<og::audio::Music>(filename.toStdString());
+            return m_Music.audio;
+        }
+    }
+
+    return nullptr;
 }

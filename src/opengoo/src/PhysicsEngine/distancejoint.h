@@ -12,8 +12,10 @@ namespace physics
 {
 class DistanceJoint : public Joint
 {
+    og::physics::PhysicsEngine& m_physicEngine;
+
 public:
-    DistanceJoint(og::PhysicsBody* a_b1, og::PhysicsBody* a_b2, OGUserData* a_data);
+    DistanceJoint(PhysicsEngine& a_physicEngine, og::PhysicsBody* a_b1, og::PhysicsBody* a_b2, OGUserData* a_data);
 
     ~DistanceJoint();
 };

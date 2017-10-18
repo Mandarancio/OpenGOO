@@ -24,6 +24,8 @@ public:
 
     virtual void Update() = 0;
     virtual void Render(QPainter& a_painter, const QVector2D& a_pos) = 0;
+
+    virtual float GetAngle() const = 0;
 };
 }
 

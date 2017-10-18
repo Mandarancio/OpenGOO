@@ -11,7 +11,7 @@ class QPointF;
 class SpriteFactory
 {
 public:    
-    static WOGResources* GetResourceManager();
+
     static ImageSourcePtr CreateImageSource(const QString& a_id);
 
     OGSprite* CreateCap(WOGPipe* a_pipe, const QString& a_id, bool a_visible);

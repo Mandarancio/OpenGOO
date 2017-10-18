@@ -44,7 +44,7 @@ class OGWindowCamera
 
         float zoom() const { return camera_->zoom(); }
 
-        QPoint windowToLogical(const QPoint &p);
+        const QPoint windowToLogical(const QPoint &p);
         QRect rect() const;
 
         void SetLastPosition();

@@ -8,11 +8,11 @@
 #include "og_videomode.h"
 #include "logger.h"
 
-using namespace og;
-
+namespace og
+{
 OGGameEngine* OGGameEngine::m_instance = nullptr;
 
-OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config, bool a_crt)
+OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config)
 {
     m_instance = this;
     m_game = a_game;
@@ -20,7 +20,7 @@ OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config, bool a_crt)
     m_height = a_config.screen_height;
     m_fullscreen = a_config.fullscreen;
     m_frameDelay = 1000.0f / a_config.refreshrate;
-    m_crt = a_crt;
+    m_crt = a_config.isCrt;
     m_isVideoModeSupported = false;
     m_resourceManager = nullptr;
 }
@@ -111,15 +111,12 @@ void OGGameEngine::gameExit()
     QApplication::quit();
 }
 
-PEngine* OGGameEngine::getPhysicsEngine()
-{
-    return PE;
-}
-
 OGResourceManager* OGGameEngine::getResourceManager()
 {
     if (!m_resourceManager)
+    {
         m_resourceManager.reset(new OGResourceManager);
+    }
 
     return m_resourceManager.get();
 }
@@ -142,4 +139,5 @@ QScreen* OGGameEngine::getPrimaryScreen()
 void OGGameEngine::quit()
 {
     m_window->close();
+}
 }

@@ -1,24 +1,20 @@
-#ifndef OG_LEVELCONFIG_H
-#define OG_LEVELCONFIG_H
+#pragma once
 
 #include "og_xmlconfig.h"
-#include "wog_level.h"
+
+struct WOGLevel;
 
 class OGLevelConfig : public OGXmlConfig
 {
-    public:
-        OGLevelConfig(const QString &filename);
+public:
+    typedef WOGLevel Type;
 
-        WOGLevel* Parser();
+public:
+    OGLevelConfig(const QString& filename)
+        : OGXmlConfig(filename)
+    {
+        SetRootTag("level");
+    }
 
-    private:
-        WOGLevelExit* CreateLevelExit(const QDomElement &element);
-        WOGCamera* CreateCamera(const QDomElement &element);
-        WOGPoi* CreatePoi(const QDomElement &element);
-        WOGBallInstance* CreateBallInstance(const QDomElement &element);
-        WOGPipe* CreatePipe(const QDomElement &element);
-        WOGStrand* CreateStrand(const QDomElement &element);
-        QPointF CreateVertex(const QDomElement &element);
+    WOGLevel Parser();
 };
-
-#endif // OG_LEVELCONFIG_H

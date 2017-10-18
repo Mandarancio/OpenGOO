@@ -5,6 +5,7 @@ SOURCES += \
     src/entities/og_ball.cpp \
     src/entities/radialforcefield.cpp \
     src/entities/strand.cpp \
+    src/entities/button.cpp \
     src/entities/og_pipe.cpp
 
 HEADERS += \
@@ -14,4 +15,5 @@ HEADERS += \
     src/entities/og_ball.h \
     src/entities/radialforcefield.h \
     src/entities/strand.h \
+    src/entities/button.h \
     src/entities/og_pipe.h

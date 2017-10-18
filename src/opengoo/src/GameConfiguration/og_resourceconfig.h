@@ -1,22 +1,42 @@
-#ifndef OG_RESOURCECONFIG_H
-#define OG_RESOURCECONFIG_H
+#pragma once
 
-#include <og_xmlconfig.h>
-#include "wog_resources.h"
+#include "og_xmlconfig.h"
+
+class WOGResources;
+struct WOGResource;
+struct WOGResourceGroup;
 
 class OGResourceConfig : public OGXmlConfig
 {
     QString defaultPath_;
     QString defaultIdPrefix_;
+    QString mGroupId;
+
+    enum ResourceType
+    {
+        Image,
+        Sound,
+        Font
+    };
 
 public:
-    OGResourceConfig(const QString & filename);
+    typedef WOGResources* Type;
 
-    WOGResources* Parser(QString groupid=QString());
-    WOGResource* CreateResource(const QDomElement & element
-                                , WOGResource::Type type
-                                );
-    WOGResourceGroup* CreateResourceGroup(const QDomElement & element);
+public:
+    OGResourceConfig(const QString& filename)
+        : OGXmlConfig(filename)
+    {
+        SetRootTag("ResourceManifest");
+    }
+
+    WOGResources* Parser();
+
+    void SetGroupId(const QString aGroupId)
+    {
+        mGroupId = aGroupId;
+    }
+
+private:
+    WOGResource* CreateResource(const QDomElement& element, ResourceType aType);
+    WOGResourceGroup* CreateResourceGroup(const QDomElement& element);
 };
-
-#endif // OG_RESOURCECONFIG_H

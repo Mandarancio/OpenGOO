@@ -1,5 +1,4 @@
-#ifndef WOG_POBJECT_H
-#define WOG_POBJECT_H
+#pragma once
 
 #include <QString>
 
@@ -12,7 +11,7 @@ struct WOGPObject
     QString tag;
     QString material;
 
-    virtual ~WOGPObject() {}
+    virtual ~WOGPObject()
+    {
+    }
 };
-
-#endif // WOG_POBJECT_H

@@ -1,0 +1,9 @@
+SOURCES += \
+    src/SoundEngine/music.cpp \
+    src/SoundEngine/sound.cpp
+
+HEADERS += \
+    src/SoundEngine/music.h \
+    src/SoundEngine/sound.h \
+    src/SoundEngine/audio.h
+

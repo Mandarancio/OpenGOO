@@ -1,5 +1,4 @@
-#ifndef ISLAND_H
-#define ISLAND_H
+#pragma once
 
 #include <QObject>
 #include <memory>
@@ -13,7 +12,7 @@ class Island : public QObject
     Q_DISABLE_COPY(Island)
 
     public:
-        Island(const QString &name);
+        Island(const QString &);
         ~Island();
 
     signals:
@@ -23,5 +22,3 @@ class Island : public QObject
         struct Impl;
         std::unique_ptr<Impl> _pImpl;
 };
-
-#endif // ISLAND_H

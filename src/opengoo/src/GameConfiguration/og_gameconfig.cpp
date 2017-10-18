@@ -2,12 +2,6 @@
 #include <QTextStream>
 #include <QXmlStreamWriter>
 
-OGGameConfig::OGGameConfig(const QString & filename)
-    :OGXmlConfig(filename)
-{
-    SetRootTag("config");
-}
-
 OGConfig OGGameConfig::Parser()
 {
     OGConfig config;
@@ -53,7 +47,7 @@ OGConfig OGGameConfig::Parser()
     return config;
 }
 
-void OGGameConfig::Create(OGConfig &config)
+void OGGameConfig::Create(OGConfig& config)
 {
     QFile file(GetFilename());
     file.open(QIODevice::WriteOnly);

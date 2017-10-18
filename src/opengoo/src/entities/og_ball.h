@@ -53,6 +53,7 @@
 #include <OGPhysicsBody>
 #include "wog_material.h"
 #include "GameEngine/entity.h"
+#include "SoundEngine/sound.h"
 
 struct WOGLevelExit;
 struct WOGBallInstance;
@@ -74,13 +75,114 @@ class QPainter;
 
 class BallSensor;
 
+class BodyBuilder
+{
+public:
+    typedef std::unique_ptr<og::PhysicsBody> PhysicsBodyUPtr;
+
+public:
+    enum Type
+    {
+        e_unknown,
+        e_circle,
+        e_rect
+    };
+
+    BodyBuilder(og::physics::PhysicsEngine& a_physicEngine)
+        : m_entity(nullptr)
+        , m_angle(0.0f)
+        , m_mass(0.0f)
+        , m_radius(0.0f)
+        , m_variation(0.0f)
+        , m_type(e_unknown)
+        , m_physicEngine(a_physicEngine)
+    {
+    }
+
+    BodyBuilder& SetAngle(float a_angle)
+    {
+        m_angle = a_angle;
+
+        return *this;
+    }
+
+    BodyBuilder& SetMass(float a_mass)
+    {
+        m_mass = a_mass;
+
+        return *this;
+    }
+
+    BodyBuilder& SetMaterial(const WOGMaterial& a_material)
+    {
+        m_material = a_material;
+
+        return *this;
+    }
+
+    BodyBuilder& SetPosition(const QVector2D& a_position)
+    {
+        m_position = a_position;
+
+        return *this;
+    }
+
+    BodyBuilder& SetRadius(float a_radius)
+    {
+        m_radius = a_radius;
+
+        return *this;
+    }
+
+    BodyBuilder& SetType(Type a_type)
+    {
+        m_type = a_type;
+
+        return *this;
+    }
+
+    BodyBuilder& SetVariation(float a_variation)
+    {
+        m_variation = a_variation;
+
+        return *this;
+    }
+
+    BodyBuilder& SetEntity(og::Entity* a_entity)
+    {
+        m_entity = a_entity;
+
+        return *this;
+    }
+
+    PhysicsBodyUPtr Build();
+
+private:
+    PhysicsBodyUPtr CreateCircle();
+
+    PhysicsBodyUPtr CreateRect();
+
+private:
+    WOGMaterial m_material;
+    QVector2D m_position;
+    og::Entity* m_entity;
+    float m_angle;
+    float m_mass;
+    float m_radius;
+    float m_variation;
+    Type m_type;
+    og::physics::PhysicsEngine& m_physicEngine;
+};
+
 class OGBall : public og::Entity
 {
     public:
-        class Builder;
+        OGBall(og::physics::PhysicsEngine& a_physicEngine,
+               const WOGBallInstance& a_data,
+               const WOGBall* a_conf,
+               BodyBuilder& a_bodyBuilder,
+               QMap<QString, std::shared_ptr<og::audio::SoundSourceList>>& a_soundMap);
 
-    public:
-        OGBall(const WOGBallInstance* a_data, const WOGBall* a_conf);
         ~OGBall();
 
         // Get properties
@@ -105,7 +207,6 @@ class OGBall : public og::Entity
         float GetPhyRadius() const { return GetBody()->shape->GetRadius(); }
         float GetPhyAngle() const { return GetBody()->body->GetAngle(); }
 
-        QString GetId() const;
         b2JointEdge* GetJoints() { return GetBody()->body->GetJointList(); }
         int GetMaxStrands() const;
         OGUserData* GetUserData();
@@ -116,7 +217,7 @@ class OGBall : public og::Entity
         void SetDetaching(bool status) { isDetaching_ = status; }
         void SetDragging(bool status) { isDragging_ = status; }
         void SetFalling(bool status) { isFalling_ = status; }
-        void SetMarked(bool status);
+        void SetMarked(bool status) { isMarked_ = status; }
         void SetStanding(bool status) { isStanding_ = status; }
         void SetWalking(bool status) { isWalking_ = status; }
 
@@ -138,7 +239,7 @@ class OGBall : public og::Entity
         bool TestPoint(const QPoint &pos);
 
         void MouseDown(const QPoint &pos);
-        void MouseUp(const QPoint &pos);
+        void MouseUp(const QPoint &);
         void MouseMove(const QPoint &pos);
 
         friend class  OGStrand;
@@ -160,11 +261,17 @@ private:
 
         void OnMouseUp();
 
-        void Added();
+        void OnMouseEnter();
+
+        void OnMouseExit();
+
+        void Added();                
+
+        AudioSPtr GetSound(const QString& a_id);
+
+        void CheckMouse();
 
 protected:
-        enum BallType {C_BALL, R_BALL}; // C_ - circle R_ - rectangle
-
         enum BallEvent
         {
             ATTACH
@@ -172,11 +279,8 @@ protected:
             , MARKER
         };
 
-        const WOGBallInstance* m_data;
         const WOGBall* m_config;
-        WOGMaterial material_;
         int numberStrands_;
-        BallType type_;
         int id_;
         QPointF target_;
         QPointF origin_;
@@ -206,7 +310,6 @@ protected:
 
         QPointF* GetTarget() { return &target_; }
         QPointF* GetOrigin() { return &origin_; }
-        float GetAngle() const;
 
         float GetTowerMass() const { return towerMass_; }
         WOGBallShape* GetShape() const;
@@ -221,10 +324,6 @@ protected:
         float Distance(OGBall* b);
 
         void SetBodyPosition(float x, float y);
-
-        og::PhysicsBody* CreateCircle(float x, float y, float angle, float mass, const WOGCircleBall& shape, int variation);
-
-        og::PhysicsBody* CreateReactangle(float x, float y, float angle, float mass, WOGBallShape* shape, int variation);
 
         void AddStrand();
         void ReleaseStrand();
@@ -265,31 +364,11 @@ protected:
         void _CreateStrand(OGBall* b1, OGBall* b2);
 
         std::unique_ptr<BallSensor> _sensor;
-        std::unique_ptr<BallSensor> getSensor();
         std::shared_ptr<og::PhysicsBody> m_body;
         QString m_name;
-};
 
-class OGBall::Builder
-{
-public:
-    Builder& SetBallDef(const WOGBall* a_ballDef)
-    {
-        m_ballDef = a_ballDef;
-        return *this;
-    }
+        AudioSPtr m_markerSound;
+        AudioSPtr m_pickupSound;
 
-    Builder& SetInstDef(const WOGBallInstance& a_instDef)
-    {
-        m_instDef = &a_instDef;
-        return *this;
-    }
-
-    std::shared_ptr<OGBall> Build()
-    {
-        return std::make_shared<OGBall>(m_instDef, m_ballDef);
-    }
-
-    const WOGBallInstance* m_instDef;
-    const WOGBall* m_ballDef;
+        bool m_isMouseOver;
 };

@@ -11,13 +11,12 @@ class Entity;
 class CircleCollider : public og::Collider
 {
 public:
-    CircleCollider(float a_radius, const og::Entity* a_entity);
+    CircleCollider(float a_radius);
 
 private:
     bool OverlapPoint(const QVector2D& a_point) const;
 
 private:
     b2CircleShape m_shape;
-    const og::Entity* m_entity;
 };
 }

@@ -1,18 +1,19 @@
-#ifndef OG_MATERIALCONFIG_H
-#define OG_MATERIALCONFIG_H
+#pragma once
 
 #include "og_xmlconfig.h"
 #include "wog_material.h"
 
-#include <QList>
-
 class OGMaterialConfig : public OGXmlConfig
 {
 public:
-    OGMaterialConfig(const QString & filename);
-    WOGMaterialList* Parser();
+    typedef WOGMaterialList Type;
 
-    WOGMaterial* CreateMaterial(const QDomElement & element);
+public:
+    OGMaterialConfig(const QString & filename)
+        : OGXmlConfig(filename)
+    {
+        SetRootTag("materials");
+    }
+
+    WOGMaterialList Parser();
 };
-
-#endif // OG_MATERIALCONFIG_H

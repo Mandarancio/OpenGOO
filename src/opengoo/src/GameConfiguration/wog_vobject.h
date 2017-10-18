@@ -14,6 +14,14 @@ struct WOGVObject
     float alpha;
     QColor colorize;
 
-    WOGVObject() : alpha(1.0f) {}
-    virtual ~WOGVObject() {}
+    WOGVObject()
+        : depth(0.0f)
+        , rotation(0.0f)
+        , alpha(1.0f)
+    {
+    }
+
+    virtual ~WOGVObject()
+    {
+    }
 };

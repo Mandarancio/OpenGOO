@@ -17,13 +17,12 @@ namespace og
 {
 namespace global
 {
-WOGScene* GetScene();
+
 float sceneWidth();
 float sceneHeight();
-}
-}
 
-//bool initializePhysicsEngine(const QPointF &gravity, bool sleep);
+}
+}
 
 class PhysicsFactory
 {
@@ -40,32 +39,53 @@ public:
     static uint16 SENSOR;
     static uint16 STATIC;
 
-    static og::PhysicsBody* createCircle(float x, float y, float radius, float angle
-                                , WOGMaterial* material, bool dynamic
-                                , float mass, OGUserData* data);
+    static og::PhysicsBody* createCircle(og::physics::PhysicsEngine& a_physicEngine,
+                                         float x,
+                                         float y,
+                                         float radius,
+                                         float angle,
+                                         const WOGMaterial& material,
+                                         bool dynamic,
+                                         float mass,
+                                         OGUserData* data);
 
-    static og::PhysicsBody* createCircle(const QPointF &position, float radius
-                                , float angle, WOGMaterial* material
-                                , bool dynamic = false, float mass = 0
-                                        , OGUserData* data = 0);
+    static og::PhysicsBody* createCircle(og::physics::PhysicsEngine& a_physicEngine,
+                                         const QPointF &position,
+                                         float radius,
+                                         float angle,
+                                         const WOGMaterial& material,
+                                         bool dynamic = false,
+                                         float mass = 0.0f,
+                                         OGUserData* data = nullptr);
 
-    static og::PhysicsBody* createLine(const QPointF &anchor, const QPointF &normal
-                              , WOGMaterial* material, bool dynamic = false
-                                      , OGUserData* data = 0);
+    static og::PhysicsBody* createLine(og::physics::PhysicsEngine& a_physicEngine,
+                                       const QPointF &anchor, const QPointF &normal,
+                                       const WOGMaterial& material,
+                                       bool dynamic = false,
+                                       OGUserData* data = nullptr);
 
-    static og::PhysicsBody* createRectangle(float x, float y, float width
-                                   , float height, float angle
-                                   , WOGMaterial* material, bool dynamic
-                                   , float mass, OGUserData* data);
+    static og::PhysicsBody* createRectangle(og::physics::PhysicsEngine& a_physicEngine,
+                                            float x,
+                                            float y,
+                                            float width,
+                                            float height,
+                                            float angle,
+                                            const WOGMaterial& material,
+                                            bool dynamic,
+                                            float mass,
+                                            OGUserData* data);
 
-    static og::PhysicsBody* createRectangle(const QPointF& position,
-                                              const QSizeF& size,
-                                              qreal angle,
-                                              WOGMaterial* material, bool dynamic = false,
-                                              float mass = 0,
-                                              OGUserData* data = 0);
+    static og::PhysicsBody* createRectangle(og::physics::PhysicsEngine& a_physicEngine,
+                                            const QPointF& position,
+                                            const QSizeF& size,
+                                            float angle,
+                                            const WOGMaterial& material,
+                                            bool dynamic = false,
+                                            float mass = 0.0f,
+                                            OGUserData* data = nullptr);
 
-    static og::physics::Joint* createJoint(og::PhysicsBody* b1,
+    static og::physics::Joint* createJoint(og::physics::PhysicsEngine& a_physicEngine,
+                                           og::PhysicsBody* b1,
                                            og::PhysicsBody* b2,
                                            OGUserData* data);
 };

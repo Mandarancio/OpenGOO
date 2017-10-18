@@ -10,14 +10,17 @@ using namespace og;
 
 OGStrand::~OGStrand()
 {
-    PE->DestroyJoint(strand_);
+    m_physicEngine.DestroyJoint(strand_);
 
     b1_->ReleaseStrand();
     b2_->ReleaseStrand();
 }
 
-OGStrand::OGStrand(OGBall* gb1, OGBall* gb2, int id)
-    : b1_(gb1), b2_(gb2), id_(id)
+OGStrand::OGStrand(og::physics::PhysicsEngine& a_physicEngine, OGBall* gb1, OGBall* gb2, int id)
+    : b1_(gb1)
+    , b2_(gb2)
+    , id_(id)
+    , m_physicEngine(a_physicEngine)
 {
     strand_ = 0;
     type_ = b1_->GetStrandType();
@@ -30,15 +33,20 @@ OGStrand::OGStrand(OGBall* gb1, OGBall* gb2, int id)
             data->type = OGUserData::STRAND;
             data->data = this;
 
-            strand_ = PhysicsFactory::createJoint(b1_->GetBody(), b2_->GetBody(), data);
+            strand_ = PhysicsFactory::createJoint(a_physicEngine, b1_->GetBody(), b2_->GetBody(), data);
             b1_->GetBody()->body->SetFixedRotation(true);
             b2_->GetBody()->body->SetFixedRotation(true);
             b1_->AddStrand();
             b2_->AddStrand();
         }
-        else if (type_ == "rope") {}
+        else if (type_ == "rope")
+        {
 
-        else if (type_ == "rigid") {}
+        }
+        else if (type_ == "rigid")
+        {
+
+        }
     }
 }
 

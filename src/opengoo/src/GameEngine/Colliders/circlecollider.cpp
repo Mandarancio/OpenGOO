@@ -8,16 +8,14 @@
 
 namespace og
 {
-CircleCollider::CircleCollider(float a_radius, const og::Entity* a_entity)
+CircleCollider::CircleCollider(float a_radius)
 {
-    assert(a_entity);
-    m_entity = a_entity;
     m_shape.m_radius = a_radius;
 }
 
 bool CircleCollider::OverlapPoint(const QVector2D& a_point) const
 {
-    auto& pos = m_entity->GetPosition();
+    auto& pos = GetEntity().GetPosition();
     b2Vec2 p(pos.x(), pos.y());
     b2Transform t;
     t.Set(p, 0.0f);

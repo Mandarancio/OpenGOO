@@ -5,8 +5,8 @@
 
 struct WOGLevelExit
 {
-    QString id;
     QPointF pos;
+    QString id;
     float radius;
     QString filter;
 };

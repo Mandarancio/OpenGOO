@@ -3,20 +3,19 @@
 #include "physics.h"
 #include "og_userdata.h"
 
-#include <OGPhysicsEngine>
-
-BallSensor::BallSensor(OGBall* b)
-    : CircleSensor(Circle(b->GetPhyPosition(), b->GetPhyRadius() + 5), nullptr)
+BallSensor::BallSensor(og::physics::PhysicsEngine& a_physicEngine, OGBall* b)
+    : CircleSensor(a_physicEngine, Circle(b->GetPhyPosition(), b->GetPhyRadius() + 5), nullptr)
     , m_ball(b)
+    , m_physicEngine(a_physicEngine)
 {
     SetCategory(PhysicsFactory::SENSOR);
     SetMask(PhysicsFactory::BALL);
-    PE->AddSensor(this);
+    m_physicEngine.AddSensor(this);
 }
 
 BallSensor::~BallSensor()
 {
-    PEngine::GetInstance()->RemoveSensor(this);
+    m_physicEngine.RemoveSensor(this);
 }
 
 void BallSensor::BeginContact(Fixture* a_fixture)

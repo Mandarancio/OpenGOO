@@ -1,18 +1,19 @@
-#ifndef WOG_TEXTCONFIG_H
-#define WOG_TEXTCONFIG_H
-
+#pragma once
 #include "og_xmlconfig.h"
-#include "wog_text.h"
+
+struct WOGText;
 
 class OGTextConfig : public OGXmlConfig
 {
 public:
-    OGTextConfig(const QString & filename);
+    typedef WOGText* Type;
 
-    WOGText* Parser(const QString & language);
-    WOGString* CreateString(const QDomElement & element
-                            , const QString & language
-                            );
+public:
+    OGTextConfig(const QString& filename)
+        :OGXmlConfig(filename)
+    {
+        SetRootTag("strings");
+    }
+
+    WOGText* Parser(const QString& language);
 };
-
-#endif // WOG_TEXTCONFIG_H

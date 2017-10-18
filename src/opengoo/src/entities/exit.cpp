@@ -15,26 +15,26 @@
 
 using namespace og;
 
-Exit::Exit(const WOGLevelExit& a_exit,
-           ExitEventListener* a_listener)
-    : Entity(0, 0),
-      m_listener(a_listener)
+Exit::Exit(og::physics::PhysicsEngine& a_physicEngine, const WOGLevelExit& a_exit, ExitEventListener* a_listener)
+    : Entity(0, 0)
+    , m_listener(a_listener)
+    , m_physicEngine(a_physicEngine)
 {       
     Circle c = Circle(a_exit.pos, a_exit.radius) / 10.0f;
     og::physics::SensorFilter f;
     f.category = PhysicsFactory::EXIT;
     f.mask = PhysicsFactory::BALL;
 
-    m_sensor.reset(new og::physics::CircleSensor(c, this));
+    m_sensor.reset(new og::physics::CircleSensor(m_physicEngine, c, this));
     m_sensor->SetFilter(f);
-    PE->AddSensor(m_sensor.get());
+    m_physicEngine.AddSensor(m_sensor.get());
 
     m_isClosed = true;
 }
 
 Exit::~Exit()
 {
-    PE->RemoveSensor(m_sensor.get());
+    m_physicEngine.RemoveSensor(m_sensor.get());
 }
 
 void Exit::Update()
@@ -42,7 +42,7 @@ void Exit::Update()
     if (m_isClosed)
         return;
 
-    QVector2D&& center = m_sensor->GetPosition();
+    auto center = m_sensor->GetPosition();
 
     for (int i = 0; i < m_balls.size(); ++i)
     {
@@ -50,8 +50,8 @@ void Exit::Update()
 
         if (userData && userData->isTouching)
         {
-            QVector2D position = GetBall(i)->GetPhyPosition();
-            QVector2D v = center - position;
+            auto position = GetBall(i)->GetPhyPosition();
+            auto v = center - position;
 
             float force = 40.0f;
 
@@ -65,7 +65,7 @@ void Exit::Update()
 
         if (GetBall(i)->isSuction())
         {
-            QVector2D position = GetBall(i)->GetPhyPosition();
+            auto position = GetBall(i)->GetPhyPosition();
             float lq = (center - position).lengthSquared();
 
             if (lq <= 1.0f)

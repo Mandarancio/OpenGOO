@@ -1,9 +1,9 @@
 #include "progresswindow.h"
+#include "GameEngine/og_gameengine.h"
 #include "og_utils.h"
 
 
 using namespace og::ui;
-using namespace ogUtils;
 
 struct ProgressWindow::Impl
 {
@@ -13,15 +13,13 @@ struct ProgressWindow::Impl
 };
 
 ProgressWindow::ProgressWindow() : _pImpl(new Impl)
-{    
-    auto ge = getGameEngine();
-
+{
     auto frame = &_pImpl->frame;
     {
         int w = 400;
         int h = 400;
-        int x = ge->getWidth() / 2 - w / 2;
-        int y = ge->getHeight() / 2 - h / 2;
+        int x = GE->getWidth() / 2 - w / 2;
+        int y = GE->getHeight() / 2 - h / 2;
         frame->setSize(w, h);
         frame->setPosition(x, y);
         frame->setBgColor(QColor(0, 0, 0, 25));

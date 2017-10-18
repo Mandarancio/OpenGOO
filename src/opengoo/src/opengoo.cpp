@@ -13,14 +13,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <functional>
+
 #include <QMouseEvent>
-#include <QTime>
 #include <QDebug>
 
 #include "opengoo.h"
 #include "og_world.h"
 #include "flags.h"
 #include "GameEngine/og_gameengine.h"
+#include "GameEngine/input.h"
 #include <logger.h>
 #include "og_windowcamera.h"
 #include "og_ballconfig.h"
@@ -32,32 +34,29 @@
 #include "og_fpscounter.h"
 #include "og_forcefield.h"
 #include "entityfactory.h"
-
-namespace
-{
-EntityFactory g_entityFactory;
-}
+#include "physicsenginefactory.h"
+#include "og_utils.h"
+#include "sceneloader.h"
 
 using namespace og;
+
+const char* OpenGOO::types[] = {".level", ".scene", ".resrc"};
+const char* OpenGOO::exts[] = {".xml", ".bin"};
 
 OpenGOO* OpenGOO::pInstance_ = nullptr;
 
 OpenGOO* OpenGOO::GetInstance()
 {
-    if (!pInstance_) pInstance_ = new OpenGOO;
+    if (!pInstance_)
+        pInstance_ = new OpenGOO;
 
     return pInstance_;
-}
-
-OpenGOO::OpenGOO()
-{
-    m_entityFactory = &g_entityFactory;
 }
 
 void OpenGOO::Destroy()
 {
     delete pInstance_;
-    pInstance_ = 0;
+    pInstance_ = nullptr;
 }
 
 void OpenGOO::AddSprite(float depth, OGSprite* sprite)
@@ -68,9 +67,8 @@ void OpenGOO::AddSprite(float depth, OGSprite* sprite)
     }
     else
     {
-        OGLayer l;
-        l.Add(sprite);
-        layers_.insert(depth, l);
+        auto it = layers_.insert(depth, OGLayer());
+        it->Add(sprite);
     }
 }
 
@@ -84,232 +82,201 @@ void OpenGOO::ClearSprites()
     _ClearLayers();
 }
 
-OGBall* OpenGOO::GetNearestBall() { return pWorld_->nearestball(); }
-
-void OpenGOO::SetLevelName(const QString &levelname)
+void OpenGOO::SetLanguage(const QString &language)
 {
-    levelName_ = levelname;
+    m_language = language;
 }
-
-//void OpenGOO::OpenPipe()
-//{
-//    pWorld_->pipe()->Open();
-//}
-
-//void OpenGOO::ClosePipe()
-//{
-//    pWorld_->pipe()->Close();
-//}
-
-//void OpenGOO::ShowProgress()
-//{
-//    pContinueBtn_.reset();
-//    pWorld_->exit()->Close();
-//    _InitProgressWindow();
-//}
-
-void OpenGOO::SetLanguage(const QString &language) { language_ = language; }
 
 void OpenGOO::_Start()
 {
-    const int STEPS = 60;
-    pCamera_ = 0;
-    pGameTime_ = 0;
-    _ClearSelectedBall();
-    _pFPS = 0;
+    pCamera_ = nullptr;
     SetPause(false);
 
     //initialize randseed
+#ifdef DEBUG
+    qsrand(0);
+#else
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
+#endif
 
-    pWorld_ = new OGWorld(*GetEntityFactory());
+    m_entityFactory.reset(new EntityFactory(*GE->getResourceManager()));
 
-    if (language_.isEmpty()) pWorld_->SetLanguage("en");
-    else pWorld_->SetLanguage(language_);
+    if (m_language.isEmpty())
+        m_language = "en";
 
-    if (!pWorld_->Initialize()) { return; }
+    SetScene(std::make_shared<og::Scene>(""));
 
-    if (levelName_.isEmpty() || (!OGWorld::isExist(levelName_)))
-    {
-        _LoadMainMenu();
-    }
-    else _CreateLevel(levelName_);
+    if (m_gotoScene.isEmpty())
+        m_gotoScene = _GetMainMenu();
 
     if (flag & FPS)
-    {
         _pFPS.reset(new OGFPSCounter(QRect(20, 20, 40, 40)));
-    }
 
-    width_ = OGGameEngine::getInstance()->getWidth();
-    height_ = OGGameEngine::getInstance()->getHeight();
+    width_ = GE->getWidth();
+    height_ = GE->getHeight();
 
     timeScrollStep_ = width_ / 1000.0f;
-    timeStep_ = STEPS / 1000.0f;    
+    timeStep_ =  GE->getFrameDelay();
+
+    auto rm = GE->getResourceManager();
+    if (!rm->ParseResourceFile("./properties/resources.xml"))
+    {
+        logError("Could not load resources");
+    }
+
+    lastTime_ = QDateTime::currentDateTime();
 }
 
 void OpenGOO::_End()
 {
     _pFPS.reset();
-    pContinueBtn_.reset();
-    pProgressWnd_.reset();
 
-    _RemoveLevel();
-    _RemoveIsland();
-    _CloseMainMenu();
-
-    if (pWorld_)
+    if (m_scene)
     {        
-        logDebug("Clear world");
-        delete pWorld_;
+        logDebug("Clear Scene");
+        m_scene.reset();
     }
 }
 
-void OpenGOO::_Activate() { SetPause(false); }
-void OpenGOO::_Deactivate() { SetPause(true); }
-
-void OpenGOO::_Cycle()
+void OpenGOO::_Activate()
 {
-    if (!pWorld_->isLevelLoaded())
+    SetPause(false);
+}
+
+void OpenGOO::_Deactivate()
+{
+    SetPause(true);
+}
+
+bool OpenGOO::LevelIsExists(const QString& a_name)
+{
+    const auto path = QString("./res/levels/%1/%1").arg(a_name);
+
+    for (size_t i = 0; i << utils::array_size(types); ++i)
     {
-        _Quit();
-
-        return;
-    }
-
-    if (!pGameTime_)
-    {
-        lastTime_ = 0;
-        pGameTime_ =  new QTime;
-        pGameTime_->start();
-    }
-    else lastTime_ = pGameTime_->restart();
-
-    if (flag & FPS) _pFPS->Update(lastTime_);
-
-    if (pCamera_)
-    {
-        pCamera_->Update(lastTime_);
-        _Scroll();
-    }
-
-    if (isPause()) return;
-
-    if (_pSelectedBall && !_pSelectedBall->IsDragging())
-    {
-        if (!_pSelectedBall->TestPoint(lastMousePos_))
+        auto pathWithType = path + types[i];
+        for (size_t j = 0; j < utils::array_size(exts); ++j)
         {
-            _pSelectedBall->SetMarked(false);
-            _ClearSelectedBall();
+            const auto fullPath = pathWithType + exts[j];
+            if (!QFile::exists(fullPath))
+            {
+                logError(QString("File %1 not found").arg(fullPath));
+                return false;
+            }
         }
     }
 
-    Q_FOREACH(OGBall * ball, pWorld_->balls())
+    return true;
+}
+
+void OpenGOO::LoadScene(og::Scene* a_scene)
+{
+
+//        if (!world->Initialize())
+//            return;
+
+    const auto& name = a_scene->GetName();
+    if (name.isEmpty() || !LevelIsExists(name))
     {
-        ball->Update();
+        return;
     }
 
-    for (unsigned int j=0; j < pWorld_->forcefilds().size(); j++)
+
+//    if (world->Load())
     {
-        pWorld_->GetForceField(j).Update();
+//            if (world->leveldata()->visualdebug)
+//                SetDebug(*world, true);
+
+//        _SetBackgroundColor(world->GetBackgroundColor());
+
+        pCamera_ = OGWindowCamera::instance();
+        SetPause(false);
+    }
+}
+
+std::shared_ptr<Scene> OpenGOO::CreateScene()
+{
+//    PhysicsEngineFactory pef;
+    return std::make_shared<Scene>(m_gotoScene);
+//    return std::make_shared<OGWorld>(pef, *m_entityFactory, m_gotoScene, m_language);
+}
+
+void OpenGOO::_Cycle()
+{   
+    auto now = QDateTime::currentDateTime();
+    auto dt = now.msecsTo(lastTime_);
+
+    if (flag & FPS)
+        _pFPS->Update(dt);
+
+    if (pCamera_)
+    {
+        pCamera_->Update(dt);
     }
 
-    pWorld_->Update();
+    lastTime_= now;
+
+    Scroll();
+
+    if (isPause())
+        return;
+
+    GetScene()->Update();
+
+    if (!m_gotoScene.isEmpty())
+    {   
+        m_previousScene = GetScene()->GetName();
+
+        SetScene(CreateScene());
+        SceneLoader sl;
+        sl.load(*m_scene);
+//        LoadScene(m_scene.get());
+        m_gotoScene.clear();
+    }
 }
 
 void OpenGOO::_Paint(QPainter* painter)
 {
-    if (pWorld_->isLevelLoaded())
+//        painter->setWindow(pCamera_->rect());
+
+//        // Paint a scene
+//        for (auto it = layers_.begin(); it != layers_.end(); ++it)
+//        {
+//            (*it).Paint(*painter);
+//        }
+
+//        foreach(auto body, pWorld_->staticbodies())
+//        {
+//            body->Draw(painter);
+//        }
+
+//        foreach(auto ball, pWorld_->balls())
+//        {
+//            ball->Paint(painter, pWorld_->leveldata()->visualdebug);
+//        }
+
+//        foreach(auto strand, pWorld_->strands())
+//        {
+//            strand->Paint(painter, pWorld_->leveldata()->visualdebug);
+//        }
+
+//        if (pWorld_->leveldata() && pWorld_->leveldata()->visualdebug)
+//        {
+//            visualDebug(painter, pWorld_.get(), pCamera_->zoom());
+//        }
+
+    if (m_scene)
     {
-        painter->setWindow(pCamera_->rect());
-
-        // Paint a scene
-        for (auto it = layers_.begin(); it != layers_.end(); ++it)
-        {
-            (*it).Paint(*painter);
-        }
-
-        Q_FOREACH(OGIBody * body, pWorld_->staticbodies())
-        {
-            body->Draw(painter);
-        }
-
-        Q_FOREACH(OGBall * ball, pWorld_->balls())
-        {
-            ball->Paint(painter, pWorld_->leveldata()->visualdebug);
-        }
-
-        Q_FOREACH(OGStrand * strand, pWorld_->strands())
-        {
-            strand->Paint(painter, pWorld_->leveldata()->visualdebug);
-        }
-
-        if (pWorld_->leveldata() && pWorld_->leveldata()->visualdebug)
-        {
-            visualDebug(painter, pWorld_, pCamera_->zoom());
-        }
-
-        pWorld_->Render(*painter);
+        m_scene->Render(*painter);
     }
 }
 
 void OpenGOO::_MouseButtonDown(QMouseEvent* ev)
 {
-    if (isPause() || !pCamera_ || pProgressWnd_) return;
+    if (isPause() || !pCamera_ || pProgressWnd_)
+        return;
 
-    QPoint pos = pCamera_->windowToLogical(ev->pos());
-
-    Q_FOREACH(OGButton * button, pWorld_->buttons())
-    {
-        if (button->TestPoint(pos))
-        {
-            if (button->onclick() == "quit") { _Quit(); }
-            else if (button->onclick() == "credits") { }
-            else if (button->onclick() == "showselectprofile") { }
-            else if (button->onclick() == "island1")
-            {
-                _SetIsland("island1"); // Saves the name of island
-                LoadIsland(_GetIsland());
-            }
-            else if (button->onclick() == "island2")
-            {
-                _SetIsland("island2"); // Saves the name of island
-                LoadIsland(_GetIsland());
-            }
-            else if (button->onclick() == "island3")
-            {
-                _SetIsland("island3"); // Saves the name of island
-                LoadIsland(_GetIsland());
-            }
-            else if (button->onclick() == "island4")
-            {
-                _SetIsland("island4"); // Saves the name of island
-                LoadIsland(_GetIsland());
-            }
-            else if (button->onclick() == "island5")
-            {
-                _SetIsland("island5"); // Saves the name of island
-                LoadIsland(_GetIsland());
-            }
-            else if (!button->onclick().isEmpty())
-            {
-                QString name = button->getLevelName();
-
-                if (!name.isEmpty())
-                {
-                    loadLevel(name);
-                }
-            }
-
-            break;
-        }
-    }    
-
-    if (_pSelectedBall && _pSelectedBall->IsDraggable())
-    {
-        _pSelectedBall->MouseDown(pos);
-    }
-
-    GetScene()->OnMouseDown(pos);
+    GetScene()->OnMouseDown(pCamera_->windowToLogical(ev->pos()));
 }
 
 void OpenGOO::_MouseButtonUp(QMouseEvent* ev)
@@ -317,63 +284,64 @@ void OpenGOO::_MouseButtonUp(QMouseEvent* ev)
     if (isPause() || !pCamera_ || pProgressWnd_)
         return;
 
-    auto pos = pCamera_->windowToLogical(ev->pos());
-
-    if (_pSelectedBall && _pSelectedBall->IsDragging() && pCamera_)
-        _pSelectedBall->MouseUp(pos);
-
-    GetScene()->OnMouseUp(pos);
+    GetScene()->OnMouseUp(pCamera_->windowToLogical(ev->pos()));
 }
 
-void OpenGOO::_MouseMove(QMouseEvent* ev)
+void OpenGOO::_MouseMove(QMouseEvent* /*ev*/)
 {
-    if (isPause() || !pCamera_ || pProgressWnd_) return;
+//    if (isPause() || !pCamera_ || pProgressWnd_)
+//        return;
 
-    curMousePos_ = ev->pos();
+//    curMousePos_ = ev->pos();
 
-    QPoint pos = pCamera_->windowToLogical(ev->pos());
-    lastMousePos_ = pos;
+//    QPoint pos = pCamera_->windowToLogical(ev->pos());
+//    lastMousePos_ = pos;
 
-    Q_FOREACH(OGButton * button, pWorld_->buttons())
-    {
-        if (button->TestPoint(pos))
-        {
-            button->up()->SetVisible(false);
-            button->over()->SetVisible(true);
-        }
-        else
-        {
-            button->up()->SetVisible(true);
-            button->over()->SetVisible(false);
-        }
-    }
+//    Q_FOREACH(OGButton * button, pWorld_->buttons())
+//    {
+//        if (button->TestPoint(pos))
+//        {
+//            button->up()->SetVisible(false);
+//            button->over()->SetVisible(true);
+//        }
+//        else
+//        {
+//            button->up()->SetVisible(true);
+//            button->over()->SetVisible(false);
+//        }
+//    }
 
-    if (!_pSelectedBall)
-    {
-        Q_FOREACH(OGBall * ball, pWorld_->balls())
-        {
-            if (ball->TestPoint(pos))
-            {
-                _pSelectedBall = ball;
-                _pSelectedBall->SetMarked(true);
-                break;
-            }
-        }
-    }
-    else if (_pSelectedBall->IsDragging())
-    {
-        _pSelectedBall->MouseMove(pos);
-    }
-    else if (!_pSelectedBall->TestPoint(pos))
-    {
-        _pSelectedBall->SetMarked(false);
-        _ClearSelectedBall();
-    }
+//    if (!_pSelectedBall)
+//    {
+//        Q_FOREACH(OGBall * ball, pWorld_->balls())
+//        {
+//            if (ball->TestPoint(pos))
+//            {
+//                _pSelectedBall = ball;
+//                _pSelectedBall->SetMarked(true);
+//                break;
+//            }
+//        }
+//    }
+//    else if (_pSelectedBall->IsDragging())
+//    {
+//        _pSelectedBall->MouseMove(pos);
+//    }
+//    else if (!_pSelectedBall->TestPoint(pos))
+//    {
+//        _pSelectedBall->SetMarked(false);
+//        _ClearSelectedBall();
+//    }
 }
 
 void OpenGOO::_KeyDown(QKeyEvent* ev)
 {
-    Q_UNUSED(ev)
+    switch (ev->key())
+    {
+    case Qt::Key_Escape:
+        GotoScene(m_previousScene);
+        return;
+    }
 }
 
 inline void OpenGOO::_ClearLayers()
@@ -381,35 +349,45 @@ inline void OpenGOO::_ClearLayers()
     layers_.clear();
 }
 
-inline void OpenGOO::_Quit() { OGGameEngine::getInstance()->quit(); }
-
-void OpenGOO::_Scroll()
+void OpenGOO::_Quit()
 {
-    if (isPause() || pProgressWnd_) return;
-
-    float OFFSET = 50.0f;
-    float sx = curMousePos_.x();
-    float sy = curMousePos_.y();
-    int shift = lastTime_;
-
-    if (sx <= OFFSET) { pCamera_->ScrollLeft(shift); }
-    else if (sx >= width_ - OFFSET) { pCamera_->ScrollRight(shift); }
-
-    if (sy <= OFFSET) { pCamera_->ScrollUp(shift); }
-    else if (sy >= height_ - OFFSET) { pCamera_->ScrollDown(shift);}
+    GE->quit();
 }
 
-void OpenGOO::_SetDebug(bool debug)
+void OpenGOO::Scroll()
 {
-    Q_FOREACH(OGIBody * body, pWorld_->staticbodies())
-    {
-        body->SetDebug(debug);
-    }
+//    if (isPause() || pProgressWnd_)
+//        return;
+
+//    static const float OFFSET = 50.0f;
+
+//    curMousePos_ = og::MouseInput::GetPosition();
+//    float sx = curMousePos_.x();
+//    float sy = curMousePos_.y();
+//    int shift = lastTime_;
+
+//    if (sx <= OFFSET)
+//        { pCamera_->ScrollLeft(shift); }
+//    else if (sx >= width_ - OFFSET)
+//        { pCamera_->ScrollRight(shift); }
+
+//    if (sy <= OFFSET)
+//        { pCamera_->ScrollUp(shift); }
+//    else if (sy >= height_ - OFFSET)
+//        { pCamera_->ScrollDown(shift);}
+}
+
+void OpenGOO::SetDebug(OGWorld& /*a_world*/, bool /*a_debug*/)
+{
+//    foreach (auto body, a_world.staticbodies())
+//    {
+//        body->SetDebug(a_debug);
+//    }
 }
 
 void OpenGOO::_SetBackgroundColor(const QColor &color)
 {
-    OGGameEngine::getInstance()->getWindow()->setBackgroundColor(color, true);
+    GE->getWindow()->setBackgroundColor(color, true);
 }
 
 void OpenGOO::_CreateContinueButton()
@@ -432,38 +410,38 @@ void OpenGOO::_InitProgressWindow()
 }
 
 // Level
-void OpenGOO::_LoadLevel(const QString &levelname)
+bool OpenGOO::_LoadLevel(OGWorld* a_world, const QString& /*levelname*/)
 {
-    if (!pWorld_->LoadLevel(levelname)) return;
-    if (pWorld_->leveldata()->visualdebug) _SetDebug(true);
+    assert(false);
+    assert(a_world);
+//    auto isLoaded = a_world->LoadLevel();
+//    if (!isLoaded)
+//        return false;
+//    if (a_world->leveldata()->visualdebug)
+//        SetDebug(*a_world, true);
 
-    _SetBackgroundColor(pWorld_->scenedata()->backgroundcolor);
+//    _SetBackgroundColor(pWorld_->scenedata()->backgroundcolor);
 
-    pCamera_ = OGWindowCamera::instance();
-    SetPause(false);
-
-//    if (pWorld_->exit())
-//    {
-//        isLevelExit_ = true;
-//        balls_ = 0;
-//        ballsRequired_ = pWorld_->leveldata()->ballsrequired;
-//        isContinue_ = false;
-//    }
-//    else { isLevelExit_ = false; }
+//    pCamera_ = OGWindowCamera::instance();
+//    SetPause(false);
+    return true;
 }
 
 void OpenGOO::_CloseLevel()
 {
-    pWorld_->CloseLevel();
-    _ClearLayers();
-    pCamera_ = 0;
+    assert(false);
+//    pWorld_->CloseLevel();
+//    _ClearLayers();
+//    pCamera_ = 0;
+//    mSceneIsLoaded = false;
 }
 
 void OpenGOO::ReloadLevel()
 {
-    pWorld_->Reload();
-    pCamera_->SetLastPosition();
-    balls_ = 0;
+    assert(false);
+//    pWorld_->Reload();
+//    pCamera_->SetLastPosition();
+//    balls_ = 0;
 }
 void OpenGOO::_CreateLevel(const QString &levelname)
 {
@@ -477,7 +455,10 @@ void OpenGOO::_RemoveLevel() { pLevel_.reset(); }
 // Main menu
 inline QString OpenGOO::_GetMainMenu() { return "MapWorldView"; }
 
-inline void OpenGOO::_LoadMainMenu() { _LoadLevel(_GetMainMenu()); }
+inline void OpenGOO::_LoadMainMenu()
+{
+    _LoadLevel(GetWorld(), _GetMainMenu());
+}
 
 inline void OpenGOO::_CloseMainMenu() { _CloseLevel(); }
 
@@ -487,10 +468,6 @@ void OpenGOO::LoadIsland(const QString &name)
     _CloseMainMenu();
     _CreateIsland(name);
 }
-
-// Island private interface
-inline QString OpenGOO::_GetIsland() { return _currentIsland; }
-inline void OpenGOO::_SetIsland(const QString &name) { _currentIsland = name; }
 
 inline void OpenGOO::_CreateIsland(const QString &name)
 {   

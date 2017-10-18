@@ -1,43 +1,53 @@
 #include "ogapplication.h"
+
+#include <QApplication>
+#include <QDebug>
+#include <QDir>
+
 #include "GameEngine/og_gameengine.h"
 #include "opengoo.h"
+#include "og_gameconfig.h"
 
 #include "flags.h"
 #include "og_utils.h"
 
-#include <QDir>
-#include <QApplication>
-#include <QDebug>
-
 using namespace og;
+
+const char* OGApplication::DEFAUL_LANGUAGE = "en";
+const char* OGApplication::DEFAUL_LEVEL_NAME = "MapWorldView";
+
+const char* OGApplication::RESOURCES_DIR = "res";
+const char* OGApplication::PROPERTIES_DIR = "properties";
+const char* OGApplication::FILE_CONFIG = "config.txt";
 
 int OGApplication::run(int argc, char **argv)
 {
-    if (initialize(argc, argv))
+    OGConfig config;
+    if (initialize(argc, argv, config))
     {
         QApplication app(argc, argv);
 
-        if (OGGameEngine::getInstance()->initialize()) app.exec();
-    }
+        auto game = OpenGOO::GetInstance();
+        game->GotoScene(config.levelName);
+        game->SetLanguage(config.language);
 
-    clear();
+        OGGameEngine engine(game, config);
+        if (engine.initialize())
+        {
+            app.exec();
+        }
+
+        game->Destroy();
+    }
 
     return 0;
 }
 
-bool OGApplication::initialize(int argc, char **argv)
+bool OGApplication::initialize(int argc, char **argv, OGConfig& config)
 {
-    const QString GAMEDIR = QDir::homePath() + "/.OpenGOO";
-    const QString RESOURCES_DIR = "res";
-    const QString PROPERTIES_DIR = "properties";
-    const QString FILE_CONFIG = "config.txt";
-    const int FRAMERATE = 60;
+    utils::backTracer();
+    utils::logger();
 
-    ogUtils::ogBackTracer();
-    ogUtils::ogLogger();
-
-    QString levelName;
-    bool isCrt = false;
     bool isFullScreen = false;
 
     //Check for the run parameters
@@ -56,7 +66,7 @@ bool OGApplication::initialize(int argc, char **argv)
         }
         if (!arg.compare("--crt", Qt::CaseInsensitive))
         {
-            isCrt = true;
+            config.isCrt = true;
         }
         if (!arg.compare("--fullscreen", Qt::CaseInsensitive))
         {
@@ -66,72 +76,75 @@ bool OGApplication::initialize(int argc, char **argv)
         {
             if (++i < argc)
             {
-                levelName = QString(argv[i]);
+                config.levelName = argv[i];
             }
         }
     }
 
     //CHECK FOR GAME DIR IN HOME DIRECTORY
     QDir dir;
+    const auto gameDir = QDir::homePath() + "/.OpenGOO";
     //If the game dir doesn't exist create it
-    if (!dir.exists(GAMEDIR))
+    if (!dir.exists(gameDir))
     {
-        if (flag & DEBUG) logWarn("Game dir doesn't exist!");
-        dir.mkdir(GAMEDIR);
-        dir.cd(GAMEDIR);
+        if (flag & DEBUG)
+        {
+            logWarn("Game dir doesn't exist!");
+        }
+
+        dir.mkdir(gameDir);
+        dir.cd(gameDir);
         //create subdir for user levels and progressions.
         dir.mkdir("userLevels");
         dir.mkdir("userProgression");
         dir.mkdir("debug");
     }
-    else if (flag & DEBUG) logWarn("Game dir exist!");
+    else if (flag & DEBUG)
+    {
+        logWarn("Game dir exist!");
+    }
 
     if (!dir.exists(RESOURCES_DIR))
     {
-        logError(RESOURCES_DIR + " directory not found");
+        logError(QString(RESOURCES_DIR) + " directory not found");
         return false;
     }
 
     if (!dir.exists(PROPERTIES_DIR))
     {
-        logError(PROPERTIES_DIR + " directory not found");
+        logError(QString(PROPERTIES_DIR) + " directory not found");
         return false;
     }
 
-    OGConfig config;
-    auto isLoaded = ogUtils::ogLoadConfig(config, PROPERTIES_DIR + "/" + FILE_CONFIG);
+    auto path = QString("%1/%2").arg(PROPERTIES_DIR).arg(FILE_CONFIG);
+    auto isLoaded = utils::loadConfig(config, path);
     if (!isLoaded)
     {
-        logWarn("Could not load config file:" + FILE_CONFIG);
+        logWarn(QString("Could not load config file:") + FILE_CONFIG);
         config.fullscreen = false;
-        config.screen_width = 800;
-        config.screen_height = 600;
-        config.refreshrate = 60;
-        config.language = "en";
+        config.screen_width = DEFAUL_SCREEN_WIDTH;
+        config.screen_height = DEFAUL_SCREEN_HEIGHT;
+        config.refreshrate = DEFAUL_FRAMERATE;
+        config.language = DEFAUL_LANGUAGE;
 
         logInfo("Saving config file...");
-        ogUtils::ogSaveConfig(config, PROPERTIES_DIR + "/" + FILE_CONFIG);
+        utils::saveConfig(config, path);
     }
 
-    int refreshrate = config.refreshrate;
-    if (refreshrate == 0)
-        refreshrate = FRAMERATE;
+    if (config.refreshrate == 0)
+    {
+        config.refreshrate = DEFAUL_FRAMERATE;
+    }
 
     if (isFullScreen)
+    {
         config.fullscreen = true;
+    }
 
-    auto game = OpenGOO::GetInstance();
-    game->SetLevelName(levelName);
-    game->SetLanguage(config.language);
-
-    auto engine = new OGGameEngine(game, config, isCrt);
-    (void) engine;
+    if (config.levelName.isEmpty())
+    {
+        config.levelName = DEFAUL_LEVEL_NAME;
+    }
 
     return true;
-}
-
-void OGApplication::clear()
-{
-    OpenGOO::GetInstance()->Destroy();
-    delete OGGameEngine::getInstance();
 }

@@ -5,26 +5,28 @@
 #include "radialforcefield.h"
 
 RadialForceField::RadialForceField(
+    og::physics::PhysicsEngine& a_physicEngine,
     const Circle& a_c,
     float a_forceatcenter,
     float a_forceatedge,
     const og::physics::SensorFilter& a_filter)
     : Entity(a_c.center().x(), a_c.center().y())
-    , m_sensor(a_c * PhysicsFactory::PixelsToMeters, this)
+    , m_sensor(a_physicEngine, a_c * PhysicsFactory::PixelsToMeters, this)
     , m_forceatcenter(a_forceatcenter)
     , m_forceatedge(a_forceatedge)
+    , m_physicEngine(a_physicEngine)
 {
     m_sensor.SetFilter(a_filter);
 }
 
 void RadialForceField::Added()
 {
-    PE->AddSensor(&m_sensor);
+   m_physicEngine.AddSensor(&m_sensor);
 }
 
 void RadialForceField::Removed()
 {
-    PE->RemoveSensor(&m_sensor);
+    m_physicEngine.RemoveSensor(&m_sensor);
 }
 
 void RadialForceField::OnTriggerEnter(Fixture* a_fixture)
