@@ -1,6 +1,7 @@
 #pragma once
 
-#include <forward_list>
+#include <list>
+#include <unordered_map>
 
 #include "entity.h"
 
@@ -107,7 +108,7 @@ private:
     QString m_name;
     QVector<EntityPtr> m_add;
     QVector<EntityPtr> m_remove;
-    std::forward_list<EntityPtr> m_update;
-    std::forward_list<EntityPtr> m_render;
+    std::list<EntityPtr> m_update;
+    std::unordered_map<float, std::list<EntityPtr>> m_render;
 };
 }
