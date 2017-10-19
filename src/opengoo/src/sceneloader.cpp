@@ -38,8 +38,14 @@ void SceneLoaderHelper::processWOGSceneLayer(const WOGSceneLayer& aSceneLayer)
 {
     auto src = SpriteFactory::CreateImageSource(aSceneLayer.image);
     auto spr = std::make_shared<OGSprite>(src);
+    spr->CenterOrigin();
+    spr->SetScale(aSceneLayer.scale);
+    spr->SetAngle(-aSceneLayer.rotation);
+    spr->SetColorize(aSceneLayer.colorize);
+    spr->SetAlpha(aSceneLayer.alpha);
 
-    auto e = std::make_shared<og::Entity>(QVector2D(aSceneLayer.position), spr);
+    auto e = std::make_shared<og::Entity>(aSceneLayer.position.x(), -aSceneLayer.position.y(), spr);
+    e->SetDepth(aSceneLayer.depth);
     mScene.AddEntity(e);
 }
 
