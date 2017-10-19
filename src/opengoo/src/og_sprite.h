@@ -148,6 +148,12 @@ public:
         m_scale = a_scale;
     }
 
+    void SetScale(const QPointF& a_scale)
+    {
+        SetScaleX(a_scale.x());
+        SetScaleY(a_scale.y());
+    }
+
     float GetScaledWidth() const
     {
         return GetWidth() * m_scale * m_scaleX;
