@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include <QPainter>
 #include <QVector2D>
 
@@ -22,6 +20,7 @@ class Entity
     Scene* m_scene;
     bool m_visible;
     QString m_name;
+    float m_depth;
 
     Entity(const Entity&);
     Entity& operator=(const Entity&);
@@ -136,11 +135,22 @@ public:
         return m_name;
     }
 
+    void SetDepth(float a_depth)
+    {
+        m_depth = a_depth;
+    }
+
+    float GetDepth() const
+    {
+        return m_depth;
+    }
+
 private:
     void Init()
     {
         m_visible = m_graphic ? true : false;
         m_scene = nullptr;
+        m_depth = 0.0f;
     }
 };
 }
