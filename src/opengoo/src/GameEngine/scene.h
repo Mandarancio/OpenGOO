@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include <unordered_map>
+#include <map>
 
 #include "entity.h"
 
@@ -109,6 +109,6 @@ private:
     QVector<EntityPtr> m_add;
     QVector<EntityPtr> m_remove;
     std::list<EntityPtr> m_update;
-    std::unordered_map<float, std::list<EntityPtr>> m_render;
+    std::map<float, std::list<EntityPtr>> m_render;
 };
 }

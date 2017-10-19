@@ -54,7 +54,7 @@ void Scene::Update()
 
 void Scene::Render(QPainter& a_painter)
 {
-    for (auto it = m_render.rbegin(); it != m_render.rend(); ++it)
+    for (auto it = m_render.begin(); it != m_render.end(); ++it)
     {
         auto& depthList = it->second;
         std::for_each(depthList.begin(), depthList.end(), [&a_painter](EntityPtr& a_e) { a_e->Render(a_painter); });
