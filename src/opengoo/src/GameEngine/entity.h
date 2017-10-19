@@ -26,6 +26,12 @@ class Entity
     Entity& operator=(const Entity&);
 
 public:
+    typedef std::list<std::shared_ptr<Entity>>::iterator Iterator;
+
+    Iterator render_iterator;
+    Iterator update_iterator;
+
+public:
     Entity(const QVector2D& a_position, GraphicPtr a_graphic = nullptr)
         : m_position(a_position)
         , m_graphic(a_graphic)
