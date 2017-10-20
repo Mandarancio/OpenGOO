@@ -16,4 +16,5 @@ HEADERS += \
     src/entities/radialforcefield.h \
     src/entities/strand.h \
     src/entities/button.h \
-    src/entities/og_pipe.h
+    src/entities/og_pipe.h \
+    src/entities/scenelayer.h

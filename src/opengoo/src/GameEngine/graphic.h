@@ -26,6 +26,7 @@ public:
     virtual void Render(QPainter& a_painter, const QVector2D& a_pos) = 0;
 
     virtual float GetAngle() const = 0;
+    virtual void SetAngle(float a_angle)  = 0;
 };
 }
 

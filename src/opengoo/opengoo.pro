@@ -113,7 +113,9 @@ HEADERS += \
     src/exiteventlistener.h \
     src/ijointbuilder.h \
     src/physicsenginefactory.h \
-    src/sceneloader.h
+    src/sceneloader.h \
+    src/animator.h \
+    src/keyframe.h
 
 SOURCES += \
     src/main.cpp \
@@ -151,7 +153,8 @@ SOURCES += \
     src/og_sprite.cpp \
     src/spritefactory.cpp \
     src/entityfactory.cpp \
-    src/sceneloader.cpp
+    src/sceneloader.cpp \
+    src/animator.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio -lsfml-system
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio-d -lsfml-system-d

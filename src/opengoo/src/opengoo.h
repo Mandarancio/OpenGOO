@@ -96,6 +96,11 @@ class OpenGOO : public og::OGGame
             return *pCamera_;
         }
 
+        int GetDeltaTime() const
+        {
+            return m_deltaTime;
+        }
+
     static void SetDebug(OGWorld&, bool);
 
     private:
@@ -137,6 +142,7 @@ class OpenGOO : public og::OGGame
         float timeScrollStep_;        
 
         QDateTime lastTime_;
+        int m_deltaTime;
 
         bool _pause;
 

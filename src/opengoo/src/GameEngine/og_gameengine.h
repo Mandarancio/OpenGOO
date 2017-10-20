@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <memory>
 
 #include "og_widget.h"
 #include "PhysicsEngine/og_physicsengine.h"
@@ -33,7 +32,7 @@ namespace og
         protected:
             static OGGameEngine* m_instance;
             int m_width, m_height;
-            int m_frameDelay;
+            int m_frameRate;
             bool m_fullscreen;
             bool m_crt;
             OGGame* m_game;
@@ -50,7 +49,16 @@ namespace og
 
             int getWidth() const { return m_width; }
             int getHeight() const { return m_height; }
-            int getFrameDelay() const { return m_frameDelay; }
+
+            int getFrameDelay() const
+            {
+                return qRound(1000.0f / m_frameRate);
+            }
+
+            int getFrameRate() const
+            {
+                return m_frameRate;
+            }
 
             OGResourceManager* getResourceManager();
 
@@ -64,8 +72,12 @@ namespace og
                 return m_crt;
             }
 
+            void setFrameRate(int a_frameRate)
+            {
+                m_frameRate = a_frameRate;
+            }
+
         public slots:
-            void setFrameRate(int a_framerate) { m_frameDelay = qRound(1000.0f / a_framerate); }
             void quit();
 
         private slots:

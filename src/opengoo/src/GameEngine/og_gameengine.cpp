@@ -19,7 +19,7 @@ OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config)
     m_width = a_config.screen_width;
     m_height = a_config.screen_height;
     m_fullscreen = a_config.fullscreen;
-    m_frameDelay = 1000.0f / a_config.refreshrate;
+    m_frameRate = a_config.refreshrate;
     m_crt = a_config.isCrt;
     m_isVideoModeSupported = false;
     m_resourceManager = nullptr;

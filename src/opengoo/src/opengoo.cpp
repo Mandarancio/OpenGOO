@@ -124,6 +124,7 @@ void OpenGOO::_Start()
         logError("Could not load resources");
     }
 
+    m_deltaTime = 0;
     lastTime_ = QDateTime::currentDateTime();
 }
 
@@ -204,14 +205,16 @@ std::shared_ptr<Scene> OpenGOO::CreateScene()
 void OpenGOO::_Cycle()
 {   
     auto now = QDateTime::currentDateTime();
-    auto dt = now.msecsTo(lastTime_);
+    m_deltaTime = lastTime_.msecsTo(now);
 
     if (flag & FPS)
-        _pFPS->Update(dt);
+    {
+        _pFPS->Update(m_deltaTime);
+    }
 
     if (pCamera_)
     {
-        pCamera_->Update(dt);
+        pCamera_->Update(m_deltaTime);
     }
 
     lastTime_= now;
@@ -238,7 +241,7 @@ void OpenGOO::_Cycle()
 void OpenGOO::_Paint(QPainter* painter)
 {
 //        painter->setWindow(pCamera_->rect());
-
+    painter->setWindow(-400, -600, 800, 600);
 //        // Paint a scene
 //        for (auto it = layers_.begin(); it != layers_.end(); ++it)
 //        {
