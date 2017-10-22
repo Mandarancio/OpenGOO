@@ -239,7 +239,7 @@ void OGBall::OnMouseExit()
 
 void OGBall::CheckMouse()
 {
-    auto pos = QVector2D(GAME->GetCamera().windowToLogical(og::MouseInput::GetPosition()));
+    auto pos = QVector2D(GAME->WindowToLogical(og::MouseInput::GetPosition()));
     auto isOver = GetCollider()->OverlapPoint(pos);
 
     if (!m_isMouseOver && isOver)

@@ -1,5 +1,4 @@
-#ifndef POINTF_H
-#define POINTF_H
+#pragma once
 
 namespace oglib
 {
@@ -14,6 +13,12 @@ class PointF
 
         void SetX(float x) { x_ = x; }
         void SetY(float y) { y_ = y; }
+        void Set(float x, float y)
+        {
+            SetX(x);
+            SetY(y);
+        }
+
 
         PointF operator / (float n)
         {
@@ -25,5 +30,3 @@ class PointF
         float y_;
 };
 }
-
-#endif // POINTF_H

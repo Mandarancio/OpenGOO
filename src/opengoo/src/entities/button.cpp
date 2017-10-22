@@ -16,7 +16,7 @@ Button::Button(float a_x, float a_y, GraphicPtr a_up, GraphicPtr a_over, const C
 
 void Button::Update()
 {
-    auto pos = QVector2D(GAME->GetCamera().windowToLogical(og::MouseInput::GetPosition()));
+    auto pos = QVector2D(GAME->WindowToLogical(og::MouseInput::GetPosition()));
     auto isOver = GetCollider()->OverlapPoint(pos);
 
     if (!m_isOver && isOver)

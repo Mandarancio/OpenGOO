@@ -2,15 +2,20 @@
 #include "GameEngine/og_gameengine.h"
 #include "GameEngine/scene.h"
 #include "og_utils.h"
-#include "og_levelconfig.h"
-#include "og_sceneconfig.h"
 #include "wog_level.h"
 #include "wog_scene.h"
+#include "og_levelconfig.h"
+#include "og_sceneconfig.h"
 
 #include "entities/og_ball.h"
 #include "entityfactory.h"
 
 #include "spritefactory.h"
+#include "animator.h"
+#include "entities/scenelayer.h"
+
+#include "opengoo.h"
+#include "og_windowcamera.h"
 
 struct SceneLoaderHelper
 {
@@ -20,21 +25,46 @@ struct SceneLoaderHelper
     {
     }
 
-    void processLevel(const WOGLevel& aLevel);
+    void processLevel(const WOGLevel&);
 
-    void processScene(const WOGScene& aScene);
+    void processScene(const WOGScene&);
 
-    void processWOGSceneLayer(const WOGSceneLayer& aSceneLayer);
+    void processSceneLayer(const WOGSceneLayer&);
+
+    void processButtonGroup(const WOGButtonGroup&);
+
+    void processButton(const WOGButton&);
+
+    void processCamera(const WOGCamera&);
 
     og::Scene& mScene;
     EntityFactory mEntityFactory;
 };
 
-void SceneLoaderHelper::processLevel(const WOGLevel& aLevel)
+void SceneLoaderHelper::processCamera(const WOGCamera& aCamera)
 {
+    const auto& poi = aCamera.poi.back();
+    GAME->GetCamera().SetPosition(poi.position.x(), poi.position.y());
+    GAME->GetCamera().SetZoom(poi.zoom);
 }
 
-void SceneLoaderHelper::processWOGSceneLayer(const WOGSceneLayer& aSceneLayer)
+void SceneLoaderHelper::processLevel(const WOGLevel& aLevel)
+{
+    if (!aLevel.camera.empty())
+    {
+        auto dr = std::div(GE->getWidth(), GE->getHeight());
+        auto aspect = (dr.quot == 4 && dr.rem == 3) ? WOGCamera::Normal : WOGCamera::WideScreen;
+        auto it = std::find_if(aLevel.camera.begin(), aLevel.camera.end(),
+                     [aspect](const WOGCamera& aCamera) { return aCamera.aspect == aspect; });
+
+        if (it != aLevel.camera.end())
+        {
+            processCamera(*it);
+        }
+    }
+}
+
+void SceneLoaderHelper::processSceneLayer(const WOGSceneLayer& aSceneLayer)
 {
     auto src = SpriteFactory::CreateImageSource(aSceneLayer.image);
     auto spr = std::make_shared<OGSprite>(src);
@@ -44,16 +74,67 @@ void SceneLoaderHelper::processWOGSceneLayer(const WOGSceneLayer& aSceneLayer)
     spr->SetColorize(aSceneLayer.colorize);
     spr->SetAlpha(aSceneLayer.alpha);
 
-    auto e = std::make_shared<og::Entity>(aSceneLayer.position.x(), -aSceneLayer.position.y(), spr);
+    auto e = std::make_shared<SceneLayer>(aSceneLayer.position.x(), -aSceneLayer.position.y(), spr);
     e->SetDepth(aSceneLayer.depth);
+
+    if (!aSceneLayer.anim.isEmpty())
+    {
+        // TODO Remove this test data
+        auto anim = std::make_shared<Animator>(e.get(), aSceneLayer.animspeed);
+        anim->AddTransformType(Animator::XFORM_ROTATE);
+        anim->AddFrameTime(0);
+        anim->AddFrameTime(0.5);
+        anim->AddFrameTime(1);
+
+        KeyFrame kf;
+        kf.interpolation = KeyFrame::INTERPOLATION_LINEAR;
+
+        kf.angle = 0;
+        kf.nextFrameIndex = 1;
+        anim->AddTransformFrame(kf);
+
+        kf.angle = 180.0f;
+        kf.nextFrameIndex = 2;
+        anim->AddTransformFrame(kf);
+
+        kf.angle = 360.0f;
+        kf.nextFrameIndex = -1;
+        anim->AddTransformFrame(kf);
+
+        e->SetAnimator(anim);
+    }
+
+    if (!aSceneLayer.id.isEmpty())
+    {
+        e->SetVisible(false);
+    }
+
     mScene.AddEntity(e);
+}
+
+void SceneLoaderHelper::processButton(const WOGButton& aButton)
+{
+    mScene.AddEntity(mEntityFactory.CreateButton(aButton))->SetDepth(aButton.depth);
+}
+
+void SceneLoaderHelper::processButtonGroup(const WOGButtonGroup& aButtonGroup)
+{
+    foreach (const auto& btn, aButtonGroup.button)
+    {
+        processButton(btn);
+    }
 }
 
 void SceneLoaderHelper::processScene(const WOGScene& aScene)
 {
-    foreach (const auto sl, aScene.sceneLayer)
+    foreach (const auto& sl, aScene.sceneLayer)
     {
-        processWOGSceneLayer(*sl);
+        processSceneLayer(sl);
+    }
+
+    foreach (const auto& bg, aScene.buttongroup)
+    {
+        processButtonGroup(bg);
     }
 }
 
@@ -83,14 +164,6 @@ bool SceneLoader::load(og::Scene &aScene)
         return false;
     }
 
-    fullPath = path + "level";
-    OGLevelConfig lc(fullPath);
-    if (!LoadConf(lc))
-    {
-        logError("Could not load " + fullPath);
-        return false;
-    }
-
     fullPath = path + "scene";
     OGSceneConfig sc(fullPath);
     if (!LoadConf(sc))
@@ -99,8 +172,20 @@ bool SceneLoader::load(og::Scene &aScene)
         return false;
     }
 
+    fullPath = path + "level";
+    OGLevelConfig lc(fullPath);
+    if (!LoadConf(lc))
+    {
+        logError("Could not load " + fullPath);
+        return false;
+    }
+
     SceneLoaderHelper helper(aScene);
-    helper.processScene(*sc.Parser());
+    auto scene = sc.Parser();
+    helper.processScene(*scene);
+
+    auto level = lc.Parser();
+    helper.processLevel(*level);
 
     return true;
 }

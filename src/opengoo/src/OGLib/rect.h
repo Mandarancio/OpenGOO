@@ -1,5 +1,4 @@
-#ifndef RECT_H
-#define RECT_H
+#pragma once
 
 namespace oglib
 {
@@ -20,4 +19,3 @@ class Rect
         int miny() const { return minY_; }
 };
 }
-#endif // OG_RECT_H

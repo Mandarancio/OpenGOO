@@ -15,9 +15,16 @@ struct WOGPoi
 
 struct WOGCamera
 {
+    enum Aspect
+    {
+        Unknown,
+        Normal,
+        WideScreen
+    };
+
     QPointF endpos;
     float endzoom;
-    QString aspect;
+    Aspect aspect;
     QVector<WOGPoi> poi;
 };
 

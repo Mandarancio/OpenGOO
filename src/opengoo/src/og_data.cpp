@@ -1,9 +1,10 @@
 #include "og_data.h"
 #include "logger.h"
+#include "wog_scene.h"
 
-template<class T, class C> T* OGData::_GetData(const QString &path)
+template<class T> static typename T::Type GetData(const QString &path)
 {
-    C config(path);
+    T config(path);
 
     if (config.Open())
     {
@@ -12,17 +13,17 @@ template<class T, class C> T* OGData::_GetData(const QString &path)
     }
     else { logWarn("File " + path + " not found"); }
 
-    return 0;
+    return nullptr;
 }
 
 WOGScene* OGData::GetScene(const QString &path)
 {
-    return _GetData<WOGScene, OGSceneConfig> (path);
+    return GetData<OGSceneConfig>(path).release();
 }
 
 WOGResources* OGData::GetResources(const QString &path)
 {
-    return _GetData<WOGResources, OGResourceConfig> (path);
+    return GetData<OGResourceConfig>(path);
 }
 
 WOGText* OGData::GetText(const QString &path, const QString &lang)

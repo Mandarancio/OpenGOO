@@ -115,7 +115,8 @@ HEADERS += \
     src/physicsenginefactory.h \
     src/sceneloader.h \
     src/animator.h \
-    src/keyframe.h
+    src/keyframe.h \
+    src/camera.h
 
 SOURCES += \
     src/main.cpp \

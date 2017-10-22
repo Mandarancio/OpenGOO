@@ -7,7 +7,7 @@ struct WOGScene;
 class OGSceneConfig : public OGXmlConfig
 {
 public:
-    typedef WOGScene* Type;
+    typedef std::unique_ptr<WOGScene> Type;
 
 public:
     OGSceneConfig(const QString& filename)
@@ -16,5 +16,5 @@ public:
         SetRootTag("scene");
     }
 
-    WOGScene* Parser();
+    Type Parser();
 };

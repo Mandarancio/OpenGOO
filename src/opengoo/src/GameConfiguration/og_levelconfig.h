@@ -7,7 +7,7 @@ struct WOGLevel;
 class OGLevelConfig : public OGXmlConfig
 {
 public:
-    typedef WOGLevel Type;
+    typedef std::unique_ptr<WOGLevel> Type;
 
 public:
     OGLevelConfig(const QString& filename)
@@ -16,5 +16,5 @@ public:
         SetRootTag("level");
     }
 
-    WOGLevel Parser();
+    Type Parser();
 };

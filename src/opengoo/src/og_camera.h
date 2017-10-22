@@ -1,5 +1,4 @@
-#ifndef OG_CAMERA_H
-#define OG_CAMERA_H
+#pragma once
 
 #include "OGLib/icamera.h"
 #include "OGLib/point.h"
@@ -13,9 +12,14 @@ protected:
     Point pos_;
     Size size_;
     float zoom_;
+
 public:
     OGCamera(int posx, int posy, int width, int height, float zoom=1)
-        : pos_(posx, posy), size_(width, height), zoom_(zoom) {}
+        : pos_(posx, posy)
+        , size_(width, height)
+        , zoom_(zoom)
+    {
+    }
 
 private:
     int _GetX() const { return pos_.x(); }
@@ -35,6 +39,9 @@ private:
     void _MoveTo(const Point& poi) { pos_ = poi; }
 
     void _SetZoom(float zoom) { zoom_ = zoom; }
-};
 
-#endif // OG_CAMERA_H
+    void SetSize(int aWidth, int aHeight)
+    {
+        size_.Set(aWidth, aHeight);
+    }
+};

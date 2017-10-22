@@ -9,7 +9,8 @@ class Entity;
 class Collider
 {
 public:
-    Collider(Entity* a_entity = nullptr) : m_entity(a_entity)
+    Collider(Entity* a_entity = nullptr)
+        : m_entity(a_entity)
     {
     }
 

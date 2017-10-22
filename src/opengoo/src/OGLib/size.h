@@ -1,22 +1,43 @@
-#ifndef SIZE_H
-#define SIZE_H
+#pragma once
 
 namespace oglib
 {
 class Size
 {
-        int width_;
-        int height_;
+    int mWidth;
+    int mHeight;
 
-    public:
-        Size(int w, int h) : width_(w), height_(h) {}
+public:
+    Size(int aWidth=0, int aHeight=0)
+        : mWidth(aWidth)
+        , mHeight(aHeight)
+    {
+    }
 
-        int width() const { return width_; }
-        int height() const { return height_; }
+    int width() const
+    {
+        return mWidth;
+    }
 
-        void SetWidth(int w) { width_ = w; }
-        void SetHeight(int h) { height_ = h; }
+    int height() const
+    {
+        return mHeight;
+    }
+
+    void SetWidth(int aWidth)
+    {
+        mWidth = aWidth;
+    }
+
+    void SetHeight(int aHeight)
+    {
+        mHeight = aHeight;
+    }
+
+    void Set(int aWidth, int aHeight)
+    {
+        SetWidth(aWidth);
+        SetHeight(aHeight);
+    }
 };
 }
-
-#endif // SIZE_H

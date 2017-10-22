@@ -3,7 +3,7 @@
 #include "OGLib/pointf.h"
 #include "wog_level.h"
 
-#include <vector>
+#include <list>
 
 using namespace oglib;
 
@@ -12,13 +12,10 @@ class OGPoi
     public:
         OGPoi(const WOGPoi& poi)
         {
-            pos_.SetX(poi.position.x());
-            pos_.SetY(poi.position.y());
+            pos_.Set(poi.position.x(), poi.position.y());
             traveltime_ = poi.traveltime * 1000;
             pause_ = poi.pause * 1000;
-            zoom_ = poi.zoom;
-            if (zoom_ == 0) zoom_ = 1;
-            zoom_ = 1 / zoom_;
+            zoom_ = (poi.zoom == 0) ? 1 : 1.0f / poi.zoom;
         }
 
         float x() const { return pos_.x(); }
@@ -34,4 +31,4 @@ class OGPoi
         float zoom_;
 };
 
-typedef std::vector<OGPoi> PoiList;
+typedef std::list<OGPoi> PoiList;

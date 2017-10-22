@@ -1,10 +1,9 @@
 #pragma once
 
-#include "wog_pobject.h"
-#include "wog_vobject.h"
-#include "wog_circle.h"
-
 #include <QSizeF>
+
+#include "wog_circle.h"
+#include "wog_vobject.h"
 
 struct WOGLabel
 {
@@ -27,11 +26,6 @@ struct WOGSceneLayer : public WOGVObject
     QString image;
     QString anim;
     float animspeed;
-
-    WOGSceneLayer()
-        : animspeed(1.0f)
-    {
-    }
 };
 
 struct WOGRadialForceField
@@ -82,9 +76,7 @@ struct WOGButtonGroup
 {
     QString id;
     QPointF osx;
-    QList<WOGButton*> button;
-
-    ~WOGButtonGroup();
+    std::vector<WOGButton> button;
 };
 
 struct WOGLine : public WOGPObject
@@ -104,8 +96,8 @@ struct WOGCompositeGeom : public WOGPObject
 {
     QPointF position;
     float rotation;
-    QList<WOGCircle> circle;
-    QList<WOGRectangle> rectangle;
+    std::vector<WOGCircle> circle;
+    std::vector<WOGRectangle> rectangle;
 };
 
 struct WOGScene
@@ -115,20 +107,18 @@ struct WOGScene
     float maxx;
     float maxy;
     QColor backgroundcolor;
-    QList<WOGButton*> button;
-    QList<WOGButtonGroup*> buttongroup;
-    QList<WOGSceneLayer*> sceneLayer;
-    QList<WOGLabel*> label;
-    QList<WOGCircle*> circle;
-    QList<WOGLine*> line;
-    QList<WOGRectangle*> rectangle;
-    QList<WOGLinearForceField*> linearforcefield;
-    QList<WOGRadialForceField*> radialforcefield;
-    QList<WOGParticle*> particle;
-    QList<WOGCompositeGeom*> compositegeom;
+    std::vector<WOGButton> button;
+    std::vector<WOGButtonGroup> buttongroup;
+    std::vector<WOGSceneLayer> sceneLayer;
+    std::vector<WOGLabel> label;
+    std::vector<WOGCircle> circle;
+    std::vector<WOGLine> line;
+    std::vector<WOGRectangle> rectangle;
+    std::vector<WOGLinearForceField> linearforcefield;
+    std::vector<WOGRadialForceField> radialforcefield;
+    std::vector<WOGParticle> particle;
+    std::vector<WOGCompositeGeom> compositegeom;
 
-    ~WOGScene();
-
-    WOGButtonGroup* GetButtonGroup(const QString& id);
+    WOGButtonGroup* GetButtonGroup(const QString&);
     WOGButton* FindButton(const QString &id);
 };

@@ -7,7 +7,7 @@ using namespace oglib;
 OGWindowCamera* OGWindowCamera::pInstance_ = nullptr;
 
 OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size, const WOGCamera *cam)
-    : target_(0), scene_(scene), traveltime_(0), pause_(0), isScrolling_(true)
+    : target_(nullptr), scene_(scene), traveltime_(0), pause_(0), isScrolling_(true)
 {
     pInstance_ = this;
 
@@ -18,13 +18,27 @@ OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size, const WOGCam
 
     int x = RoundF(poiList_.front().x());
     int y = RoundF(poiList_.front().y());
-    float z = poiList_.front().zoom();
     int w = size.width();
     int h = size.height();
+    auto zoom = poiList_.front().zoom();
+    float z = (zoom == 0) ? 1 : 1 / zoom;
+    camera_ = unique_ptr<ICamera>(new OGCamera(x, y, w, h, z));
+}
 
-    if (z == 0) z = 1;
-    else z = 1 / z;
+OGWindowCamera::OGWindowCamera(const Rect& aScene, const Size& aSize, const QPoint& aPosition, float aZoom)
+    : target_(nullptr),
+      scene_(aScene),
+      traveltime_(0),
+      pause_(0),
+      isScrolling_(true)
+{
+    pInstance_ = this;
 
+    int x = aPosition.x();
+    int y = aPosition.y();
+    int w = aSize.width();
+    int h = aSize.height();
+    float z = (aZoom == 0) ? 1 : 1 / aZoom;
     camera_ = unique_ptr<OGCamera>(new OGCamera(x, y, w, h, z));
 }
 
@@ -40,7 +54,10 @@ OGWindowCamera* OGWindowCamera::instance()
 
 void OGWindowCamera::ScrollUp(int shift)
 {
-    if (!isScrolling_) return;
+    if (!isScrolling_)
+    {
+        return;
+    }
 
     int y = camera_->y() + shift;
     int pos = qMin(y, scene_.maxy() - RoundF(camera_->height() * 0.5f));
@@ -49,7 +66,10 @@ void OGWindowCamera::ScrollUp(int shift)
 
 void OGWindowCamera::ScrollDown(int shift)
 {
-    if (!isScrolling_) return;
+    if (!isScrolling_)
+    {
+        return;
+    }
 
     int y = camera_->y() - shift;
     int pos = qMax(y, scene_.miny() + RoundF(camera_->height() * 0.5f));
@@ -58,7 +78,10 @@ void OGWindowCamera::ScrollDown(int shift)
 
 void OGWindowCamera::ScrollLeft(int shift)
 {
-    if (!isScrolling_) return;
+    if (!isScrolling_)
+    {
+        return;
+    }
 
     int x = camera_->x() - shift;
     int pos = qMax(x, scene_.minx() + RoundF(camera_->width() * 0.5f));
@@ -67,7 +90,10 @@ void OGWindowCamera::ScrollLeft(int shift)
 
 void OGWindowCamera::ScrollRight(int shift)
 {
-    if (!isScrolling_) return;
+    if (!isScrolling_)
+    {
+        return;
+    }
 
     int x = camera_->x() + shift;
     int pos = qMin(x, scene_.maxx() - RoundF(camera_->width() * 0.5f));
@@ -102,9 +128,19 @@ QRect OGWindowCamera::rect() const
     return QRect(x, y, camera_->width(), camera_->height());
 }
 
+void OGWindowCamera::Clear()
+{
+    target_ = nullptr;
+    poiList_.clear();
+    isScrolling_ = true;
+    camera_->SetZoom(1);
+    camera_->SetSize(GE->getWidth(), GE->getHeight());
+    camera_->MoveTo(0, 0);
+}
+
 void OGWindowCamera::Update(int time)
 {                
-    if (target_ == 0 && poiList_.size() > 1)
+    if (!target_ && poiList_.size() > 1)
     {
         traveltime_ = 0;
         pause_ = 0;
@@ -114,10 +150,16 @@ void OGWindowCamera::Update(int time)
         initialPosition_ = Vector2D(x, y);
         _SetTarget();
 
-        if (target_->pause() > 0) pause_ = time;
+        if (target_->pause() > 0)
+        {
+            pause_ = time;
+        }
     }
 
-    if (target_ == 0) return;
+    if (!target_)
+    {
+        return;
+    }
 
     if (pause_ < target_->pause())
     {
@@ -137,27 +179,36 @@ void OGWindowCamera::Update(int time)
     else
     {
         camera_->MoveTo(target_->x(), target_->y());
-        target_ = 0;
+        target_ = nullptr;
         poiList_.erase(poiList_.begin());        
     }
 
-    if (poiList_.size() == 1) isScrolling_ = true;
+    if (poiList_.size() == 1)
+    {
+        isScrolling_ = true;
+    }
 }
 
 void OGWindowCamera::_SetTarget()
 {
-    target_ = &poiList_.at(1);
+    target_ = &poiList_.front();
     finalPosition_ = Vector2D(target_->x(), target_->y());
     float time = target_->traveltime();
 
-    if (time == 0) velocity_.SetZero();
-    else velocity_ = (finalPosition_ - initialPosition_) / time;
+    if (time <= 0)
+    {
+        velocity_.SetZero();
+    }
+    else
+    {
+        velocity_ = (finalPosition_ - initialPosition_) / time;
+    }
 
     zoom_ = (target_->zoom() - poiList_.front().zoom()) / time;
 }
 
 void OGWindowCamera::SetLastPosition()
 {
-    OGPoi& last = poiList_.back();
+    const auto& last = poiList_.back();
     camera_->MoveTo(last.x(), last.y());
 }

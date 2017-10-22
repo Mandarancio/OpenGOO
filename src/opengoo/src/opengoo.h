@@ -20,7 +20,7 @@
 #include "level.h"
 #include "og_fpscounter.h"
 #include "og_world.h"
-
+#include "camera.h"
 
 class OGWindowCamera;
 class OGBall;
@@ -91,9 +91,14 @@ class OpenGOO : public og::OGGame
             return m_scene.get();
         }
 
-        OGWindowCamera& GetCamera() const
+        Camera& GetCamera()
         {
-            return *pCamera_;
+            return mCamera;
+        }
+
+        const Camera& GetCamera() const
+        {
+            return mCamera;
         }
 
         int GetDeltaTime() const
@@ -101,11 +106,14 @@ class OpenGOO : public og::OGGame
             return m_deltaTime;
         }
 
+        QPoint WindowToLogical(const QPoint& p);
+
     static void SetDebug(OGWorld&, bool);
 
     private:
-        OpenGOO() {}
-        ~OpenGOO() {}
+        OpenGOO();
+
+        ~OpenGOO();
 
         static bool LevelIsExists(const QString& a_name);
 
@@ -115,7 +123,7 @@ class OpenGOO : public og::OGGame
         EntityFactoryPtr m_entityFactory;
         std::shared_ptr<og::Scene> m_scene;
         std::unique_ptr<OGFPSCounter> _pFPS;
-        OGWindowCamera* pCamera_;
+        Camera mCamera;
 
         bool mSceneIsLoaded;
 

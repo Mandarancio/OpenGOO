@@ -1,5 +1,4 @@
-#ifndef OGCONFIGURATION
-#define OGCONFIGURATION
+#pragma once
 
 #include "og_gameconfig.h"
 #include "og_resourceconfig.h"
@@ -10,5 +9,3 @@
 #include "og_effectconfig.h"
 #include "og_ballconfig.h"
 #include "og_islandconfig.h"
-
-#endif // OGCONFIGURATION

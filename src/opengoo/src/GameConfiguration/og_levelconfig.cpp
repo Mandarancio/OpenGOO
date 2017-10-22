@@ -27,7 +27,20 @@ WOGPoi OGLevelConfigHelper::CreatePoi(const QDomElement &element)
 WOGCamera OGLevelConfigHelper::CreateCamera(const QDomElement& element)
 {
     WOGCamera obj;
-    obj.aspect = element.attribute("aspect", "normal");
+    auto aspect = element.attribute("aspect", "normal");
+    if (aspect == "normal")
+    {
+        obj.aspect = WOGCamera::Normal;
+    }
+    else if (aspect == "widescreen")
+    {
+        obj.aspect = WOGCamera::WideScreen;
+    }
+    else
+    {
+        obj.aspect = WOGCamera::Unknown;
+    }
+
     obj.endpos = OGXmlConfig::StringToPoint(element.attribute("endpos"));
     obj.endzoom = element.attribute("endzoom", "1").toDouble();
 
@@ -89,22 +102,22 @@ void OGLevelConfigHelper::LoadPipe(WOGPipe& pipe, const QDomElement &element)
     }
 }
 
-WOGLevel OGLevelConfig::Parser()
+OGLevelConfig::Type OGLevelConfig::Parser()
 {
-    WOGLevel level;
-    level.levelexit.second = false;
-    level.pipe.second = false;
+    auto level = Type(new WOGLevel);
+    level->levelexit.second = false;
+    level->pipe.second = false;
 
-    level.ballsrequired = rootElement.attribute("ballsrequired").toInt();
-    level.letterboxed = StringToBool(rootElement.attribute("letterboxed"));
-    level.visualdebug = StringToBool(rootElement.attribute("visualdebug"));
-    level.autobounds = StringToBool(rootElement.attribute("autobounds"));
-    level.textcolor = StringToColor(rootElement.attribute("textcolor"));
-    level.texteffects = StringToBool(rootElement.attribute("texteffects"));
-    level.timebugprobability = rootElement.attribute("timebugprobability").toDouble();
+    level->ballsrequired = rootElement.attribute("ballsrequired").toInt();
+    level->letterboxed = StringToBool(rootElement.attribute("letterboxed"));
+    level->visualdebug = StringToBool(rootElement.attribute("visualdebug"));
+    level->autobounds = StringToBool(rootElement.attribute("autobounds"));
+    level->textcolor = StringToColor(rootElement.attribute("textcolor"));
+    level->texteffects = StringToBool(rootElement.attribute("texteffects"));
+    level->timebugprobability = rootElement.attribute("timebugprobability").toDouble();
 
-    level.strandgeom = StringToBool(rootElement.attribute("strandgeom"));
-    level.allowskip = StringToBool(rootElement.attribute("allowskip"));
+    level->strandgeom = StringToBool(rootElement.attribute("strandgeom"));
+    level->allowskip = StringToBool(rootElement.attribute("allowskip"));
 
     for (auto node = rootElement.firstChild(); !node.isNull(); node = node.nextSibling())
     {
@@ -112,35 +125,35 @@ WOGLevel OGLevelConfig::Parser()
 
         if (domElement.tagName() == "camera")
         {
-            level.camera.push_back(OGLevelConfigHelper::CreateCamera(domElement));
+            level->camera.push_back(OGLevelConfigHelper::CreateCamera(domElement));
         }
         else if (domElement.tagName() == "music")
         {
-            level.music.id = domElement.attribute("id");
+            level->music.id = domElement.attribute("id");
         }
         else if (domElement.tagName() == "BallInstance")
         {
-            level.ball.push_back(OGLevelConfigHelper::CreateBallInstance(domElement));
+            level->ball.push_back(OGLevelConfigHelper::CreateBallInstance(domElement));
         }
         else if (domElement.tagName() == "levelexit")
         {
-            if (!level.levelexit.second)
+            if (!level->levelexit.second)
             {
-                OGLevelConfigHelper::LoadLevelExit(level.levelexit.first, domElement);
-                level.levelexit.second = true;
+                OGLevelConfigHelper::LoadLevelExit(level->levelexit.first, domElement);
+                level->levelexit.second = true;
             }
         }
         else if (domElement.tagName() == "pipe")
         {
-            if (!level.pipe.second)
+            if (!level->pipe.second)
             {                
-                OGLevelConfigHelper::LoadPipe(level.pipe.first, domElement);
-                level.pipe.second = true;
+                OGLevelConfigHelper::LoadPipe(level->pipe.first, domElement);
+                level->pipe.second = true;
             }
         }
         else if (domElement.tagName() == "Strand")
         {
-            level.strand.push_back(OGLevelConfigHelper::CreateStrand(domElement));
+            level->strand.push_back(OGLevelConfigHelper::CreateStrand(domElement));
         }
     }
 

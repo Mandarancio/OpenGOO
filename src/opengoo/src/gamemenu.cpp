@@ -67,32 +67,32 @@ GameMenu::GameMenu() : mImpl(new Impl)
     auto group = scene->GetButtonGroup("gamemenugroup");
     auto resrc = GameMenuHelper::getResources();
 
-    foreach (WOGButton* btn, group->button)
+    foreach (const WOGButton& btn, group->button)
     {
-        if (btn->onclick == "restartlevelrightnow")
+        if (btn.onclick == "restartlevelrightnow")
         {
-            mImpl->restart = GameMenuHelper::createButton(btn, *resrc);
+            mImpl->restart = GameMenuHelper::createButton(&btn, *resrc);
             auto ibtn = mImpl->restart.get();
             connect(ibtn, SIGNAL(pressed()), this, SLOT(restart()));
             ibtn->setVisible(true);
         }
-        else if (btn->onclick == "showocdcriteria")
+        else if (btn.onclick == "showocdcriteria")
         {
-            mImpl->ocdcriteria = GameMenuHelper::createButton(btn, *resrc);
+            mImpl->ocdcriteria = GameMenuHelper::createButton(&btn, *resrc);
             auto ibtn = mImpl->ocdcriteria.get();
             connect(ibtn, SIGNAL(pressed()), this, SLOT(ocdcriteria()));
             ibtn->setVisible(true);
         }
-        else if (btn->onclick == "backtoisland")
+        else if (btn.onclick == "backtoisland")
         {
-            mImpl->backto = GameMenuHelper::createButton(btn, *resrc);
+            mImpl->backto = GameMenuHelper::createButton(&btn, *resrc);
             auto ibtn = mImpl->backto.get();
             connect(ibtn, SIGNAL(pressed()), this, SIGNAL(backToIsland()));
             ibtn->setVisible(true);
         }
-        else if (btn->onclick == "resumegame")
+        else if (btn.onclick == "resumegame")
         {
-            mImpl->resume = GameMenuHelper::createButton(btn, *resrc);
+            mImpl->resume = GameMenuHelper::createButton(&btn, *resrc);
             auto ibtn = mImpl->resume.get();
             connect(ibtn, SIGNAL(pressed()), this, SIGNAL(close()));
             ibtn->setVisible(true);

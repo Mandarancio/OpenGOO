@@ -1,5 +1,4 @@
-#ifndef ICAMERA_H
-#define ICAMERA_H
+#pragma once
 
 #include "OGLib/point.h"
 
@@ -29,6 +28,8 @@ class ICamera
         void MoveTo(float posx, float posy) { _MoveTo(posx, posy); }
         void MoveTo(const Point &poi) { _MoveTo(poi); }
 
+        virtual void SetSize(int aWidth, int aHeight) = 0;
+
     private:
         virtual int _GetX() const = 0;
         virtual int _GetY() const = 0;
@@ -49,4 +50,3 @@ class ICamera
         virtual void _MoveTo(const Point &poi) = 0;
 };
 }
-#endif // ICAMERA_H

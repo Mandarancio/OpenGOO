@@ -13,13 +13,11 @@
 
 #include <memory>
 
-using namespace std;
-
 class OGWindowCamera
 {
         static OGWindowCamera* pInstance_;
 
-        unique_ptr<OGCamera> camera_;
+        std::unique_ptr<ICamera> camera_;
         OGPoi* target_;
         Rect scene_;
         PoiList poiList_;
@@ -34,10 +32,13 @@ class OGWindowCamera
 
         bool isScrolling_;
 
-        void _SetTarget();                
+        void _SetTarget();
 
     public:
         OGWindowCamera(const Rect &scene, const Size& size, const WOGCamera* cam);
+
+        OGWindowCamera(const Rect& aScene, const Size& aSize, const QPoint& aPosition, float aZoom);
+
         ~OGWindowCamera();
 
         static OGWindowCamera* instance();
@@ -55,4 +56,8 @@ class OGWindowCamera
         void ScrollRight(int shift);
 
         void Update(int time);
+
+        void Clear();
+
+        void AddPoi();
 };
