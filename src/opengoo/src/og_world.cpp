@@ -27,11 +27,14 @@
 
 using namespace og;
 
-OGWorld::OGWorld(PhysicsEngineFactory& a_physicsEngineFactory, EntityFactory& a_factory, const QString& a_levelname, const QString& a_language)
+OGWorld::OGWorld(PhysicsEngineFactory& a_physicsEngineFactory,
+                 EntityFactory& a_factory,
+                 const QString& a_levelname,
+                 const QString& a_language)
     : Scene(a_levelname)
     ,  m_entityFactory(a_factory)
-    , m_language(a_language)
     , m_physicsEngine(a_physicsEngineFactory.Create())
+    , m_language(a_language)
 {
 
     m_entityFactory.SetPhysicsEngine(m_physicsEngine.get());
@@ -646,7 +649,7 @@ bool OGWorld::Load()
 //    m_update.clear();
 //}
 
-void OGWorld::CreateStrand(OGBall* b1, OGBall* b2)
+void OGWorld::CreateStrand(OGBall* /*b1*/, OGBall* /*b2*/)
 {
 //    if (b1->id() == -1)
 //        b1->SetId(ballId_++);
@@ -791,7 +794,7 @@ void OGWorld::Render(QPainter& a_p)
 //    sprites_.append(sprite);
 //}
 
-void OGWorld::RemoveStrand(OGStrand* strand)
+void OGWorld::RemoveStrand(OGStrand* /*strand*/)
 {
 //    delete strands_.take(strand->id());
 }

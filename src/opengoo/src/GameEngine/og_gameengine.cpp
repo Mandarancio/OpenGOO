@@ -7,12 +7,13 @@
 
 #include "og_videomode.h"
 #include "logger.h"
+#include "iresourcemanagerfactory.h"
 
 namespace og
 {
 OGGameEngine* OGGameEngine::m_instance = nullptr;
 
-OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config)
+OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config, IResourceManagerFactory &aFactory)
 {
     m_instance = this;
     m_game = a_game;
@@ -22,7 +23,7 @@ OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config)
     m_frameRate = a_config.refreshrate;
     m_crt = a_config.isCrt;
     m_isVideoModeSupported = false;
-    m_resourceManager = nullptr;
+    m_resourceManager.reset(aFactory.Create().release());
 }
 
 OGGameEngine::~OGGameEngine()
@@ -111,13 +112,8 @@ void OGGameEngine::gameExit()
     QApplication::quit();
 }
 
-OGResourceManager* OGGameEngine::getResourceManager()
+IResourceManager* OGGameEngine::getResourceManager()
 {
-    if (!m_resourceManager)
-    {
-        m_resourceManager.reset(new OGResourceManager);
-    }
-
     return m_resourceManager.get();
 }
 

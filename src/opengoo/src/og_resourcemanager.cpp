@@ -2,25 +2,13 @@
 #include <QImage>
 #include <QString>
 
-#include <logger.h>
+#include "GameConfiguration/binltlfile.h"
 
+#include <logger.h>
 #include "og_resourcemanager.h"
 #include "og_resourceconfig.h"
 #include "wog_resources.h"
 #include "og_data.h"
-
-using namespace og;
-
-OGResourceManager::OGResourceManager()
-    : m_file("og-log.txt")
-{
-    m_previous = audio::SoundUtil::SetStreamBuffer(m_file.rdbuf());
-}
-
-OGResourceManager::~OGResourceManager()
-{
-    audio::SoundUtil::SetStreamBuffer(m_previous);
-}
 
 bool OGResourceManager::ParseResourceFile(const QString& a_filename)
 {
@@ -50,7 +38,29 @@ bool OGResourceManager::ParseResourceFile(const QString& a_filename)
     return true;
 }
 
-OGResourceManager::ImageSourceSPtr OGResourceManager::GetImageSourceById(const QString& a_id)
+og::ImageSourceSPtr OGResourceManager::CreateImageSource(const QString& a_filename)
+{
+#ifdef Q_OS_MAC
+    auto fn = a_filename + ".png.binltl";
+    if (!QFile::exists(fn))
+    {
+        return std::make_shared<og::ImageSource>();
+    }
+
+    QFile file(fn);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        return std::make_shared<og::ImageSource>();
+    }
+
+    auto data = BinLtlFile::Decompress(file);
+    return std::make_shared<og::ImageSource>(data);
+#else
+    return std::make_shared<og::ImageSource>(a_filename + ".png");
+#endif
+}
+
+og::ImageSourceSPtr OGResourceManager::GetImageSourceById(const QString& a_id)
 {
     if (auto is = m_imageSources.value(a_id))
         return is;
@@ -69,9 +79,9 @@ OGResourceManager::ImageSourceSPtr OGResourceManager::GetImageSourceById(const Q
         return nullptr;
     }
 
-    m_imageSources[a_id] = std::make_shared<ImageSource>(filename + ".png");
-
-    return m_imageSources.value(a_id);
+    auto is = CreateImageSource(filename);
+    m_imageSources[a_id] = is;
+    return is;
 }
 
 template<typename T>
@@ -95,7 +105,7 @@ bool OGResourceManager::Load(T& a_data, const QString& a_filename)
     return true;
 }
 
-WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
+const WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
 {
     if (auto ball = m_balls.value(a_type))
         return ball.get();
@@ -150,13 +160,11 @@ SoundSPtr OGResourceManager::GetSound(const QString& a_id)
     auto it = m_soundSources.find(a_id);
     if (it != m_soundSources.end())
     {
-//        qDebug() << ++count;
         return std::make_shared<og::audio::Sound>(it.value());
     }
 
     if (auto src = AddSoundSource(a_id))
     {
-//        qDebug() << ++count;
         return std::make_shared<og::audio::Sound>(*src);
     }
 

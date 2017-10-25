@@ -15,7 +15,14 @@ SOURCES += \
     src/GameConfiguration/wog_material.cpp \
     src/GameConfiguration/wog_text.cpp \
     src/GameConfiguration/wog_pipe.cpp \
-    src/GameConfiguration/decrypter.cpp
+
+macx {
+SOURCES += \
+    src/GameConfiguration/xordecrypter.cpp \
+    src/GameConfiguration/binltlfile.cpp
+} else {
+SOURCES += src/GameConfiguration/aesdecrypter.cpp
+}
 
 HEADERS += \
     src/GameConfiguration/og_gameconfig.h \
@@ -41,4 +48,9 @@ HEADERS += \
     src/GameConfiguration/wog_pipe.h \
     src/GameConfiguration/wog_exit.h \
     src/GameConfiguration/wog_circle.h \
-    src/GameConfiguration/decrypter.h
+    src/GameConfiguration/xordecrypter.h \
+    src/GameConfiguration/aesdecrypter.h \
+    src/GameConfiguration/decrypter.h \
+    src/GameConfiguration/binltlfile.h
+
+INCLUDEPATH += ../extlibs/AES/

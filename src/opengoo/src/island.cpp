@@ -21,7 +21,7 @@ Island::Island(const QString& /*name*/) : _pImpl(new Impl)
     auto data = utils::getUIData("BACK_BUTTON");
     int x = 20;
     int y = GE->getHeight() - (data->height + 20);
-    _pImpl->pBackBtn = std::move(utils::createPushButton(QPoint(x ,y), *data));
+    _pImpl->pBackBtn.reset(utils::createPushButton(QPoint(x ,y), *data).release());
     auto btn = _pImpl->pBackBtn.get();
     connect(btn, SIGNAL(pressed()), this, SIGNAL(close()));
     btn->setVisible(true);

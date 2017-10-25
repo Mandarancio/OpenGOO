@@ -46,18 +46,24 @@ class OpenGOO : public og::OGGame
 
         void Destroy();
 
-        OGWorld* GetWorld() { return static_cast<OGWorld*>(GetScene()); }
+        OGWorld* GetWorld()
+        {
+            return static_cast<OGWorld*>(GetScene());
+        }
 
         OGBall* GetNearestBall();
 
-        void SetLanguage(const QString &language);                
+        void SetLanguage(const QString &language);
 
         void OpenPipe();
         void ClosePipe();
 
         void ShowProgress();
 
-        void Quit() { _Quit(); }
+        void Quit()
+        {
+            _Quit();
+        }
 
         void LoadIsland(const QString &name);
 
@@ -67,8 +73,15 @@ class OpenGOO : public og::OGGame
 
         void ReloadLevel();
 
-        bool isPause() { return _pause; }
-        void SetPause(bool pause) { _pause = pause; }
+        bool isPause()
+        {
+            return _pause;
+        }
+
+        void SetPause(bool pause)
+        {
+            pause = pause;
+        }
 
         friend class Level;
         friend class MainMenu;
@@ -147,7 +160,7 @@ class OpenGOO : public og::OGGame
         int height_;
 
         float timeStep_;
-        float timeScrollStep_;        
+        float timeScrollStep_;
 
         QDateTime lastTime_;
         int m_deltaTime;
@@ -173,13 +186,17 @@ class OpenGOO : public og::OGGame
         void _Cycle();
         void _Paint(QPainter* painter);
 
-        void _MouseButtonDown(QMouseEvent* ev);
-        void _MouseButtonUp(QMouseEvent* ev);
+        void _MouseButtonDown(QMouseEvent*);
+        void _MouseButtonUp(QMouseEvent*);
         void _MouseMove(QMouseEvent* ev);
-        void _MouseWheel(QWheelEvent* ev) { Q_UNUSED(ev)}
+        void _MouseWheel(QWheelEvent*)
+        {
+        }
 
         void _KeyDown(QKeyEvent* ev);
-        void _KeyUp(QKeyEvent* ev) { Q_UNUSED(ev)}
+        void _KeyUp(QKeyEvent*)
+        {
+        }
 
         void LoadScene(og::Scene* a_scene);
 
@@ -190,10 +207,10 @@ class OpenGOO : public og::OGGame
     private:
         void _ClearLayers();
 
-        void _Quit();        
+        void _Quit();
 
         void Scroll();
-        void _SetBackgroundColor(const QColor &color);        
+        void _SetBackgroundColor(const QColor &color);
 
         // Main menu
         QString _GetMainMenu();

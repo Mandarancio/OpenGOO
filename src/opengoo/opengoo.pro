@@ -1,31 +1,27 @@
-QT       += core gui xml opengl
+QT += core gui xml opengl
 CONFIG += c++11
 
 DESTDIR = ../../
 TEMPLATE = app
 
 CONFIG(debug, debug|release) {
-    TARGET      = OpenGOO
+    TARGET = OpenGOO
     OBJECTS_DIR = build/debug
     MOC_DIR = build/debug
-} else{
-    TARGET      = OpenGOO
+} else {
+    TARGET = OpenGOO
     OBJECTS_DIR = build/release
     MOC_DIR = build/release
 }
 
-
 #ATTENCTION
 #Lib Box2D must be in system folder and also the header files of it!
 INCLUDEPATH += ../extlibs/box2d
-INCLUDEPATH += ../extlibs/AES/src
 INCLUDEPATH += ../opengoo/src
 INCLUDEPATH += ../libs/logger/src
 INCLUDEPATH += src/GameEngine
 INCLUDEPATH += src/GameConfiguration
 INCLUDEPATH += src/include
-
-
 
 CONFIG(debug, debug|release) {
     LIBS += -L../libs/lib -lloggerd
@@ -35,27 +31,18 @@ CONFIG(debug, debug|release) {
 
 LIBS += -L../extlibs/libs
 
-LIBS += -lAES
-
-!win32 {
+CONFIG(debug, debug|release) {
+    LIBS += -lBox2Dd
+} else {
     LIBS += -lBox2D
-    freebsd-g++|freebsd-clang {
-        LIBS += -lexecinfo
-    }
 }
 
-win32: {
+win32 {
     DEFINES += _UNICODE DONT_GRAB_MOUSE
     LIBS += -lDbgHelp -lAdvapi32 -lpsapi -lUser32
 
     INCLUDEPATH += .
     CONFIG += console
-
-    CONFIG(debug, debug|release) {
-        LIBS += -lBox2Dd
-    } else {
-        LIBS += -lBox2D
-    }
 
     msvc: {
         #  Backtrace on win32
@@ -65,6 +52,10 @@ win32: {
 #            QMAKE_CXXFLAGS += /Z7 /DEBUG  /Oy-
 #            QMAKE_LFLAGS   += /DEBUG
         }
+    }
+} else {
+    freebsd-g++|freebsd-clang {
+        LIBS += -lexecinfo
     }
 }
 
@@ -116,7 +107,9 @@ HEADERS += \
     src/sceneloader.h \
     src/animator.h \
     src/keyframe.h \
-    src/camera.h
+    src/camera.h \
+    src/og_resourcemanager.h \
+    src/resourcemanagerfactory.h
 
 SOURCES += \
     src/main.cpp \
@@ -155,14 +148,21 @@ SOURCES += \
     src/spritefactory.cpp \
     src/entityfactory.cpp \
     src/sceneloader.cpp \
-    src/animator.cpp
+    src/animator.cpp \
+    src/og_resourcemanager.cpp \
+    src/resourcemanagerfactory.cpp
+
+win32 {
+    INCLUDEPATH += $$PWD/../extlibs/SFML-2.3.2/include
+    DEPENDPATH += $$PWD/../extlibs/SFML-2.3.2/include
+} else:unix {
+    INCLUDEPATH += /usr/local/include
+    DEPENDPATH += /usr/local/include
+}
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio -lsfml-system
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio-d -lsfml-system-d
-else:unix: LIBS += -L$$PWD/../extlibs/SFML-2.3.2/lib/ -lsfml-audio
-
-INCLUDEPATH += $$PWD/../extlibs/SFML-2.3.2/include
-DEPENDPATH += $$PWD/../extlibs/SFML-2.3.2/include
+else:unix: LIBS += -L/usr/local/lib/ -lsfml-system -lsfml-audio
 
 include(src/GameEngine/GameEngine.files)
 include(src/PhysicsEngine/PhysicsEngine.files)
@@ -171,7 +171,6 @@ include(src/GameConfiguration/GameConfiguration.files)
 include(src/entities/entities.files)
 include(src/SoundEngine/SoundEngine.files)
 
-
 !win32 {
     HEADERS += src/backtracer.h
     SOURCES += src/backtracer.cpp
@@ -179,8 +178,3 @@ include(src/SoundEngine/SoundEngine.files)
 
 RESOURCES += \
     resources.qrc
-
-OTHER_FILES += \
-    README \
-    ../README \
-    ../README.md \

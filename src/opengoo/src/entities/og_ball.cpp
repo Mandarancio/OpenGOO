@@ -25,15 +25,15 @@
 
 using namespace og;
 
-inline static float LengthSquared(float x1, float y1, float x2, float y2)
-{
-    return qPow((x2 - x1), 2.0f) + qPow((y2 - y1), 2.0f);
-}
+//inline static float LengthSquared(float x1, float y1, float x2, float y2)
+//{
+//    return qPow((x2 - x1), 2.0f) + qPow((y2 - y1), 2.0f);
+//}
 
-inline static float LengthSquared(const QPointF* p1, const QPointF* p2)
-{
-    return LengthSquared(p1->x(), p1->y(), p2->x(), p2->y());
-}
+//inline static float LengthSquared(const QPointF* p1, const QPointF* p2)
+//{
+//    return LengthSquared(p1->x(), p1->y(), p2->x(), p2->y());
+//}
 
 BodyBuilder::PhysicsBodyUPtr BodyBuilder::CreateCircle()
 {

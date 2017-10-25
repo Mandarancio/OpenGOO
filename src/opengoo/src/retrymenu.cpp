@@ -13,13 +13,14 @@ struct RetryMenu::Impl
     ui::IPushButtonUPtr cancelBtn;
 };
 
-RetryMenu::RetryMenu() : mImpl(new Impl)
+RetryMenu::RetryMenu()
+    : mImpl(new Impl)
 {    
     {
         auto data = utils::getUIData("OK_BUTTON");
         auto offset = 10 + data->width;
         auto pos = QPoint(GE->getWidth() / 2 - offset, GE->getHeight() / 2);
-        mImpl->okBtn = std::move(utils::createPushButton(pos, *data));
+        mImpl->okBtn.reset(utils::createPushButton(pos, *data).release());
         auto btn = mImpl->okBtn.get();
         connect(btn, SIGNAL(pressed()), this, SLOT(ok()));
         btn->setVisible(true);
@@ -29,7 +30,7 @@ RetryMenu::RetryMenu() : mImpl(new Impl)
         auto data = utils::getUIData("CANCEL_BUTTON");
         auto offset = 10;
         auto pos = QPoint(GE->getWidth() / 2 + offset, GE->getHeight() / 2);
-        mImpl->cancelBtn = std::move(utils::createPushButton(pos, *data));
+        mImpl->cancelBtn.reset(utils::createPushButton(pos, *data).release());
         auto btn = mImpl->cancelBtn.get();
         connect(btn, SIGNAL(pressed()), this, SIGNAL(close()));
         btn->setVisible(true);

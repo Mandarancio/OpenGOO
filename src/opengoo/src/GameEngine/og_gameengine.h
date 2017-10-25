@@ -4,8 +4,8 @@
 
 #include "og_widget.h"
 #include "PhysicsEngine/og_physicsengine.h"
-#include "og_resourcemanager.h"
-
+#include "iresourcemanager.h"
+#include "iresourcemanagerfactory.h"
 
 typedef og::OGWidget OGWindow;
 
@@ -22,7 +22,7 @@ namespace og
             Q_OBJECT
 
             bool m_isVideoModeSupported;
-            std::unique_ptr<OGResourceManager> m_resourceManager;
+            std::unique_ptr<IResourceManager> m_resourceManager;
             std::unique_ptr<OGWindow> m_window;
 
             QScreen* getPrimaryScreen();
@@ -40,7 +40,7 @@ namespace og
             bool eventFilter(QObject* a_obj, QEvent* a_event);
 
         public:
-            OGGameEngine(OGGame* a_game, const OGConfig& a_config);
+            OGGameEngine(OGGame* a_game, const OGConfig& a_config, IResourceManagerFactory& aFactory);
 
             virtual ~OGGameEngine();
 
@@ -60,7 +60,7 @@ namespace og
                 return m_frameRate;
             }
 
-            OGResourceManager* getResourceManager();
+            IResourceManager* getResourceManager();
 
             void addUI(ui::IUI* a_ui);
             void removeUI(ui::IUI* a_ui);

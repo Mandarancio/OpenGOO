@@ -21,7 +21,7 @@ bool OGVideoMode::setVideoMode(int width, int height)
     return native_setVideoMode(width, height);
 }
 
-bool OGVideoMode::setVideoMode(const OGVideoMode & mode)
+bool OGVideoMode::setVideoMode(const OGVideoMode& mode)
 {
     return native_setVideoMode(mode);
 }

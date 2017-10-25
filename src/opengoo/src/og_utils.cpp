@@ -146,6 +146,19 @@ std::unique_ptr<UIData> getUIData(const QString & id)
     return data;
 }
 
+template<class T> std::unique_ptr<T> inline createUI(const QPoint& pos, const UIData& data)
+{
+    auto ui = std::unique_ptr<T>(new T);
+
+    ui->setPosition(pos.x(), pos.y());
+    ui->setSize(data.width, data.height);
+    ui->setUpImage(getImage(data.up));
+    ui->setOverImage(getImage(data.over));
+    ui->setText(getText(data.text));
+
+    return ui;
+}
+
 std::unique_ptr<ui::PushButton> createPushButton(const QPoint &pos, const UIData& data)
 {
     return createUI<ui::PushButton>(pos, data);

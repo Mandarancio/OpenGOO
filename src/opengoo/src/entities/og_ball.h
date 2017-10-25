@@ -364,8 +364,8 @@ protected:
         void _CreateStrand(OGBall* b1, OGBall* b2);
 
         std::unique_ptr<BallSensor> _sensor;
-        std::shared_ptr<og::PhysicsBody> m_body;
         QString m_name;
+        std::shared_ptr<og::PhysicsBody> m_body;
 
         AudioSPtr m_markerSound;
         AudioSPtr m_pickupSound;

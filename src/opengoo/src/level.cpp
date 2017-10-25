@@ -28,7 +28,7 @@ Level::Level(const QString &/*levelname*/) : mImpl(new Impl)
         auto data = utils::getUIData("MENU_BUTTON");
         int x = GE->getWidth() - (data->width + 20);
         int y = GE->getHeight() - (data->height + 20);
-        mImpl->menuBtn = std::move(utils::createPushButton(QPoint(x,y), *data));
+        mImpl->menuBtn.reset(utils::createPushButton(QPoint(x,y), *data).release());
         auto btn = mImpl->menuBtn.get();
         connect(btn, SIGNAL(pressed()), this, SLOT(menuButton()));
     }
@@ -38,7 +38,7 @@ Level::Level(const QString &/*levelname*/) : mImpl(new Impl)
         auto data = utils::getUIData("RETRY_BUTTON");
         int x = 20;
         int y = GE->getHeight() - (data->height + 20);
-        mImpl->retryBtn = std::move(utils::createPushButton(QPoint(x,y), *data));
+        mImpl->retryBtn.reset(utils::createPushButton(QPoint(x,y), *data).release());
         auto btn = mImpl->retryBtn.get();
         connect(btn, SIGNAL(pressed()), this, SLOT(retryButton()));
     }

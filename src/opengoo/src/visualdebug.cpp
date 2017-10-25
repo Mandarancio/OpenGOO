@@ -8,7 +8,6 @@
 #include "flags.h"
 #include "physics.h"
 
-
 extern OGBall* _nearestBall;
 extern OGBall* _selectedBall;
 
@@ -16,7 +15,7 @@ namespace visual_debug
 {
 bool _initImages = true;
 QList<QImage> _images;
-const qreal DEGREE = 57.2957795;
+//const qreal DEGREE = 57.2957795;
 }
 
 using namespace visual_debug;

@@ -7,6 +7,7 @@
 #include "GameEngine/og_gameengine.h"
 #include "opengoo.h"
 #include "og_gameconfig.h"
+#include "resourcemanagerfactory.h"
 
 #include "flags.h"
 #include "og_utils.h"
@@ -31,7 +32,8 @@ int OGApplication::run(int argc, char **argv)
         game->GotoScene(config.levelName);
         game->SetLanguage(config.language);
 
-        OGGameEngine engine(game, config);
+        ResourceManagerFactory factory;
+        OGGameEngine engine(game, config, factory);
         if (engine.initialize())
         {
             app.exec();

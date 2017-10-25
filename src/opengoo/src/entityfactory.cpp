@@ -137,6 +137,9 @@ static BodyBuilder::Type GetBodyType(WOGBallShape::Type a_type)
 
     case WOGBallShape::e_rectangle:
         return BodyBuilder::e_rect;
+
+    case WOGBallShape::e_unknown:
+        return BodyBuilder::e_unknown;
     }
 
     return BodyBuilder::e_unknown;
@@ -169,6 +172,8 @@ EntityPtr EntityFactory::CreateBall(const WOGBallInstance& a_ball)
         builder.SetRadius(static_cast<WOGCircleBall&>(*shape).radius);
         break;
     case BodyBuilder::e_rect:
+        break;
+    case BodyBuilder::e_unknown:
         break;
     }
 
@@ -208,6 +213,8 @@ EntityPtr EntityFactory::CreateBall(const WOGBallInstance& a_ball)
         col = std::make_shared<og::CircleCollider>(static_cast<WOGCircleBall&>(*shape).radius);
         break;
     case BodyBuilder::e_rect:
+        break;
+    case BodyBuilder::e_unknown:
         break;
     }
 
@@ -292,7 +299,7 @@ public:
         m_isCenterOrigin = false;
     }
 
-    SpriteBuilder& SetSource(og::OGResourceManager::ImageSourceSPtr& a_src)
+    SpriteBuilder& SetSource(og::ImageSourceSPtr& a_src)
     {
         m_imageSource = a_src;
 
@@ -336,7 +343,7 @@ public:
     }
 
 private:
-    og::OGResourceManager::ImageSourceSPtr m_imageSource;
+    og::ImageSourceSPtr m_imageSource;
     float m_scaleX;
     float m_scaleY;
     float m_angle;
@@ -346,7 +353,7 @@ private:
 class ButtonBuilder
 {
 public:
-    ButtonBuilder(og::OGResourceManager& a_resourceManager)
+    ButtonBuilder(og::IResourceManager& a_resourceManager)
         : m_resourceManager(a_resourceManager)
         , m_position()
         , m_id()
@@ -402,6 +409,10 @@ public:
     std::shared_ptr<OGSprite> CreateSprite(const QString& a_id)
     {
         auto src = m_resourceManager.GetImageSourceById(a_id);
+        if (!src)
+        {
+            src = std::make_shared<og::ImageSource>();
+        }
 
         return SpriteBuilder()
             .SetSource(src)
@@ -424,7 +435,7 @@ public:
     }
 
 private:
-    og::OGResourceManager& m_resourceManager;
+    og::IResourceManager& m_resourceManager;
     QPointF m_position;
     QString m_id;
     QPointF m_scale;

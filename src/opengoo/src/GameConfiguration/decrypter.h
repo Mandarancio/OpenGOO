@@ -1,18 +1,12 @@
-#ifndef DECRYPTER_H
-#define DECRYPTER_H
+#pragma once
 
-#include "QByteArray"
-#include "AES.h"
+#include <qsystemdetection.h>
 
-class Decrypter
-{
-public:
-    Decrypter();
+#ifdef Q_OS_OSX
+#include "xordecrypter.h"
+typedef XorDecrypter Decrypter;
+#else
+#include "aesdecrypter.h"
+typedef AesDecrypter Decrypter;
+#endif
 
-    QByteArray decrypt(QByteArray &indata);
-
-private:    
-    AES _crypt;
-};
-
-#endif // DECRYPTER_H

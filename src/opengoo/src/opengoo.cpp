@@ -243,7 +243,16 @@ void OpenGOO::_Cycle()
 
         SetScene(CreateScene());
         SceneLoader sl;
-        sl.load(*m_scene);
+        logInfo("Loading Scene...");
+        if (sl.load(*m_scene))
+        {
+            logInfo("Scene was loaded");
+        }
+        else
+        {
+            logInfo("Could not load Scene");
+        }
+
         m_gotoScene.clear();
     }
 }
@@ -288,7 +297,7 @@ void OpenGOO::_Paint(QPainter* painter)
     }
 }
 
-void OpenGOO::_MouseButtonDown(QMouseEvent* ev)
+void OpenGOO::_MouseButtonDown(QMouseEvent* /*ev*/)
 {
     if (isPause())
         return;
@@ -296,7 +305,7 @@ void OpenGOO::_MouseButtonDown(QMouseEvent* ev)
 //    GetScene()->OnMouseDown(mCamera->windowToLogical(ev->pos()));
 }
 
-void OpenGOO::_MouseButtonUp(QMouseEvent* ev)
+void OpenGOO::_MouseButtonUp(QMouseEvent* /*ev*/)
 {
     if (isPause())
         return;

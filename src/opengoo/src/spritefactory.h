@@ -12,7 +12,7 @@ class SpriteFactory
 {
 public:    
 
-    static ImageSourcePtr CreateImageSource(const QString& a_id);
+    static og::ImageSourceSPtr CreateImageSource(const QString& a_id);
 
     OGSprite* CreateCap(WOGPipe* a_pipe, const QString& a_id, bool a_visible);
     OGSprite* CreateBend(const QString& a_type,

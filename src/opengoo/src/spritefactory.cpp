@@ -8,7 +8,7 @@
 #include <GameEngine/og_gameengine.h>
 
 
-ImageSourcePtr SpriteFactory::CreateImageSource(const QString& a_id)
+og::ImageSourceSPtr SpriteFactory::CreateImageSource(const QString& a_id)
 {    
     return GE->getResourceManager()->GetImageSourceById(a_id);
 }

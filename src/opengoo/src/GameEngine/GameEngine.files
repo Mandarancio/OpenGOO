@@ -3,7 +3,6 @@ SOURCES += \
     src/GameEngine/og_widget.cpp \
     src/GameEngine/og_videomode.cpp \
     src/GameEngine/og_videomode_native.cpp \
-    src/GameEngine/og_resourcemanager.cpp \
     src/GameEngine/Colliders/circlecollider.cpp \
     src/GameEngine/Colliders/rectcollider.cpp \
     src/GameEngine/input.cpp \
@@ -16,7 +15,6 @@ HEADERS += \
     src/GameEngine/og_videomode.h \
     src/GameEngine/og_videomode_native.h \
     src/GameEngine/og_game.h \
-    src/GameEngine/og_resourcemanager.h \
     src/GameEngine/og_iui.h \
     src/GameEngine/entity.h \
     src/GameEngine/graphic.h \
@@ -25,4 +23,6 @@ HEADERS += \
     src/GameEngine/Colliders/circlecollider.h \
     src/GameEngine/Colliders/rectcollider.h \
     src/GameEngine/input.h \
-    src/GameEngine/scene.h
+    src/GameEngine/scene.h \
+    src/GameEngine/iresourcemanagerfactory.h \
+    src/GameEngine/iresourcemanager.h

@@ -23,7 +23,7 @@ class OGBall;
 
 namespace og
 {
-class OGResourceManager;
+struct IResourceManager;
 
 namespace physics
 {
@@ -33,10 +33,10 @@ class PhysicsEngine;
 
 class EntityFactory
 {
-    og::OGResourceManager& m_resourceManager;
+    og::IResourceManager& m_resourceManager;
     og::physics::PhysicsEngine* m_physicEngine;
 
-    og::OGResourceManager& GetResourceManager() const
+    og::IResourceManager& GetResourceManager()
     {
         return m_resourceManager;
     }
@@ -48,7 +48,7 @@ class EntityFactory
     }
 
 public:
-    EntityFactory(og::OGResourceManager& a_rm)
+    EntityFactory(og::IResourceManager& a_rm)
         : m_resourceManager(a_rm)
         , m_physicEngine(nullptr)
     {

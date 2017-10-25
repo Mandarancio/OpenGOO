@@ -10,15 +10,12 @@
 #include "GameEngine/imagesource.h"
 #include "GameEngine/graphic.h"
 
-
-typedef std::shared_ptr<og::ImageSource> ImageSourcePtr;
-
 class QPainter;
 
 class OGSprite : public og::Graphic
 {    
     QVector2D m_position;
-    ImageSourcePtr m_source;
+    og::ImageSourceSPtr m_source;
     float m_angle;
     float m_offsetX;
     float m_offsetY;
@@ -53,13 +50,13 @@ public:
         Init();
     }
 
-    OGSprite(ImageSourcePtr a_source)
+    OGSprite(og::ImageSourceSPtr a_source)
         : m_source(a_source)
     {
         Init();
     }
 
-    OGSprite(float a_x, float a_y, ImageSourcePtr a_source)
+    OGSprite(float a_x, float a_y, og::ImageSourceSPtr a_source)
         : m_position(a_x, a_y), m_source(a_source)
     {
         Init();
@@ -199,7 +196,7 @@ public:
        m_colorize = a_color;
     }
 
-    static OGSpritePtr Create(ImageSourcePtr a_source)
+    static OGSpritePtr Create(og::ImageSourceSPtr a_source)
     {
         return std::make_shared<OGSprite>(a_source);
     }

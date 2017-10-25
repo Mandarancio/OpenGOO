@@ -216,8 +216,8 @@ class OGWorld : public og::Scene
 //        Target LoadConf(const QString &path);
 
 //        TODO why this here?
-        void CreateStrand(OGBall* b1, OGBall* b2);
-        void RemoveStrand(OGStrand* strand);
+        void CreateStrand(OGBall*, OGBall*);
+        void RemoveStrand(OGStrand*);
 
         EntityPtr AddEntity(EntityPtr a_e);
 

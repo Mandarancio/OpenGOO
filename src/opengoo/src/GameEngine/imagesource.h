@@ -4,6 +4,7 @@
 
 class QRectF;
 class QPointF;
+class QImage;
 
 namespace og
 {
@@ -16,18 +17,13 @@ public:
     {
     }
 
-    ImageSource(const QString& a_filename)
-        : m_image(a_filename)
-    {
-    }
+    ImageSource(const QString& a_filename);
 
-    void Render(QPainter& a_painter,
-                const QRectF& a_target,
-                const QRectF& a_source);
+    ImageSource(const QImage& aImage);
 
-    void Render(QPainter& a_painter,
-                const QPointF& a_pos,
-                const QRectF& a_source);
+    void Render(QPainter& a_painter, const QRectF& a_target, const QRectF& a_source);
+
+    void Render(QPainter& a_painter, const QPointF& a_pos, const QRectF& a_source);
 
     int GetWidth() const
     {
@@ -39,4 +35,6 @@ public:
         return m_image.height();
     }
 };
+
+typedef std::shared_ptr<ImageSource> ImageSourceSPtr;
 }

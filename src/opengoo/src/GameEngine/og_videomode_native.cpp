@@ -12,3 +12,7 @@
 #ifdef Q_OS_WIN
 #include "og_videomode_native_win.cpp"
 #endif
+
+#ifdef Q_OS_MAC
+#include "og_videomode_native_mac.cpp"
+#endif
