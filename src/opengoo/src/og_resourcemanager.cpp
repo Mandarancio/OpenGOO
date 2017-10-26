@@ -3,11 +3,13 @@
 #include <QString>
 
 #include "GameConfiguration/binltlfile.h"
+#include "GameConfiguration/wog_text.h"
+#include "GameConfiguration/wog_resources.h"
 
 #include <logger.h>
+
 #include "og_resourcemanager.h"
 #include "og_resourceconfig.h"
-#include "wog_resources.h"
 #include "og_data.h"
 
 bool OGResourceManager::ParseResourceFile(const QString& a_filename)
@@ -36,6 +38,18 @@ bool OGResourceManager::ParseResourceFile(const QString& a_filename)
     m_resources[filename] = res;
 
     return true;
+}
+
+bool OGResourceManager::ParseTextFile(const QString& a_filename, const QString& a_language)
+{
+    m_text.reset(OGData::GetText(a_filename, a_language));
+    return m_text.get();
+}
+
+bool OGResourceManager::ParseFxFile(const QString& a_filename)
+{
+    m_effects.reset(OGData::GetEffects(a_filename));
+    return m_effects.get();
 }
 
 og::ImageSourceSPtr OGResourceManager::CreateImageSource(const QString& a_filename)
@@ -126,17 +140,13 @@ const WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
 
 og::audio::SoundSource* OGResourceManager::AddSoundSource(const QString a_id)
 {
-    static int count = 0;
-
     foreach (auto& res, m_resources)
     {
         auto filename = res->GetSound(a_id);
         if (!filename.isEmpty())
         {
             filename.append(".ogg");
-            auto it = m_soundSources.insert(a_id, og::audio::SoundSource(filename.toStdString()));
-            ++count;
-            qDebug() << count << " id:" << a_id;
+            auto it = m_soundSources.insert(a_id, og::audio::SoundSource(filename.toStdString()));;
             return &(it.value());
         }
     }
@@ -191,4 +201,16 @@ MusicSPtr OGResourceManager::GetMusic(const QString& a_id)
     }
 
     return nullptr;
+}
+
+QString OGResourceManager::GetText(const QString& aId)
+{
+    auto& string = m_text->string;
+    auto it = string.find(aId);
+    if (it == string.end())
+    {
+        return "";
+    }
+
+    return it.value();
 }

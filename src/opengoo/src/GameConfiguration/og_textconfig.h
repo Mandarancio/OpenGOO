@@ -1,4 +1,5 @@
 #pragma once
+
 #include "og_xmlconfig.h"
 
 struct WOGText;
@@ -6,14 +7,22 @@ struct WOGText;
 class OGTextConfig : public OGXmlConfig
 {
 public:
-    typedef WOGText* Type;
+    typedef std::unique_ptr<WOGText> Type;
 
 public:
-    OGTextConfig(const QString& filename)
-        :OGXmlConfig(filename)
+    OGTextConfig(const QString& aFilename)
+        :OGXmlConfig(aFilename)
     {
         SetRootTag("strings");
     }
 
-    WOGText* Parser(const QString& language);
+    void SetLanguage(const QString& aLanguage)
+    {
+        mLanguage = aLanguage;
+    }
+
+    Type Parser();
+
+private:
+    QString mLanguage;
 };

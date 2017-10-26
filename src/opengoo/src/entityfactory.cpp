@@ -361,6 +361,7 @@ public:
         , m_up()
         , m_over()
         , m_rotation(0.0f)
+        , m_depth(0)
     {
     }
 
@@ -406,6 +407,26 @@ public:
         return *this;
     }
 
+    ButtonBuilder& SetDepth(float a_depth)
+    {
+        m_depth = a_depth;
+        return *this;
+    }
+
+    std::shared_ptr<Button> Build()
+    {
+        auto up = CreateSprite(m_up);
+        auto over = CreateSprite(m_over);
+
+        auto col = std::make_shared<og::RectCollider>(up->GetScaledWidth(), up->GetScaledHeight());
+        auto b = std::make_shared<Button>(m_position.x(), -m_position.y(), up, over, m_callback);
+        b->SetName(m_id);
+        b->SetCollider(col);
+        b->SetDepth(m_depth);
+        return b;
+    }
+
+private:
     std::shared_ptr<OGSprite> CreateSprite(const QString& a_id)
     {
         auto src = m_resourceManager.GetImageSourceById(a_id);
@@ -422,18 +443,6 @@ public:
             .Build();
     }
 
-    std::shared_ptr<Button> Build()
-    {
-        auto up = CreateSprite(m_up);
-        auto over = CreateSprite(m_over);
-
-        auto col = std::make_shared<og::RectCollider>(up->GetScaledWidth(), up->GetScaledHeight());
-        auto b = std::make_shared<Button>(m_position.x(), -m_position.y(), up, over, m_callback);
-        b->SetName(m_id);
-        b->SetCollider(col);
-        return b;
-    }
-
 private:
     og::IResourceManager& m_resourceManager;
     QPointF m_position;
@@ -442,6 +451,7 @@ private:
     QString m_up;
     QString m_over;
     float m_rotation;
+    float m_depth;
     Button::Callback m_callback;
 };
 
@@ -471,4 +481,10 @@ EntityPtr EntityFactory::CreateButton(const WOGButton& a_btnDef)
 
 
     return builder.Build();
+}
+
+EntityPtr EntityFactory::CreateLabel(const WOGLabel& a_label)
+{
+    qDebug() << m_resourceManager.GetText(a_label.text);
+    return std::make_shared<og::Entity>(a_label.position.x(), a_label.position.y());
 }

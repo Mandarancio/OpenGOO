@@ -75,23 +75,51 @@ bool OGXmlConfig::Read()
     return false;
 }
 
-QPointF OGXmlConfig::StringToPoint(const QString & position)
+QPointF OGXmlConfig::StringToPointF(const QString& aPosition)
 {
-    QStringList pos(position.split(","));
+    QPointF pos;
+    auto sl = aPosition.split(",");
+    for (int i = 0; i < sl.size(); ++i)
+    {
+        auto val = sl.at(i).toDouble();
+        switch (i)
+        {
+        case 0:
+            pos.setX(val);
+            break;
+        case 1:
+            pos.setY(val);
+            return pos;
+        }
+    }
 
-    if (pos.size() == 2)
-    {
-        return QPointF(pos.at(0).toDouble(), pos.at(1).toDouble());
-    }
-    else
-    {
-        return QPointF();
-    }
+    return pos;
 }
 
-QPointF OGXmlConfig::StringToPoint(const QString & x, const QString & y)
+QPointF OGXmlConfig::StringToPointF(const QString & x, const QString & y)
 {
     return QPointF(x.toDouble(), y.toDouble());
+}
+
+QPoint OGXmlConfig::StringToPoint(const QString& aPosition)
+{
+    QPoint pos;
+    auto sl = aPosition.split(",");
+    for (int i = 0; i < sl.size(); ++i)
+    {
+        auto val = sl.at(i).toInt();
+        switch (i)
+        {
+        case 0:
+            pos.setX(val);
+            break;
+        case 1:
+            pos.setY(val);
+            return pos;
+        }
+    }
+
+    return pos;
 }
 
 QColor OGXmlConfig::StringToColor(const QString & color)

@@ -21,7 +21,8 @@ struct SceneLoaderHelper
 {
     SceneLoaderHelper(og::Scene& aScene)
         : mScene(aScene)
-        , mEntityFactory(*GE->getResourceManager())
+        , mResouceManger(GE->getResourceManager())
+        , mEntityFactory(*mResouceManger)
     {
     }
 
@@ -37,7 +38,12 @@ struct SceneLoaderHelper
 
     void processCamera(const WOGCamera&);
 
+    void processLabel(const WOGLabel&);
+
+    void processParticle(const WOGScene::WOGParticle&);
+
     og::Scene& mScene;
+    og::IResourceManager* mResouceManger;
     EntityFactory mEntityFactory;
 };
 
@@ -114,7 +120,7 @@ void SceneLoaderHelper::processSceneLayer(const WOGSceneLayer& aSceneLayer)
 
 void SceneLoaderHelper::processButton(const WOGButton& aButton)
 {
-    mScene.AddEntity(mEntityFactory.CreateButton(aButton))->SetDepth(aButton.depth);
+    mScene.AddEntity(mEntityFactory.CreateButton(aButton));
 }
 
 void SceneLoaderHelper::processButtonGroup(const WOGButtonGroup& aButtonGroup)
@@ -123,6 +129,19 @@ void SceneLoaderHelper::processButtonGroup(const WOGButtonGroup& aButtonGroup)
     {
         processButton(btn);
     }
+}
+
+void SceneLoaderHelper::processLabel(const WOGLabel& aLabel)
+{
+    if (aLabel.id.isEmpty())
+    {
+        mScene.AddEntity(mEntityFactory.CreateLabel(aLabel));
+    }
+}
+
+void SceneLoaderHelper::processParticle(const WOGScene::WOGParticle& aParticle)
+{
+    qDebug() << aParticle.effect;
 }
 
 void SceneLoaderHelper::processScene(const WOGScene& aScene)
@@ -135,6 +154,16 @@ void SceneLoaderHelper::processScene(const WOGScene& aScene)
     foreach (const auto& bg, aScene.buttongroup)
     {
         processButtonGroup(bg);
+    }
+
+    foreach (const auto& l, aScene.label)
+    {
+        processLabel(l);
+    }
+
+    foreach (const auto& p, aScene.particle)
+    {
+        processParticle(p);
     }
 }
 

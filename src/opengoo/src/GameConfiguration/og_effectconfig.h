@@ -1,5 +1,4 @@
-#ifndef OG_EFFECTCONFIG_H
-#define OG_EFFECTCONFIG_H
+#pragma once
 
 #include "og_xmlconfig.h"
 #include "wog_effects.h"
@@ -7,9 +6,14 @@
 class OGEffectConfig : public OGXmlConfig
 {
 public:
-    OGEffectConfig(const QString & filename);
+    typedef std::unique_ptr<WOGEffects> Type;
 
-    WOGEffects* Parser();
+public:
+    OGEffectConfig(const QString & aFileName)
+        : OGXmlConfig(aFileName)
+    {
+        SetRootTag("effects");
+    }
+
+    Type Parser();
 };
-
-#endif // OG_EFFECTCONFIG_H

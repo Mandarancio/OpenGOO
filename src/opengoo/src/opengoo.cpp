@@ -131,6 +131,16 @@ void OpenGOO::_Start()
         logError("Could not load resources");
     }
 
+    if (!rm->ParseTextFile("./properties/text.xml", m_language))
+    {
+        logError("Could not load texts");
+    }
+
+    if (!rm->ParseFxFile("./properties/fx.xml"))
+    {
+        logError("Could not load fx");
+    }
+
     mCamera.SetSize(width_, height_);
     mCamera.SetPosition(0, 0);
     mCamera.SetZoom(1);

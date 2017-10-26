@@ -109,7 +109,8 @@ HEADERS += \
     src/keyframe.h \
     src/camera.h \
     src/og_resourcemanager.h \
-    src/resourcemanagerfactory.h
+    src/resourcemanagerfactory.h \
+    font.h
 
 SOURCES += \
     src/main.cpp \

@@ -17,6 +17,7 @@ struct WOGRadialForceField;
 struct WOGBallInstance;
 struct WOGStrand;
 struct WOGButton;
+struct WOGLabel;
 
 class OGIPipe;
 class OGBall;
@@ -80,5 +81,7 @@ public:
     EntityPtr CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2);
 
     EntityPtr CreateButton(const WOGButton& a_btnDef);
+
+    EntityPtr CreateLabel(const WOGLabel& a_label);
 };
 

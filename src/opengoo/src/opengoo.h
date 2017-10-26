@@ -75,12 +75,12 @@ class OpenGOO : public og::OGGame
 
         bool isPause()
         {
-            return _pause;
+            return mPause;
         }
 
-        void SetPause(bool pause)
+        void SetPause(bool aPause)
         {
-            pause = pause;
+            mPause = aPause;
         }
 
         friend class Level;
@@ -165,7 +165,7 @@ class OpenGOO : public og::OGGame
         QDateTime lastTime_;
         int m_deltaTime;
 
-        bool _pause;
+        bool mPause;
 
         bool isContinue_;
         bool isLevelExit_;

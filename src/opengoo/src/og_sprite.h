@@ -57,7 +57,8 @@ public:
     }
 
     OGSprite(float a_x, float a_y, og::ImageSourceSPtr a_source)
-        : m_position(a_x, a_y), m_source(a_source)
+        : m_position(a_x, a_y)
+        , m_source(a_source)
     {
         Init();
     }

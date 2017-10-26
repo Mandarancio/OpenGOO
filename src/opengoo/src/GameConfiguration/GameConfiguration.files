@@ -13,8 +13,7 @@ SOURCES += \
     src/GameConfiguration/wog_scene.cpp \
     src/GameConfiguration/wog_resources.cpp \
     src/GameConfiguration/wog_material.cpp \
-    src/GameConfiguration/wog_text.cpp \
-    src/GameConfiguration/wog_pipe.cpp \
+    src/GameConfiguration/wog_pipe.cpp
 
 macx {
 SOURCES += \
@@ -51,6 +50,7 @@ HEADERS += \
     src/GameConfiguration/xordecrypter.h \
     src/GameConfiguration/aesdecrypter.h \
     src/GameConfiguration/decrypter.h \
-    src/GameConfiguration/binltlfile.h
+    src/GameConfiguration/binltlfile.h \
+    src/GameConfiguration/ogeffectconfigparser.h
 
 INCLUDEPATH += ../extlibs/AES/

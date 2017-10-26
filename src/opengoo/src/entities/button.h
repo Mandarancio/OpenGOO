@@ -10,7 +10,7 @@ class Button : public og::Entity
 
     void OnMouseDown()
     {
-        if (m_callback)        
+        if (m_callback)
             m_callback(*this);
     }
 

@@ -16,6 +16,7 @@
 
 #include "GameEngine/entity.h"
 #include "GameEngine/scene.h"
+#include "GameConfiguration/wog_effects.h"
 
 #include "SoundEngine/music.h"
 
@@ -27,7 +28,6 @@ typedef std::unique_ptr<LinearForceField> LinearForceFieldPtr;
 
 struct WOGLevel;
 struct WOGText;
-struct WOGEffects;
 struct WOGBallInstance;
 struct WOGStrand;
 struct WOGPipe;

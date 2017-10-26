@@ -51,14 +51,6 @@ struct WOGLinearForceField
     bool geomonly;
 };
 
-struct WOGParticle
-{
-    QString effect;
-    float depth;
-    QPointF position;
-    float pretick;
-};
-
 struct WOGButton : public WOGVObject
 {
     QString id;
@@ -102,6 +94,14 @@ struct WOGCompositeGeom : public WOGPObject
 
 struct WOGScene
 {
+    struct WOGParticle
+    {
+        QString effect;
+        float depth;
+        QPointF position;
+        float pretick;
+    };
+
     float minx;
     float miny;
     float maxx;

@@ -265,7 +265,7 @@ private:
 
         void OnMouseExit();
 
-        void Added();                
+        void Added();
 
         AudioSPtr GetSound(const QString& a_id);
 

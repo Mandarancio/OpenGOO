@@ -16,7 +16,7 @@ struct OGLevelConfigHelper
 WOGPoi OGLevelConfigHelper::CreatePoi(const QDomElement &element)
 {
     WOGPoi obj;
-    obj.position = OGXmlConfig::StringToPoint(element.attribute("pos"));
+    obj.position = OGXmlConfig::StringToPointF(element.attribute("pos"));
     obj.traveltime = element.attribute("traveltime").toDouble();
     obj.pause = element.attribute("pause").toDouble();
     obj.zoom = element.attribute("zoom").toDouble();
@@ -41,7 +41,7 @@ WOGCamera OGLevelConfigHelper::CreateCamera(const QDomElement& element)
         obj.aspect = WOGCamera::Unknown;
     }
 
-    obj.endpos = OGXmlConfig::StringToPoint(element.attribute("endpos"));
+    obj.endpos = OGXmlConfig::StringToPointF(element.attribute("endpos"));
     obj.endzoom = element.attribute("endzoom", "1").toDouble();
 
     for (auto node = element.firstChild(); !node.isNull(); node = node.nextSibling())
@@ -86,7 +86,7 @@ WOGStrand OGLevelConfigHelper::CreateStrand(const QDomElement& element)
 void OGLevelConfigHelper::LoadLevelExit(WOGLevelExit& obj, const QDomElement &element)
 {
     obj.id = element.attribute("id");
-    obj.pos = OGXmlConfig::StringToPoint(element.attribute("pos"));
+    obj.pos = OGXmlConfig::StringToPointF(element.attribute("pos"));
     obj.radius = element.attribute("radius").toFloat();
     obj.filter = element.attribute("filter");
 }

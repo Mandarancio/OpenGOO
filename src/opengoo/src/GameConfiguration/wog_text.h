@@ -1,23 +1,10 @@
-#ifndef WOG_TEXT_H
-#define WOG_TEXT_H
+#pragma once
 
 #include <QString>
-#include <QList>
-
-struct WOGString
-{
-    QString id;
-    QString text;
-};
+#include <QHash>
 
 struct WOGText
 {
     QString language;
-    QList<WOGString*> string;
-
-    ~WOGText() { while (!string.isEmpty()) { delete string.takeFirst(); } }
-
-    QString GetString(const QString& str);
+    QHash<QString, QString> string;
 };
-
-#endif // WOG_TEXT_H

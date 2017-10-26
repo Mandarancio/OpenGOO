@@ -4,8 +4,10 @@
 #include <QString>
 
 #include "GameEngine/iresourcemanager.h"
+#include "GameConfiguration/wog_effects.h"
 
 class WOGResources;
+struct WOGText;
 
 class OGResourceManager : public og::IResourceManager
 {
@@ -24,8 +26,12 @@ public:
     typedef std::shared_ptr<WOGBall> WOGBallSPtr;
     typedef std::shared_ptr<WOGResources> WOGResourcesSPtr;
 
-public:
+private:
     bool ParseResourceFile(const QString& a_filename);
+
+    bool ParseTextFile(const QString& a_filename, const QString& a_language);
+
+    bool ParseFxFile(const QString& a_filename);
 
     const WOGBall* GetBallByType(const QString& a_type);
 
@@ -42,9 +48,11 @@ public:
         m_soundSources.clear();
     }
 
-private:
-    template<typename T>
-    bool Load(T& a_ball, const QString& a_filename);
+    const og::IFontSPtr GetFont(const QString& aId) {return nullptr;}
+
+    QString GetText(const QString& aId);
+
+    template<typename T> bool Load(T& a_ball, const QString& a_filename);
 
     og::audio::SoundSource* AddSoundSource(const QString a_id);
 
@@ -56,4 +64,6 @@ private:
     QHash<QString, og::ImageSourceSPtr> m_imageSources;
     QHash<QString, og::audio::SoundSource> m_soundSources;
     MusicEntry m_Music;
+    std::unique_ptr<WOGText> m_text;
+    std::unique_ptr<WOGEffects> m_effects;
 };

@@ -11,7 +11,7 @@ struct OGSceneConfigHelper
     static WOGRectangle CreateRectanle(const QDomElement& element);
     static WOGCompositeGeom CreateCompositeGeom(const QDomElement& el);
     static WOGLinearForceField CreateLinearForceField(const QDomElement& element);
-    static WOGParticle CreateParticle(const QDomElement& element);
+    static WOGScene::WOGParticle CreateParticle(const QDomElement& element);
     static WOGButtonGroup CreateButtonGroup(const QDomElement& element);
     static WOGRadialForceField CreateRadialForceField(const QDomElement& element);
 
@@ -23,8 +23,8 @@ WOGButton OGSceneConfigHelper::CreateButton(const QDomElement& element)
     WOGButton obj;
     obj.id = element.attribute("id");
     obj.depth = element.attribute("depth").toFloat();
-    obj.position = OGXmlConfig::StringToPoint(element.attribute("x"), element.attribute("y"));
-    obj.scale = OGXmlConfig::StringToPoint(element.attribute("scalex", "1"), element.attribute("scaley", "1"));
+    obj.position = OGXmlConfig::StringToPointF(element.attribute("x"), element.attribute("y"));
+    obj.scale = OGXmlConfig::StringToPointF(element.attribute("scalex", "1"), element.attribute("scaley", "1"));
     obj.rotation = element.attribute("rotation","0").toFloat();
     obj.alpha = element.attribute("alpha", "1").toFloat();
     obj.colorize = OGXmlConfig::StringToColor(element.attribute("colorize", "255,255,255"));
@@ -45,7 +45,7 @@ WOGLabel OGSceneConfigHelper::CreateLabel(const QDomElement& element)
     WOGLabel obj;
     obj.id = element.attribute("id");
     obj.depth = element.attribute("depth", "0").toDouble();
-    obj.position = OGXmlConfig::StringToPoint(element.attribute("x"), element.attribute("y"));
+    obj.position = OGXmlConfig::StringToPointF(element.attribute("x"), element.attribute("y"));
     obj.align = element.attribute("align");
     obj.rotation = element.attribute("rotation", "0").toDouble();
     obj.scale = element.attribute("scale", "1").toDouble();
@@ -63,8 +63,8 @@ WOGSceneLayer OGSceneConfigHelper::CreateSceneLayer(const QDomElement& element)
     obj.id = element.attribute("id");
     obj.name = element.attribute("name");
     obj.depth = element.attribute("depth", "0").toDouble();
-    obj.position = OGXmlConfig::StringToPoint(element.attribute("x"), element.attribute("y"));
-    obj.scale = OGXmlConfig::StringToPoint(element.attribute("scalex", "1"), element.attribute("scaley", "1"));
+    obj.position = OGXmlConfig::StringToPointF(element.attribute("x"), element.attribute("y"));
+    obj.scale = OGXmlConfig::StringToPointF(element.attribute("scalex", "1"), element.attribute("scaley", "1"));
     obj.rotation = element.attribute("rotation", "0").toDouble();
     obj.alpha = element.attribute("alpha", "1").toDouble();
     obj.colorize = OGXmlConfig::StringToColor(element.attribute("colorize", "255,255,255"));
@@ -79,7 +79,7 @@ WOGLinearForceField OGSceneConfigHelper::CreateLinearForceField(const QDomElemen
 {
     WOGLinearForceField obj;
     obj.type = element.attribute("type");
-    obj.force = OGXmlConfig::StringToPoint(element.attribute("force"));
+    obj.force = OGXmlConfig::StringToPointF(element.attribute("force"));
     obj.dampeningfactor = element.attribute("dampeningfactor", "0").toDouble();
     obj.antigrav = OGXmlConfig::StringToBool(element.attribute("antigrav"));
     obj.geomonly = OGXmlConfig::StringToBool(element.attribute("geomonly"));
@@ -87,12 +87,12 @@ WOGLinearForceField OGSceneConfigHelper::CreateLinearForceField(const QDomElemen
     return obj;
 }
 
-WOGParticle OGSceneConfigHelper::CreateParticle(const QDomElement& element)
+WOGScene::WOGParticle OGSceneConfigHelper::CreateParticle(const QDomElement& element)
 {
-    WOGParticle obj;
+    WOGScene::WOGParticle obj;
     obj.effect = element.attribute("effect");
     obj.depth = element.attribute("depth", "0").toDouble();
-    obj.position = OGXmlConfig::StringToPoint(element.attribute("pos"));
+    obj.position = OGXmlConfig::StringToPointF(element.attribute("pos"));
     obj.pretick = element.attribute("pretick", "0").toDouble();
 
     return obj;
@@ -102,7 +102,7 @@ WOGButtonGroup OGSceneConfigHelper::CreateButtonGroup(const QDomElement& element
 {
     WOGButtonGroup obj;
     obj.id = element.attribute("id");
-    obj.osx = OGXmlConfig::StringToPoint(element.attribute("osx"));
+    obj.osx = OGXmlConfig::StringToPointF(element.attribute("osx"));
 
     for (auto n = element.firstChild(); !n.isNull(); n = n.nextSibling())
     {
@@ -115,8 +115,8 @@ WOGButtonGroup OGSceneConfigHelper::CreateButtonGroup(const QDomElement& element
 WOGLine OGSceneConfigHelper::CreateLine(const QDomElement& element)
 {
     WOGLine obj;
-    obj.anchor = OGXmlConfig::StringToPoint(element.attribute("anchor"));
-    obj.normal = OGXmlConfig::StringToPoint(element.attribute("normal"));
+    obj.anchor = OGXmlConfig::StringToPointF(element.attribute("anchor"));
+    obj.normal = OGXmlConfig::StringToPointF(element.attribute("normal"));
 
     LoadPObject(obj, element);
 
@@ -128,7 +128,7 @@ WOGRadialForceField OGSceneConfigHelper::CreateRadialForceField(const QDomElemen
     WOGRadialForceField obj;
     obj.id = element.attribute("id");
     obj.type = element.attribute("type");
-    obj.center = OGXmlConfig::StringToPoint(element.attribute("center"));
+    obj.center = OGXmlConfig::StringToPointF(element.attribute("center"));
     obj.radius = element.attribute("radius", "0").toDouble();
     obj.forceatcenter = element.attribute("forceatcenter", "0").toDouble();
     obj.forceatedge = element.attribute("forceatedge", "0").toDouble();
@@ -151,7 +151,7 @@ void OGSceneConfigHelper::LoadPObject(WOGPObject& pobject, const QDomElement& el
 WOGCompositeGeom OGSceneConfigHelper::CreateCompositeGeom(const QDomElement& el)
 {
     WOGCompositeGeom obj;
-    obj.position = OGXmlConfig::StringToPoint(el.attribute("x"), el.attribute("y"));
+    obj.position = OGXmlConfig::StringToPointF(el.attribute("x"), el.attribute("y"));
     obj.rotation = el.attribute("rotation", "0").toFloat();
     LoadPObject(obj, el);
 
@@ -175,7 +175,7 @@ WOGCompositeGeom OGSceneConfigHelper::CreateCompositeGeom(const QDomElement& el)
 WOGCircle OGSceneConfigHelper::CreateCircle(const QDomElement& element)
 {
     WOGCircle obj;
-    obj.position = OGXmlConfig::StringToPoint(element.attribute("x"), element.attribute("y"));
+    obj.position = OGXmlConfig::StringToPointF(element.attribute("x"), element.attribute("y"));
     obj.radius = element.attribute("radius", "0").toDouble();
     LoadPObject(obj, element);
 
@@ -185,7 +185,7 @@ WOGCircle OGSceneConfigHelper::CreateCircle(const QDomElement& element)
 WOGRectangle OGSceneConfigHelper::CreateRectanle(const QDomElement& element)
 {
     WOGRectangle obj;
-    obj.position = OGXmlConfig::StringToPoint(element.attribute("x"), element.attribute("y"));
+    obj.position = OGXmlConfig::StringToPointF(element.attribute("x"), element.attribute("y"));
     obj.size = OGXmlConfig::StringToSize(element.attribute("width"), element.attribute("height"));
     obj.rotation = element.attribute("rotation", "0").toFloat();
     LoadPObject(obj, element);
