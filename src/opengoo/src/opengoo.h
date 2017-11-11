@@ -12,6 +12,7 @@
 
 #include "GameEngine/og_game.h"
 #include "GameEngine/scene.h"
+#include "GameEngine/camera.h"
 
 #include "progresswindow.h"
 #include <OGIPushButton>
@@ -20,7 +21,6 @@
 #include "level.h"
 #include "og_fpscounter.h"
 #include "og_world.h"
-#include "camera.h"
 
 class OGWindowCamera;
 class OGBall;
@@ -94,32 +94,25 @@ class OpenGOO : public og::OGGame
             m_gotoScene = a_scene;
         }
 
-        EntityFactory& GetEntityFactory() const
+        EntityFactory& GetEntityFactory()
         {
             return *m_entityFactory;
         }
 
-        og::Scene* GetScene() const
+        og::Scene* GetScene()
         {
             return m_scene.get();
         }
 
-        Camera& GetCamera()
+        og::Camera* GetCamera()
         {
-            return mCamera;
+            return &mCamera;
         }
 
-        const Camera& GetCamera() const
-        {
-            return mCamera;
-        }
-
-        int GetDeltaTime() const
+        int GetDeltaTime()
         {
             return m_deltaTime;
         }
-
-        QPoint WindowToLogical(const QPoint& p);
 
     static void SetDebug(OGWorld&, bool);
 
@@ -136,9 +129,11 @@ class OpenGOO : public og::OGGame
         EntityFactoryPtr m_entityFactory;
         std::shared_ptr<og::Scene> m_scene;
         std::unique_ptr<OGFPSCounter> _pFPS;
-        Camera mCamera;
+        og::Camera mCamera;
 
         bool mSceneIsLoaded;
+
+        QPointF mCameraSpeed;
 
     private:
         std::shared_ptr<og::Scene> CreateScene();
@@ -186,8 +181,8 @@ class OpenGOO : public og::OGGame
         void _Cycle();
         void _Paint(QPainter* painter);
 
-        void _MouseButtonDown(QMouseEvent*);
-        void _MouseButtonUp(QMouseEvent*);
+        void MouseButtonDown(const QPoint& aPos);
+        void MouseButtonUp(const QPoint& aPos);
         void _MouseMove(QMouseEvent* ev);
         void _MouseWheel(QWheelEvent*)
         {
@@ -210,7 +205,6 @@ class OpenGOO : public og::OGGame
         void _Quit();
 
         void Scroll();
-        void _SetBackgroundColor(const QColor &color);
 
         // Main menu
         QString _GetMainMenu();

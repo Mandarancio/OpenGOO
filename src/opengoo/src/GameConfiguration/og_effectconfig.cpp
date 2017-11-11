@@ -90,5 +90,5 @@ OGEffectConfig::Type OGEffectConfig::Parser()
         }
     }
 
-    return nullptr;
+    return obj;
 }

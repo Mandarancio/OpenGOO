@@ -67,13 +67,9 @@ public:
         return a_entity;
     }
 
-    void OnMouseDown(const QPoint& /*a_point*/)
-    {
-    }
+    void OnMouseDown(const QPoint& a_point);
 
-    void OnMouseUp(const QPoint& /*a_point*/)
-    {
-    }
+    void OnMouseUp(const QPoint& a_point);
 
     void OnMouseMove(const QPoint& /*a_point*/)
     {

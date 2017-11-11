@@ -214,3 +214,14 @@ QString OGResourceManager::GetText(const QString& aId)
 
     return it.value();
 }
+
+WOGEffect* OGResourceManager::GetEffect(const QString &aId)
+{
+    auto it = m_effects->find(aId);
+    if (it == m_effects->end())
+    {
+        return nullptr;
+    }
+
+    return it->get();
+}

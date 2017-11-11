@@ -26,6 +26,9 @@ public:
     typedef std::shared_ptr<WOGBall> WOGBallSPtr;
     typedef std::shared_ptr<WOGResources> WOGResourcesSPtr;
 
+public:
+    WOGEffect* GetEffect(const QString& aId);
+
 private:
     bool ParseResourceFile(const QString& a_filename);
 

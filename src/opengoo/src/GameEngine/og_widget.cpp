@@ -107,7 +107,7 @@ void OGWidget::mousePressEvent(QMouseEvent* ev)
         }
     }
 
-    getGame()->MouseButtonDown(ev);
+    getGame()->MouseButtonDown(GE->windowToLogical(ev->pos()));
 
     ev->accept();
 }
@@ -128,7 +128,7 @@ void OGWidget::mouseReleaseEvent(QMouseEvent* ev)
         }
     }
 
-    getGame()->MouseButtonUp(ev);
+    getGame()->MouseButtonUp(GE->windowToLogical(ev->pos()));
 
     ev->accept();
 }

@@ -4,6 +4,8 @@
 #include "OGLib/pointf.h"
 #include "OGLib/size.h"
 
+namespace og
+{
 class Camera
 {
     oglib::Size mSize;
@@ -53,6 +55,7 @@ public:
 
     void SetZoom(float aZoom)
     {
+        Q_ASSERT_X(aZoom == 0, "SetZoom", "aZoom equal to zero");
         mZoom = aZoom;
     }
 
@@ -61,3 +64,4 @@ public:
         return mZoom;
     }
 };
+} // ns:og

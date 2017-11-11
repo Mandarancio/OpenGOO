@@ -56,7 +56,9 @@ OpenGOO::~OpenGOO()
 OpenGOO* OpenGOO::GetInstance()
 {
     if (!pInstance_)
+    {
         pInstance_ = new OpenGOO;
+    }
 
     return pInstance_;
 }
@@ -109,15 +111,21 @@ void OpenGOO::_Start()
     m_entityFactory.reset(new EntityFactory(*GE->getResourceManager()));
 
     if (m_language.isEmpty())
+    {
         m_language = "en";
+    }
 
     SetScene(std::make_shared<og::Scene>(""));
 
     if (m_gotoScene.isEmpty())
+    {
         m_gotoScene = _GetMainMenu();
+    }
 
     if (flag & FPS)
+    {
         _pFPS.reset(new OGFPSCounter(QRect(20, 20, 40, 40)));
+    }
 
     width_ = GE->getWidth();
     height_ = GE->getHeight();
@@ -144,6 +152,7 @@ void OpenGOO::_Start()
     mCamera.SetSize(width_, height_);
     mCamera.SetPosition(0, 0);
     mCamera.SetZoom(1);
+    mCameraSpeed = QPointF();
 
     m_deltaTime = 0;
     lastTime_ = QDateTime::currentDateTime();
@@ -193,7 +202,6 @@ bool OpenGOO::LevelIsExists(const QString& a_name)
 
 void OpenGOO::LoadScene(og::Scene* a_scene)
 {
-
 //        if (!world->Initialize())
 //            return;
 
@@ -202,7 +210,6 @@ void OpenGOO::LoadScene(og::Scene* a_scene)
     {
         return;
     }
-
 
 //    if (world->Load())
     {
@@ -233,17 +240,17 @@ void OpenGOO::_Cycle()
         _pFPS->Update(m_deltaTime);
     }
 
-//    if (mCamera)
-//    {
-//        mCamera->Update(m_deltaTime);
-//    }
-
     lastTime_= now;
+
+    if (isPause())
+    {
+        return;
+    }
 
     Scroll();
 
-    if (isPause())
-        return;
+    const auto& pos = mCamera.GetPosition();
+    mCamera.SetPosition(pos.x() + mCameraSpeed.x(), pos.y() + mCameraSpeed.y());
 
     GetScene()->Update();
 
@@ -307,20 +314,24 @@ void OpenGOO::_Paint(QPainter* painter)
     }
 }
 
-void OpenGOO::_MouseButtonDown(QMouseEvent* /*ev*/)
+void OpenGOO::MouseButtonDown(const QPoint& aPos)
 {
     if (isPause())
+    {
         return;
+    }
 
-//    GetScene()->OnMouseDown(mCamera->windowToLogical(ev->pos()));
+    m_scene->OnMouseDown(aPos);
 }
 
-void OpenGOO::_MouseButtonUp(QMouseEvent* /*ev*/)
+void OpenGOO::MouseButtonUp(const QPoint& aPos)
 {
     if (isPause())
+    {
         return;
+    }
 
-//    GetScene()->OnMouseUp(mCamera->windowToLogical(ev->pos()));
+    m_scene->OnMouseUp(aPos);
 }
 
 void OpenGOO::_MouseMove(QMouseEvent* /*ev*/)
@@ -392,25 +403,39 @@ void OpenGOO::_Quit()
 
 void OpenGOO::Scroll()
 {
-//    if (isPause() || pProgressWnd_)
-//        return;
+    static const float OFFSET = 50.0f;
+    static const int DEFAULT_H_SPEED = 4;
+    static const int DEFAULT_V_SPEED = 4;
 
-//    static const float OFFSET = 50.0f;
+    curMousePos_ = og::MouseInput::GetPosition();
+    float sx = curMousePos_.x();
+    float sy = curMousePos_.y();
 
-//    curMousePos_ = og::MouseInput::GetPosition();
-//    float sx = curMousePos_.x();
-//    float sy = curMousePos_.y();
-//    int shift = lastTime_;
+    if (sx <= OFFSET)
+    {
+        mCameraSpeed.setX(-DEFAULT_H_SPEED);
+    }
+    else if (sx >= width_ - OFFSET)
+    {
+        mCameraSpeed.setX(DEFAULT_H_SPEED);
+    }
+    else
+    {
+        mCameraSpeed.setX(0);
+    }
 
-//    if (sx <= OFFSET)
-//        { pCamera_->ScrollLeft(shift); }
-//    else if (sx >= width_ - OFFSET)
-//        { pCamera_->ScrollRight(shift); }
-
-//    if (sy <= OFFSET)
-//        { pCamera_->ScrollUp(shift); }
-//    else if (sy >= height_ - OFFSET)
-//        { pCamera_->ScrollDown(shift);}
+    if (sy <= OFFSET)
+    {
+        mCameraSpeed.setY(DEFAULT_V_SPEED);
+    }
+    else if (sy >= height_ - OFFSET)
+    {
+        mCameraSpeed.setY(-DEFAULT_V_SPEED);
+    }
+    else
+    {
+        mCameraSpeed.setY(0);
+    }
 }
 
 void OpenGOO::SetDebug(OGWorld& /*a_world*/, bool /*a_debug*/)
@@ -419,11 +444,6 @@ void OpenGOO::SetDebug(OGWorld& /*a_world*/, bool /*a_debug*/)
 //    {
 //        body->SetDebug(a_debug);
 //    }
-}
-
-void OpenGOO::_SetBackgroundColor(const QColor &color)
-{
-    GE->getWindow()->setBackgroundColor(color, true);
 }
 
 void OpenGOO::_CreateContinueButton()
@@ -486,17 +506,26 @@ void OpenGOO::_CreateLevel(const QString &levelname)
     connect(lvl, SIGNAL(closeLevel()), this, SLOT(_backToIsland()));
 }
 
-void OpenGOO::_RemoveLevel() { pLevel_.reset(); }
+void OpenGOO::_RemoveLevel()
+{
+    pLevel_.reset();
+}
 
 // Main menu
-inline QString OpenGOO::_GetMainMenu() { return "MapWorldView"; }
+inline QString OpenGOO::_GetMainMenu()
+{
+    return "MapWorldView";
+}
 
 inline void OpenGOO::_LoadMainMenu()
 {
     _LoadLevel(GetWorld(), _GetMainMenu());
 }
 
-inline void OpenGOO::_CloseMainMenu() { _CloseLevel(); }
+inline void OpenGOO::_CloseMainMenu()
+{
+    _CloseLevel();
+}
 
 // Island public interface
 void OpenGOO::LoadIsland(const QString &name)
@@ -538,7 +567,7 @@ void OpenGOO::loadLevel(const QString &levelname)
 
 void OpenGOO::_closeContinueButton()
 {
-    pContinueBtn_.reset();    
+    pContinueBtn_.reset();
     _InitProgressWindow();
 }
 
@@ -546,27 +575,4 @@ void OpenGOO::_closeProgressWindow()
 {
     pProgressWnd_.reset();
     _backToIsland();
-}
-
-QPoint OpenGOO::WindowToLogical(const QPoint& p)
-{
-    float px = p.x();
-    float py = p.y();
-    float w = GetCamera().GetScaledWidth();
-    float h = GetCamera().GetScaledHeight();
-
-    if (!GE->isCrt())
-    {
-        auto window = GE->getWindow();
-        px *= w / window->width();
-        py *= h / window->height();
-    }
-
-    // FIXME don't work zoom
-    int a = qRound(px * 1 /*camera_->zoom()*/ - w * 0.5f);
-    int b = qRound(py * 1 /*camera_->zoom()*/ - h * 0.5f);
-    int x = qRound(GetCamera().GetPosition().x() + a);
-    int y = qRound(GetCamera().GetPosition().y() + -b);
-
-    return QPoint(x, y);
 }

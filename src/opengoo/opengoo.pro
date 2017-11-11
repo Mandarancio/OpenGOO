@@ -69,7 +69,7 @@ HEADERS += \
     src/og_camera.h \
     src/og_button.h \
     src/og_sprite.h \
-    src/og_windowcamera.h \        
+    src/og_windowcamera.h \
     src/og_strand.h \
     src/og_circle.h \
     src/og_ibody.h \
@@ -107,10 +107,9 @@ HEADERS += \
     src/sceneloader.h \
     src/animator.h \
     src/keyframe.h \
-    src/camera.h \
     src/og_resourcemanager.h \
     src/resourcemanagerfactory.h \
-    font.h
+    src/font.h
 
 SOURCES += \
     src/main.cpp \

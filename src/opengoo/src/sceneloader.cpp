@@ -16,6 +16,7 @@
 
 #include "opengoo.h"
 #include "og_windowcamera.h"
+#include "og_resourcemanager.h"
 
 struct SceneLoaderHelper
 {
@@ -50,8 +51,9 @@ struct SceneLoaderHelper
 void SceneLoaderHelper::processCamera(const WOGCamera& aCamera)
 {
     const auto& poi = aCamera.poi.back();
-    GAME->GetCamera().SetPosition(poi.position.x(), poi.position.y());
-    GAME->GetCamera().SetZoom(poi.zoom);
+    auto cam = GE->getCamera();
+    cam->SetPosition(poi.position.x(), poi.position.y());
+    cam->SetZoom(1 /poi.zoom);
 }
 
 void SceneLoaderHelper::processLevel(const WOGLevel& aLevel)
@@ -141,11 +143,16 @@ void SceneLoaderHelper::processLabel(const WOGLabel& aLabel)
 
 void SceneLoaderHelper::processParticle(const WOGScene::WOGParticle& aParticle)
 {
-    qDebug() << aParticle.effect;
+    if (auto effect = ((OGResourceManager*)mResouceManger)->GetEffect(aParticle.effect))
+    {
+        qDebug() << aParticle.effect << effect->GetType();
+    }
 }
 
 void SceneLoaderHelper::processScene(const WOGScene& aScene)
 {
+    GE->setBackgroundColor(aScene.backgroundcolor);
+
     foreach (const auto& sl, aScene.sceneLayer)
     {
         processSceneLayer(sl);

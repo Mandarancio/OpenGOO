@@ -61,4 +61,36 @@ void Scene::Render(QPainter& a_painter)
     }
 }
 
+void Scene::OnMouseDown(const QPoint& a_point)
+{
+    QVector2D point(a_point);
+    for (auto it = m_update.cbegin(); it != m_update.cend(); ++it)
+    {
+        if (auto col = (*it)->GetCollider())
+        {
+            if (col->OverlapPoint(point))
+            {
+                (*it)->OnMouseDown();
+                break;
+            }
+        }
+    }
 }
+
+void Scene::OnMouseUp(const QPoint& a_point)
+{
+    QVector2D point(a_point);
+    for (auto it = m_update.cbegin(); it != m_update.cend(); ++it)
+    {
+        if (auto col = (*it)->GetCollider())
+        {
+            if (col->OverlapPoint(point))
+            {
+                (*it)->OnMouseUp();
+                break;
+            }
+        }
+    }
+}
+
+} // ns:og

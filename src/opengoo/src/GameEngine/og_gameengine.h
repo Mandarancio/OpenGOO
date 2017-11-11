@@ -6,6 +6,7 @@
 #include "PhysicsEngine/og_physicsengine.h"
 #include "iresourcemanager.h"
 #include "iresourcemanagerfactory.h"
+#include "og_game.h"
 
 typedef og::OGWidget OGWindow;
 
@@ -14,7 +15,6 @@ struct OGConfig;
 
 namespace og
 {
-    class OGGame;
     class OGPhysicsEngine;
 
     class OGGameEngine : public QObject
@@ -44,30 +44,47 @@ namespace og
 
             virtual ~OGGameEngine();
 
-            static OGGameEngine* getInstance() { return m_instance; }
+            static OGGameEngine* getInstance()
+            {
+                return m_instance;
+            }
+
             bool initialize();
 
-            int getWidth() const { return m_width; }
-            int getHeight() const { return m_height; }
+            int getWidth()
+            {
+                return m_width;
+            }
 
-            int getFrameDelay() const
+            int getHeight()
+            {
+                return m_height;
+            }
+
+            int getFrameDelay()
             {
                 return qRound(1000.0f / m_frameRate);
             }
 
-            int getFrameRate() const
+            int getFrameRate()
             {
                 return m_frameRate;
             }
 
-            IResourceManager* getResourceManager();
+            IResourceManager* getResourceManager()
+            {
+                return m_resourceManager.get();
+            }
 
             void addUI(ui::IUI* a_ui);
             void removeUI(ui::IUI* a_ui);
 
-            OGWindow* getWindow() const { return m_window.get(); }
+            OGWindow* getWindow()
+            {
+                return m_window.get();
+            }
 
-            bool isCrt() const
+            bool isCrt()
             {
                 return m_crt;
             }
@@ -76,6 +93,18 @@ namespace og
             {
                 m_frameRate = a_frameRate;
             }
+
+            void setBackgroundColor(const QColor& color)
+            {
+                m_window->setBackgroundColor(color, true);
+            }
+
+            Camera* getCamera()
+            {
+                return m_game->GetCamera();
+            }
+
+            QPoint windowToLogical(const QPoint& p);
 
         public slots:
             void quit();

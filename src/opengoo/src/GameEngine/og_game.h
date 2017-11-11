@@ -1,5 +1,4 @@
-#ifndef OG_GAME_H
-#define OG_GAME_H
+#pragma once
 
 class QKeyEvent;
 class QMouseEvent;
@@ -10,6 +9,8 @@ class QWheelEvent;
 
 namespace og
 {
+    class Camera;
+
     class OGGame : public QObject
     {
             virtual void _Start() = 0;
@@ -20,8 +21,6 @@ namespace og
             virtual void _Cycle() = 0;
             virtual void _KeyDown(QKeyEvent* ev) = 0;
             virtual void _KeyUp(QKeyEvent* ev) = 0;
-            virtual void _MouseButtonDown(QMouseEvent* ev) = 0;
-            virtual void _MouseButtonUp(QMouseEvent* ev) = 0;
             virtual void _MouseMove(QMouseEvent* ev) = 0;
             virtual void _MouseWheel(QWheelEvent* ev) = 0;
 
@@ -37,12 +36,11 @@ namespace og
             void Cycle() { _Cycle(); }
             void KeyDown(QKeyEvent* ev) { _KeyDown(ev); }
             void KeyUp(QKeyEvent* ev) { _KeyUp(ev); }
-            void MouseButtonDown(QMouseEvent* ev) { _MouseButtonDown(ev); }
-            void MouseButtonUp(QMouseEvent* ev) { _MouseButtonUp(ev); }
+            virtual void MouseButtonDown(const QPoint& aPos) = 0;
+            virtual void MouseButtonUp(const QPoint& aPos) = 0;
             void MouseMove(QMouseEvent* ev) { _MouseMove(ev); }
             void MouseWheel(QWheelEvent* ev) { _MouseWheel(ev); }
+            virtual Camera* GetCamera() = 0;
     };
 
-} // namespace og
-
-#endif // OG_GAME_H
+} // ns:og

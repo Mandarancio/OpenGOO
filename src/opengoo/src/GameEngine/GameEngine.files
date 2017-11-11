@@ -26,4 +26,5 @@ HEADERS += \
     src/GameEngine/scene.h \
     src/GameEngine/iresourcemanagerfactory.h \
     src/GameEngine/iresourcemanager.h \
-    ifont.h
+    src/GameEngine/camera.h \
+    src/GameEngine/ifont.h

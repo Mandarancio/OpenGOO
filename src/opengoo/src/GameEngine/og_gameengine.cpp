@@ -1,13 +1,15 @@
 #include "og_gameengine.h"
-#include "og_game.h"
-#include "og_gameconfig.h"
 
 #include <QApplication>
 #include <QScreen>
 
-#include "og_videomode.h"
 #include "logger.h"
+
+#include "og_game.h"
+#include "og_gameconfig.h"
+#include "og_videomode.h"
 #include "iresourcemanagerfactory.h"
+#include "camera.h"
 
 namespace og
 {
@@ -87,14 +89,12 @@ bool OGGameEngine::eventFilter(QObject* a_obj, QEvent* a_event)
             m_game->Activate();
             m_window->setActive(true);
             m_window->grabKeyboard();
-
             return true;
 
         case QEvent::ApplicationDeactivate:
             m_window->setActive(true);
             m_game->Deactivate();
             m_window->releaseKeyboard();
-
             return true;
 
         default:
@@ -110,11 +110,6 @@ void OGGameEngine::gameExit()
     m_game->End();
     m_window.reset();
     QApplication::quit();
-}
-
-IResourceManager* OGGameEngine::getResourceManager()
-{
-    return m_resourceManager.get();
 }
 
 void OGGameEngine::addUI(ui::IUI* a_ui)
@@ -136,4 +131,27 @@ void OGGameEngine::quit()
 {
     m_window->close();
 }
+
+QPoint OGGameEngine::windowToLogical(const QPoint& p)
+{
+    float px = p.x();
+    float py = p.y();
+    auto cam = m_game->GetCamera();
+    float w = cam->GetScaledWidth();
+    float h = cam->GetScaledHeight();
+
+    if (!m_crt)
+    {
+        px *= w / m_window->width();
+        py *= h / m_window->height();
+    }
+
+    // FIXME don't work zoom
+    int a = qRound(px * 1 /*camera_->zoom()*/ - w * 0.5f);
+    int b = qRound(py * 1 /*camera_->zoom()*/ - h * 0.5f);
+    int x = qRound(cam->GetPosition().x() + a);
+    int y = qRound(cam->GetPosition().y() + -b);
+
+    return QPoint(x, y);
 }
+} // ns:og
