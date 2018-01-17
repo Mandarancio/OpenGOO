@@ -1,5 +1,4 @@
-#ifndef OG_ISLANDCONFIG_H
-#define OG_ISLANDCONFIG_H
+#pragma once
 
 #include "og_xmlconfig.h"
 #include "wog_island.h"
@@ -7,7 +6,10 @@
 class OGIslandConfig : public OGXmlConfig
 {
 public:
-    OGIslandConfig(const QString & filename);
+    OGIslandConfig()
+    {
+        SetRootTag("island");
+    }
 
     WOGIsland* Parser();
 
@@ -17,5 +19,3 @@ private:
     wog::Level* CreateLevel(const QDomElement & element);
 
 };
-
-#endif // OG_ISLANDCONFIG_H

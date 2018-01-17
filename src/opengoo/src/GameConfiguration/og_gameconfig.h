@@ -25,13 +25,12 @@ struct OGConfig
 class OGGameConfig : public OGXmlConfig
 {
 public:
-    OGGameConfig(const QString& filename)
-        :OGXmlConfig(filename)
+    OGGameConfig()
     {
         SetRootTag("config");
     }
 
     OGConfig Parser();
 
-    void Create(OGConfig& config); // Create new game configuration file
+    static void Create(const QString& fileName, OGConfig& config); // Create new game configuration file
 };

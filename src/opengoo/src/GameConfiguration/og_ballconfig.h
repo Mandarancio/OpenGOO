@@ -1,14 +1,15 @@
-#ifndef OG_BALLCONFIG_H
-#define OG_BALLCONFIG_H
+#pragma once
 
 #include "og_xmlconfig.h"
 #include "wog_ball.h"
 
-
 class OGBallConfig : public OGXmlConfig
 {
 public:
-    OGBallConfig(const QString & filename);
+    OGBallConfig()
+    {
+        SetRootTag("ball");
+    }
 
     WOGBall* Parser();
 
@@ -26,5 +27,3 @@ private:
     WOGBallDetachstrand* CreateDetachstrand_(const QDomElement & element);
     std::shared_ptr<WOGBallShape> StringToShape(const QString & shape);
 };
-
-#endif // OG_BALLCONFIG_H

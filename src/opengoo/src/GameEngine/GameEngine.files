@@ -7,7 +7,12 @@ SOURCES += \
     src/GameEngine/Colliders/rectcollider.cpp \
     src/GameEngine/input.cpp \
     src/GameEngine/imagesource.cpp \
-    src/GameEngine/scene.cpp
+    src/GameEngine/scene.cpp \
+    src/GameEngine/Particles/particleemmiterfactory.cpp \
+    src/GameEngine/Particles/particlesystem.cpp \
+    src/GameEngine/Particles/pointparticleemmiter.cpp \
+    src/GameEngine/Particles/particleemmiterfactorymanager.cpp \
+    src/GameEngine/Particles/particleemmiter.cpp
 
 HEADERS += \
     src/GameEngine/og_gameengine.h \
@@ -27,4 +32,13 @@ HEADERS += \
     src/GameEngine/iresourcemanagerfactory.h \
     src/GameEngine/iresourcemanager.h \
     src/GameEngine/camera.h \
-    src/GameEngine/ifont.h
+    src/GameEngine/ifont.h \
+    src/GameEngine/Particles/particlesystem.h \
+    src/GameEngine/Particles/particleemmiter.h \
+    src/GameEngine/Particles/pointparticleemmiter.h \
+    src/GameEngine/Particles/ambientparticleemmiter.h \
+    src/GameEngine/Particles/iparticleemmiterfactory.h \
+    src/GameEngine/Particles/particleemmiterfactory.h \
+    src/GameEngine/Particles/particlepool.h \
+    src/GameEngine/Particles/particle.h \
+    src/GameEngine/Particles/particleemmiterfactorymanager.h

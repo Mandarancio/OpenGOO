@@ -16,6 +16,7 @@ HEADERS += \
     src/OGLib/size.h \
     src/OGLib/rect.h \
     src/OGLib/rectf.h\
+    src/OGLib/random.h \
     src/OGLib/UI/og_ipushbutton.h \
     src/OGLib/UI/og_ui.h \
     src/OGLib/UI/og_uiframe.h \

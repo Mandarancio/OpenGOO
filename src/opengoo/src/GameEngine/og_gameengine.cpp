@@ -16,6 +16,7 @@ namespace og
 OGGameEngine* OGGameEngine::m_instance = nullptr;
 
 OGGameEngine::OGGameEngine(OGGame* a_game, const OGConfig& a_config, IResourceManagerFactory &aFactory)
+    : mRandomGenerator(new oglib::Random)
 {
     m_instance = this;
     m_game = a_game;

@@ -10,8 +10,7 @@ public:
     typedef std::unique_ptr<WOGScene> Type;
 
 public:
-    OGSceneConfig(const QString& filename)
-        : OGXmlConfig(filename)
+    OGSceneConfig()
     {
         SetRootTag("scene");
     }

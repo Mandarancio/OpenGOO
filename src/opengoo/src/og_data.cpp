@@ -5,9 +5,9 @@
 
 template<class T> inline static typename T::Type GetData(const QString &path)
 {
-    T config(path);
+    T config;
 
-    if (config.Open())
+    if (config.Open(path))
     {
         if (config.Read())
         {
@@ -38,10 +38,10 @@ WOGResources* OGData::GetResources(const QString &path)
 
 WOGText* OGData::GetText(const QString &path, const QString &lang)
 {
-    OGTextConfig config(path);
+    OGTextConfig config;
     config.SetLanguage(lang);
 
-    if (config.Open())
+    if (config.Open(path))
     {
         if (config.Read())
         {

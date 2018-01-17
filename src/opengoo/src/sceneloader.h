@@ -8,5 +8,5 @@ class Scene;
 class SceneLoader
 {
 public:
-    bool load(og::Scene& aScene);
+    void Load(og::Scene& aScene);
 };

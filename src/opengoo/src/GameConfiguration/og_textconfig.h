@@ -10,8 +10,7 @@ public:
     typedef std::unique_ptr<WOGText> Type;
 
 public:
-    OGTextConfig(const QString& aFilename)
-        :OGXmlConfig(aFilename)
+    OGTextConfig()
     {
         SetRootTag("strings");
     }

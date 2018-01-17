@@ -22,7 +22,6 @@ class OGSprite : public og::Graphic
     bool m_visible;
     float m_scaleX;
     float m_scaleY;
-    float m_scale;
     float m_alpha;
     float m_depth;
     QRectF m_clipRect;
@@ -36,7 +35,6 @@ class OGSprite : public og::Graphic
         m_offsetY = 0.0f;
         m_scaleX = 1.0f;
         m_scaleY = 1.0f;
-        m_scale = 1.0f;
         m_alpha = 1.0f;
         m_depth = 0.0f;
         m_clipRect = QRectF(0, 0, GetWidth(), GetHeight());
@@ -141,11 +139,6 @@ public:
         m_scaleY = a_scale;
     }
 
-    void SetScale(float a_scale)
-    {
-        m_scale = a_scale;
-    }
-
     void SetScale(const QPointF& a_scale)
     {
         SetScaleX(a_scale.x());
@@ -154,12 +147,12 @@ public:
 
     float GetScaledWidth() const
     {
-        return GetWidth() * m_scale * m_scaleX;
+        return GetWidth() * m_scaleX;
     }
 
     float GetScaledHeight() const
     {
-        return GetHeight() * m_scale * m_scaleY;
+        return GetHeight() * m_scaleY;
     }
 
     void SetAlpha(float a_alpha)

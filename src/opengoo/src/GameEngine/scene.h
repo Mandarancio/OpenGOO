@@ -45,6 +45,8 @@ public:
 
 class Scene : public IScene
 {
+    typedef std::list<EntityPtr> EntityPtrList;
+
 public:
     Scene(const QString& a_name)
         : m_name(a_name)
@@ -101,10 +103,11 @@ public:
     }
 
 private:
+
     QString m_name;
-    QVector<EntityPtr> m_add;
-    QVector<EntityPtr> m_remove;
-    std::list<EntityPtr> m_update;
-    std::map<float, std::list<EntityPtr>> m_render;
+    EntityPtrList m_add;
+    EntityPtrList m_remove;
+    EntityPtrList m_update;
+    std::map<float, EntityPtrList> m_render;
 };
 }

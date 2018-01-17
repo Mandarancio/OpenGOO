@@ -10,8 +10,7 @@ public:
     typedef std::unique_ptr<WOGLevel> Type;
 
 public:
-    OGLevelConfig(const QString& filename)
-        : OGXmlConfig(filename)
+    OGLevelConfig()
     {
         SetRootTag("level");
     }

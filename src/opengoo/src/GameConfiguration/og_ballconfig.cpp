@@ -2,12 +2,6 @@
 
 #include <QDebug>
 
-OGBallConfig::OGBallConfig(const QString &filename)
-    : OGXmlConfig(filename)
-{
-    SetRootTag("ball");
-}
-
 //struct WOGPart
 //{
 //    QString name;

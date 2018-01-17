@@ -150,8 +150,8 @@ void OpenGOO::_Start()
     }
 
     mCamera.SetSize(width_, height_);
-    mCamera.SetPosition(0, 0);
-    mCamera.SetZoom(1);
+    mCamera.SetPosition(0.0f, 0.0f);
+    mCamera.SetZoom(1.0f);
     mCameraSpeed = QPointF();
 
     m_deltaTime = 0;
@@ -200,34 +200,34 @@ bool OpenGOO::LevelIsExists(const QString& a_name)
     return true;
 }
 
-void OpenGOO::LoadScene(og::Scene* a_scene)
+bool OpenGOO::LoadScene(const QString& a_name)
 {
-//        if (!world->Initialize())
-//            return;
-
-    const auto& name = a_scene->GetName();
-    if (name.isEmpty() || !LevelIsExists(name))
+    try
     {
-        return;
-    }
-
-//    if (world->Load())
-    {
-//            if (world->leveldata()->visualdebug)
-//                SetDebug(*world, true);
-
-//        _SetBackgroundColor(world->GetBackgroundColor());
-
-//        pCamera_ = OGWindowCamera::instance();
+        auto scene = CreateScene(a_name);
+        SceneLoader sl;
+        sl.Load(*scene);
+        m_previousScene = GetScene()->GetName();
+        SetScene(scene);
         SetPause(false);
+        return true;
+    }
+    catch (const std::exception& e)
+    {
+        logError(e.what());
+        return false;
     }
 }
 
-std::shared_ptr<Scene> OpenGOO::CreateScene()
+std::shared_ptr<Scene> OpenGOO::CreateScene(const QString& a_name)
 {
-//    PhysicsEngineFactory pef;
-    return std::make_shared<Scene>(m_gotoScene);
-//    return std::make_shared<OGWorld>(pef, *m_entityFactory, m_gotoScene, m_language);
+
+#if 0
+    PhysicsEngineFactory pef;
+    return std::make_shared<OGWorld>(pef, *m_entityFactory, m_gotoScene, m_language);
+#else
+    return std::make_shared<Scene>(a_name);
+#endif
 }
 
 void OpenGOO::_Cycle()
@@ -255,13 +255,10 @@ void OpenGOO::_Cycle()
     GetScene()->Update();
 
     if (!m_gotoScene.isEmpty())
-    {   
-        m_previousScene = GetScene()->GetName();
-
-        SetScene(CreateScene());
-        SceneLoader sl;
+    {
         logInfo("Loading Scene...");
-        if (sl.load(*m_scene))
+
+        if (LoadScene(m_gotoScene))
         {
             logInfo("Scene was loaded");
         }
@@ -281,32 +278,6 @@ void OpenGOO::_Paint(QPainter* painter)
     int x = qRound(mCamera.GetPosition().x() + -(w * 0.5));
     int y = qRound(-mCamera.GetPosition().y() + -(h * 0.5));
     painter->setWindow(x, y, w, h);
-
-//        // Paint a scene
-//        for (auto it = layers_.begin(); it != layers_.end(); ++it)
-//        {
-//            (*it).Paint(*painter);
-//        }
-
-//        foreach(auto body, pWorld_->staticbodies())
-//        {
-//            body->Draw(painter);
-//        }
-
-//        foreach(auto ball, pWorld_->balls())
-//        {
-//            ball->Paint(painter, pWorld_->leveldata()->visualdebug);
-//        }
-
-//        foreach(auto strand, pWorld_->strands())
-//        {
-//            strand->Paint(painter, pWorld_->leveldata()->visualdebug);
-//        }
-
-//        if (pWorld_->leveldata() && pWorld_->leveldata()->visualdebug)
-//        {
-//            visualDebug(painter, pWorld_.get(), pCamera_->zoom());
-//        }
 
     if (m_scene)
     {

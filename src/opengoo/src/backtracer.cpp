@@ -1,17 +1,28 @@
 #include "backtracer.h"
 #include <execinfo.h>
 #ifdef __FreeBSD__
-#	include <ucontext.h>
+    #include <ucontext.h>
 #endif
 
-#include <QDebug>
+//#include <QDebug>
 #include <logger.h>
 #include <QString>
+
+#if defined(Q_CC_CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winconsistent-missing-override"
+#endif
+
 #include <QProcess>
+
+#if defined(Q_CC_CLANG)
+#pragma clang diagnostic pop
+#endif
 
 static void SignalHandler(int32_t sig, siginfo_t *info, void *scp);
 
-void BackTracer(int32_t sig){
+void BackTracer(int32_t sig)
+{
     struct sigaction sa;
     sa.sa_sigaction = SignalHandler;
     sigemptyset (&sa.sa_mask);
@@ -19,7 +30,8 @@ void BackTracer(int32_t sig){
     sigaction(sig, &sa, NULL);
 }
 
-static void SignalHandler(int32_t sig, siginfo_t *info, void *scp){
+static void SignalHandler(int32_t sig, siginfo_t *info, void *scp)
+{
     void * array[64];
     int32_t nSize = backtrace(array, 64);
     char ** symbols = backtrace_symbols(array, nSize);

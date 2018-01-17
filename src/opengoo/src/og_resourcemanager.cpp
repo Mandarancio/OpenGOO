@@ -101,8 +101,8 @@ og::ImageSourceSPtr OGResourceManager::GetImageSourceById(const QString& a_id)
 template<typename T>
 bool OGResourceManager::Load(T& a_data, const QString& a_filename)
 {
-    typename T::element_type::Conf conf(a_filename);
-    if (!conf.Open())
+    typename T::element_type::Conf conf;
+    if (!conf.Open(a_filename))
     {
         logWarn("Could not open file:" + a_filename);
         return false;
@@ -215,7 +215,7 @@ QString OGResourceManager::GetText(const QString& aId)
     return it.value();
 }
 
-WOGEffect* OGResourceManager::GetEffect(const QString &aId)
+WOGEffect* OGResourceManager::GetEffect(const QString& aId)
 {
     auto it = m_effects->find(aId);
     if (it == m_effects->end())

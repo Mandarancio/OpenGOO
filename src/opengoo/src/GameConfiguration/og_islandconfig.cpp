@@ -2,12 +2,6 @@
 
 using namespace wog;
 
-OGIslandConfig::OGIslandConfig(const QString & filename)
-    : OGXmlConfig(filename)
-{
-    SetRootTag("island");
-}
-
 WOGIsland* OGIslandConfig::Parser()
 {
     WOGIsland* obj = new WOGIsland;

@@ -23,8 +23,7 @@ public:
     typedef WOGResources* Type;
 
 public:
-    OGResourceConfig(const QString& filename)
-        : OGXmlConfig(filename)
+    OGResourceConfig()
     {
         SetRootTag("ResourceManifest");
     }

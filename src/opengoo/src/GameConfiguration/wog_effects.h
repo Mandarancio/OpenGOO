@@ -6,8 +6,13 @@
 #include <QPoint>
 #include <QStringList>
 
+#include "GameEngine/Particles/particleemmiter.h"
+
 class WOGEffect
 {
+public:
+    typedef og::ParticleEmmiter::Type Type;
+
 public:
     struct WOGParticle
     {
@@ -25,28 +30,35 @@ public:
             QPointF phaseshift;
         };
 
-        QPointF scale;
-        float finalscale;
-        int movedirvar;
         QStringList image;
-        float directed;
-        int movedir;
-        QPointF acceleration;
         bool additive;
-        QPointF lifespan;
-        QPointF speed;
-        float dampening;
-        QPoint rotation;
-        QPointF rotspeed;
+        bool directed;
         bool fade;
-        std::vector<WOGAxialSinOffset> axialsinoffset;
-    };
+        QPointF scale;
+        QPointF speed;
+        QPointF acceleration;
+        int movedir;
+        int movedirvar;
+        QPoint rotation;
 
-    enum Type
-    {
-        e_unknown,
-        e_point,
-        e_ambient,
+        std::pair<bool, float> dampening;
+        std::pair<bool, QPointF> lifespan;
+        std::pair<bool, float> finalscale;
+        std::pair<bool, QPointF> rotspeed;
+
+        std::vector<WOGAxialSinOffset> axialsinoffset;
+
+        WOGParticle()
+            : additive(false)
+            , directed(false)
+            , fade(false)
+            , movedir(0)
+        {
+            dampening.first = false;
+            lifespan.first = false;
+            finalscale.first = false;
+            rotspeed.first = false;
+        }
     };
 
 private:
@@ -55,9 +67,9 @@ private:
 public:
     WOGEffect(Type aType)
         : mType(aType)
-        , margin(0)
-        , maxparticles(0)
-        , rate(0)
+        , margin(-50)
+        , maxparticles(1)
+        , rate(0.00001)
     {
     }
 

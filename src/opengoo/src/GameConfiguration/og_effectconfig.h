@@ -9,8 +9,7 @@ public:
     typedef std::unique_ptr<WOGEffects> Type;
 
 public:
-    OGEffectConfig(const QString & aFileName)
-        : OGXmlConfig(aFileName)
+    OGEffectConfig()
     {
         SetRootTag("effects");
     }

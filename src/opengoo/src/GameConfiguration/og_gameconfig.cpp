@@ -47,9 +47,9 @@ OGConfig OGGameConfig::Parser()
     return config;
 }
 
-void OGGameConfig::Create(OGConfig& config)
+void OGGameConfig::Create(const QString& fileName, OGConfig& config)
 {
-    QFile file(GetFilename());
+    QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     QString xmlData;
     QTextStream out(&file);

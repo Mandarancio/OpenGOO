@@ -1,5 +1,7 @@
 #include "scene.h"
 
+#include <QDebug>
+
 namespace og
 {
 
@@ -7,48 +9,39 @@ void Scene::Update()
 {
     std::for_each(m_update.begin(), m_update.end(), [](EntityPtr& a_e) { a_e->Update(); });
 
-    if (!m_add.empty())
+    while (!m_add.empty())
     {
-        std::for_each(
-            m_add.begin(),
-            m_add.end(),
-            [this](EntityPtr& a_e)
-            {
-                a_e->update_iterator = m_update.emplace(m_update.end(), a_e);
+        auto& entry = m_add.front();
+        entry->m_update_iterator = m_update.insert(m_update.end(), entry);
 
-                auto it = m_render.find(a_e->GetDepth());
-                if (it == m_render.end())
-                {
-                    it = m_render.emplace(std::make_pair(a_e->GetDepth(), std::list<EntityPtr>())).first;
-                }
+        auto it = m_render.find(entry->GetDepth());
+        if (it == m_render.end())
+        {
+            it = m_render.emplace(std::make_pair(entry->GetDepth(), EntityPtrList())).first;
+        }
 
-                a_e->render_iterator = it->second.emplace(it->second.end(), a_e);
-            });
-
-        m_add.clear();
+        auto& entryList = it->second;
+        entry->m_render_iterator = entryList.insert(entryList.end(), entry);
+        m_add.pop_front();
     }
 
-    if (!m_remove.empty())
+    while (!m_remove.empty())
     {
-        std::for_each(
-            m_remove.begin(),
-            m_remove.end(),
-            [this](EntityPtr& a_e)
+        auto& entry = m_remove.front();
+        m_update.erase(entry->m_update_iterator);
+
+        auto it = m_render.find(entry->GetDepth());
+        if (it != m_render.end())
+        {
+            auto& entryList = it->second;
+            entryList.erase(entry->m_render_iterator);
+            if (entryList.empty())
             {
-                m_update.erase(a_e->update_iterator);
+                m_render.erase(it);
+            }
+        }
 
-                auto it = m_render.find(a_e->GetDepth());
-                if (it != m_render.end())
-                {
-                    it->second.erase(a_e->render_iterator);
-                    if (it->second.empty())
-                    {
-                        m_render.erase(it);
-                    }
-                }
-            });
-
-        m_remove.clear();
+        m_remove.pop_front();
     }
 }
 

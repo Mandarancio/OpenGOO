@@ -28,8 +28,11 @@ class Entity
 public:
     typedef std::list<std::shared_ptr<Entity>>::iterator Iterator;
 
-    Iterator render_iterator;
-    Iterator update_iterator;
+private:
+    Iterator m_render_iterator;
+    Iterator m_update_iterator;
+
+    friend class Scene;
 
 public:
     Entity(const QVector2D& a_position, GraphicPtr a_graphic = nullptr)
@@ -162,5 +165,3 @@ private:
 }
 
 typedef std::shared_ptr<og::Entity> EntityPtr;
-
-

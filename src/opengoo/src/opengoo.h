@@ -136,7 +136,7 @@ class OpenGOO : public og::OGGame
         QPointF mCameraSpeed;
 
     private:
-        std::shared_ptr<og::Scene> CreateScene();
+        std::shared_ptr<og::Scene> CreateScene(const QString& a_name);
 
         std::shared_ptr<og::Scene> SetScene(std::shared_ptr<og::Scene> a_scene)
         {
@@ -146,6 +146,8 @@ class OpenGOO : public og::OGGame
 
             return a_scene;
         }
+
+        bool LoadScene(const QString &a_name);
 
     private:
         QString m_language;
@@ -192,8 +194,6 @@ class OpenGOO : public og::OGGame
         void _KeyUp(QKeyEvent*)
         {
         }
-
-        void LoadScene(og::Scene* a_scene);
 
     private:
         // Layers

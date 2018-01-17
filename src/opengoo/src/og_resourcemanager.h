@@ -51,7 +51,7 @@ private:
         m_soundSources.clear();
     }
 
-    const og::IFontSPtr GetFont(const QString& aId) {return nullptr;}
+    const og::IFontSPtr GetFont(const QString& /*aId*/) {return nullptr;}
 
     QString GetText(const QString& aId);
 

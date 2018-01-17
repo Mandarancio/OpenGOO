@@ -10,24 +10,25 @@
 class OGXmlConfig
 {
 public:
-    OGXmlConfig(const QString& filename=QString())
-        : isOpen_(false)
-        , fileName_(filename)
-    {
-    }
-
-    bool Open();
     void Close();
     bool Read();
 
-    QString GetFilename()
+    bool IsOpen() const
     {
-        return fileName_;
+        return file_.isOpen();
     }
 
-    void SetFileName(const QString& filename)
+    bool Open(const QString& aFileName);
+
+    bool Load(const QString& aFileName)
     {
-        fileName_ = filename;
+        Close();
+        return (Open(aFileName) && Read());
+    }
+
+    const QString GetFilename() const
+    {
+        return file_.fileName();
     }
 
     void SetRootTag(const QString& root)
@@ -76,18 +77,34 @@ public:
         aData = StringToBool(aAttribute.value());
     }
 
+    static void WriteValue(std::pair<bool, float>& aData, const QDomAttr& aAttribute)
+    {
+        aData.first = true;
+        WriteValue(aData.second, aAttribute);
+    }
+
+    static void WriteValue(std::pair<bool, QPointF>& aData, const QDomAttr& aAttribute)
+    {
+        aData.first = true;
+        WriteValue(aData.second, aAttribute);
+    }
+
 protected:
+    OGXmlConfig()
+    {
+    }
+
     ~OGXmlConfig()
     {
         Close();
     }
 
+    bool OpenFile(const QString& filename);
+
 protected:
     QDomElement rootElement;
 
 private:
-    bool isOpen_;    
-    QString fileName_;
     QFile file_;
     QDomDocument domDoc_;
     QString rootTag_;   

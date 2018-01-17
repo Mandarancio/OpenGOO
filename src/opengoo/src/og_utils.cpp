@@ -72,9 +72,9 @@ void logger()
 
 bool loadConfig(OGConfig& config, const QString& filename)
 {
-    OGGameConfig gameConfig(filename);
+    OGGameConfig gameConfig;
 
-    if (!gameConfig.Open())
+    if (!gameConfig.Open(filename))
     {
         logWarn("Could not open file:" + filename);
         return false;
@@ -93,8 +93,7 @@ bool loadConfig(OGConfig& config, const QString& filename)
 
 void saveConfig(OGConfig& config, const QString & filename)
 {
-    OGGameConfig gameConfig(filename);
-    gameConfig.Create(config);
+    OGGameConfig::Create(filename, config);
 }
 
 QPixmap* getImage(const QString & /*id*/)

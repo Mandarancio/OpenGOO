@@ -7,6 +7,7 @@
 #include "iresourcemanager.h"
 #include "iresourcemanagerfactory.h"
 #include "og_game.h"
+#include "../OGLib/random.h"
 
 typedef og::OGWidget OGWindow;
 
@@ -24,6 +25,7 @@ namespace og
             bool m_isVideoModeSupported;
             std::unique_ptr<IResourceManager> m_resourceManager;
             std::unique_ptr<OGWindow> m_window;
+            std::unique_ptr<oglib::Random> mRandomGenerator;
 
             QScreen* getPrimaryScreen();
 
@@ -51,22 +53,22 @@ namespace og
 
             bool initialize();
 
-            int getWidth()
+            int getWidth() const
             {
                 return m_width;
             }
 
-            int getHeight()
+            int getHeight() const
             {
                 return m_height;
             }
 
-            int getFrameDelay()
+            int getFrameDelay() const
             {
                 return qRound(1000.0f / m_frameRate);
             }
 
-            int getFrameRate()
+            int getFrameRate() const
             {
                 return m_frameRate;
             }
@@ -79,12 +81,12 @@ namespace og
             void addUI(ui::IUI* a_ui);
             void removeUI(ui::IUI* a_ui);
 
-            OGWindow* getWindow()
+            OGWindow* getWindow() const
             {
                 return m_window.get();
             }
 
-            bool isCrt()
+            bool isCrt() const
             {
                 return m_crt;
             }
@@ -99,12 +101,17 @@ namespace og
                 m_window->setBackgroundColor(color, true);
             }
 
-            Camera* getCamera()
+            Camera* getCamera() const
             {
                 return m_game->GetCamera();
             }
 
             QPoint windowToLogical(const QPoint& p);
+
+            oglib::Random* GetRandomGenarator() const
+            {
+                return mRandomGenerator.get();
+            }
 
         public slots:
             void quit();

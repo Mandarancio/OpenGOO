@@ -1,5 +1,7 @@
 #include "og_contactlistener.h"
 
+#include <Box2D/Dynamics/Contacts/b2Contact.h>
+
 namespace og
 {
 namespace physics

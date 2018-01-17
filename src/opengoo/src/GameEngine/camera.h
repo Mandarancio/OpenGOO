@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QSize>
 #include "OGLib/pointf.h"
 #include "OGLib/size.h"
 
@@ -55,7 +54,7 @@ public:
 
     void SetZoom(float aZoom)
     {
-        Q_ASSERT_X(aZoom == 0, "SetZoom", "aZoom equal to zero");
+        Q_ASSERT_X(aZoom != 0.0f, "SetZoom", "aZoom equal to zero");
         mZoom = aZoom;
     }
 

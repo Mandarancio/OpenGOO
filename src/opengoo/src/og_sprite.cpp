@@ -6,13 +6,13 @@ void OGSprite::Paint(QPainter* p)
         return;
 
     QPointF target(-m_offsetX, -m_offsetY);
-    auto sx = m_scale * m_scaleX;
-    auto sy = m_scale * m_scaleY;
+    auto sx = m_scaleX;
+    auto sy = m_scaleY;
 
     p->save();
     p->translate(GetX(), GetY());
 
-    if (GetAngle() != 0)
+    if (GetAngle() != 0.0f)
         p->rotate(GetAngle());
 
     p->scale(sx, sy);
@@ -39,8 +39,8 @@ void OGSprite::Paint(QPainter& p, const QRectF& a_target)
 void OGSprite::Render(QPainter& a_painter, const QVector2D& a_pos)
 {
     QPointF target(-m_offsetX, -m_offsetY);
-    auto sx = m_scale * m_scaleX;
-    auto sy = m_scale * m_scaleY;
+    auto sx = m_scaleX;
+    auto sy = m_scaleY;
 
     a_painter.save();
     a_painter.translate(a_pos.x(), a_pos.y());

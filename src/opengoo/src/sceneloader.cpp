@@ -1,6 +1,11 @@
 #include "sceneloader.h"
 #include "GameEngine/og_gameengine.h"
 #include "GameEngine/scene.h"
+#include "GameEngine/Particles/particlesystem.h"
+#include "GameEngine/Particles/particle.h"
+#include "GameEngine/Particles/pointparticleemmiter.h"
+#include "GameEngine/Particles/ambientparticleemmiter.h"
+
 #include "og_utils.h"
 #include "wog_level.h"
 #include "wog_scene.h"
@@ -22,33 +27,51 @@ struct SceneLoaderHelper
 {
     SceneLoaderHelper(og::Scene& aScene)
         : mScene(aScene)
-        , mResouceManger(GE->getResourceManager())
-        , mEntityFactory(*mResouceManger)
+        , mEntityFactory(*GetResourceManager())
     {
     }
 
-    void processLevel(const WOGLevel&);
+    og::IResourceManager* GetResourceManager()
+    {
+        return GE->getResourceManager();
+    }
 
-    void processScene(const WOGScene&);
+    EntityFactory& GetEntityFactory()
+    {
+        return mEntityFactory;
+    }
 
-    void processSceneLayer(const WOGSceneLayer&);
+    void Process(const WOGLevel&);
 
-    void processButtonGroup(const WOGButtonGroup&);
+    void Process(const WOGScene&);
 
-    void processButton(const WOGButton&);
+    void Process(const WOGSceneLayer&);
 
-    void processCamera(const WOGCamera&);
+    void Process(const WOGButtonGroup&);
 
-    void processLabel(const WOGLabel&);
+    void Process(const WOGButton&);
 
-    void processParticle(const WOGScene::WOGParticle&);
+    void Process(const WOGCamera&);
 
+    void Process(const WOGLabel&);
+
+    void Process(const WOGScene::WOGParticle&);
+
+    template<typename T>
+    void Process(const T& aData)
+    {
+        foreach(const auto& d, aData)
+        {
+            Process(d);
+        }
+    }
+
+private:
     og::Scene& mScene;
-    og::IResourceManager* mResouceManger;
     EntityFactory mEntityFactory;
 };
 
-void SceneLoaderHelper::processCamera(const WOGCamera& aCamera)
+void SceneLoaderHelper::Process(const WOGCamera& aCamera)
 {
     const auto& poi = aCamera.poi.back();
     auto cam = GE->getCamera();
@@ -56,7 +79,7 @@ void SceneLoaderHelper::processCamera(const WOGCamera& aCamera)
     cam->SetZoom(1 /poi.zoom);
 }
 
-void SceneLoaderHelper::processLevel(const WOGLevel& aLevel)
+void SceneLoaderHelper::Process(const WOGLevel& aLevel)
 {
     if (!aLevel.camera.empty())
     {
@@ -67,12 +90,12 @@ void SceneLoaderHelper::processLevel(const WOGLevel& aLevel)
 
         if (it != aLevel.camera.end())
         {
-            processCamera(*it);
+            Process(*it);
         }
     }
 }
 
-void SceneLoaderHelper::processSceneLayer(const WOGSceneLayer& aSceneLayer)
+void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
 {
     auto src = SpriteFactory::CreateImageSource(aSceneLayer.image);
     auto spr = std::make_shared<OGSprite>(src);
@@ -120,108 +143,237 @@ void SceneLoaderHelper::processSceneLayer(const WOGSceneLayer& aSceneLayer)
     mScene.AddEntity(e);
 }
 
-void SceneLoaderHelper::processButton(const WOGButton& aButton)
+void SceneLoaderHelper::Process(const WOGButton& aButton)
 {
-    mScene.AddEntity(mEntityFactory.CreateButton(aButton));
+    mScene.AddEntity(GetEntityFactory().CreateButton(aButton));
 }
 
-void SceneLoaderHelper::processButtonGroup(const WOGButtonGroup& aButtonGroup)
+void SceneLoaderHelper::Process(const WOGButtonGroup& aButtonGroup)
 {
     foreach (const auto& btn, aButtonGroup.button)
     {
-        processButton(btn);
+        Process(btn);
     }
 }
 
-void SceneLoaderHelper::processLabel(const WOGLabel& aLabel)
+void SceneLoaderHelper::Process(const WOGLabel& aLabel)
 {
     if (aLabel.id.isEmpty())
     {
-        mScene.AddEntity(mEntityFactory.CreateLabel(aLabel));
+        mScene.AddEntity(GetEntityFactory().CreateLabel(aLabel));
     }
 }
 
-void SceneLoaderHelper::processParticle(const WOGScene::WOGParticle& aParticle)
+static QString ToString(const QPointF& aPoint)
 {
-    if (auto effect = ((OGResourceManager*)mResouceManger)->GetEffect(aParticle.effect))
+    return QString("(%1, %2)").arg(aPoint.x()).arg(aPoint.y());
+}
+
+static QString ToString(bool aFlag)
+{
+    return aFlag ? "True" : "False";
+}
+
+static QString ToString(const QStringList& aStrList)
+{
+    QString str;
+    QTextStream stream(&str);
+    stream << "{";
+
+    for (int i = 0; i < aStrList.size(); ++i)
     {
-        qDebug() << aParticle.effect << effect->GetType();
+        stream << aStrList[i];
+        if (i + 1 < aStrList.size())
+        {
+            stream << ", ";
+        }
+    }
+
+    stream << "}";
+
+    return str;
+}
+
+//static QString ToString(WOGEffect::WOGParticle::WOGAxialSinOffset::Axis axis)
+//{
+//    switch (axis)
+//    {
+//    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_x:
+//        return "X";
+//    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_y:
+//        return "Y";
+//    }
+
+//    return "Unknown";
+//}
+
+//static QString ToString(const WOGEffect::WOGParticle::WOGAxialSinOffset& offset)
+//{
+//    QByteArray ba;
+//    QDataStream stream(&ba, QIODevice::WriteOnly);
+//    stream << "WOGEffect::WOGParticle::WOGAxialSinOffset("
+//       << "axis:" << ToString(offset.axis)
+//       << ", freq:" << offset.freq
+//       << ", amp:" << offset.amp
+//       << ", phaseshift:" << offset.phaseshift
+//       << ")";
+//    return ba;
+//}
+
+static QString ToString(const WOGEffect::WOGParticle& aParticle)
+{
+    QString str;
+    QTextStream stream(&str);
+    stream << "WOGParticle("
+           << "scale=" << ToString(aParticle.scale)
+           << ", finalscale[" << ToString(aParticle.finalscale.first) << "]=" << aParticle.finalscale.second
+           << ", movedirvar=" << aParticle.movedirvar
+           << ", image=" << ToString(aParticle.image)
+           << ", directed=" << ToString(aParticle.directed)
+           << ", movedir=" << aParticle.movedir
+           << ", acceleration=" << ToString(aParticle.acceleration)
+           << ", additive=" << ToString(aParticle.additive)
+           << ", lifespan[" << ToString(aParticle.lifespan.first) << "]=" << ToString(aParticle.lifespan.second)
+           << ", speed=" << ToString(aParticle.speed)
+           << ", dampening[" << ToString(aParticle.dampening.first) << "]=" << aParticle.dampening.second
+           << ", rotation=" << ToString(QPointF(aParticle.rotation))
+           << ", rotspeed[" << ToString(aParticle.rotspeed.first) << "]="<< ToString(aParticle.rotspeed.second)
+           << ", fade="<< ToString(aParticle.fade)
+           << ", axialsinoffset[" << static_cast<int>(aParticle.axialsinoffset.size()) << "]"
+           << ")";
+    return str;
+}
+
+static QString ToString(og::ParticleEmmiter::Type type)
+{
+    switch (type)
+    {
+    case og::ParticleEmmiter::e_unknown:
+        return"Unknown";
+    case og::ParticleEmmiter::e_point:
+        return "Point";
+    case og::ParticleEmmiter::e_ambient:
+        return "Ambient";
+    case og::ParticleEmmiter::e_user:
+        return "User";
+    }
+
+    return "Unknown";
+}
+
+inline QDebug operator<< (QDebug dbg, const WOGEffect& effect)
+{
+    dbg.nospace() << "WOGEffect("
+                  << "type=" << ToString(effect.GetType())
+                  << ", margin=" << effect.margin
+                  << ", maxparticles=" << effect.maxparticles
+                  << ", rate=" << effect.rate
+                  << ", particle[" << effect.particle.size() << "]";
+    if (effect.particle.size() > 0)
+    {
+    dbg.noquote() << "={";
+    foreach (auto& particle, effect.particle)
+    {
+        dbg << ToString(particle);
+    }
+
+    dbg << "}";
+    }
+
+    dbg << ")";
+
+    return dbg.space();
+}
+
+void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
+{
+    assert(dynamic_cast<OGResourceManager*>(GetResourceManager()));
+    qDebug() << aParticle.effect;
+    if (auto effect = static_cast<OGResourceManager*>(GetResourceManager())->GetEffect(aParticle.effect))
+    {
+        const auto pos = QVector2D(aParticle.position.x(), -aParticle.position.y());
+        auto ps = og::ParticleSystem::Create(pos, aParticle.depth);
+        if (auto emmiter = ps->CreateEmmiter(effect->GetType(), effect->maxparticles))
+        {
+            if (auto em = dynamic_cast<og::PointParticleEmmiter*>(emmiter))
+            {
+                qDebug() << *effect;
+                em->SetRate(effect->rate);
+            }
+
+            if (auto em = dynamic_cast<og::AmbientParticleEmmiter*>(emmiter))
+            {
+                em->SetMargin(effect->margin);
+            }
+
+            og::ParticleDefination pd;
+
+            foreach (const auto& particle, effect->particle)
+            {
+                pd.finalScale = particle.finalscale;
+                pd.lifespan = particle.lifespan;
+
+                pd.direction = particle.movedir;
+                pd.dirvar = particle.movedirvar;
+                pd.SetSpeed(particle.speed);
+                pd.acceleration = particle.acceleration;
+                pd.rotation = particle.rotation;
+                pd.rotationSpeed = particle.rotspeed;
+                pd.isDirected = particle.directed;
+                pd.dampening = particle.dampening;
+
+                foreach (const auto& img, particle.image)
+                {
+                    auto src = SpriteFactory::CreateImageSource(img);
+                    pd.AddImageSource(src);
+                }
+
+                pd.isAdditive = particle.additive;
+                pd.SetScale(particle.scale);
+                pd.shouldFade = particle.fade;
+
+                emmiter->AddParticleDefination(pd);
+            }
+        }
+
+        mScene.AddEntity(ps);
     }
 }
 
-void SceneLoaderHelper::processScene(const WOGScene& aScene)
+void SceneLoaderHelper::Process(const WOGScene& aScene)
 {
     GE->setBackgroundColor(aScene.backgroundcolor);
 
-    foreach (const auto& sl, aScene.sceneLayer)
-    {
-        processSceneLayer(sl);
-    }
-
-    foreach (const auto& bg, aScene.buttongroup)
-    {
-        processButtonGroup(bg);
-    }
-
-    foreach (const auto& l, aScene.label)
-    {
-        processLabel(l);
-    }
-
-    foreach (const auto& p, aScene.particle)
-    {
-        processParticle(p);
-    }
+    Process(aScene.sceneLayer);
+    Process(aScene.buttongroup);
+    Process(aScene.label);
+    Process(aScene.particle);
 }
 
-template<typename T> bool LoadConf(T& config)
+void SceneLoader::Load(og::Scene& aScene)
 {
-    if (!config.Open())
+    auto LoadConfig = [&aScene](const QString& aType, std::function<bool(const QString&)> aLoader)
     {
-        return false;
-    }
+        const auto path = QString("./res/levels/%1/%1.%2").arg(aScene.GetName()).arg(aType);
+        if (!aLoader(path))
+        {
+            throw std::runtime_error(qPrintable("Could not load file " + path));
+        }
+    };
 
-    if (!config.Read())
-    {
-        return false;
-    }
+    LoadConfig("resrc", [](const QString& aPath){ return GE->getResourceManager()->ParseResourceFile(aPath); });
 
-    return true;
-}
+    OGSceneConfig sc;
+    LoadConfig("scene", [&sc](const QString& aPath){ return sc.Load(aPath); });
 
-bool SceneLoader::load(og::Scene &aScene)
-{
-    auto rm = GE->getResourceManager();
-    auto path = QString("./res/levels/%1/%1.").arg(aScene.GetName());
-    auto fullPath = path + "resrc";
-    if (!rm->ParseResourceFile(fullPath))
-    {
-        logError("Could not load " + fullPath);
-        return false;
-    }
-
-    fullPath = path + "scene";
-    OGSceneConfig sc(fullPath);
-    if (!LoadConf(sc))
-    {
-        logError("Could not load " + fullPath);
-        return false;
-    }
-
-    fullPath = path + "level";
-    OGLevelConfig lc(fullPath);
-    if (!LoadConf(lc))
-    {
-        logError("Could not load " + fullPath);
-        return false;
-    }
+    OGLevelConfig lc;
+    LoadConfig("level", [&lc](const QString& aPath){ return lc.Load(aPath); });
 
     SceneLoaderHelper helper(aScene);
+
     auto scene = sc.Parser();
-    helper.processScene(*scene);
+    helper.Process(*scene);
 
     auto level = lc.Parser();
-    helper.processLevel(*level);
-
-    return true;
+    helper.Process(*level);
 }

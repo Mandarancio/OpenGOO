@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <cmath>
 
+#include "OGLib/util.h"
 #include "keyframe.h"
 
 namespace og
@@ -24,7 +26,8 @@ public:
         : mTarget(aTarget)
         , mCurrentTime(0)
         , mCurrentFrameTime(0)
-        , mSpeed(aSpeed)
+        , mSpeed(std::fabs(aSpeed))
+        , mSpeedIsNegative(IsNegative(aSpeed))
     {
     }
 
@@ -69,5 +72,6 @@ private:
     float mCurrentTime;
     unsigned int mCurrentFrameTime;
     float mSpeed;
+    bool mSpeedIsNegative;
 };
 

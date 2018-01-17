@@ -1,7 +1,6 @@
 #include "animator.h"
 
 #include "GameEngine/entity.h"
-
 #include "opengoo.h"
 
 void Animator::ProcessRotateTransformFrame()
@@ -14,8 +13,8 @@ void Animator::ProcessRotateTransformFrame()
         {
             float deltaAngle = mTransformFrames[frame.nextFrameIndex].angle - angle;
             float deltaTime = mFrameTimes[frame.nextFrameIndex] - mFrameTimes[mCurrentFrameTime];
-            auto rotationSpeed = (mSpeed < 0 ? -1 : 1) * deltaAngle / deltaTime;
-
+            assert(deltaTime != 0.0f);
+            auto rotationSpeed = mSpeedIsNegative ? (deltaAngle / deltaTime) : -(deltaAngle / deltaTime);
             auto delata = rotationSpeed * (mCurrentTime - mFrameTimes[mCurrentFrameTime]);
             angle += delata;
         }
@@ -29,7 +28,7 @@ void Animator::Update()
     std::for_each(mTransformTypes.begin(), mTransformTypes.end(),
                   [this](TransformType aType) { ProcessTransformFrame(aType); });
 
-    mCurrentTime += GAME->GetDeltaTime() * 0.001 * std::fabs(mSpeed);
+    mCurrentTime += GAME->GetDeltaTime() * 0.001f * mSpeed; // 1s = 1000ms
     auto nextFrameTime = mCurrentFrameTime + 1;
     if (nextFrameTime < mFrameTimes.size() && mCurrentTime < mFrameTimes[nextFrameTime])
     {

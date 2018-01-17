@@ -9,8 +9,7 @@ public:
     typedef WOGMaterialList Type;
 
 public:
-    OGMaterialConfig(const QString & filename)
-        : OGXmlConfig(filename)
+    OGMaterialConfig()
     {
         SetRootTag("materials");
     }

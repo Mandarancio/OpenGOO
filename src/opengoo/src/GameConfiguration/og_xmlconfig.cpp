@@ -2,47 +2,35 @@
 #include "decrypter.h"
 #include <QFileInfo>
 
-bool OGXmlConfig::Open()
+bool OGXmlConfig::OpenFile(const QString& filename)
 {
-    if (isOpen_)
+    file_.setFileName(filename);
+    return file_.open(QIODevice::ReadOnly);
+}
+
+bool OGXmlConfig::Open(const QString& aFileName)
+{
+    if (QFile::exists(aFileName))
     {
-        return false;
+        return OpenFile(aFileName);
     }
 
-    if (!QFile::exists(fileName_))
+    if (QFile::exists(aFileName + ".xml"))
     {
-        if (QFile::exists(fileName_ + ".xml"))
-        {
-            fileName_ += ".xml";
-        }
-        else if (QFile::exists(fileName_ + ".bin"))
-        {
-            fileName_ += ".bin";
-        }
-        else
-        {
-            return false;
-        }
+        return OpenFile(aFileName + ".xml");
     }
 
-    file_.setFileName(fileName_);
-
-    if (!file_.open(QIODevice::ReadOnly))
+    if (QFile::exists(aFileName + ".bin"))
     {
-        return false;
+        return OpenFile(aFileName + ".bin");
     }
 
-    isOpen_ = true;
-    return true;
+    return false;
 }
 
 void OGXmlConfig::Close()
 {
-    if (isOpen_)
-    {
-        file_.close();
-        isOpen_ = false;
-    }
+    file_.close();
 }
 
 bool OGXmlConfig::Read()

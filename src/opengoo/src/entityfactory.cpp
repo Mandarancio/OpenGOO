@@ -1,7 +1,5 @@
 #include <memory>
 
-#include <Box2D/Box2D.h>
-
 #include "PhysicsEngine/distancejoint.h"
 
 #include "GameEngine/og_gameengine.h"
