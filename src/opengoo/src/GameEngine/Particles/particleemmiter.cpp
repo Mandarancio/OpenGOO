@@ -15,7 +15,7 @@ void ParticleEmmiter::Emmit(const QPointF& aPosition)
     auto particle = (CountParticles() + 1 > GetMaxPirticles()) ? PopParticle() : mParticlePool.Create();
     particle->SetPosition(aPosition);
 
-    auto generator = GE->GetRandomGenarator();
+    auto generator = GE->GetRandomGenerator();
     const auto& def = mPartileDefinations[generator->Range(0, static_cast<int>(mPartileDefinations.size()) - 1)];
 
     particle->SetAcceleration(def.acceleration);

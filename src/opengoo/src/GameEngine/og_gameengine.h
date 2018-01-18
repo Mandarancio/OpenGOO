@@ -108,7 +108,7 @@ namespace og
 
             QPoint windowToLogical(const QPoint& p);
 
-            oglib::Random* GetRandomGenarator() const
+            oglib::Random* GetRandomGenerator() const
             {
                 return mRandomGenerator.get();
             }
