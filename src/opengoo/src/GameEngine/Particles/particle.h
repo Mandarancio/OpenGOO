@@ -185,6 +185,10 @@ public:
                 mAngle += mRotationSpeed.second;
             }
         }
+        else
+        {
+            mAngle = qRadiansToDegrees(std::atan2(mVelocity[0], -mVelocity[1]));
+        }
 
         if (mFade.first)
         {

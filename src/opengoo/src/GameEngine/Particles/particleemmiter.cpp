@@ -3,7 +3,6 @@
 #include "../og_gameengine.h"
 
 // TODO Should implement:
-//  directed
 //  axialsinoffset
 
 // TODO Should test:
