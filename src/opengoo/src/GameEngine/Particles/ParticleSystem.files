@@ -1,0 +1,18 @@
+SOURCES += \
+    src/GameEngine/Particles/ambientparticleemiter.cpp \
+    src/GameEngine/Particles/particleemiter.cpp \
+    src/GameEngine/Particles/particleemiterfactory.cpp \
+    src/GameEngine/Particles/particleemiterfactorymanager.cpp \
+    src/GameEngine/Particles/particlesystem.cpp \
+    src/GameEngine/Particles/pointparticleemiter.cpp
+
+HEADERS += \
+    src/GameEngine/Particles/ambientparticleemiter.h \
+    src/GameEngine/Particles/iparticleemiterfactory.h \
+    src/GameEngine/Particles/particle.h \
+    src/GameEngine/Particles/particleemiter.h \
+    src/GameEngine/Particles/particleemiterfactory.h \
+    src/GameEngine/Particles/particleemiterfactorymanager.h \
+    src/GameEngine/Particles/particlepool.h \
+    src/GameEngine/Particles/particlesystem.h \
+    src/GameEngine/Particles/pointparticleemiter.h

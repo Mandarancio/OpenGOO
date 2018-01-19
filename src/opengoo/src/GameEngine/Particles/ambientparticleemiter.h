@@ -1,0 +1,40 @@
+#pragma once
+
+#include <array>
+
+#include "../timer.h"
+
+#include "particleemiter.h"
+
+namespace og
+{
+class AmbientParticleEmiter : public ParticleEmiter
+{
+    template<int Precision> class PositionGenerator;
+
+public:
+    AmbientParticleEmiter(int aMaxParticles, ParticleSystem* aSystem)
+        : ParticleEmiter(aMaxParticles, aSystem)
+    {
+    }
+
+    void SetMargin(int aMargin)
+    {
+        mMargin = QMarginsF(aMargin, aMargin, aMargin, aMargin);
+    }
+
+    void SetTimeoutInterval(int aInterval)
+    {
+        mTimer.SetInterval(aInterval);
+    }
+
+private:
+    void Update();
+
+    QPointF GetNextPosition(int aDegrees) const;
+
+private:
+    QMarginsF mMargin;
+    Timer mTimer;
+};
+}

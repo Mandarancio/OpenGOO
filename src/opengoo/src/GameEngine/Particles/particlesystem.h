@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../entity.h"
-#include "particleemmiter.h"
-#include "particleemmiterfactorymanager.h"
+#include "particleemiter.h"
+#include "particleemiterfactorymanager.h"
 
 namespace og
 {
@@ -20,17 +20,17 @@ public:
         return std::shared_ptr<ParticleSystem>(new ParticleSystem(aPosition, aDepth));
     }
 
-    ParticleEmmiter* CreateEmmiter(ParticleEmmiter::Type aType, int aMaxParticles);
+    ParticleEmiter* CreateEmiter(ParticleEmiter::Type aType, int aMaxParticles);
 
-    void DestroyEmmiter(ParticleEmmiter* aEmmiter);
+    void DestroyEmiter(ParticleEmiter* aEmiter);
 
 private:
     void Update();
 
-    void Render(QPainter &a_painter);
+    void Render(QPainter& aPainter);
 
 private:
-    std::list<ParticleEmmiterSPtr> mEmmiters;
-    ParticleEmmiterFactoryManager mParticleEmmiterFactoryManager;
+    std::list<ParticleEmiterSPtr> mEmiters;
+    ParticleEmiterFactoryManager mParticleEmiterFactoryManager;
 };
 }

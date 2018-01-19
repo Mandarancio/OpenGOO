@@ -3,8 +3,8 @@
 #include "GameEngine/scene.h"
 #include "GameEngine/Particles/particlesystem.h"
 #include "GameEngine/Particles/particle.h"
-#include "GameEngine/Particles/pointparticleemmiter.h"
-#include "GameEngine/Particles/ambientparticleemmiter.h"
+#include "GameEngine/Particles/pointparticleemiter.h"
+#include "GameEngine/Particles/ambientparticleemiter.h"
 
 #include "og_utils.h"
 #include "wog_level.h"
@@ -244,17 +244,17 @@ static QString ToString(const WOGEffect::WOGParticle& aParticle)
     return str;
 }
 
-static QString ToString(og::ParticleEmmiter::Type type)
+static QString ToString(og::ParticleEmiter::Type type)
 {
     switch (type)
     {
-    case og::ParticleEmmiter::e_unknown:
+    case og::ParticleEmiter::e_unknown:
         return"Unknown";
-    case og::ParticleEmmiter::e_point:
+    case og::ParticleEmiter::e_point:
         return "Point";
-    case og::ParticleEmmiter::e_ambient:
+    case og::ParticleEmiter::e_ambient:
         return "Ambient";
-    case og::ParticleEmmiter::e_user:
+    case og::ParticleEmiter::e_user:
         return "User";
     }
 
@@ -288,22 +288,23 @@ inline QDebug operator<< (QDebug dbg, const WOGEffect& effect)
 void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
 {
     assert(dynamic_cast<OGResourceManager*>(GetResourceManager()));
-    qDebug() << aParticle.effect;
+
     if (auto effect = static_cast<OGResourceManager*>(GetResourceManager())->GetEffect(aParticle.effect))
     {
         const auto pos = QVector2D(aParticle.position.x(), -aParticle.position.y());
         auto ps = og::ParticleSystem::Create(pos, aParticle.depth);
-        if (auto emmiter = ps->CreateEmmiter(effect->GetType(), effect->maxparticles))
+        if (auto emiter = ps->CreateEmiter(effect->GetType(), effect->maxparticles))
         {
-            if (auto em = dynamic_cast<og::PointParticleEmmiter*>(emmiter))
+            if (auto em = dynamic_cast<og::PointParticleEmiter*>(emiter))
             {
-                qDebug() << *effect;
                 em->SetRate(effect->rate);
             }
 
-            if (auto em = dynamic_cast<og::AmbientParticleEmmiter*>(emmiter))
+            if (auto em = dynamic_cast<og::AmbientParticleEmiter*>(emiter))
             {
+                qDebug() << aParticle.effect << *effect;
                 em->SetMargin(effect->margin);
+                em->SetTimeoutInterval(0.5 * GE->getFrameRate());
             }
 
             og::ParticleDefination pd;
@@ -313,7 +314,7 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
                 pd.finalScale = particle.finalscale;
                 pd.lifespan = particle.lifespan;
 
-                pd.direction = particle.movedir;
+                pd.direction = (particle.movedir < 0 ? 360 + particle.movedir : particle.movedir);
                 pd.dirvar = particle.movedirvar;
                 pd.SetSpeed(particle.speed);
                 pd.acceleration = particle.acceleration;
@@ -332,7 +333,7 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
                 pd.SetScale(particle.scale);
                 pd.shouldFade = particle.fade;
 
-                emmiter->AddParticleDefination(pd);
+                emiter->AddParticleDefination(pd);
             }
         }
 

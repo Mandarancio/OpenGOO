@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameEngine/Particles/particleemmiter.h"
+#include "GameEngine/Particles/particleemiter.h"
 
 typedef WOGEffect::WOGParticle::WOGAxialSinOffset AxialSinOffset;
 
@@ -17,20 +17,20 @@ template <> struct Enumerator<AxialSinOffset::Axis>
     }
 };
 
-template <> struct Enumerator<og::ParticleEmmiter::Type>
+template <> struct Enumerator<og::ParticleEmiter::Type>
 {
-    static og::ParticleEmmiter::Type ToEnum(const QString& aType)
+    static og::ParticleEmiter::Type ToEnum(const QString& aType)
     {
         if (aType == "particleeffect")
         {
-            return og::ParticleEmmiter::e_point;
+            return og::ParticleEmiter::e_point;
         }
         else if (aType == "ambientparticleeffect")
         {
-            return og::ParticleEmmiter::e_ambient;
+            return og::ParticleEmiter::e_ambient;
         }
 
-        return og::ParticleEmmiter::e_unknown;
+        return og::ParticleEmiter::e_unknown;
     }
 };
 

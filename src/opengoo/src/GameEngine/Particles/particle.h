@@ -8,6 +8,7 @@
 #include <QDebug>
 
 #include "../imagesource.h"
+#include "../timer.h"
 
 class QPainter;
 
@@ -24,18 +25,13 @@ public:
     {
     }
 
-    virtual ~Particle()
-    {
-    }
-
     void Init()
     {
        mShouldRelease = false;
        SetScale(1.0f);
        mFinalScale.first = false;
        mScaleSpeed = 0.0f;
-       mLifespan.first = false;
-       mLifespan.second = -1;
+       mShouldUseLifespan = false;
        mFade.first = false;
        mOpacity = 1.0f;
        mIsDirected = false;
@@ -53,9 +49,9 @@ public:
 
     void SetVelocity(float aSpeed, float aDirection)
     {
-        const auto rad = qDegreesToRadians(aDirection + 180.0f);
+        const auto rad = qDegreesToRadians(aDirection);
         mVelocity[0] = (std::cos(rad) * aSpeed);
-        mVelocity[1] = (std::sin(rad) * aSpeed);
+        mVelocity[1] = -(std::sin(rad) * aSpeed);
     }
 
     void SetImageSource(ImageSourceSPtr aImageSource)
@@ -98,17 +94,17 @@ public:
 
     int GetLifespan() const
     {
-        return mLifespan.second;
+        return mLifespanTimer.GetInterval();
     }
 
     void SetLifespan(int aLifespan)
     {
-        mLifespan.second = aLifespan;
+        mLifespanTimer.SetInterval(aLifespan);
     }
 
     void SetEnabledLifespan(bool aEnabled)
     {
-        mLifespan.first = aEnabled;
+        mShouldUseLifespan = aEnabled;
     }
 
     void SetEnabledFade(bool aEnable)
@@ -162,7 +158,17 @@ public:
         mDampening.second = aDampening;
     }
 
-    virtual void Update()
+    std::valarray<float> GetPosition() const
+    {
+        return mPosition;
+    }
+
+    void SetShouldRelease(bool aShouldRelease)
+    {
+        mShouldRelease = aShouldRelease;
+    }
+
+    void Update()
     {
         mVelocity += mAcceleration;
 
@@ -195,17 +201,18 @@ public:
             mOpacity -= mFade.second;
         }
 
-        if (mLifespan.first && mLifespan.second != -1)
+        if (mShouldUseLifespan)
         {
-            --mLifespan.second;
-            if (mLifespan.second == -1)
+            mLifespanTimer.Update();
+
+            if (!mLifespanTimer.IsActive())
             {
                 mShouldRelease = true;
             }
         }
     }
 
-    virtual void Render(QPainter& aPainter)
+    void Render(QPainter& aPainter)
     {
         aPainter.save();
 
@@ -246,7 +253,8 @@ private:
 
     std::pair<bool, float> mDampening;
 
-    std::pair<bool, int> mLifespan;
+    bool mShouldUseLifespan;
+    Timer mLifespanTimer;
     bool mShouldRelease;
 
     std::pair<bool, float> mFade;

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "particleemmiter.h"
+#include "particleemiter.h"
 
 namespace og
 {
-class PointParticleEmmiter : public ParticleEmmiter
+class PointParticleEmiter : public ParticleEmiter
 {
 public:
     static const float MinRate;
 
 public:
-    PointParticleEmmiter(int aMaxParticles, ParticleSystem* aSystem)
-        : ParticleEmmiter(aMaxParticles, aSystem)
+    PointParticleEmiter(int aMaxParticles, ParticleSystem* aSystem)
+        : ParticleEmiter(aMaxParticles, aSystem)
     {
         SetRate(MinRate);
     }
@@ -20,8 +20,6 @@ public:
 
 private:
     void Update();
-
-    void Render(QPainter& aPainter);
 
 private:
     std::pair<int, float> mRate;

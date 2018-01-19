@@ -10,9 +10,9 @@ class QPainter;
 namespace og
 {
 class ParticleSystem;
-class ParticleEmmiter;
+class ParticleEmiter;
 
-typedef std::shared_ptr<ParticleEmmiter> ParticleEmmiterSPtr;
+typedef std::shared_ptr<ParticleEmiter> ParticleEmiterSPtr;
 
 struct ParticleDefination
 {
@@ -71,7 +71,7 @@ private:
     }
 };
 
-class ParticleEmmiter
+class ParticleEmiter
 {
 public:
     enum Type
@@ -85,19 +85,25 @@ public:
     friend class ParticleSystem;
 
 public:
-    ParticleEmmiter(int aMaxParticles, ParticleSystem* aSystem)
+    ParticleEmiter(int aMaxParticles, ParticleSystem* aSystem)
         : mParticlePool(aMaxParticles)
         , mParticleSystem(aSystem)
     {
     }
 
-    virtual ~ParticleEmmiter()
+    virtual ~ParticleEmiter()
     {
     }
 
-    virtual void Update() = 0;
+    virtual void Update();
 
-    virtual void Render(QPainter& a_painter) = 0;
+    void Render(QPainter& aPainter)
+    {
+        foreach (auto particle, mUpdate)
+        {
+            particle->Render(aPainter);
+        }
+    }
 
     Particle* AddParticle(Particle* aParticle)
     {
@@ -107,7 +113,7 @@ public:
 
     void AddParticleDefination(ParticleDefination& aDefination)
     {
-        mPartileDefinations.push_back(aDefination);
+        mParticleDefinations.push_back(aDefination);
     }
 
     ParticleSystem* GetParticleSystem() const
@@ -120,7 +126,7 @@ public:
         return mParticlePool.GetMaxParticleCount();
     }
 
-    int CountParticles() const
+    int GetCountParticles() const
     {
         return mUpdate.size();
     }
@@ -138,13 +144,15 @@ public:
         return p;
     }
 
-    void Emmit(const QPointF& aPosition);
+    void Emit(const QPointF& aPosition, const ParticleDefination aDef);
+
+    void Emit(const QPointF& aPosition);
 
 protected:
     ParticlePool mParticlePool;
     std::list<Particle*> mUpdate;
-    std::list<ParticleEmmiterSPtr>::iterator mIterator;
+    std::list<ParticleEmiterSPtr>::iterator mIterator;
     ParticleSystem* mParticleSystem;
-    std::vector<ParticleDefination> mPartileDefinations;
+    std::vector<ParticleDefination> mParticleDefinations;
 };
 } // ns:og

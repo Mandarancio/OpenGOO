@@ -1,5 +1,5 @@
 #include "particlesystem.h"
-#include "iparticleemmiterfactory.h"
+#include "iparticleemiterfactory.h"
 
 namespace og
 {
@@ -9,35 +9,35 @@ ParticleSystem::ParticleSystem(const QVector2D &aPosition, float aDepth)
     SetDepth(aDepth);
 }
 
-ParticleEmmiter *ParticleSystem::CreateEmmiter(ParticleEmmiter::Type aType, int aMaxParticles)
+ParticleEmiter *ParticleSystem::CreateEmiter(ParticleEmiter::Type aType, int aMaxParticles)
 {
-    if (auto emmiter = mParticleEmmiterFactoryManager.GetFactory()->Create(aType, aMaxParticles, this))
+    if (auto emiter = mParticleEmiterFactoryManager.GetFactory()->Create(aType, aMaxParticles, this))
     {
-        emmiter->mIterator = mEmmiters.insert(mEmmiters.end(), emmiter);
-        return emmiter.get();
+        emiter->mIterator = mEmiters.insert(mEmiters.end(), emiter);
+        return emiter.get();
     }
 
     return nullptr;
 }
 
-void ParticleSystem::DestroyEmmiter(ParticleEmmiter* aEmmiter)
+void ParticleSystem::DestroyEmiter(ParticleEmiter* aEmiter)
 {
-    mEmmiters.erase(aEmmiter->mIterator);
+    mEmiters.erase(aEmiter->mIterator);
 }
 
 void ParticleSystem::Update()
 {
-    foreach (auto emmiter, mEmmiters)
+    foreach (auto emiter, mEmiters)
     {
-        emmiter->Update();
+        emiter->Update();
     }
 }
 
-void ParticleSystem::Render(QPainter &a_painter)
+void ParticleSystem::Render(QPainter& aPainter)
 {
-    foreach (auto emmiter, mEmmiters)
+    foreach (auto emiter, mEmiters)
     {
-        emmiter->Render(a_painter);
+        emiter->Render(aPainter);
     }
 }
 }

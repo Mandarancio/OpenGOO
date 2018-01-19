@@ -11,3 +11,9 @@ inline bool IsNegative(float val)
     u.f = val;
     return (int)(u.u >> 31);
 }
+
+template<int Min, int Max>
+inline bool IsValueInRange(int aVal)
+{
+    return (aVal >= Min && aVal <= Max);
+}

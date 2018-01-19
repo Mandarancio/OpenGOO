@@ -6,12 +6,12 @@
 #include <QPoint>
 #include <QStringList>
 
-#include "GameEngine/Particles/particleemmiter.h"
+#include "GameEngine/Particles/particleemiter.h"
 
 class WOGEffect
 {
 public:
-    typedef og::ParticleEmmiter::Type Type;
+    typedef og::ParticleEmiter::Type Type;
 
 public:
     struct WOGParticle
@@ -67,7 +67,7 @@ private:
 public:
     WOGEffect(Type aType)
         : mType(aType)
-        , margin(-50)
+        , margin(50)
         , maxparticles(1)
         , rate(0.00001)
     {
