@@ -60,7 +60,7 @@ void ParticleEmiter::Emit(const QPointF& aPosition, const ParticleDefination aDe
     {
         const auto lifespan = generator->Range(aDef.lifespan.second.x(), aDef.lifespan.second.y());
         particle->SetEnabledLifespan(true);
-        particle->SetLifespan(1 * GE->getFrameRate());
+        particle->SetLifespan(lifespan * GE->getFrameRate());
 
         if (aDef.finalScale.first)
         {
