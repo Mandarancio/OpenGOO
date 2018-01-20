@@ -16,6 +16,28 @@ typedef std::shared_ptr<ParticleEmiter> ParticleEmiterSPtr;
 
 struct ParticleDefination
 {
+    struct AxialSinOffset
+    {
+        std::array<int, 2> amp;
+        std::array<float, 2> freq;
+        std::array<float, 2> phaseshift;
+
+        void SetAmplitude(const QPoint& aAmp)
+        {
+            AssignValueToArray(amp, aAmp);
+        }
+
+        void SetFrequency(const QPointF& aFreq)
+        {
+            AssignValueToArray(freq, aFreq);
+        }
+
+        void SetPhaseshift(const QPointF& aPhaseshift)
+        {
+            AssignValueToArray(phaseshift, aPhaseshift);
+        }
+    };
+
     int direction;
     int dirvar;
     std::vector<ImageSourceSPtr> imageSources;
@@ -25,6 +47,8 @@ struct ParticleDefination
     std::pair<bool, QPointF> lifespan;
     std::pair<bool, QPointF> rotationSpeed;
     std::pair<bool, float> dampening;
+    std::pair<bool, AxialSinOffset> xAxialSinOffset;
+    std::pair<bool, AxialSinOffset> yAxialSinOffset;
     bool shouldFade;
     bool isDirected;
     bool isAdditive;
@@ -43,6 +67,8 @@ struct ParticleDefination
         finalScale.first = false;
         lifespan.first = false;
         dampening.first = false;
+        xAxialSinOffset.first = false;
+        yAxialSinOffset.first = false;
     }
 
     void AddImageSource(ImageSourceSPtr& aSource)

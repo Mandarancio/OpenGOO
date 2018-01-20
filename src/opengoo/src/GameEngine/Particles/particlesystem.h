@@ -11,10 +11,6 @@ class ParticleSystem : public Entity
     ParticleSystem(const QVector2D& aPosition, float aDepth);
 
 public:
-    ~ParticleSystem()
-    {
-    }
-
     static std::shared_ptr<ParticleSystem> Create(const QVector2D& aPosition, float aDepth)
     {
         return std::shared_ptr<ParticleSystem>(new ParticleSystem(aPosition, aDepth));

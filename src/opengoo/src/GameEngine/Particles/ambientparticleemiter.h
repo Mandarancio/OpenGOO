@@ -13,10 +13,9 @@ class AmbientParticleEmiter : public ParticleEmiter
     template<int Precision> class PositionGenerator;
 
 public:
-    AmbientParticleEmiter(int aMaxParticles, ParticleSystem* aSystem)
-        : ParticleEmiter(aMaxParticles, aSystem)
-    {
-    }
+    AmbientParticleEmiter(int aMaxParticles, ParticleSystem* aSystem);
+
+    ~AmbientParticleEmiter();
 
     void SetMargin(int aMargin)
     {
@@ -31,10 +30,9 @@ public:
 private:
     void Update();
 
-    QPointF GetNextPosition(int aDegrees) const;
-
 private:
     QMarginsF mMargin;
     Timer mTimer;
+    std::unique_ptr<PositionGenerator<10>> mPositionGenerator;
 };
 }

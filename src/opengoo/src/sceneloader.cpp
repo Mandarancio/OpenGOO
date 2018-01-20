@@ -23,6 +23,17 @@
 #include "og_windowcamera.h"
 #include "og_resourcemanager.h"
 
+template<>
+inline void OptionalSetValue(std::pair<bool, og::ParticleDefination::AxialSinOffset>& aOptional,
+                             const WOGEffect::WOGParticle::WOGAxialSinOffset& aValue)
+{
+    aOptional.first = true;
+    auto& aso = aOptional.second;
+    aso.SetAmplitude(aValue.amp);
+    aso.SetFrequency(aValue.freq);
+    aso.SetPhaseshift(aValue.phaseshift);
+}
+
 struct SceneLoaderHelper
 {
     SceneLoaderHelper(og::Scene& aScene)
@@ -194,31 +205,31 @@ static QString ToString(const QStringList& aStrList)
     return str;
 }
 
-//static QString ToString(WOGEffect::WOGParticle::WOGAxialSinOffset::Axis axis)
-//{
-//    switch (axis)
-//    {
-//    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_x:
-//        return "X";
-//    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_y:
-//        return "Y";
-//    }
+static QString ToString(WOGEffect::WOGParticle::WOGAxialSinOffset::Axis axis)
+{
+    switch (axis)
+    {
+    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_x:
+        return "X";
+    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_y:
+        return "Y";
+    }
 
-//    return "Unknown";
-//}
+    return "Unknown";
+}
 
-//static QString ToString(const WOGEffect::WOGParticle::WOGAxialSinOffset& offset)
-//{
-//    QByteArray ba;
-//    QDataStream stream(&ba, QIODevice::WriteOnly);
-//    stream << "WOGEffect::WOGParticle::WOGAxialSinOffset("
-//       << "axis:" << ToString(offset.axis)
-//       << ", freq:" << offset.freq
-//       << ", amp:" << offset.amp
-//       << ", phaseshift:" << offset.phaseshift
-//       << ")";
-//    return ba;
-//}
+static QString ToString(const WOGEffect::WOGParticle::WOGAxialSinOffset& offset)
+{
+    QString str;
+    QTextStream stream(&str);
+    stream << "WOGEffect::WOGParticle::WOGAxialSinOffset("
+       << "axis:" << ToString(offset.axis)
+       << ", freq:" << ToString(offset.freq)
+       << ", amp:" << ToString(offset.amp)
+       << ", phaseshift:" << ToString(offset.phaseshift)
+       << ")";
+    return str;
+}
 
 static QString ToString(const WOGEffect::WOGParticle& aParticle)
 {
@@ -304,7 +315,7 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
             {
                 qDebug() << aParticle.effect << *effect;
                 em->SetMargin(effect->margin);
-                em->SetTimeoutInterval(0.5 * GE->getFrameRate());
+                em->SetTimeoutInterval(0.5f * GE->getFrameRate());
             }
 
             og::ParticleDefination pd;
@@ -332,6 +343,20 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
                 pd.isAdditive = particle.additive;
                 pd.SetScale(particle.scale);
                 pd.shouldFade = particle.fade;
+
+                foreach (const auto& axialsinoffset, particle.axialsinoffset)
+                {
+                    qDebug() << ToString(axialsinoffset);
+                    switch (axialsinoffset.axis)
+                    {
+                    case WOGEffect::WOGParticle::WOGAxialSinOffset::e_x:
+                        OptionalSetValue(pd.xAxialSinOffset, axialsinoffset);
+                        break;
+                    case WOGEffect::WOGParticle::WOGAxialSinOffset::e_y:
+                        OptionalSetValue(pd.yAxialSinOffset, axialsinoffset);
+                        break;
+                    }
+                }
 
                 emiter->AddParticleDefination(pd);
             }

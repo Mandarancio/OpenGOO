@@ -1,9 +1,7 @@
 #include "particleemiter.h"
 
 #include "../og_gameengine.h"
-
-// TODO Should implement:
-//  axialsinoffset
+#include "../../OGLib/util.h"
 
 // TODO Should test:
 //  dampening
@@ -19,10 +17,9 @@ void ParticleEmiter::Emit(const QPointF& aPosition, const ParticleDefination aDe
 
     particle->SetAcceleration(aDef.acceleration);
 
-    if (aDef.dampening.first)
+    if (OptionalHasValue(aDef.dampening))
     {
-        particle->SetEnabledDampening(true);
-        particle->SetDampening(aDef.dampening.second / GE->getFrameRate());
+        particle->SetDampening(OptionalValue(aDef.dampening) / GE->getFrameRate());
     }
 
     particle->SetImageSource(aDef.imageSources[generator->Range(0, static_cast<int>(aDef.imageSources.size()) - 1)]);
@@ -48,33 +45,50 @@ void ParticleEmiter::Emit(const QPointF& aPosition, const ParticleDefination aDe
     else
     {
         particle->SetAngle(generator->Range(aDef.rotation.x(), aDef.rotation.y()));
-        if (aDef.rotationSpeed.first)
+        if (OptionalHasValue(aDef.rotationSpeed))
         {
-            const auto rotSpeedInRad = generator->Range(aDef.rotationSpeed.second.x(), aDef.rotationSpeed.second.y());
-            particle->SetEnabledRotationSpeed(true);
+            const auto rotSpeedInRad = generator->Range(OptionalValue(aDef.rotationSpeed).x()
+                                                        , OptionalValue(aDef.rotationSpeed).y());
             particle->SetRotationSpeed(qRadiansToDegrees(rotSpeedInRad) / GE->getFrameRate());
         }
     }
 
-    if (aDef.lifespan.first)
+    if (OptionalHasValue(aDef.lifespan))
     {
-        const auto lifespan = generator->Range(aDef.lifespan.second.x(), aDef.lifespan.second.y());
+        const auto lifespan = generator->Range(OptionalValue(aDef.lifespan).x(),
+                                               OptionalValue(aDef.lifespan).y());
         particle->SetEnabledLifespan(true);
         particle->SetLifespan(lifespan * GE->getFrameRate());
 
-        if (aDef.finalScale.first)
+        if (OptionalHasValue(aDef.finalScale))
         {
-            const auto finalScale = aDef.finalScale.second;
-            particle->SetEnabledFinalScale(true);
+            const auto finalScale = OptionalHasValue(aDef.finalScale);
             particle->SetFinalScale(finalScale);
             particle->SetScaleSpeed((finalScale - scale) / particle->GetLifespan());
         }
 
         if (aDef.shouldFade)
         {
-            particle->SetEnabledFade(true);
             particle->SetFadeSpeed(1.0f / particle->GetLifespan());
         }
+    }
+
+    if (OptionalHasValue(aDef.xAxialSinOffset))
+    {
+        const auto& aso = OptionalValue(aDef.xAxialSinOffset);
+        auto amp = generator->Range(aso.amp[0], aso.amp[1]);
+        auto step = generator->Range(aso.freq[0], aso.freq[1]) / GE->getFrameRate();
+        auto phase = generator->Range(aso.phaseshift[0], aso.phaseshift[1]);
+        particle->SetAxialSinOffset(Particle::e_x, amp, step, phase);
+    }
+
+    if (OptionalHasValue(aDef.yAxialSinOffset))
+    {
+        const auto& aso = OptionalValue(aDef.yAxialSinOffset);
+        auto amp = generator->Range(aso.amp[0], aso.amp[1]);
+        auto step = generator->Range(aso.freq[0], aso.freq[1]) / GE->getFrameRate();
+        auto phase = generator->Range(aso.phaseshift[0], aso.phaseshift[1]);
+        particle->SetAxialSinOffset(Particle::e_y, amp, step, phase);
     }
 
     AddParticle(particle);

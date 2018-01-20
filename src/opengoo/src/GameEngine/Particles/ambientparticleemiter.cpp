@@ -9,8 +9,15 @@ namespace og
 template<int Precision>
 class AmbientParticleEmiter::PositionGenerator
 {
+    AmbientParticleEmiter* mEmiter;
+
 public:
-    static QPointF GetNext(int aDegrees)
+    PositionGenerator(AmbientParticleEmiter* aEmiter)
+        : mEmiter(aEmiter)
+    {
+    }
+
+    QPointF GetNext(int aDegrees)
     {;
         const auto& pos = GE->getCamera()->GetPosition();
         const auto hw = GE->getCamera()->GetScaledWidth() * 0.5f;
@@ -19,28 +26,31 @@ public:
         auto x = pos.x() + GE->GetRandomGenerator()->Range(-hw, hw);
         auto y = pos.y() + GE->GetRandomGenerator()->Range(-hh, hh);
 
+        auto hwWithMargin = hw + mEmiter->mMargin.left();
+        auto hhWithMargin = hh + mEmiter->mMargin.top();
+
         switch (CheckDegrees(aDegrees))
         {
         case 0:
-            x = pos.x() - hw;
+            x = pos.x() - hwWithMargin;
             break;
         case 90:
-            y = pos.y() - hh;
+            y = pos.y() - hhWithMargin;
             break;
         case 180:
-            x = pos.x() + hw;
+            x = pos.x() + hwWithMargin;
             break;
         case 270:
-            y = pos.y() + hh;
+            y = pos.y() + hhWithMargin;
             break;
         default:
             if (GE->GetRandomGenerator()->Range(0, 1))
             {
-                y = (aDegrees > 0 && aDegrees < 180) ? pos.y() - hh : pos.y() + hh;
+                y = (aDegrees > 0 && aDegrees < 180) ? pos.y() - hhWithMargin : pos.y() + hhWithMargin;
             }
             else
             {
-                x = (aDegrees > 90 && aDegrees < 270) ? pos.x() + hw : pos.x() - hw;
+                x = (aDegrees > 90 && aDegrees < 270) ? pos.x() + hwWithMargin : pos.x() - hwWithMargin;
             }
             break;
         }
@@ -76,10 +86,18 @@ private:
     }
 };
 
+AmbientParticleEmiter::AmbientParticleEmiter(int aMaxParticles, ParticleSystem* aSystem)
+    : ParticleEmiter(aMaxParticles, aSystem)
+    , mPositionGenerator(new PositionGenerator<10>(this))
+{
+}
+
+AmbientParticleEmiter::~AmbientParticleEmiter()
+{
+}
+
 void AmbientParticleEmiter::Update()
 {
-    const static int Precision = 10;
-
     mTimer.Update();
     if (!mTimer.IsActive())
     {
@@ -87,7 +105,7 @@ void AmbientParticleEmiter::Update()
         {
             const auto i = GE->GetRandomGenerator()->Range(0, static_cast<int>(mParticleDefinations.size()) - 1);
             const auto& def = mParticleDefinations[i];
-            Emit(PositionGenerator<Precision>::GetNext(def.direction), def);
+            Emit(mPositionGenerator->GetNext(def.direction), def);
         }
 
         mTimer.Start();

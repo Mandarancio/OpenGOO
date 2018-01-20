@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <valarray>
 #include <cassert>
 
@@ -9,13 +10,49 @@
 
 #include "../imagesource.h"
 #include "../timer.h"
+#include "../../OGLib/util.h"
 
 class QPainter;
 
 namespace og
 {
+struct HOscillator
+{
+    float GetAxialSinOffset() const
+    {
+        return mAxialSinOffset;
+    }
+
+    void Init(int aAmplitude, float aPhase)
+    {
+        mAmplitude = aAmplitude;
+        mPhase = aPhase;
+        mAngularSpeed = 0.0f;
+        mAxialSinOffset = 0.0f;
+    }
+
+    void Step(float aAngularSpeedStep)
+    {
+        mAxialSinOffset = mAmplitude * std::sin(mAngularSpeed + mPhase);
+        mAngularSpeed += aAngularSpeedStep;
+    }
+
+private:
+    int mAmplitude;
+    float mPhase;
+    float mAngularSpeed;
+    float mAxialSinOffset;
+};
+
 class Particle
 {
+public:
+    enum Axis
+    {
+        e_x,
+        e_y
+    };
+
 public:
     Particle()
         : mPosition(2)
@@ -29,16 +66,19 @@ public:
     {
        mShouldRelease = false;
        SetScale(1.0f);
-       mFinalScale.first = false;
+       OptionalReset(mFinalScale);
        mScaleSpeed = 0.0f;
        mShouldUseLifespan = false;
-       mFade.first = false;
+       OptionalReset(mFade);
        mOpacity = 1.0f;
        mIsDirected = false;
        mAngle = 0.0f;
-       mRotationSpeed.first = false;
+       OptionalReset(mRotationSpeed);
        mIsAdditive = false;
-       mDampening.first = false;
+       OptionalReset(mDampening);
+
+       mShouldUseAxialSinOffset[e_x] = false;
+       mShouldUseAxialSinOffset[e_y] = false;
     }
 
     void SetPosition(const QPointF& aPosition)
@@ -74,17 +114,7 @@ public:
 
     void SetFinalScale(float aFinalScale)
     {
-        mFinalScale.second = aFinalScale;
-    }
-
-    void SetEnabledFinalScale(bool aEnabled)
-    {
-        mFinalScale.first = aEnabled;
-    }
-
-    bool GetEnabledFinalScale() const
-    {
-        return mFinalScale.first;
+        OptionalSetValue(mFinalScale, aFinalScale);
     }
 
     bool GetShouldRelease() const
@@ -107,14 +137,9 @@ public:
         mShouldUseLifespan = aEnabled;
     }
 
-    void SetEnabledFade(bool aEnable)
-    {
-        mFade.first = aEnable;
-    }
-
     void SetFadeSpeed(float aSpeed)
     {
-        mFade.second = aSpeed;
+        OptionalSetValue(mFade, aSpeed);
     }
 
     void SetDirected(bool aDirected)
@@ -127,14 +152,9 @@ public:
         mAngle = aAngle + 180.0f;
     }
 
-    void SetEnabledRotationSpeed(float aEnabled)
-    {
-        mRotationSpeed.first = aEnabled;
-    }
-
     void SetRotationSpeed(float aSpeed)
     {
-        mRotationSpeed.second = aSpeed;
+        OptionalSetValue(mRotationSpeed, aSpeed);
     }
 
     void SetAcceleration(const QPointF& aAcceleration)
@@ -148,14 +168,9 @@ public:
         mIsAdditive = aEnabled;
     }
 
-    void SetEnabledDampening(bool aEnabled)
-    {
-        mDampening.first = aEnabled;
-    }
-
     void SetDampening(float aDampening)
     {
-        mDampening.second = aDampening;
+        OptionalSetValue(mDampening, aDampening);
     }
 
     std::valarray<float> GetPosition() const
@@ -168,27 +183,54 @@ public:
         mShouldRelease = aShouldRelease;
     }
 
+    void SetAxialSinOffset(Axis aAxis, int aAmp, float aAngularSpeedStep, float aPhase)
+    {
+        switch (aAxis)
+        {
+        case e_x:
+            mHOscillator[e_x].Init(aAmp, aPhase);
+            mAngularSpeedStep[e_x] = aAngularSpeedStep;
+            mShouldUseAxialSinOffset[e_x] = true;
+            break;
+        case e_y:
+            mHOscillator[e_y].Init(aAmp, aPhase);
+            mAngularSpeedStep[e_y] = aAngularSpeedStep;
+            mShouldUseAxialSinOffset[e_y] = true;
+            break;
+        }
+    }
+
     void Update()
     {
         mVelocity += mAcceleration;
 
-        if (mDampening.first)
+        if (OptionalHasValue(mDampening))
         {
-            mVelocity *= 1.0f - mDampening.second;
+            mVelocity *= 1.0f - OptionalValue(mDampening);
         }
 
         mPosition += mVelocity;
 
-        if (GetEnabledFinalScale())
+        if (mShouldUseAxialSinOffset[e_x])
+        {
+            mHOscillator[e_x].Step(mAngularSpeedStep[e_x]);
+        }
+
+        if (mShouldUseAxialSinOffset[e_y])
+        {
+            mHOscillator[e_y].Step(mAngularSpeedStep[e_y]);
+        }
+
+        if (OptionalHasValue(mFinalScale))
         {
             mScale += mScaleSpeed;
         }
 
         if (!mIsDirected)
         {
-            if (mRotationSpeed.first)
+            if (OptionalHasValue(mRotationSpeed))
             {
-                mAngle += mRotationSpeed.second;
+                mAngle += OptionalValue(mRotationSpeed);
             }
         }
         else
@@ -196,9 +238,9 @@ public:
             mAngle = qRadiansToDegrees(std::atan2(mVelocity[0], -mVelocity[1]));
         }
 
-        if (mFade.first)
+        if (OptionalHasValue(mFade))
         {
-            mOpacity -= mFade.second;
+            mOpacity -= OptionalValue(mFade);
         }
 
         if (mShouldUseLifespan)
@@ -216,7 +258,13 @@ public:
     {
         aPainter.save();
 
-        aPainter.translate(mPosition[0], mPosition[1]);
+        auto x = mShouldUseAxialSinOffset[e_x] ?
+                    mPosition[0] + mHOscillator[e_x].GetAxialSinOffset() : mPosition[0];
+        auto y = mShouldUseAxialSinOffset[e_y] ?
+                    mPosition[1] + mHOscillator[e_y].GetAxialSinOffset() : mPosition[1];
+
+        aPainter.translate(x, y);
+
         aPainter.scale(mScale[0], mScale[1]);
         aPainter.setOpacity(mOpacity);
 
@@ -262,5 +310,9 @@ private:
 
     bool mIsDirected;
     bool mIsAdditive;
+
+    std::array<bool, 2> mShouldUseAxialSinOffset;
+    std::array<HOscillator, 2> mHOscillator;
+    std::array<float, 2> mAngularSpeedStep;
 };
 } // ns:og
