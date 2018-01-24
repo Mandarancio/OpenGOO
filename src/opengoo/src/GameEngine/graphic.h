@@ -7,7 +7,8 @@
 class QPainter;
 class QVector2D;
 
-namespace og {
+namespace og
+{
 class Graphic
 {
     Graphic(const Graphic&);
@@ -27,6 +28,12 @@ public:
 
     virtual float GetAngle() const = 0;
     virtual void SetAngle(float a_angle)  = 0;
+
+    virtual void SetScaleX(float a_scale) = 0;
+    virtual void SetScaleY(float a_scale) = 0;
+
+    virtual float GetScaleX() const = 0;
+    virtual float GetScaleY() const = 0;
 };
 }
 

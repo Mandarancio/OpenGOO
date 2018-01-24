@@ -61,11 +61,14 @@ private:
 
     og::ImageSourceSPtr CreateImageSource(const QString& a_filename);
 
+    AnimationData* GetAnimation(const QString& aId);
+
 private:
     QHash<QString, WOGResourcesSPtr> m_resources;
     QHash<QString, WOGBallSPtr> m_balls;
     QHash<QString, og::ImageSourceSPtr> m_imageSources;
     QHash<QString, og::audio::SoundSource> m_soundSources;
+    QHash<QString, std::shared_ptr<AnimationData>> mAnimations;
     MusicEntry m_Music;
     std::unique_ptr<WOGText> m_text;
     std::unique_ptr<WOGEffects> m_effects;

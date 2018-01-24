@@ -5,6 +5,7 @@
 #include "GameEngine/Particles/particle.h"
 #include "GameEngine/Particles/pointparticleemiter.h"
 #include "GameEngine/Particles/ambientparticleemiter.h"
+#include "GameConfiguration/animationdata.h"
 
 #include "og_utils.h"
 #include "wog_level.h"
@@ -17,6 +18,10 @@
 
 #include "spritefactory.h"
 #include "animator.h"
+#include "scaleanimation.h"
+#include "translateanimation.h"
+#include "rotationanimation.h"
+#include "sequentialanimationgroup.h"
 #include "entities/scenelayer.h"
 
 #include "opengoo.h"
@@ -32,6 +37,36 @@ inline void OptionalSetValue(std::pair<bool, og::ParticleDefination::AxialSinOff
     aso.SetAmplitude(aValue.amp);
     aso.SetFrequency(aValue.freq);
     aso.SetPhaseshift(aValue.phaseshift);
+}
+
+inline QString ToString(const QPointF& aPoint)
+{
+    return QString("(%1, %2)").arg(aPoint.x()).arg(aPoint.y());
+}
+
+inline QString ToString(bool aFlag)
+{
+    return aFlag ? "True" : "False";
+}
+
+inline QString ToString(const QStringList& aStrList)
+{
+    QString str;
+    QTextStream stream(&str);
+    stream << "{";
+
+    for (int i = 0; i < aStrList.size(); ++i)
+    {
+        stream << aStrList[i];
+        if (i + 1 < aStrList.size())
+        {
+            stream << ", ";
+        }
+    }
+
+    stream << "}";
+
+    return str;
 }
 
 struct SceneLoaderHelper
@@ -121,27 +156,57 @@ void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
 
     if (!aSceneLayer.anim.isEmpty())
     {
-        // TODO Remove this test data
-        auto anim = std::make_shared<Animator>(e.get(), aSceneLayer.animspeed);
-        anim->AddTransformType(Animator::XFORM_ROTATE);
-        anim->AddFrameTime(0);
-        anim->AddFrameTime(0.5);
-        anim->AddFrameTime(1);
+        AnimationData* ad = GetResourceManager()->GetAnimation(aSceneLayer.anim);
+        auto anim = std::make_shared<Animator>();
+        foreach (const auto& entry, ad->transformFrame)
+        {
+            auto ag = std::make_shared<SequentialAnimationGroup>();
+            const auto& frame = entry.frame;
+            for (int i = 0; frame[i].nextFrameIndex != -1;)
+            {
+                auto next = frame[i].nextFrameIndex;
+                int duration = ((ad->frameTime[next] - ad->frameTime[i]) * 1000) / std::fabs(aSceneLayer.animspeed);
+                switch (entry.type)
+                {
+                case AnimationData::XFORM_SCALE:
+                    {
+                        auto a = std::make_shared<ScaleAnimation>(e.get(),
+                                                                  duration,
+                                                                  frame[i].x,
+                                                                  frame[i].y,
+                                                                  frame[next].x,
+                                                                  frame[next].y);
+                        ag->AddAnimation(a);
+                    }
+                    break;
+                case AnimationData::XFORM_TRANSLATE:
+                    {
+                        auto a = std::make_shared<TranslateAnimation>(e.get(),
+                                                                  duration,
+                                                                  frame[i].x,
+                                                                  frame[i].y,
+                                                                  frame[next].x,
+                                                                  frame[next].y);
+                        ag->AddAnimation(a);
+                    }
+                    break;
+                case AnimationData::XFORM_ROTATE:
+                    {
+                        auto a = std::make_shared<RotationAnimation>(e.get(),
+                                                                  duration,
+                                                                  frame[i].angle,
+                                                                  frame[next].angle,
+                                                                  IsNegative(aSceneLayer.animspeed));
+                        ag->AddAnimation(a);
+                    }
+                    break;
+                }
 
-        KeyFrame kf;
-        kf.interpolation = KeyFrame::INTERPOLATION_LINEAR;
+                i = next;
+            }
 
-        kf.angle = 0;
-        kf.nextFrameIndex = 1;
-        anim->AddTransformFrame(kf);
-
-        kf.angle = 180.0f;
-        kf.nextFrameIndex = 2;
-        anim->AddTransformFrame(kf);
-
-        kf.angle = 360.0f;
-        kf.nextFrameIndex = -1;
-        anim->AddTransformFrame(kf);
+            anim->AddAnimationGroup(ag)->Start();
+        }
 
         e->SetAnimator(anim);
     }
@@ -175,127 +240,6 @@ void SceneLoaderHelper::Process(const WOGLabel& aLabel)
     }
 }
 
-static QString ToString(const QPointF& aPoint)
-{
-    return QString("(%1, %2)").arg(aPoint.x()).arg(aPoint.y());
-}
-
-static QString ToString(bool aFlag)
-{
-    return aFlag ? "True" : "False";
-}
-
-static QString ToString(const QStringList& aStrList)
-{
-    QString str;
-    QTextStream stream(&str);
-    stream << "{";
-
-    for (int i = 0; i < aStrList.size(); ++i)
-    {
-        stream << aStrList[i];
-        if (i + 1 < aStrList.size())
-        {
-            stream << ", ";
-        }
-    }
-
-    stream << "}";
-
-    return str;
-}
-
-static QString ToString(WOGEffect::WOGParticle::WOGAxialSinOffset::Axis axis)
-{
-    switch (axis)
-    {
-    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_x:
-        return "X";
-    case WOGEffect::WOGParticle::WOGAxialSinOffset::Axis::e_y:
-        return "Y";
-    }
-
-    return "Unknown";
-}
-
-static QString ToString(const WOGEffect::WOGParticle::WOGAxialSinOffset& offset)
-{
-    QString str;
-    QTextStream stream(&str);
-    stream << "WOGEffect::WOGParticle::WOGAxialSinOffset("
-       << "axis:" << ToString(offset.axis)
-       << ", freq:" << ToString(offset.freq)
-       << ", amp:" << ToString(offset.amp)
-       << ", phaseshift:" << ToString(offset.phaseshift)
-       << ")";
-    return str;
-}
-
-static QString ToString(const WOGEffect::WOGParticle& aParticle)
-{
-    QString str;
-    QTextStream stream(&str);
-    stream << "WOGParticle("
-           << "scale=" << ToString(aParticle.scale)
-           << ", finalscale[" << ToString(aParticle.finalscale.first) << "]=" << aParticle.finalscale.second
-           << ", movedirvar=" << aParticle.movedirvar
-           << ", image=" << ToString(aParticle.image)
-           << ", directed=" << ToString(aParticle.directed)
-           << ", movedir=" << aParticle.movedir
-           << ", acceleration=" << ToString(aParticle.acceleration)
-           << ", additive=" << ToString(aParticle.additive)
-           << ", lifespan[" << ToString(aParticle.lifespan.first) << "]=" << ToString(aParticle.lifespan.second)
-           << ", speed=" << ToString(aParticle.speed)
-           << ", dampening[" << ToString(aParticle.dampening.first) << "]=" << aParticle.dampening.second
-           << ", rotation=" << ToString(QPointF(aParticle.rotation))
-           << ", rotspeed[" << ToString(aParticle.rotspeed.first) << "]="<< ToString(aParticle.rotspeed.second)
-           << ", fade="<< ToString(aParticle.fade)
-           << ", axialsinoffset[" << static_cast<int>(aParticle.axialsinoffset.size()) << "]"
-           << ")";
-    return str;
-}
-
-static QString ToString(og::ParticleEmiter::Type type)
-{
-    switch (type)
-    {
-    case og::ParticleEmiter::e_unknown:
-        return"Unknown";
-    case og::ParticleEmiter::e_point:
-        return "Point";
-    case og::ParticleEmiter::e_ambient:
-        return "Ambient";
-    case og::ParticleEmiter::e_user:
-        return "User";
-    }
-
-    return "Unknown";
-}
-
-inline QDebug operator<< (QDebug dbg, const WOGEffect& effect)
-{
-    dbg.nospace() << "WOGEffect("
-                  << "type=" << ToString(effect.GetType())
-                  << ", margin=" << effect.margin
-                  << ", maxparticles=" << effect.maxparticles
-                  << ", rate=" << effect.rate
-                  << ", particle[" << effect.particle.size() << "]";
-    if (effect.particle.size() > 0)
-    {
-    dbg.noquote() << "={";
-    foreach (auto& particle, effect.particle)
-    {
-        dbg << ToString(particle);
-    }
-
-    dbg << "}";
-    }
-
-    dbg << ")";
-
-    return dbg.space();
-}
-
 void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
 {
     assert(dynamic_cast<OGResourceManager*>(GetResourceManager()));
@@ -313,7 +257,6 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
 
             if (auto em = dynamic_cast<og::AmbientParticleEmiter*>(emiter))
             {
-                qDebug() << aParticle.effect << *effect;
                 em->SetMargin(effect->margin);
                 em->SetTimeoutInterval(0.5f * GE->getFrameRate());
             }
@@ -346,7 +289,6 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
 
                 foreach (const auto& axialsinoffset, particle.axialsinoffset)
                 {
-                    qDebug() << ToString(axialsinoffset);
                     switch (axialsinoffset.axis)
                     {
                     case WOGEffect::WOGParticle::WOGAxialSinOffset::e_x:

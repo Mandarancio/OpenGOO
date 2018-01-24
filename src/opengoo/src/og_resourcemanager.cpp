@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include <QFile>
 #include <QImage>
 #include <QString>
@@ -5,6 +7,8 @@
 #include "GameConfiguration/binltlfile.h"
 #include "GameConfiguration/wog_text.h"
 #include "GameConfiguration/wog_resources.h"
+#include "GameConfiguration/animationdata.h"
+#include "GameConfiguration/binanimparser.h"
 
 #include <logger.h>
 
@@ -223,5 +227,19 @@ WOGEffect* OGResourceManager::GetEffect(const QString& aId)
         return nullptr;
     }
 
+    return it->get();
+}
+
+AnimationData* OGResourceManager::GetAnimation(const QString& aId)
+{
+    auto it = mAnimations.find(aId);
+    if (it != mAnimations.end())
+    {
+        return (*it).get();
+    }
+
+    auto path = QString("res/anim/%1.anim.binltl").arg(aId);
+    auto anim = BinAnimParser::Parse(path);
+    it = mAnimations.insert(aId, std::move(anim));
     return it->get();
 }

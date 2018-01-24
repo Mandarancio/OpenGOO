@@ -109,7 +109,13 @@ HEADERS += \
     src/keyframe.h \
     src/og_resourcemanager.h \
     src/resourcemanagerfactory.h \
-    src/font.h
+    src/font.h \
+    src/animation.h \
+    src/sequentialanimationgroup.h \
+    src/animationgroup.h \
+    src/scaleanimation.h \
+    src/translateanimation.h \
+    src/rotationanimation.h
 
 SOURCES += \
     src/main.cpp \

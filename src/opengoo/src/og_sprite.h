@@ -145,6 +145,16 @@ public:
         SetScaleY(a_scale.y());
     }
 
+    float GetScaleX() const
+    {
+        return m_scaleX;
+    }
+
+    float GetScaleY() const
+    {
+        return m_scaleY;
+    }
+
     float GetScaledWidth() const
     {
         return GetWidth() * m_scaleX;
