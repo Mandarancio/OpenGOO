@@ -106,7 +106,6 @@ HEADERS += \
     src/physicsenginefactory.h \
     src/sceneloader.h \
     src/animator.h \
-    src/keyframe.h \
     src/og_resourcemanager.h \
     src/resourcemanagerfactory.h \
     src/font.h \
