@@ -13,11 +13,3 @@ struct WOGMaterial
 };
 
 typedef QList<WOGMaterial> WOGMaterialList;
-
-// TODO Remove
-//struct WOGMaterialList
-//{
-//    QList<WOGMaterial> material;
-
-//    WOGMaterial* GetMaterial(const QString& id);
-//};

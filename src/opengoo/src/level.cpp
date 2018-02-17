@@ -48,7 +48,6 @@ Level::Level(const QString &/*levelname*/) : mImpl(new Impl)
 
 Level::~Level()
 {
-    GAME->_CloseLevel();
 }
 
 void Level::retryButton()

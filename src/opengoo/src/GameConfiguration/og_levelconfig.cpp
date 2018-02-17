@@ -1,6 +1,8 @@
 #include "og_levelconfig.h"
 #include "wog_level.h"
 
+#include "../OGLib/util.h"
+
 struct OGLevelConfigHelper
 {
     static WOGCamera CreateCamera(const QDomElement& element);
@@ -9,9 +11,16 @@ struct OGLevelConfigHelper
     static WOGStrand CreateStrand(const QDomElement& element);
     static QPointF CreateVertex(const QDomElement& element);
 
-    static void LoadLevelExit(WOGLevelExit& obj, const QDomElement& element);
-    static void LoadPipe(WOGPipe& pipe, const QDomElement& element);
+    static void Load(WOGLevelExit& obj, const QDomElement& element);
+    static void Load(WOGPipe& pipe, const QDomElement& element);
 };
+
+template<typename TOptional>
+inline void OptionalSetValue(TOptional& aOptional, const QDomElement& aValue)
+{
+    aOptional.first = true;
+    OGLevelConfigHelper::Load(aOptional.second, aValue);
+}
 
 WOGPoi OGLevelConfigHelper::CreatePoi(const QDomElement &element)
 {
@@ -83,7 +92,7 @@ WOGStrand OGLevelConfigHelper::CreateStrand(const QDomElement& element)
     return obj;
 }
 
-void OGLevelConfigHelper::LoadLevelExit(WOGLevelExit& obj, const QDomElement &element)
+void OGLevelConfigHelper::Load(WOGLevelExit& obj, const QDomElement &element)
 {
     obj.id = element.attribute("id");
     obj.pos = OGXmlConfig::StringToPointF(element.attribute("pos"));
@@ -91,7 +100,7 @@ void OGLevelConfigHelper::LoadLevelExit(WOGLevelExit& obj, const QDomElement &el
     obj.filter = element.attribute("filter");
 }
 
-void OGLevelConfigHelper::LoadPipe(WOGPipe& pipe, const QDomElement &element)
+void OGLevelConfigHelper::Load(WOGPipe& pipe, const QDomElement &element)
 {
     pipe.id = element.attribute("id", "0");
     pipe.depth = element.attribute("depth", "0").toFloat();
@@ -105,8 +114,8 @@ void OGLevelConfigHelper::LoadPipe(WOGPipe& pipe, const QDomElement &element)
 OGLevelConfig::Type OGLevelConfig::Parser()
 {
     auto level = Type(new WOGLevel);
-    level->levelexit.second = false;
-    level->pipe.second = false;
+    OptionalReset(level->levelexit);
+    OptionalReset(level->pipe);
 
     level->ballsrequired = rootElement.attribute("ballsrequired").toInt();
     level->letterboxed = StringToBool(rootElement.attribute("letterboxed"));
@@ -137,18 +146,16 @@ OGLevelConfig::Type OGLevelConfig::Parser()
         }
         else if (domElement.tagName() == "levelexit")
         {
-            if (!level->levelexit.second)
+            if (!OptionalHasValue(level->levelexit))
             {
-                OGLevelConfigHelper::LoadLevelExit(level->levelexit.first, domElement);
-                level->levelexit.second = true;
+                OptionalSetValue(level->levelexit, domElement);
             }
         }
         else if (domElement.tagName() == "pipe")
         {
-            if (!level->pipe.second)
+            if (!OptionalHasValue(level->pipe))
             {                
-                OGLevelConfigHelper::LoadPipe(level->pipe.first, domElement);
-                level->pipe.second = true;
+                OptionalSetValue(level->pipe, domElement);
             }
         }
         else if (domElement.tagName() == "Strand")

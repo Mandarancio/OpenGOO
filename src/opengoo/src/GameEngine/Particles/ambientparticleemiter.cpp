@@ -19,9 +19,9 @@ public:
 
     QPointF GetNext(int aDegrees)
     {;
-        const auto& pos = GE->getCamera()->GetPosition();
-        const auto hw = GE->getCamera()->GetScaledWidth() * 0.5f;
-        const auto hh = GE->getCamera()->GetScaledHeight() * 0.5f;
+        const auto& pos = GE->GetCamera()->GetPosition();
+        const auto hw = GE->GetCamera()->GetScaledWidth() * 0.5f;
+        const auto hh = GE->GetCamera()->GetScaledHeight() * 0.5f;
 
         auto x = pos.x() + GE->GetRandomGenerator()->Range(-hw, hw);
         auto y = pos.y() + GE->GetRandomGenerator()->Range(-hh, hh);
@@ -113,9 +113,9 @@ void AmbientParticleEmiter::Update()
 
     ParticleEmiter::Update();
 
-    QRectF rect(0, 0, GE->getCamera()->GetScaledWidth(), GE->getCamera()->GetScaledHeight());
+    QRectF rect(0, 0, GE->GetCamera()->GetScaledWidth(), GE->GetCamera()->GetScaledHeight());
     rect += mMargin;
-    rect.moveCenter(QPointF(GE->getCamera()->GetPosition().x(), GE->getCamera()->GetPosition().y()));
+    rect.moveCenter(QPointF(GE->GetCamera()->GetPosition().x(), GE->GetCamera()->GetPosition().y()));
 
     foreach (auto particle, mUpdate)
     {

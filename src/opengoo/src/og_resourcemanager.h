@@ -11,15 +11,8 @@ struct WOGText;
 
 class OGResourceManager : public og::IResourceManager
 {
-    template <typename T>
-    struct AudioEntry
-    {
-        QString id;
-        T audio;
-    };
-
-    typedef AudioEntry<MusicSPtr> MusicEntry;
-    typedef AudioEntry<SoundSPtr> SoundEntry;
+    typedef std::pair<QString, MusicSPtr> MusicEntry;
+    typedef std::pair<QString, SoundSPtr> SoundEntry;
 
 public:
     typedef std::unique_ptr<WOGBall> WOGBallPtr;
@@ -27,6 +20,7 @@ public:
     typedef std::shared_ptr<WOGResources> WOGResourcesSPtr;
 
 public:
+    OGResourceManager();
     WOGEffect* GetEffect(const QString& aId);
 
 private:
@@ -40,7 +34,7 @@ private:
 
     og::ImageSourceSPtr GetImageSourceById(const QString& a_id);
 
-    MusicSPtr GetMusic(const QString& a_id);
+    og::audio::Music* GetMusic(const QString& a_id);
 
     SoundSPtr GetSound(const QString& a_id);
 
@@ -51,7 +45,7 @@ private:
         m_soundSources.clear();
     }
 
-    const og::IFontSPtr GetFont(const QString& /*aId*/) {return nullptr;}
+    const og::IFont* GetFont(const QString& aId);
 
     QString GetText(const QString& aId);
 
@@ -69,6 +63,7 @@ private:
     QHash<QString, og::ImageSourceSPtr> m_imageSources;
     QHash<QString, og::audio::SoundSource> m_soundSources;
     QHash<QString, std::shared_ptr<AnimationData>> mAnimations;
+    QHash<QString, og::IFontSPtr> mFonts;
     MusicEntry m_Music;
     std::unique_ptr<WOGText> m_text;
     std::unique_ptr<WOGEffects> m_effects;

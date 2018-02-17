@@ -7,6 +7,9 @@
 #include <QColor>
 #include <QSizeF>
 
+#include "OGLib/optional.h"
+
+
 class OGXmlConfig
 {
 public:
@@ -70,6 +73,31 @@ public:
     static void WriteValue(QStringList& aData, const QDomAttr& aAttribute)
     {
         aData = aAttribute.value().split(",");
+    }
+
+    static void WriteValue(QString& aData, const QDomAttr& aAttribute)
+    {
+        aData = aAttribute.value();
+    }
+
+    static void WriteValue(oglib::Optional<bool>& aData, const QDomAttr& aAttribute)
+    {
+        aData = StringToBool(aAttribute.value());
+    }
+
+    static void WriteValue(oglib::Optional<QPointF>& aData, const QDomAttr& aAttribute)
+    {
+        aData = StringToPointF(aAttribute.value());
+    }
+
+    static void WriteValue(oglib::Optional<QColor>& aData, const QDomAttr& aAttribute)
+    {
+        aData = StringToColor(aAttribute.value());
+    }
+
+    static void WriteValue(oglib::Optional<float>& aData, const QDomAttr& aAttribute)
+    {
+        aData = aAttribute.value().toFloat();
     }
 
     static void WriteValue(bool& aData, const QDomAttr& aAttribute)

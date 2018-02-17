@@ -2,6 +2,8 @@
 
 #include <QSizeF>
 
+#include "OGLib/optional.h"
+
 #include "wog_circle.h"
 #include "wog_vobject.h"
 
@@ -49,6 +51,23 @@ struct WOGLinearForceField
     float dampeningfactor;
     bool antigrav;
     bool geomonly;
+    QString id;
+    float width;
+    float height;
+    oglib::Optional<QPointF> center;
+    oglib::Optional<QColor> color;
+    oglib::Optional<float> depth;
+    oglib::Optional<bool> enabled;
+    oglib::Optional<bool> water;
+
+    WOGLinearForceField()
+        : dampeningfactor(0)
+        , antigrav(false)
+        , geomonly(false)
+        , width(0)
+        , height(0)
+    {
+    }
 };
 
 struct WOGButton : public WOGVObject
@@ -60,8 +79,7 @@ struct WOGButton : public WOGVObject
     QString onclick;
     QString onmouseenter;
     QString onmouseexit;
-    QString text;
-    QString font;
+    QString tooltip;
 };
 
 struct WOGButtonGroup
@@ -79,9 +97,18 @@ struct WOGLine : public WOGPObject
 
 struct WOGRectangle : public WOGPObject
 {
+    struct Image
+    {
+        QPointF imagepos;
+        QPointF imagescale;
+        float imagerot;
+        QString image;
+    };
+
     QPointF position;
     QSizeF size;
     float rotation;
+    Image image;
 };
 
 struct WOGCompositeGeom : public WOGPObject
@@ -118,7 +145,4 @@ struct WOGScene
     std::vector<WOGRadialForceField> radialforcefield;
     std::vector<WOGParticle> particle;
     std::vector<WOGCompositeGeom> compositegeom;
-
-    WOGButtonGroup* GetButtonGroup(const QString&);
-    WOGButton* FindButton(const QString &id);
 };

@@ -29,6 +29,5 @@ Island::Island(const QString& /*name*/) : _pImpl(new Impl)
 
 Island::~Island()
 {
-    GAME->_CloseLevel();
 }
 

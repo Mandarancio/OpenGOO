@@ -2,31 +2,9 @@
 
 #include "wog_exit.h"
 #include "wog_pipe.h"
+#include "wog_camera.h"
 
 #include <QColor>
-
-struct WOGPoi
-{
-    QPointF position;
-    float traveltime;
-    float pause;
-    float zoom;
-};
-
-struct WOGCamera
-{
-    enum Aspect
-    {
-        Unknown,
-        Normal,
-        WideScreen
-    };
-
-    QPointF endpos;
-    float endzoom;
-    Aspect aspect;
-    QVector<WOGPoi> poi;
-};
 
 struct WOGMusic { QString id; };
 
@@ -63,6 +41,6 @@ struct WOGLevel
     QVector<WOGStrand> strand;
     QVector<WOGCamera> camera;
     QVector<WOGBallInstance> ball;
-    std::pair<WOGLevelExit, bool> levelexit;
-    std::pair<WOGPipe, bool> pipe;
+    std::pair<bool, WOGLevelExit> levelexit;
+    std::pair<bool, WOGPipe> pipe;
 };

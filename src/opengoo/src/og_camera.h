@@ -10,7 +10,7 @@ class OGCamera : public ICamera
 {    
 protected:
     Point pos_;
-    Size size_;
+    Size<int> size_;
     float zoom_;
 
 public:

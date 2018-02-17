@@ -106,7 +106,6 @@ GameMenu::~GameMenu()
 
 void GameMenu::restart()
 {
-    GAME->ReloadLevel();
     emit close();
 }
 

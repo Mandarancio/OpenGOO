@@ -1,6 +1,6 @@
-#include "scene.h"
+#include "sceneloader.h"
 
-#include <QDebug>
+#include "scene.h"
 
 namespace og
 {
@@ -11,30 +11,32 @@ void Scene::Update()
 
     while (!m_add.empty())
     {
-        auto& entry = m_add.front();
-        entry->m_update_iterator = m_update.insert(m_update.end(), entry);
+        auto entity = m_add.front();
+        entity->m_update_iterator = m_update.insert(m_update.end(), entity);
 
-        auto it = m_render.find(entry->GetDepth());
+        auto it = m_render.find(entity->GetDepth());
         if (it == m_render.end())
         {
-            it = m_render.emplace(std::make_pair(entry->GetDepth(), EntityPtrList())).first;
+            it = m_render.emplace(std::make_pair(entity->GetDepth(), EntityPtrList())).first;
         }
 
         auto& entryList = it->second;
-        entry->m_render_iterator = entryList.insert(entryList.end(), entry);
+        entity->m_render_iterator = entryList.insert(entryList.end(), entity);
+
         m_add.pop_front();
+        entity->Added();
     }
 
     while (!m_remove.empty())
     {
-        auto& entry = m_remove.front();
-        m_update.erase(entry->m_update_iterator);
+        auto entity = m_remove.front();
+        m_update.erase(entity->m_update_iterator);
 
-        auto it = m_render.find(entry->GetDepth());
+        auto it = m_render.find(entity->GetDepth());
         if (it != m_render.end())
         {
             auto& entryList = it->second;
-            entryList.erase(entry->m_render_iterator);
+            entryList.erase(entity->m_render_iterator);
             if (entryList.empty())
             {
                 m_render.erase(it);
@@ -42,6 +44,7 @@ void Scene::Update()
         }
 
         m_remove.pop_front();
+        entity->Removed();
     }
 }
 
@@ -84,6 +87,12 @@ void Scene::OnMouseUp(const QPoint& a_point)
             }
         }
     }
+}
+
+void Scene::OnBegin()
+{
+    SceneLoader sl;
+    sl.Load(*this);
 }
 
 } // ns:og

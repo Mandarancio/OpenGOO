@@ -16,6 +16,11 @@
 #include "og_resourceconfig.h"
 #include "og_data.h"
 
+OGResourceManager::OGResourceManager()
+{
+    m_Music.second = og::audio::Music::Create();
+}
+
 bool OGResourceManager::ParseResourceFile(const QString& a_filename)
 {
     if (m_resources.contains(a_filename))
@@ -185,11 +190,11 @@ SoundSPtr OGResourceManager::GetSound(const QString& a_id)
     return nullptr;
 }
 
-MusicSPtr OGResourceManager::GetMusic(const QString& a_id)
+og::audio::Music* OGResourceManager::GetMusic(const QString& a_id)
 {
-    if (m_Music.id == a_id)
+    if (m_Music.first == a_id)
     {
-        return m_Music.audio;
+        return m_Music.second.get();
     }
 
     foreach (auto& res, m_resources)
@@ -197,10 +202,9 @@ MusicSPtr OGResourceManager::GetMusic(const QString& a_id)
         auto filename = res->GetSound(a_id);
         if (!filename.isEmpty())
         {
-            m_Music.id = filename;
-            filename.append(".ogg");
-            m_Music.audio = std::make_shared<og::audio::Music>(filename.toStdString());
-            return m_Music.audio;
+            m_Music.first = filename + QLatin1String(".ogg");
+            m_Music.second->OpenFile(m_Music.first.toStdString());
+            return m_Music.second.get();
         }
     }
 
@@ -209,25 +213,13 @@ MusicSPtr OGResourceManager::GetMusic(const QString& a_id)
 
 QString OGResourceManager::GetText(const QString& aId)
 {
-    auto& string = m_text->string;
-    auto it = string.find(aId);
-    if (it == string.end())
-    {
-        return "";
-    }
-
-    return it.value();
+    return m_text->string.value(aId);
 }
 
 WOGEffect* OGResourceManager::GetEffect(const QString& aId)
 {
     auto it = m_effects->find(aId);
-    if (it == m_effects->end())
-    {
-        return nullptr;
-    }
-
-    return it->get();
+    return (it != m_effects->end() ? it->get() : nullptr);
 }
 
 AnimationData* OGResourceManager::GetAnimation(const QString& aId)
@@ -242,4 +234,16 @@ AnimationData* OGResourceManager::GetAnimation(const QString& aId)
     auto anim = BinAnimParser::Parse(path);
     it = mAnimations.insert(aId, std::move(anim));
     return it->get();
+}
+
+const og::IFont* OGResourceManager::GetFont(const QString& aId)
+{
+    auto it = mFonts.find(aId);
+    if (it != mFonts.end())
+    {
+        return it.value().get();
+    }
+
+    it = mFonts.insert(aId, nullptr);
+    return it.value().get();
 }

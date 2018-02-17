@@ -101,8 +101,8 @@ og::PhysicsBody* PhysicsFactory::createLine(og::physics::PhysicsEngine& a_physic
 
     //0.55 = (length + 10%)/2
 
-    float wScene = og::global::sceneWidth();
-    float hScene = og::global::sceneHeight();
+    float wScene = GAME->GetScene()->GetWidth();
+    float hScene = GAME->GetScene()->GetHeight();
     length = qMax(wScene, hScene) * 0.55f * PixelsToMeters;
 
     x2 = x1 + normal.x();
@@ -237,22 +237,4 @@ void setBodyPosition(og::PhysicsBody* b, float x, float y)
     b2Vec2 pos(x, y);
     b->body->SetTransform(pos, b->body->GetAngle());
     b->body->SetAwake(false);
-}
-
-namespace og
-{
-namespace global
-{
-
-float sceneWidth()
-{
-    return OpenGOO::GetInstance()->GetWorld()->GetWidth(); // scene->maxx - scene->minx;
-}
-
-float sceneHeight()
-{
-    return OpenGOO::GetInstance()->GetWorld()->GetHeight(); //scene->maxy - scene->miny;
-}
-
-}
 }

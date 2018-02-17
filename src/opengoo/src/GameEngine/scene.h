@@ -3,6 +3,7 @@
 #include <list>
 #include <map>
 
+#include "../OGLib/size.h"
 #include "entity.h"
 
 namespace og {
@@ -31,6 +32,10 @@ public:
     virtual void OnMouseUp(const QPoint& a_point) = 0;
 
     virtual void OnMouseMove(const QPoint& a_point) = 0;
+
+    virtual void OnBegin() = 0;
+
+    virtual void OnEnd() = 0;
 
     virtual int GetCount() const = 0;
 
@@ -77,6 +82,12 @@ public:
     {
     }
 
+    void OnBegin();
+
+    virtual void OnEnd()
+    {
+    }
+
     int GetCount() const
     {
         return 0;
@@ -94,12 +105,17 @@ public:
 
     float GetWidth() const
     {
-        return 0;
+        return mSceneSize.width();
     }
 
     float GetHeight() const
     {
-        return 0;
+        return mSceneSize.height();
+    }
+
+    void SetSize(float aWidth, float aHeight)
+    {
+        mSceneSize.Set(aWidth, aHeight);
     }
 
 private:
@@ -109,5 +125,6 @@ private:
     EntityPtrList m_remove;
     EntityPtrList m_update;
     std::map<float, EntityPtrList> m_render;
+    oglib::Size<float> mSceneSize;
 };
 }

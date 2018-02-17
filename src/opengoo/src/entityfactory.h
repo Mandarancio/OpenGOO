@@ -18,8 +18,9 @@ struct WOGBallInstance;
 struct WOGStrand;
 struct WOGButton;
 struct WOGLabel;
+struct WOGCircle;
+struct WOGRectangle;
 
-class OGIPipe;
 class OGBall;
 
 namespace og
@@ -34,24 +35,17 @@ class PhysicsEngine;
 
 class EntityFactory
 {
-    og::IResourceManager& m_resourceManager;
     og::physics::PhysicsEngine* m_physicEngine;
 
-    og::IResourceManager& GetResourceManager()
-    {
-        return m_resourceManager;
-    }
-
-    og::physics::PhysicsEngine& GetPhysicsEngine()
+    og::physics::PhysicsEngine* GetPhysicsEngine()
     {
         assert(m_physicEngine);
-        return *m_physicEngine;
+        return m_physicEngine;
     }
 
 public:
-    EntityFactory(og::IResourceManager& a_rm)
-        : m_resourceManager(a_rm)
-        , m_physicEngine(nullptr)
+    EntityFactory()
+        : m_physicEngine(nullptr)
     {
     }
 
@@ -60,17 +54,11 @@ public:
         m_physicEngine = a_physicEngine;
     }
 
-    EntityPtr CreateBend(const QString& a_type,
-                         const QPointF& a_p1,
-                         const QPointF& a_p2,
-                         const QPointF& a_p3,
-                         float a_depth);
-
     EntityPtr CreateCap(const WOGPipe& a_pipe, const QString& a_type);
 
-    OGIPipe* CreatePipe(const WOGPipe& a_pipe);
+    EntityPtr CreatePipe(const WOGPipe& a_pipe);
 
-    EntityPtr CreateGameController(GameData& a_gdata);
+    EntityPtr CreateGameController();
 
     EntityPtr CreateExit(const WOGLevelExit& a_exit, ExitEventListener* a_listener);
 
@@ -83,5 +71,8 @@ public:
     EntityPtr CreateButton(const WOGButton& a_btnDef);
 
     EntityPtr CreateLabel(const WOGLabel& a_label);
-};
 
+    EntityPtr CreateCircle(const WOGCircle& aDef);
+
+    EntityPtr CreateRect(const WOGRectangle &aDef);
+};

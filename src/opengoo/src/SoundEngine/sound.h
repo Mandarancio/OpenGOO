@@ -21,7 +21,6 @@ public:
 
 private:
     sf::SoundBuffer m_buffer;
-    mutable std::list<const SoundSourceList*> a_soundSourceLists;
 };
 
 class Sound : public Audio

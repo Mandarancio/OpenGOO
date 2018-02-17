@@ -861,19 +861,19 @@ void OGWorld::OnMouseUp(const QPoint& a_point)
     }
 }
 
-void OGWorld::OnMouseMove(const QPoint& /*a_point*/)
+void OGWorld::OnMouseMove(const QPoint& a_point)
 {
-//    TODO
-//    QVector2D point(a_point);
-//    for (auto it = m_update.cbegin(); it != m_update.cend(); ++it)
-//    {
-//        if (auto col = (*it)->GetCollider())
-//        {
-//            if (col->OverlapPoint(point))
-//            {
+    QVector2D point(a_point);
+    for (auto it = m_update.cbegin(); it != m_update.cend(); ++it)
+    {
+        if (auto col = (*it)->GetCollider())
+        {
+            if (col->OverlapPoint(point))
+            {
+//                FIXME no member named 'OnMouseMove' in 'og::Entity'
 //                (*it)->OnMouseMove();
-//                break;
-//            }
-//        }
-//    }
+                break;
+            }
+        }
+    }
 }

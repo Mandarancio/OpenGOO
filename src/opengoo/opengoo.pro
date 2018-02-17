@@ -87,18 +87,17 @@ HEADERS += \
     src/og_climb.h \
     src/og_fly.h \
     src/og_types.h \
-    src/progresswindow.h \
-    src/og_layer.h \
-    src/island.h \
-    src/retrymenu.h \
-    src/gamemenu.h \
-    src/level.h \
+#    src/progresswindow.h \
+#    src/og_layer.h \
+#    src/island.h \
+#    src/retrymenu.h \
+#    src/gamemenu.h \
+#    src/level.h \
     src/uidata.h \
-    src/continuebutton.h \
+#    src/continuebutton.h \
     src/og_forcefield.h \
     src/ogapplication.h \
     src/ballsensor.h \
-    src/spritefactory.h \
     src/entityfactory.h \
     src/gamedata.h \
     src/exiteventlistener.h \
@@ -114,7 +113,11 @@ HEADERS += \
     src/animationgroup.h \
     src/scaleanimation.h \
     src/translateanimation.h \
-    src/rotationanimation.h
+    src/rotationanimation.h \
+    src/multisprite.h \
+    src/circlesprite.h \
+    src/rectsprite.h \
+    src/camzoomanimation.h
 
 SOURCES += \
     src/main.cpp \
@@ -139,18 +142,17 @@ SOURCES += \
     src/og_walk.cpp \
     src/og_climb.cpp \
     src/og_fly.cpp \
-    src/progresswindow.cpp \
-    src/og_layer.cpp \
-    src/island.cpp \
-    src/retrymenu.cpp \
-    src/gamemenu.cpp \
-    src/level.cpp \
-    src/continuebutton.cpp \
+#    src/progresswindow.cpp \
+#    src/og_layer.cpp \
+#    src/island.cpp \
+#    src/retrymenu.cpp \
+#    src/gamemenu.cpp \
+#    src/level.cpp \
+#    src/continuebutton.cpp \
     src/og_forcefield.cpp \
     src/ogapplication.cpp \
     src/ballsensor.cpp \
     src/og_sprite.cpp \
-    src/spritefactory.cpp \
     src/entityfactory.cpp \
     src/sceneloader.cpp \
     src/animator.cpp \

@@ -65,11 +65,11 @@ OGPipe::OGPipe(const WOGPipe& a_pipe, EntityFactory& a_efactory)
         QPointF p3 = verteces[i + 2];
 
         auto bend = a_efactory.CreateBend(type, p1, p2, p3, a_pipe.depth);
-        GetWorld()->AddEntity(bend);
+        GAME->GetScene()->AddEntity(bend);
     }
 
     m_cap = a_efactory.CreateCap(a_pipe, type);
-    GetWorld()->AddEntity(m_cap);
+    GAME->GetScene()->AddEntity(m_cap);
 }
 
 void OGPipe::_Close()
@@ -80,9 +80,4 @@ void OGPipe::_Close()
 void OGPipe::_Open()
 {
     static_cast<Cap&>(*m_cap).SetOpen(true);
-}
-
-OGWorld* OGPipe::GetWorld()
-{
-    return OpenGOO::GetInstance()->GetWorld();
 }

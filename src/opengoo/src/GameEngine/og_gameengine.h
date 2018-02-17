@@ -73,7 +73,7 @@ namespace og
                 return m_frameRate;
             }
 
-            IResourceManager* getResourceManager()
+            IResourceManager* GetResourceManager()
             {
                 return m_resourceManager.get();
             }
@@ -101,7 +101,7 @@ namespace og
                 m_window->setBackgroundColor(color, true);
             }
 
-            Camera* getCamera() const
+            Camera* GetCamera() const
             {
                 return m_game->GetCamera();
             }

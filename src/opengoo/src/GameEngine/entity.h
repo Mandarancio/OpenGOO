@@ -74,9 +74,14 @@ public:
         m_graphic = a_g;
     }
 
-    void SetVisible(float a_flag)
+    void SetVisible(bool a_flag)
     {
         m_visible = a_flag;
+    }
+
+    bool GetVisible() const
+    {
+        return m_visible;
     }
 
     virtual void Added()
@@ -127,6 +132,12 @@ public:
     void SetPosition(const QVector2D& a_position)
     {
         m_position = a_position;
+    }
+
+    void SetPosition(float aX, float aY)
+    {
+        m_position.setX(aX);
+        m_position.setY(aY);
     }
 
     const QVector2D& GetPosition() const

@@ -13,17 +13,6 @@ struct WOGScene;
 
 struct OGUserData;
 
-namespace og
-{
-namespace global
-{
-
-float sceneWidth();
-float sceneHeight();
-
-}
-}
-
 class PhysicsFactory
 {
 public:

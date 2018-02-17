@@ -1,5 +1,8 @@
 #pragma once
 
+#include <QVector2D>
+
+#include "OGLib/pointf.h"
 #include "animation.h"
 
 class TranslateAnimation : public Animation
@@ -11,16 +14,10 @@ class TranslateAnimation : public Animation
     };
 
 public:
-    TranslateAnimation(og::Entity* aEntity,
-                       int aDuration,
-                       float aStartX,
-                       float aStartY,
-                       float aEndX,
-                       float aEndY)
+    TranslateAnimation(og::Entity* aEntity, int aDuration, const QPointF& aStart, const QPointF& aEnd)
             : Animation(aEntity, aDuration)
+            , mSpeed((aEnd - aStart) / mDuration)
     {
-        mXSpeed = (aEndX - aStartX) / mDuration;
-        mYSpeed = (aEndY - aStartY) / mDuration;
         mStartPosition = mEntity->GetPosition();
     }
 
@@ -34,8 +31,7 @@ private:
     void Start()
     {
         mPosition = mEntity->GetPosition();
-        mX = 0.0f;
-        mY = 0.0f;
+        mDelta = QVector2D();
         mRemainingTime = mDuration;
         mIsActive = mRemainingTime > 0;
     }
@@ -44,10 +40,8 @@ private:
     {
         if (IsActive())
         {
-            mEntity->SetPosition(QVector2D(mPosition.x() + mX, mPosition.y() + mY));
-            mX += mXSpeed * aDt;
-            mY += mYSpeed * aDt;
-
+            mEntity->SetPosition(mPosition + mDelta);
+            mDelta += mSpeed * aDt;
             mRemainingTime -= aDt;
             if (!(mRemainingTime > 0))
             {
@@ -59,8 +53,6 @@ private:
 private:
     QVector2D mStartPosition;
     QVector2D mPosition;
-    float mXSpeed;
-    float mYSpeed;
-    float mX;
-    float mY;
+    QVector2D mSpeed;
+    QVector2D mDelta;
 };

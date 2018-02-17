@@ -12,196 +12,198 @@
 
 class QPainter;
 
+class OGSprite;
+
+typedef std::shared_ptr<OGSprite> OGSpritePtr;
+
 class OGSprite : public og::Graphic
 {    
-    QVector2D m_position;
-    og::ImageSourceSPtr m_source;
-    float m_angle;
-    float m_offsetX;
-    float m_offsetY;
-    bool m_visible;
-    float m_scaleX;
-    float m_scaleY;
-    float m_alpha;
-    float m_depth;
-    QRectF m_clipRect;
-    QColor m_colorize;
+    QVector2D mPosition;
+    og::ImageSourceSPtr mSource;
+    float mAngle;
+    float mOffsetX;
+    float mOffsetY;
+    bool mVisible;
+    float mScaleX;
+    float mScaleY;
+    float mAlpha;
+    float mDepth;
+    QRectF mClipRect;
+    QColor mColorize;
 
     void Init()
     {
-        m_visible = true;
-        m_angle = 0.0f;
-        m_offsetX = 0.0f;
-        m_offsetY = 0.0f;
-        m_scaleX = 1.0f;
-        m_scaleY = 1.0f;
-        m_alpha = 1.0f;
-        m_depth = 0.0f;
-        m_clipRect = QRectF(0, 0, GetWidth(), GetHeight());
+        mVisible = true;
+        mAngle = 0.0f;
+        mOffsetX = 0.0f;
+        mOffsetY = 0.0f;
+        mScaleX = 1.0f;
+        mScaleY = 1.0f;
+        mAlpha = 1.0f;
+        mDepth = 0.0f;
+        mClipRect = QRectF(0, 0, GetWidth(), GetHeight());
     }
 
 public:
-    typedef std::shared_ptr<OGSprite> OGSpritePtr;
-
     OGSprite()
     {
         Init();
     }
 
-    OGSprite(og::ImageSourceSPtr a_source)
-        : m_source(a_source)
+    OGSprite(og::ImageSourceSPtr aSource)
+        : mSource(aSource)
     {
         Init();
     }
 
-    OGSprite(float a_x, float a_y, og::ImageSourceSPtr a_source)
-        : m_position(a_x, a_y)
-        , m_source(a_source)
+    OGSprite(float aX, float aY, og::ImageSourceSPtr aSource)
+        : mPosition(aX, aY)
+        , mSource(aSource)
     {
         Init();
     }
 
-    void Paint(QPainter* p);
+    void Paint(QPainter* aPainter);
 
-    void Paint(QPainter& p, const QRectF& a_target);
+    void Paint(QPainter& aPainter, const QRectF& aTarget);
 
-    void Render(QPainter& a_painter, const QVector2D& a_pos);
+    void Render(QPainter& aPainter, const QVector2D& aPosition);
 
     void Update()
     {
     }
 
-    void SetAngle(float a_angle)
+    void SetAngle(float aAngle)
     {
-        m_angle = a_angle;
+        mAngle = aAngle;
     }
 
     float GetAngle() const
     {
-        return m_angle;
+        return mAngle;
     }
 
     void CenterOrigin();
 
     float GetX() const
     {
-        return m_position.x();
+        return mPosition.x();
     }
 
     float GetY() const
     {
-        return m_position.y();
+        return mPosition.y();
     }
 
-    void SetX(float a_x)
+    void SetX(float aX)
     {
-        m_position.setX(a_x);
+        mPosition.setX(aX);
     }
 
-    void SetY(float a_y)
+    void SetY(float aY)
     {
-        m_position.setY(a_y);
+        mPosition.setY(aY);
     }
 
-    void SetVisible(bool a_visible)
+    void SetVisible(bool aVisible)
     {
-        m_visible = a_visible;
+        mVisible = aVisible;
     }
 
-    void SetPosition(float a_x, float a_y)
+    void SetPosition(float aX, float aY)
     {
-        m_position.setX(a_x);
-        m_position.setY(a_y);
+        mPosition.setX(aX);
+        mPosition.setY(aY);
     }
 
     const QVector2D& GetPosition() const
     {
-        return m_position;
+        return mPosition;
     }
 
     int GetWidth() const
     {
-        return m_source->GetWidth();
+        return mSource->GetWidth();
     }
 
     int GetHeight() const
     {
-        return m_source->GetHeight();
+        return mSource->GetHeight();
     }
 
-    void SetScaleX(float a_scale)
+    void SetScaleX(float aScale)
     {
-        m_scaleX = a_scale;
+        mScaleX = aScale;
     }
 
-    void SetScaleY(float a_scale)
+    void SetScaleY(float aScale)
     {
-        m_scaleY = a_scale;
+        mScaleY = aScale;
     }
 
-    void SetScale(const QPointF& a_scale)
+    void SetScale(const QPointF& aScale)
     {
-        SetScaleX(a_scale.x());
-        SetScaleY(a_scale.y());
+        SetScaleX(aScale.x());
+        SetScaleY(aScale.y());
     }
 
     float GetScaleX() const
     {
-        return m_scaleX;
+        return mScaleX;
     }
 
     float GetScaleY() const
     {
-        return m_scaleY;
+        return mScaleY;
     }
 
     float GetScaledWidth() const
     {
-        return GetWidth() * m_scaleX;
+        return GetWidth() * mScaleX;
     }
 
     float GetScaledHeight() const
     {
-        return GetHeight() * m_scaleY;
+        return GetHeight() * mScaleY;
     }
 
-    void SetAlpha(float a_alpha)
+    void SetAlpha(float aAlpha)
     {
-        m_alpha = a_alpha;
+        mAlpha = aAlpha;
     }
 
     float GetAlpha() const
     {
-        return m_alpha;
+        return mAlpha;
     }
 
-    void SetDepth(float a_depth)
+    void SetDepth(float aDepth)
     {
-        m_depth = a_depth;
+        mDepth = aDepth;
     }
 
     float GetDepth() const
     {
-        return m_depth;
+        return mDepth;
     }
 
-    void SetOffsetX(float a_offset)
+    void SetOffsetX(float aOffset)
     {
-        m_offsetX = a_offset;
+        mOffsetX = aOffset;
     }
 
-    void SetOffsetY(float a_offset)
+    void SetOffsetY(float aOffset)
     {
-        m_offsetY = a_offset;
+        mOffsetY = aOffset;
     }
 
-    void SetColorize(const QColor& a_color)
+    void SetColorize(const QColor& aColor)
     {
-       m_colorize = a_color;
+       mColorize = aColor;
     }
 
-    static OGSpritePtr Create(og::ImageSourceSPtr a_source)
+    static OGSpritePtr Create(og::ImageSourceSPtr aSource)
     {
-        return std::make_shared<OGSprite>(a_source);
+        return std::make_shared<OGSprite>(aSource);
     }
 };

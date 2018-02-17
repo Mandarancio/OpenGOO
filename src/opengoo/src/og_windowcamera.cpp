@@ -6,7 +6,7 @@ using namespace oglib;
 
 OGWindowCamera* OGWindowCamera::pInstance_ = nullptr;
 
-OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size, const WOGCamera *cam)
+OGWindowCamera::OGWindowCamera(const Rect &scene, const Size<int> &size, const WOGCamera *cam)
     : target_(nullptr), scene_(scene), traveltime_(0), pause_(0), isScrolling_(true)
 {
     pInstance_ = this;
@@ -25,7 +25,7 @@ OGWindowCamera::OGWindowCamera(const Rect &scene, const Size &size, const WOGCam
     camera_ = unique_ptr<ICamera>(new OGCamera(x, y, w, h, z));
 }
 
-OGWindowCamera::OGWindowCamera(const Rect& aScene, const Size& aSize, const QPoint& aPosition, float aZoom)
+OGWindowCamera::OGWindowCamera(const Rect& aScene, const Size<int>& aSize, const QPoint& aPosition, float aZoom)
     : target_(nullptr),
       scene_(aScene),
       traveltime_(0),

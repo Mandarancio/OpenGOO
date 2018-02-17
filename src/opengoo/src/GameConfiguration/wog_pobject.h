@@ -10,6 +10,7 @@ struct WOGPObject
     bool dynamic;
     QString tag;
     QString material;
+    float mass;
 
     virtual ~WOGPObject()
     {

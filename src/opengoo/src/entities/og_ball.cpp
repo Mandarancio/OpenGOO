@@ -43,7 +43,7 @@ BodyBuilder::PhysicsBodyUPtr BodyBuilder::CreateCircle()
     data->isTouching = false;
     data->isAttachedOnEnter = false;
 
-    return PhysicsBodyUPtr(PhysicsFactory::createCircle(m_physicEngine,
+    return PhysicsBodyUPtr(PhysicsFactory::createCircle(*m_physicEngine,
                                                         m_position.toPointF(),
                                                         radius,
                                                         m_angle,
@@ -75,8 +75,7 @@ BodyBuilder::PhysicsBodyUPtr BodyBuilder::Build()
     return nullptr;
 }
 
-OGBall::OGBall(
-    physics::PhysicsEngine& a_physicEngine,
+OGBall::OGBall(physics::PhysicsEngine *a_physicEngine,
     const WOGBallInstance& a_data,
     const WOGBall* a_conf,
     BodyBuilder& a_bodyBuilder,
@@ -128,7 +127,7 @@ OGBall::OGBall(
     else
     {
         m_body->body->SetFixedRotation(true);
-        _sensor = std::unique_ptr<BallSensor>(new BallSensor(a_physicEngine, this));
+        _sensor = std::unique_ptr<BallSensor>(new BallSensor(*a_physicEngine, this));
         _isSleeping = true;
     }
 
@@ -222,7 +221,7 @@ void OGBall::SetExit(bool exit)
 
 AudioSPtr OGBall::GetSound(const QString& a_id)
 {
-    return GE->getResourceManager()->GetSound(a_id);
+    return GE->GetResourceManager()->GetSound(a_id);
 }
 
 void OGBall::OnMouseEnter()
@@ -758,7 +757,9 @@ inline float OGBall::Distance(OGBall* b)
 
 inline OGWorld* OGBall::_GetWorld()
 {
-    return OpenGOO::GetInstance()->GetWorld();
+    assert(false);
+//    return OpenGOO::GetInstance()->GetWorld();
+    return nullptr;
 }
 
 void OGBall::_RemoveStrand(OGStrand* strand)

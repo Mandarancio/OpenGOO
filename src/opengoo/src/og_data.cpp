@@ -26,6 +26,18 @@ template<class T> inline static typename T::Type GetData(const QString &path)
     return nullptr;
 }
 
+template<class T>
+static typename T::Type ReadConfig(T& config, const QString &path)
+{
+    if (!config.Load(path))
+    {
+        logWarn(QLatin1String("Could not load file ") + path);
+        return nullptr;
+    }
+
+    return config.Parser();
+}
+
 WOGScene* OGData::GetScene(const QString &path)
 {
     return GetData<OGSceneConfig>(path).release();
@@ -40,24 +52,7 @@ WOGText* OGData::GetText(const QString &path, const QString &lang)
 {
     OGTextConfig config;
     config.SetLanguage(lang);
-
-    if (config.Open(path))
-    {
-        if (config.Read())
-        {
-            return config.Parser().release();
-        }
-        else
-        {
-            logWarn("File " + path + " is corrupted");
-        }
-    }
-    else
-    {
-        logWarn("File " + path + " not found");
-    }
-
-    return nullptr;
+    return ReadConfig(config, path).release();
 }
 
 WOGEffects* OGData::GetEffects(const QString &path)

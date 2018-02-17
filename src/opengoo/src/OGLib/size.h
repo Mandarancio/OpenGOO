@@ -2,42 +2,47 @@
 
 namespace oglib
 {
+template<typename T>
 class Size
 {
-    int mWidth;
-    int mHeight;
+    T mWidth;
+    T mHeight;
 
 public:
-    Size(int aWidth=0, int aHeight=0)
+    Size(T aWidth=0, T aHeight=0)
         : mWidth(aWidth)
         , mHeight(aHeight)
     {
     }
 
-    int width() const
+    T width() const
     {
         return mWidth;
     }
 
-    int height() const
+    T height() const
     {
         return mHeight;
     }
 
-    void SetWidth(int aWidth)
+    void SetWidth(T aWidth)
     {
         mWidth = aWidth;
     }
 
-    void SetHeight(int aHeight)
+    void SetHeight(T aHeight)
     {
         mHeight = aHeight;
     }
 
-    void Set(int aWidth, int aHeight)
+    void Set(T aWidth, T aHeight)
     {
         SetWidth(aWidth);
         SetHeight(aHeight);
     }
 };
+
+typedef Size<int> SizeI;
+typedef Size<float> SizeF;
+
 }

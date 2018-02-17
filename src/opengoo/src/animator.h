@@ -18,6 +18,19 @@ public:
         return aGroup;
     }
 
+    bool IsActive() const
+    {
+        for (size_t i = 0; i < mAnimationGroup.size(); ++i)
+        {
+            if (mAnimationGroup[i]->IsActive())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 private:
     std::vector<std::shared_ptr<AnimationGroup>> mAnimationGroup;
 };

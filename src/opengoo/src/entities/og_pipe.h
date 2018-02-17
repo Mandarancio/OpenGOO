@@ -12,7 +12,6 @@
 #include "entityfactory.h"
 
 struct WOGPipe;
-class OGWorld;
 class QPainter;
 
 class OGPipe : public OGIPipe
@@ -28,8 +27,6 @@ class OGPipe : public OGIPipe
     virtual void _Close();
     virtual void _Open();
     virtual void _Painter(QPainter*) {}
-
-    OGWorld* GetWorld();
 
 public:
     OGPipe(const WOGPipe& a_pipe, EntityFactory& a_efactory);

@@ -1,5 +1,10 @@
 #include <memory>
 
+#include <QDebug>
+#include <QtMath>
+
+#include "OGLib/util.h"
+
 #include "PhysicsEngine/distancejoint.h"
 
 #include "GameEngine/og_gameengine.h"
@@ -8,7 +13,9 @@
 
 #include "opengoo.h"
 #include "entityfactory.h"
-#include "spritefactory.h"
+#include "multisprite.h"
+#include "circlesprite.h"
+#include "rectsprite.h"
 
 #include "wog_pipe.h"
 #include "wog_scene.h"
@@ -21,97 +28,26 @@
 #include "entities/gamecontroller.h"
 #include "entities/exit.h"
 #include "entities/radialforcefield.h"
-#include "entities/og_pipe.h"
 #include "entities/og_ball.h"
 #include "entities/strand.h"
 #include "entities/button.h"
+#include "entities/pipe.h"
 
 #include "ijointbuilder.h"
 
-#define CAP_OPEN "IMAGE_GLOBAL_PIPE_CAP_OPEN_"
-#define CAP_CLOSED "IMAGE_GLOBAL_PIPE_CAP_CLOSED_"
-
-#define PIPE_BEND "IMAGE_GLOBAL_PIPE_BEND_"
-
-
-static inline QString BuildPrefix(const QPointF& a_p1,
-                                  const QPointF& a_p2,
-                                  const QPointF& a_p3)
+EntityPtr EntityFactory::CreatePipe(const WOGPipe& a_pipe)
 {
-    auto v1 = a_p2 - a_p1;
-    auto v2 = a_p3 - a_p2;
-
-    if (v1.y() > 0 || v2.y() < 0)
-        return (v2.x() < 0 || v1.x() > 0 ? "TR_" : "TL_");
-    else
-        return (v2.x() < 0 || v1.x() > 0 ? "BR_" : "BL_");
+    return std::make_shared<Pipe>(a_pipe);
 }
 
-EntityPtr EntityFactory::CreateBend(const QString& a_type,
-                     const QPointF& a_p1,
-                     const QPointF& a_p2,
-                     const QPointF& a_p3,
-                     float a_depth)
+EntityPtr EntityFactory::CreateGameController()
 {
-    auto prefix = BuildPrefix(a_p1, a_p2, a_p3);
-    auto id = PIPE_BEND + prefix + a_type;
-
-    auto src = SpriteFactory::CreateImageSource(id);
-    auto spr = std::make_shared<OGSprite>(src);
-    spr->CenterOrigin();
-    spr->SetDepth(a_depth);
-
-    auto e = std::make_shared<og::Entity>((float)a_p2.x(), (float)-a_p2.y(), spr);
-
-    return e;
-}
-
-EntityPtr EntityFactory::CreateCap(const WOGPipe& a_pipe,
-                                   const QString& a_type)
-{
-    if (a_pipe.vertex.size() < 2)
-        throw std::invalid_argument("vertices less than 2");
-
-    QPointF p1 = a_pipe.vertex[0];
-    QPointF p2 = a_pipe.vertex[1];
-    auto v = p2 - p1;
-    float angle = (v.x() == 0 ? (v.y() > 0 ? 0 : 180) : (v.x() > 0 ? 90 : -90));
-
-    float x = p1.x();
-    float y = -p1.y();
-
-    GraphicList l;
-
-    auto src = SpriteFactory::CreateImageSource(CAP_OPEN + a_type);
-    auto spr = OGSprite::Create(src);
-    spr->CenterOrigin();
-    spr->SetAngle(angle);
-    spr->SetDepth(a_pipe.depth);
-    l.append(spr);
-
-    src = SpriteFactory::CreateImageSource(CAP_CLOSED + a_type);
-    spr = OGSprite::Create(src);
-    spr->CenterOrigin();
-    spr->SetAngle(angle);
-    spr->SetDepth(a_pipe.depth);
-    l.append(spr);
-
-    return std::make_shared<Cap>(x, y, l);
-}
-
-OGIPipe* EntityFactory::CreatePipe(const WOGPipe& a_pipe)
-{
-    return new OGPipe(a_pipe, *this);
-}
-
-EntityPtr EntityFactory::CreateGameController(GameData& a_gdata)
-{
-    return std::make_shared<GameController>(a_gdata);
+    return std::make_shared<GameController>();
 }
 
 EntityPtr EntityFactory::CreateExit(const WOGLevelExit& a_exit, ExitEventListener* a_listener)
 {
-    return std::make_shared<Exit>(GetPhysicsEngine(), a_exit, a_listener);
+    return std::make_shared<Exit>(*GetPhysicsEngine(), a_exit, a_listener);
 }
 
 EntityPtr EntityFactory::CreateRadialForceField(const WOGRadialForceField& a_field)
@@ -145,7 +81,7 @@ static BodyBuilder::Type GetBodyType(WOGBallShape::Type a_type)
 
 EntityPtr EntityFactory::CreateBall(const WOGBallInstance& a_ball)
 {
-    auto ballDef = GetResourceManager().GetBallByType(a_ball.type);
+    auto ballDef = GE->GetResourceManager()->GetBallByType(a_ball.type);
     if (!ballDef)
         return nullptr;
 
@@ -182,7 +118,7 @@ EntityPtr EntityFactory::CreateBall(const WOGBallInstance& a_ball)
         auto sl = std::make_shared<og::audio::SoundSourceList>();
         foreach (const auto& id, it.value())
         {
-            auto src= GetResourceManager().GetSoundSource(id);
+            auto src= GE->GetResourceManager()->GetSoundSource(id);
             sl->Add(src);
         }
 
@@ -191,6 +127,7 @@ EntityPtr EntityFactory::CreateBall(const WOGBallInstance& a_ball)
 
     auto ball = std::make_shared<OGBall>(GetPhysicsEngine(), a_ball, ballDef, builder, soundMap);
 
+//    TODO Uncomment
 //    foreach(const auto& part, ballDef->parts)
 //    {
 //        const auto& name = part.name;
@@ -224,7 +161,7 @@ EntityPtr EntityFactory::CreateBall(const WOGBallInstance& a_ball)
 
 struct JointBuilder : IJointBuilder
 {
-    JointBuilder(og::physics::PhysicsEngine& a_physicEngine)
+    JointBuilder(og::physics::PhysicsEngine* a_physicEngine)
         : m_ball1(nullptr)
         , m_ball2(nullptr)
         , m_physicEngine(a_physicEngine)
@@ -251,8 +188,10 @@ struct JointBuilder : IJointBuilder
 
     JointUPtr Build()
     {
-        if (m_type == "spring")
-            return JointUPtr(new og::physics::DistanceJoint(m_physicEngine, m_ball1, m_ball2, (OGUserData*)nullptr));
+        if (m_type == QLatin1String("spring"))
+        {
+            return JointUPtr(new og::physics::DistanceJoint(*m_physicEngine, m_ball1, m_ball2, (OGUserData*)nullptr));
+        }
 
         return nullptr;
     }
@@ -260,7 +199,7 @@ struct JointBuilder : IJointBuilder
     og::PhysicsBody* m_ball1;
     og::PhysicsBody* m_ball2;
     QString m_type;
-    og::physics::PhysicsEngine& m_physicEngine;
+    og::physics::PhysicsEngine* m_physicEngine;
 };
 
 EntityPtr EntityFactory::CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2)
@@ -268,8 +207,8 @@ EntityPtr EntityFactory::CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2)
     auto& ball1 = static_cast<OGBall&>(*a_ball1);
     auto& ball2 = static_cast<OGBall&>(*a_ball2);
 
-    auto ballDef1 = GetResourceManager().GetBallByType(ball1.GetName());
-    auto ballDef2 = GetResourceManager().GetBallByType(ball2.GetName());
+    auto ballDef1 = GE->GetResourceManager()->GetBallByType(ball1.GetName());
+    auto ballDef2 = GE->GetResourceManager()->GetBallByType(ball2.GetName());
 
     if(!ballDef1->strand || !ballDef2->strand)
         return nullptr;
@@ -277,7 +216,7 @@ EntityPtr EntityFactory::CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2)
     if(ballDef1->strand->type != ballDef2->strand->type)
         return nullptr;
 
-    auto src = GetResourceManager().GetImageSourceById(ballDef1->strand->image);
+    auto src = GE->GetResourceManager()->GetImageSourceById(ballDef1->strand->image);
     auto spr = OGSprite::Create(src);
     spr->SetOffsetX(src->GetWidth() * 0.5f);
 
@@ -351,9 +290,8 @@ private:
 class ButtonBuilder
 {
 public:
-    ButtonBuilder(og::IResourceManager& a_resourceManager)
-        : m_resourceManager(a_resourceManager)
-        , m_position()
+    ButtonBuilder()
+        : m_position()
         , m_id()
         , m_scale()
         , m_up()
@@ -427,7 +365,7 @@ public:
 private:
     std::shared_ptr<OGSprite> CreateSprite(const QString& a_id)
     {
-        auto src = m_resourceManager.GetImageSourceById(a_id);
+        auto src = GE->GetResourceManager()->GetImageSourceById(a_id);
         if (!src)
         {
             src = std::make_shared<og::ImageSource>();
@@ -442,7 +380,6 @@ private:
     }
 
 private:
-    og::IResourceManager& m_resourceManager;
     QPointF m_position;
     QString m_id;
     QPointF m_scale;
@@ -455,7 +392,7 @@ private:
 
 EntityPtr EntityFactory::CreateButton(const WOGButton& a_btnDef)
 {
-    ButtonBuilder builder(GetResourceManager());
+    ButtonBuilder builder;
     builder
         .SetId(a_btnDef.id)
         .SetPosition(a_btnDef.position)
@@ -464,18 +401,26 @@ EntityPtr EntityFactory::CreateButton(const WOGButton& a_btnDef)
         .SetScale(a_btnDef.scale)
         .SetRotation(a_btnDef.rotation);
 
-    if (a_btnDef.id == "quit")
-    {
+    if (a_btnDef.id == QLatin1String("quit"))
+    {        
         builder.SetCallback([](og::Entity&){ GAME->Quit(); });
     }
-    else if (a_btnDef.id.startsWith("island"))
+    else if (a_btnDef.id.startsWith(QLatin1String("island")))
     {
         builder.SetCallback([](og::Entity& a_e){ GAME->GotoScene(a_e.GetName()); });
     }
-    else if (a_btnDef.id.startsWith("lb_"))
+    else if (a_btnDef.id.startsWith(QLatin1String("lb_")))
     {
         builder.SetCallback([](og::Entity& a_e){ GAME->GotoScene(a_e.GetName().mid(3)); });
     }
+//    else if (a_btnDef.id == "changename")
+//    {
+//        // TOOLTIP_PROFILES
+//    }
+//    else if (a_btnDef.id == "credits")
+//    {
+//        // TOOLTIP_CREDITS
+//    }
 
 
     return builder.Build();
@@ -483,6 +428,52 @@ EntityPtr EntityFactory::CreateButton(const WOGButton& a_btnDef)
 
 EntityPtr EntityFactory::CreateLabel(const WOGLabel& a_label)
 {
-    qDebug() << m_resourceManager.GetText(a_label.text);
-    return std::make_shared<og::Entity>(a_label.position.x(), a_label.position.y());
+    if (auto fnt = GE->GetResourceManager()->GetFont(a_label.font))
+    {
+        return std::make_shared<og::Entity>(a_label.position.x(), a_label.position.y());
+    }
+
+    return nullptr;
+}
+
+EntityPtr EntityFactory::CreateCircle(const WOGCircle& aDef)
+{
+    auto x = aDef.position.x();
+    auto y = -aDef.position.y();
+    auto spr = std::make_shared<CircleSprite>(aDef.radius);
+    auto e = std::make_shared<og::Entity>(x, y, spr);
+    e->SetDepth(1000);
+    return e;
+}
+
+EntityPtr EntityFactory::CreateRect(const WOGRectangle& aDef)
+{
+    auto x = aDef.position.x();
+    auto y = -aDef.position.y();
+
+    EntityPtr entity;
+    GraphicPtr graphic;
+    if (!aDef.image.image.isEmpty())
+    {
+        {
+            auto src = GE->GetResourceManager()->GetImageSourceById(aDef.image.image);
+            auto spr = OGSprite::Create(src);
+            spr->CenterOrigin();
+            graphic = spr;
+        }
+
+        graphic->SetAngle(qRadiansToDegrees(-aDef.image.imagerot));
+        graphic->SetScaleX(aDef.image.imagescale.x());
+        graphic->SetScaleY(aDef.image.imagescale.y());
+        entity = std::make_shared<og::Entity>(aDef.image.imagepos.x(), -aDef.image.imagepos.y(), graphic);
+    }
+    else
+    {
+        graphic = std::make_shared<RectSprite>(aDef.size);
+        graphic->SetAngle(qRadiansToDegrees(-aDef.rotation));
+        entity = std::make_shared<og::Entity>(x, y, graphic);
+        entity->SetDepth(1000);
+    }
+
+    return entity;
 }

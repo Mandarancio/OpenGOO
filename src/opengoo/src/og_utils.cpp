@@ -96,18 +96,6 @@ void saveConfig(OGConfig& config, const QString & filename)
     OGGameConfig::Create(filename, config);
 }
 
-QPixmap* getImage(const QString & /*id*/)
-{
-    assert(false);
-    return nullptr;
-}
-
-QString getText(const QString & /*id*/)
-{
-    assert(false);
-    return "";
-}
-
 std::unique_ptr<UIData> getUIData(const QString & id)
 {    
     QFile file(":/ui/resources.xml");
@@ -151,9 +139,10 @@ template<class T> std::unique_ptr<T> inline createUI(const QPoint& pos, const UI
 
     ui->setPosition(pos.x(), pos.y());
     ui->setSize(data.width, data.height);
-    ui->setUpImage(getImage(data.up));
-    ui->setOverImage(getImage(data.over));
-    ui->setText(getText(data.text));
+//    FIXME undeclared identifiers 'getText' 'getText'
+//    ui->setUpImage(getImage(data.up));
+//    ui->setOverImage(getImage(data.over));
+//    ui->setText(getText(data.text));
 
     return ui;
 }

@@ -35,9 +35,9 @@ class OGWindowCamera
         void _SetTarget();
 
     public:
-        OGWindowCamera(const Rect &scene, const Size& size, const WOGCamera* cam);
+        OGWindowCamera(const Rect &scene, const Size<int>& size, const WOGCamera* cam);
 
-        OGWindowCamera(const Rect& aScene, const Size& aSize, const QPoint& aPosition, float aZoom);
+        OGWindowCamera(const Rect& aScene, const Size<int>& aSize, const QPoint& aPosition, float aZoom);
 
         ~OGWindowCamera();
 

@@ -88,7 +88,7 @@ public:
         e_rect
     };
 
-    BodyBuilder(og::physics::PhysicsEngine& a_physicEngine)
+    BodyBuilder(og::physics::PhysicsEngine* a_physicEngine)
         : m_entity(nullptr)
         , m_angle(0.0f)
         , m_mass(0.0f)
@@ -171,13 +171,13 @@ private:
     float m_radius;
     float m_variation;
     Type m_type;
-    og::physics::PhysicsEngine& m_physicEngine;
+    og::physics::PhysicsEngine* m_physicEngine;
 };
 
 class OGBall : public og::Entity
 {
     public:
-        OGBall(og::physics::PhysicsEngine& a_physicEngine,
+        OGBall(og::physics::PhysicsEngine* a_physicEngine,
                const WOGBallInstance& a_data,
                const WOGBall* a_conf,
                BodyBuilder& a_bodyBuilder,

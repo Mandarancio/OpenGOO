@@ -1,11 +1,17 @@
+#include "OGLib/util.h"
+
 #include "sceneloader.h"
+
 #include "GameEngine/og_gameengine.h"
 #include "GameEngine/scene.h"
 #include "GameEngine/Particles/particlesystem.h"
 #include "GameEngine/Particles/particle.h"
 #include "GameEngine/Particles/pointparticleemiter.h"
 #include "GameEngine/Particles/ambientparticleemiter.h"
+
 #include "GameConfiguration/animationdata.h"
+
+#include "PhysicsEngine/og_physicsengine.h"
 
 #include "og_utils.h"
 #include "wog_level.h"
@@ -14,19 +20,21 @@
 #include "og_sceneconfig.h"
 
 #include "entities/og_ball.h"
+#include "entities/scenelayer.h"
+#include "entities/gamecontroller.h"
 #include "entityfactory.h"
 
-#include "spritefactory.h"
 #include "animator.h"
 #include "scaleanimation.h"
 #include "translateanimation.h"
 #include "rotationanimation.h"
+#include "camzoomanimation.h"
 #include "sequentialanimationgroup.h"
-#include "entities/scenelayer.h"
 
 #include "opengoo.h"
 #include "og_windowcamera.h"
 #include "og_resourcemanager.h"
+#include "og_sprite.h"
 
 template<>
 inline void OptionalSetValue(std::pair<bool, og::ParticleDefination::AxialSinOffset>& aOptional,
@@ -73,13 +81,7 @@ struct SceneLoaderHelper
 {
     SceneLoaderHelper(og::Scene& aScene)
         : mScene(aScene)
-        , mEntityFactory(*GetResourceManager())
     {
-    }
-
-    og::IResourceManager* GetResourceManager()
-    {
-        return GE->getResourceManager();
     }
 
     EntityFactory& GetEntityFactory()
@@ -103,6 +105,20 @@ struct SceneLoaderHelper
 
     void Process(const WOGScene::WOGParticle&);
 
+    void Process(const WOGCircle&);
+
+    void Process(const WOGRectangle&);
+
+    void Process(const WOGLine&);
+
+    void Process(const WOGPipe&);
+
+    void Process(const WOGLevelExit&);
+
+    void Process(const WOGLinearForceField&);
+
+    void Process(const WOGRadialForceField&);
+
     template<typename T>
     void Process(const T& aData)
     {
@@ -112,6 +128,28 @@ struct SceneLoaderHelper
         }
     }
 
+    static void SetupCamera(const WOGPoi& aPoi)
+    {
+        auto startX = aPoi.position.x();
+        auto startY = aPoi.position.y();
+        auto zoom = 1.0f / aPoi.zoom;
+        GE->GetCamera()->SetPosition(startX, startY);
+        GE->GetCamera()->SetZoom(zoom);
+        GE->GetCamera()->SetAnimator(nullptr);
+    }
+
+    static std::shared_ptr<TranslateAnimation> CreateTranslateAnimation(float aDuration, const QPointF& aStart, const QPointF& aEnd)
+    {
+        int duration = aDuration * 1000;
+        return std::make_shared<TranslateAnimation>(GE->GetCamera(), duration, aStart, aEnd);
+    }
+
+    static std::shared_ptr<CamZoomAnimation> CreateCamZoomAnimation(float aDuration, float aStart, float aEnd)
+    {
+        int duration = aDuration * 1000;
+        return std::make_shared<CamZoomAnimation>(duration, 1.0f / aStart, 1.0f / aEnd);
+    }
+
 private:
     og::Scene& mScene;
     EntityFactory mEntityFactory;
@@ -119,18 +157,55 @@ private:
 
 void SceneLoaderHelper::Process(const WOGCamera& aCamera)
 {
-    const auto& poi = aCamera.poi.back();
-    auto cam = GE->getCamera();
-    cam->SetPosition(poi.position.x(), poi.position.y());
-    cam->SetZoom(1 /poi.zoom);
+    const auto& poi = aCamera.poi;
+    if (poi.size() == 0)
+    {
+        return;
+    }
+    if (poi.size() == 1)
+    {
+        SetupCamera(poi.back());
+    }
+    else
+    {
+        SetupCamera(poi.front());
+
+        auto animator = std::make_shared<Animator>();
+        auto group = std::make_shared<SequentialAnimationGroup>();
+
+        for (int i = 1; i < poi.size(); ++i)
+        {
+            group->AddAnimation(CreateTranslateAnimation(poi[i].traveltime, poi[i - 1].position, poi[i].position));
+            group->AddAnimation(CreateCamZoomAnimation(poi[i].traveltime, poi[i - 1].zoom, poi[i].zoom));
+        }
+
+        animator->AddAnimationGroup(group)->Start(false);
+        GE->GetCamera()->SetAnimator(animator);
+    }
+}
+
+void SceneLoaderHelper::Process(const WOGLevelExit& /*aExit*/)
+{
+}
+
+void SceneLoaderHelper::Process(const WOGPipe& aPipe)
+{
+    if (auto e = GetEntityFactory().CreatePipe(aPipe))
+    {
+        mScene.AddEntity(e);
+    }
 }
 
 void SceneLoaderHelper::Process(const WOGLevel& aLevel)
 {
+    auto gc = std::dynamic_pointer_cast<GameController>(GetEntityFactory().CreateGameController());
+    assert(gc.get());
+    gc->SetMusic(aLevel.music.id);
+
     if (!aLevel.camera.empty())
     {
-        auto dr = std::div(GE->getWidth(), GE->getHeight());
-        auto aspect = (dr.quot == 4 && dr.rem == 3) ? WOGCamera::Normal : WOGCamera::WideScreen;
+        auto aspect = (!(GE->getWidth() % 4) && !(GE->getHeight() % 3)) ? WOGCamera::Normal : WOGCamera::WideScreen;
+
         auto it = std::find_if(aLevel.camera.begin(), aLevel.camera.end(),
                      [aspect](const WOGCamera& aCamera) { return aCamera.aspect == aspect; });
 
@@ -139,11 +214,23 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
             Process(*it);
         }
     }
+
+    if (OptionalHasValue(aLevel.pipe))
+    {
+        Process(OptionalValue(aLevel.pipe));
+    }
+
+    if (OptionalHasValue(aLevel.levelexit))
+    {
+        Process(OptionalValue(aLevel.levelexit));
+    }
+
+    mScene.AddEntity(gc);
 }
 
 void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
 {
-    auto src = SpriteFactory::CreateImageSource(aSceneLayer.image);
+    auto src = GE->GetResourceManager()->GetImageSourceById(aSceneLayer.image);
     auto spr = std::make_shared<OGSprite>(src);
     spr->CenterOrigin();
     spr->SetScale(aSceneLayer.scale);
@@ -156,7 +243,7 @@ void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
 
     if (!aSceneLayer.anim.isEmpty())
     {
-        AnimationData* ad = GetResourceManager()->GetAnimation(aSceneLayer.anim);
+        AnimationData* ad = GE->GetResourceManager()->GetAnimation(aSceneLayer.anim);
         auto anim = std::make_shared<Animator>();
         foreach (const auto& entry, ad->transformFrame)
         {
@@ -183,10 +270,8 @@ void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
                     {
                         auto a = std::make_shared<TranslateAnimation>(e.get(),
                                                                   duration,
-                                                                  frame[i].x,
-                                                                  frame[i].y,
-                                                                  frame[next].x,
-                                                                  frame[next].y);
+                                                                  QPointF(frame[i].x, frame[i].y),
+                                                                  QPointF(frame[next].x, frame[next].y));
                         ag->AddAnimation(a);
                     }
                     break;
@@ -205,7 +290,7 @@ void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
                 i = next;
             }
 
-            anim->AddAnimationGroup(ag)->Start();
+            anim->AddAnimationGroup(ag)->Start(true);
         }
 
         e->SetAnimator(anim);
@@ -236,15 +321,18 @@ void SceneLoaderHelper::Process(const WOGLabel& aLabel)
 {
     if (aLabel.id.isEmpty())
     {
-        mScene.AddEntity(GetEntityFactory().CreateLabel(aLabel));
+        if (auto e = GetEntityFactory().CreateLabel(aLabel))
+        {
+            mScene.AddEntity(e);
+        }
     }
 }
 
 void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
 {
-    assert(dynamic_cast<OGResourceManager*>(GetResourceManager()));
+    assert(dynamic_cast<OGResourceManager*>(GE->GetResourceManager()));
 
-    if (auto effect = static_cast<OGResourceManager*>(GetResourceManager())->GetEffect(aParticle.effect))
+    if (auto effect = static_cast<OGResourceManager*>(GE->GetResourceManager())->GetEffect(aParticle.effect))
     {
         const auto pos = QVector2D(aParticle.position.x(), -aParticle.position.y());
         auto ps = og::ParticleSystem::Create(pos, aParticle.depth);
@@ -279,7 +367,7 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
 
                 foreach (const auto& img, particle.image)
                 {
-                    auto src = SpriteFactory::CreateImageSource(img);
+                    auto src = GE->GetResourceManager()->GetImageSourceById(img);
                     pd.AddImageSource(src);
                 }
 
@@ -308,18 +396,60 @@ void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
     }
 }
 
+void SceneLoaderHelper::Process(const WOGCircle& aCircle)
+{
+    if (auto e = GetEntityFactory().CreateCircle(aCircle))
+    {
+        mScene.AddEntity(e);
+    }
+}
+
+void SceneLoaderHelper::Process(const WOGRectangle& aRect)
+{
+    if (auto e = GetEntityFactory().CreateRect(aRect))
+    {
+        mScene.AddEntity(e);
+    }
+}
+
+void SceneLoaderHelper::Process(const WOGLine&)
+{
+}
+
+void SceneLoaderHelper::Process(const WOGLinearForceField& aForceField)
+{
+//    std::make_shared<og::physics::PhysicsEngine>();
+}
+
+void SceneLoaderHelper::Process(const WOGRadialForceField& aForceField)
+{
+
+//    std::make_shared<og::physics::PhysicsEngine>();
+}
+
 void SceneLoaderHelper::Process(const WOGScene& aScene)
 {
+    auto w = aScene.maxx - aScene.minx;
+    auto h = aScene.maxy - aScene.miny;
+    mScene.SetSize(w, h);
+
     GE->setBackgroundColor(aScene.backgroundcolor);
 
     Process(aScene.sceneLayer);
     Process(aScene.buttongroup);
     Process(aScene.label);
     Process(aScene.particle);
+
+    Process(aScene.linearforcefield);
+    Process(aScene.radialforcefield);
+    Process(aScene.circle);
+    Process(aScene.line);
+    Process(aScene.rectangle);
 }
 
 void SceneLoader::Load(og::Scene& aScene)
 {
+    qDebug() << aScene.GetName();
     auto LoadConfig = [&aScene](const QString& aType, std::function<bool(const QString&)> aLoader)
     {
         const auto path = QString("./res/levels/%1/%1.%2").arg(aScene.GetName()).arg(aType);
@@ -329,7 +459,7 @@ void SceneLoader::Load(og::Scene& aScene)
         }
     };
 
-    LoadConfig("resrc", [](const QString& aPath){ return GE->getResourceManager()->ParseResourceFile(aPath); });
+    LoadConfig("resrc", [](const QString& aPath){ return GE->GetResourceManager()->ParseResourceFile(aPath); });
 
     OGSceneConfig sc;
     LoadConfig("scene", [&sc](const QString& aPath){ return sc.Load(aPath); });

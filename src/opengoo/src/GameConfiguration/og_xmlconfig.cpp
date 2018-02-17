@@ -1,6 +1,8 @@
+#include <QFileInfo>
+#include <QTextStream>
+
 #include "og_xmlconfig.h"
 #include "decrypter.h"
-#include <QFileInfo>
 
 bool OGXmlConfig::OpenFile(const QString& filename)
 {
@@ -42,8 +44,16 @@ bool OGXmlConfig::Read()
     {
         QByteArray cryptedData = file_.readAll();
         auto xml_data = Decrypter().decrypt(cryptedData);
-        QString str(xml_data.data());
-        status = domDoc_.setContent(str);
+        status = domDoc_.setContent(xml_data);
+#ifdef SAVE_BIN_TO_XML
+        auto fn = file_.fileName() + QLatin1String(".xml");
+        QFile file(fn);
+        if (!file.exists() && file.open(QFile::WriteOnly | QFile::Text))
+        {
+            QTextStream ts(&file);
+            ts << xml_data;
+        }
+#endif
     }
     else
     {

@@ -10,10 +10,7 @@ SOURCES += \
     src/GameConfiguration/og_ballconfig.cpp \
     src/GameConfiguration/og_islandconfig.cpp \
     src/GameConfiguration/wog_level.cpp \
-    src/GameConfiguration/wog_scene.cpp \
     src/GameConfiguration/wog_resources.cpp \
-    src/GameConfiguration/wog_material.cpp \
-    src/GameConfiguration/wog_pipe.cpp \
     src/GameConfiguration/binanimparser.cpp
 
 macx {
@@ -54,6 +51,8 @@ HEADERS += \
     src/GameConfiguration/binltlfile.h \
     src/GameConfiguration/ogeffectconfigparser.h \
     src/GameConfiguration/binanimparser.h \
-    src/GameConfiguration/animationdata.h
+    src/GameConfiguration/animationdata.h \
+    src/GameConfiguration/wog_camera.h \
+    src/GameConfiguration/scenereader.h
 
 INCLUDEPATH += ../extlibs/AES/

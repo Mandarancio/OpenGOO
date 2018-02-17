@@ -49,10 +49,10 @@ class RadialForceField::Builder
     float m_forceatcenter;
     float m_forceatedge;
     og::physics::SensorFilter m_filter;
-    og::physics::PhysicsEngine& m_physicEngine;
+    og::physics::PhysicsEngine* m_physicEngine;
 
 public:
-    Builder(og::physics::PhysicsEngine& a_physicEngine)
+    Builder(og::physics::PhysicsEngine* a_physicEngine)
         : m_radius(0.0f)
         , m_forceatcenter(0.0f)
         , m_forceatedge(0.0f)
@@ -106,6 +106,6 @@ public:
 
     std::shared_ptr<RadialForceField> Build()
     {
-        return std::make_shared<RadialForceField>(m_physicEngine, Circle(m_center, m_radius), m_forceatcenter, m_forceatedge, m_filter);
+        return std::make_shared<RadialForceField>(*m_physicEngine, Circle(m_center, m_radius), m_forceatcenter, m_forceatedge, m_filter);
     }
 };

@@ -1,63 +1,73 @@
 #include "og_sprite.h"
 
-void OGSprite::Paint(QPainter* p)
+void OGSprite::Paint(QPainter* aPainter)
 {
-    if (!m_visible)
+    if (!mVisible)
+    {
         return;
+    }
 
-    QPointF target(-m_offsetX, -m_offsetY);
-    auto sx = m_scaleX;
-    auto sy = m_scaleY;
+    QPointF target(-mOffsetX, -mOffsetY);
+    auto sx = mScaleX;
+    auto sy = mScaleY;
 
-    p->save();
-    p->translate(GetX(), GetY());
+    aPainter->save();
+    aPainter->translate(GetX(), GetY());
 
     if (GetAngle() != 0.0f)
-        p->rotate(GetAngle());
+    {
+        aPainter->rotate(GetAngle());
+    }
 
-    p->scale(sx, sy);
-    p->setOpacity(m_alpha);
-    m_source->Render(*p, target, m_clipRect);
-    p->restore();
+    aPainter->scale(sx, sy);
+    aPainter->setOpacity(mAlpha);
+    mSource->Render(*aPainter, target, mClipRect);
+    aPainter->restore();
 }
 
-void OGSprite::Paint(QPainter& p, const QRectF& a_target)
+void OGSprite::Paint(QPainter& aPainter, const QRectF& aTarget)
 {
-    if (!m_visible)
+    if (!mVisible)
+    {
         return;
+    }
 
-    p.setOpacity(m_alpha);
+    aPainter.setOpacity(mAlpha);
 
-    p.resetTransform();
+    aPainter.resetTransform();
 
-    if (GetAngle() != 0)
-        p.rotate(GetAngle());
+    if (GetAngle() != 0.0f)
+    {
+        aPainter.rotate(GetAngle());
+    }
 
-    m_source->Render(p, a_target, m_clipRect);
+    mSource->Render(aPainter, aTarget, mClipRect);
 }
 
-void OGSprite::Render(QPainter& a_painter, const QVector2D& a_pos)
+void OGSprite::Render(QPainter& aPainter, const QVector2D& aPosition)
 {
-    QPointF target(-m_offsetX, -m_offsetY);
-    auto sx = m_scaleX;
-    auto sy = m_scaleY;
+    QPointF target(-mOffsetX, -mOffsetY);
+    auto sx = mScaleX;
+    auto sy = mScaleY;
 
-    a_painter.save();
-    a_painter.translate(a_pos.x(), a_pos.y());
+    aPainter.save();
+    aPainter.translate(aPosition.x(), aPosition.y());
 
-    if (GetAngle() != 0)
-        a_painter.rotate(GetAngle());
+    if (GetAngle() != 0.0f)
+    {
+        aPainter.rotate(GetAngle());
+    }
 
-    a_painter.scale(sx, sy);
-    a_painter.setOpacity(m_alpha);
+    aPainter.scale(sx, sy);
+    aPainter.setOpacity(mAlpha);
 
-    m_source->Render(a_painter, target, m_clipRect);
+    mSource->Render(aPainter, target, mClipRect);
 
-    a_painter.restore();
+    aPainter.restore();
 }
 
 void OGSprite::CenterOrigin()
 {
-    m_offsetX = m_source->GetWidth() / 2.0f;
-    m_offsetY = m_source->GetHeight() / 2.0f;
+    mOffsetX = mSource->GetWidth() / 2.0f;
+    mOffsetY = mSource->GetHeight() / 2.0f;
 }

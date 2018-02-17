@@ -19,10 +19,14 @@ class PointF
             SetY(y);
         }
 
-
         PointF operator / (float n)
         {
             return PointF(x_ / n, y_ / n);
+        }
+
+        PointF operator - (const PointF& aVal)
+        {
+            return PointF(x() - aVal.x(), y() - aVal.y());
         }
 
     protected:

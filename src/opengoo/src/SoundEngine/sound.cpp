@@ -34,11 +34,11 @@ void SoundSourceList::Add(const SoundSource* a_source)
 
 void SoundSourceList::Play()
 {
-    m_currentBuffer %= m_soundSources.size();
     auto src = m_soundSources[m_currentBuffer];
     m_sound.setBuffer(src->m_buffer);
     m_sound.play();
     ++m_currentBuffer;
+    m_currentBuffer %= m_soundSources.size();
 }
 }
 }

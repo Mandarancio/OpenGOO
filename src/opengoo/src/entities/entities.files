@@ -6,7 +6,7 @@ SOURCES += \
     src/entities/radialforcefield.cpp \
     src/entities/strand.cpp \
     src/entities/button.cpp \
-    src/entities/og_pipe.cpp
+    src/entities/pipe.cpp
 
 HEADERS += \
     src/entities/cap.h \
@@ -16,5 +16,5 @@ HEADERS += \
     src/entities/radialforcefield.h \
     src/entities/strand.h \
     src/entities/button.h \
-    src/entities/og_pipe.h \
-    src/entities/scenelayer.h
+    src/entities/scenelayer.h \
+    src/entities/pipe.h

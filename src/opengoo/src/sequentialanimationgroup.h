@@ -4,10 +4,13 @@
 
 class SequentialAnimationGroup : public AnimationGroup
 {
-    void Start()
+    void Start(bool aLoop)
     {
+        SetLoop(aLoop);
+
         if (!mAnimation.empty())
         {
+            mIsActive = true;
             mCurrentAnimation = 0;
             mAnimation[mCurrentAnimation]->Start();
         }
@@ -15,22 +18,31 @@ class SequentialAnimationGroup : public AnimationGroup
 
     void Update(int aDt)
     {
-        if (!mAnimation.empty())
+        if (!IsActive())
         {
-            if (mAnimation[mCurrentAnimation]->IsActive())
+            return;
+        }
+
+        if (mAnimation[mCurrentAnimation]->IsActive())
+        {
+            mAnimation[mCurrentAnimation]->Update(aDt);
+            if (!mAnimation[mCurrentAnimation]->IsActive())
             {
-                mAnimation[mCurrentAnimation]->Update(aDt);
-                if (!mAnimation[mCurrentAnimation]->IsActive())
+                mCurrentAnimation = (mCurrentAnimation + 1) % mAnimation.size();
+                if (mCurrentAnimation == 0)
                 {
-                    mCurrentAnimation = (mCurrentAnimation + 1) % mAnimation.size();
-                    if (mCurrentAnimation == 0)
+                    if (GetLoop())
                     {
                         mAnimation[mCurrentAnimation]->Restart();
                     }
                     else
                     {
-                        mAnimation[mCurrentAnimation]->Start();
+                        mIsActive = false;
                     }
+                }
+                else
+                {
+                    mAnimation[mCurrentAnimation]->Start();
                 }
             }
         }

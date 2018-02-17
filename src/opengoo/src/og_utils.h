@@ -29,9 +29,6 @@ inline OGUserData* getUserData(void* userdata)
     return userdata ? static_cast<OGUserData*>(userdata) : nullptr;
 }
 
-QPixmap* getImage(const QString& id); // TODO Remove
-QString getText(const QString&id); // TODO Remove
-
 std::unique_ptr<UIData> getUIData(const QString &id);
 
 std::unique_ptr<og::ui::PushButton> createPushButton(const QPoint &pos, const UIData &data);

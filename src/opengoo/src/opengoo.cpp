@@ -36,7 +36,6 @@
 #include "entityfactory.h"
 #include "physicsenginefactory.h"
 #include "og_utils.h"
-#include "sceneloader.h"
 
 using namespace og;
 
@@ -69,29 +68,6 @@ void OpenGOO::Destroy()
     pInstance_ = nullptr;
 }
 
-void OpenGOO::AddSprite(float depth, OGSprite* sprite)
-{
-    if (layers_.contains(depth))
-    {
-        layers_[depth].Add(sprite);
-    }
-    else
-    {
-        auto it = layers_.insert(depth, OGLayer());
-        it->Add(sprite);
-    }
-}
-
-void OpenGOO::AddSprite(OGSprite* sprite)
-{
-    AddSprite(sprite->GetDepth(), sprite);
-}
-
-void OpenGOO::ClearSprites()
-{
-    _ClearLayers();
-}
-
 void OpenGOO::SetLanguage(const QString &language)
 {
     m_language = language;
@@ -108,18 +84,18 @@ void OpenGOO::_Start()
     qsrand(QTime::currentTime().toString("hhmmsszzz").toUInt());
 #endif
 
-    m_entityFactory.reset(new EntityFactory(*GE->getResourceManager()));
+    m_entityFactory.reset(new EntityFactory());
 
     if (m_language.isEmpty())
     {
         m_language = "en";
     }
 
-    SetScene(std::make_shared<og::Scene>(""));
+    m_scene = std::make_shared<og::Scene>("");
 
     if (m_gotoScene.isEmpty())
     {
-        m_gotoScene = _GetMainMenu();
+        m_gotoScene = GetMainMenuName();
     }
 
     if (flag & FPS)
@@ -130,10 +106,7 @@ void OpenGOO::_Start()
     width_ = GE->getWidth();
     height_ = GE->getHeight();
 
-    timeScrollStep_ = width_ / 1000.0f;
-    timeStep_ =  GE->getFrameDelay();
-
-    auto rm = GE->getResourceManager();
+    auto rm = GE->GetResourceManager();
     if (!rm->ParseResourceFile("./properties/resources.xml"))
     {
         logError("Could not load resources");
@@ -200,23 +173,12 @@ bool OpenGOO::LevelIsExists(const QString& a_name)
     return true;
 }
 
-bool OpenGOO::LoadScene(const QString& a_name)
+void OpenGOO::LoadScene(const QString& a_name)
 {
-    try
-    {
-        auto scene = CreateScene(a_name);
-        SceneLoader sl;
-        sl.Load(*scene);
-        m_previousScene = GetScene()->GetName();
-        SetScene(scene);
-        SetPause(false);
-        return true;
-    }
-    catch (const std::exception& e)
-    {
-        logError(e.what());
-        return false;
-    }
+    auto scene = CreateScene(a_name);
+    m_previousScene = GetScene()->GetName();
+    SetScene(scene);
+    SetPause(false);
 }
 
 std::shared_ptr<Scene> OpenGOO::CreateScene(const QString& a_name)
@@ -247,8 +209,8 @@ void OpenGOO::_Cycle()
         return;
     }
 
-    Scroll();
-
+    //Scroll();
+    mCamera.Update();
     const auto& pos = mCamera.GetPosition();
     mCamera.SetPosition(pos.x() + mCameraSpeed.x(), pos.y() + mCameraSpeed.y());
 
@@ -256,17 +218,8 @@ void OpenGOO::_Cycle()
 
     if (!m_gotoScene.isEmpty())
     {
-        logInfo("Loading Scene...");
-
-        if (LoadScene(m_gotoScene))
-        {
-            logInfo("Scene was loaded");
-        }
-        else
-        {
-            logInfo("Could not load Scene");
-        }
-
+        logInfo("Loading Scene..." + m_gotoScene);
+        LoadScene(m_gotoScene);
         m_gotoScene.clear();
     }
 }
@@ -357,14 +310,16 @@ void OpenGOO::_KeyDown(QKeyEvent* ev)
     switch (ev->key())
     {
     case Qt::Key_Escape:
-        GotoScene(m_previousScene);
+        if (GetScene()->GetName().startsWith(QLatin1String("island")))
+        {
+            GotoScene(GetMainMenuName());
+        }
+        else if (GetScene()->GetName() != GetMainMenuName())
+        {
+            GotoScene(m_previousScene);
+        }
         return;
     }
-}
-
-inline void OpenGOO::_ClearLayers()
-{
-    layers_.clear();
 }
 
 void OpenGOO::_Quit()
@@ -378,9 +333,9 @@ void OpenGOO::Scroll()
     static const int DEFAULT_H_SPEED = 4;
     static const int DEFAULT_V_SPEED = 4;
 
-    curMousePos_ = og::MouseInput::GetPosition();
-    float sx = curMousePos_.x();
-    float sy = curMousePos_.y();
+    auto pos = og::MouseInput::GetPosition();
+    float sx = pos.x();
+    float sy = pos.y();
 
     if (sx <= OFFSET)
     {
@@ -409,141 +364,8 @@ void OpenGOO::Scroll()
     }
 }
 
-void OpenGOO::SetDebug(OGWorld& /*a_world*/, bool /*a_debug*/)
-{
-//    foreach (auto body, a_world.staticbodies())
-//    {
-//        body->SetDebug(a_debug);
-//    }
-}
-
-void OpenGOO::_CreateContinueButton()
-{
-    pContinueBtn_.reset(new ContinueButton);
-    auto btn = pContinueBtn_.get();
-    int x = width_ - (btn->width() + 20);
-    int y = 20;
-    btn->setPosition(x, y);
-    connect(btn, SIGNAL(pressed()), this, SLOT(_closeContinueButton()));
-    btn->setVisible(true);
-}
-
-void OpenGOO::_InitProgressWindow()
-{
-    pProgressWnd_.reset(new ProgressWindow);
-    auto wnd = pProgressWnd_.get();
-    connect(wnd, SIGNAL(close()), this, SLOT(_closeProgressWindow()));
-    pProgressWnd_->setBalls(balls_, balls_ - ballsRequired_);
-}
-
-// Level
-bool OpenGOO::_LoadLevel(OGWorld* a_world, const QString& /*levelname*/)
-{
-    assert(false);
-    assert(a_world);
-//    auto isLoaded = a_world->LoadLevel();
-//    if (!isLoaded)
-//        return false;
-//    if (a_world->leveldata()->visualdebug)
-//        SetDebug(*a_world, true);
-
-//    _SetBackgroundColor(pWorld_->scenedata()->backgroundcolor);
-
-//    pCamera_ = OGWindowCamera::instance();
-//    SetPause(false);
-    return true;
-}
-
-void OpenGOO::_CloseLevel()
-{
-    assert(false);
-//    pWorld_->CloseLevel();
-//    _ClearLayers();
-//    pCamera_ = 0;
-//    mSceneIsLoaded = false;
-}
-
-void OpenGOO::ReloadLevel()
-{
-    assert(false);
-//    pWorld_->Reload();
-//    pCamera_->SetLastPosition();
-//    balls_ = 0;
-}
-void OpenGOO::_CreateLevel(const QString &levelname)
-{
-    pLevel_.reset(new Level(levelname));
-    auto lvl = pLevel_.get();
-    connect(lvl, SIGNAL(closeLevel()), this, SLOT(_backToIsland()));
-}
-
-void OpenGOO::_RemoveLevel()
-{
-    pLevel_.reset();
-}
-
 // Main menu
-inline QString OpenGOO::_GetMainMenu()
+inline QLatin1String OpenGOO::GetMainMenuName()
 {
-    return "MapWorldView";
-}
-
-inline void OpenGOO::_LoadMainMenu()
-{
-    _LoadLevel(GetWorld(), _GetMainMenu());
-}
-
-inline void OpenGOO::_CloseMainMenu()
-{
-    _CloseLevel();
-}
-
-// Island public interface
-void OpenGOO::LoadIsland(const QString &name)
-{
-    _CloseMainMenu();
-    _CreateIsland(name);
-}
-
-inline void OpenGOO::_CreateIsland(const QString &name)
-{   
-    pIsland.reset(new Island(name));
-    auto island = pIsland.get();
-    connect(island, SIGNAL(close()), this, SLOT(_backToMainMenu()));
-}
-
-inline void OpenGOO::_RemoveIsland()
-{
-    pIsland.reset();
-}
-
-// Slots
-void OpenGOO::_backToMainMenu()
-{
-    _RemoveIsland();
-    _LoadMainMenu();
-}
-
-void OpenGOO::_backToIsland()
-{
-    _RemoveLevel();
-    _CreateIsland(_GetIsland());
-}
-
-void OpenGOO::loadLevel(const QString &levelname)
-{
-     _RemoveIsland();
-     _CreateLevel(levelname);
-}
-
-void OpenGOO::_closeContinueButton()
-{
-    pContinueBtn_.reset();
-    _InitProgressWindow();
-}
-
-void OpenGOO::_closeProgressWindow()
-{
-    pProgressWnd_.reset();
-    _backToIsland();
+    return QLatin1String("MapWorldView");
 }

@@ -27,7 +27,7 @@ struct IResourceManager
 
     virtual ImageSourceSPtr GetImageSourceById(const QString& a_id) = 0;
 
-    virtual MusicSPtr GetMusic(const QString& a_id) = 0;
+    virtual og::audio::Music* GetMusic(const QString& a_id) = 0;
 
     virtual SoundSPtr GetSound(const QString& a_id) = 0;
 
@@ -35,7 +35,7 @@ struct IResourceManager
 
     virtual void ClearAllSoundSources() = 0;
 
-    virtual const IFontSPtr GetFont(const QString& aId) = 0;
+    virtual const IFont* GetFont(const QString& aId) = 0;
 
     virtual QString GetText(const QString& aId) = 0;
 

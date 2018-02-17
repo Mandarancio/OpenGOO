@@ -43,6 +43,5 @@ RetryMenu::~RetryMenu()
 
 void RetryMenu::ok()
 {
-    GAME->ReloadLevel();
     emit close();
 }
