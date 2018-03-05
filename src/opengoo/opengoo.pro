@@ -72,7 +72,7 @@ HEADERS += \
     src/og_windowcamera.h \
     src/og_strand.h \
     src/og_circle.h \
-    src/og_ibody.h \
+#    src/og_ibody.h \
     src/og_rectangle.h \
     src/og_line.h \
     src/og_userdata.h \
@@ -117,6 +117,7 @@ HEADERS += \
     src/multisprite.h \
     src/circlesprite.h \
     src/rectsprite.h \
+    src/linesprite.h \
     src/camzoomanimation.h
 
 SOURCES += \
@@ -128,10 +129,10 @@ SOURCES += \
     src/visualdebug.cpp \
     src/og_windowcamera.cpp \
     src/og_strand.cpp \
-    src/og_circle.cpp \
-    src/og_ibody.cpp \
-    src/og_rectangle.cpp \
-    src/og_line.cpp \
+#    src/og_circle.cpp \
+#    src/og_ibody.cpp \
+#    src/og_rectangle.cpp \
+#    src/og_line.cpp \
 #    src/og_uibutton.cpp \
     src/og_data.cpp \
     src/og_camera.cpp \

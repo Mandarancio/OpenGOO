@@ -9,7 +9,8 @@ SOURCES += \
     src/GameEngine/Colliders/rectcollider.cpp \
     src/GameEngine/input.cpp \
     src/GameEngine/imagesource.cpp \
-    src/GameEngine/scene.cpp
+    src/GameEngine/scene.cpp \
+    src/GameEngine/entity.cpp
 
 HEADERS += \
     src/GameEngine/og_gameengine.h \

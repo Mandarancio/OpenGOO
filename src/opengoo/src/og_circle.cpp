@@ -24,27 +24,27 @@ OGCircle::OGCircle(og::physics::PhysicsEngine& a_physicEngine, const WOGCircle& 
                                             0,
                                             new OGUserData(OGUserData::GEOM, this));
 
-    body = obj->body;
-    fixture = obj->fixture;
-    shape = obj->shape;
+//    body = obj->body;
+//    fixture = obj->fixture;
+//    shape = obj->shape;
 
     delete obj;
 }
 
 void OGCircle::_Draw(QPainter* p)
 {
-    if (debug_)
-    {
-        float r = shape->GetRadius() * 10;
-        b2Vec2 pos = body->GetPosition();
-        float posX = pos.x * 10;
-        float posY = pos.y * 10* -1;
+//    if (debug_)
+//    {
+//        float r = shape->GetRadius() * 10;
+//        b2Vec2 pos = body->GetPosition();
+//        float posX = pos.x * 10;
+//        float posY = pos.y * 10* -1;
 
-        p->save();
+//        p->save();
 
-        p->setPen(Qt::yellow);
-        p->drawEllipse(QPointF(posX, posY), r, r);
+//        p->setPen(Qt::yellow);
+//        p->drawEllipse(QPointF(posX, posY), r, r);
 
-        p->restore();
-    }
+//        p->restore();
+//    }
 }

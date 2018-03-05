@@ -1,20 +1,39 @@
 #pragma once
 
 #include <QVector2D>
-
-struct b2JointDef;
-class b2Joint;
+#include "common.h"
 
 namespace og
 {
 namespace physics
 {
-
 class PhysicsEngine;
 
 class Joint
 {
 public:
+    enum Type
+    {
+        e_unknown,
+        e_distance
+    };
+
+public:
+    Joint(b2Joint* aJoint)
+        : m_joint(aJoint)
+    {
+        switch (m_joint->GetType())
+        {
+        case e_distanceJoint:
+            mType = e_distance;
+            break;
+        default:
+            assert(false);
+            mType = e_unknown;
+            break;
+        }
+    }
+
     virtual ~Joint()
     {
     }
@@ -22,20 +41,25 @@ public:
     QVector2D GetAnchorA() const;
     QVector2D GetAnchorB() const;
 
-protected:
-    Joint()
-        : m_jointdef(nullptr)
-        , m_joint(nullptr)
+    Type GetType() const
     {
+        return mType;
     }
 
+    void Destroy();
+
+    bool IsNull() const
+    {
+        return m_joint;
+    }
+
+private:
+    Joint(const Joint&);
+    Joint& operator=(const Joint&);
 
 protected:
-    b2JointDef* m_jointdef;
+    Type mType;
     b2Joint* m_joint;
-
-    friend class PhysicsEngine;
 };
-
 }
 }

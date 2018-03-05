@@ -3,12 +3,13 @@
 #include <memory>
 
 #include <QList>
-
-class QPainter;
-class QVector2D;
+#include <QPainter>
+#include <QVector2D>
 
 namespace og
 {
+class ImageSource;
+
 class Graphic
 {
     Graphic(const Graphic&);
@@ -25,6 +26,7 @@ public:
 
     virtual void Update() = 0;
     virtual void Render(QPainter& a_painter, const QVector2D& a_pos) = 0;
+    virtual void Render(QPainter& a_painter, float aX, float aY) = 0;
 
     virtual float GetAngle() const = 0;
     virtual void SetAngle(float a_angle)  = 0;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OGLib/pointf.h"
+#include "OGLib/point.h"
 #include "OGLib/size.h"
 
 #include "entity.h"

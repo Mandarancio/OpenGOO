@@ -17,9 +17,9 @@ OGLine::OGLine(og::physics::PhysicsEngine& a_physicEngine, const WOGLine& line, 
 
     auto obj = PhysicsFactory::createLine(a_physicEngine, anchor, normal, material, false, data);
 
-    body = obj->body;
-    fixture = obj->fixture;
-    shape = obj->shape;
+//    body = obj->body;
+//    fixture = obj->fixture;
+//    shape = obj->shape;
 
     delete obj;
 }

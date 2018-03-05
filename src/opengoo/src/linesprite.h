@@ -1,25 +1,25 @@
 #pragma once
 
+#include <QLineF>
+
 #include "GameEngine/graphic.h"
 
-class RectSprite : public og::Graphic
+class LineSprite : public og::Graphic
 {
 public:
-    RectSprite(const QSizeF& aSize, const QColor aColor = Qt::green)
-        : mRect(QPointF(), aSize)
+    LineSprite(const QLineF& aLine, const QColor& aColor = Qt::green)
+        : mLine(aLine)
         , mColor(aColor)
     {
-        mRect.moveCenter(mRect.topLeft());
     }
 
     float GetAngle() const
     {
-        return mAngle;
+        return 0;
     }
 
-    void SetAngle(float aAngle)
+    void SetAngle(float)
     {
-        mAngle = aAngle;
     }
 
     void SetScaleX(float)
@@ -45,13 +45,11 @@ private:
     {
     }
 
-    void Render(QPainter& aPainter, float aX, float aY)
+    void Render(QPainter& aPainter, float /*aX*/, float /*aY*/)
     {
         aPainter.save();
         aPainter.setPen(mColor);
-        aPainter.translate(aX, aY);
-        aPainter.rotate(mAngle);
-        aPainter.drawRect(mRect);
+        aPainter.drawLine(mLine);
         aPainter.restore();
     }
 
@@ -61,7 +59,6 @@ private:
     }
 
 private:
-    QRectF mRect;
+    QLineF mLine;
     QColor mColor;
-    float mAngle;
 };

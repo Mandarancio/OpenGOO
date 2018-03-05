@@ -53,6 +53,10 @@ HEADERS += \
     src/GameConfiguration/binanimparser.h \
     src/GameConfiguration/animationdata.h \
     src/GameConfiguration/wog_camera.h \
-    src/GameConfiguration/scenereader.h
+    src/GameConfiguration/scenereader.h \
+    src/GameConfiguration/enumerator.h \
+    ballattributereader.h \
+    balltagparser.h \
+    tagparser.h
 
 INCLUDEPATH += ../extlibs/AES/

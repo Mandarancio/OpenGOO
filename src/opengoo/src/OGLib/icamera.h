@@ -4,7 +4,6 @@
 
 namespace oglib
 {
-
 class ICamera
 {
     public:
@@ -26,7 +25,7 @@ class ICamera
         void MoveRight(int posx) { _MoveRight(posx); }
         void MoveTo(int posx, int posy) { _MoveTo(posx, posy); }
         void MoveTo(float posx, float posy) { _MoveTo(posx, posy); }
-        void MoveTo(const Point &poi) { _MoveTo(poi); }
+        void MoveTo(const PointI &poi) { _MoveTo(poi); }
 
         virtual void SetSize(int aWidth, int aHeight) = 0;
 
@@ -47,6 +46,6 @@ class ICamera
         virtual void _MoveRight(int posx) = 0;
         virtual void _MoveTo(int posx, int posy) = 0;
         virtual void _MoveTo(float posx, float posy) = 0;
-        virtual void _MoveTo(const Point &poi) = 0;
+        virtual void _MoveTo(const PointI &poi) = 0;
 };
 }

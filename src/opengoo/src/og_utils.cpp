@@ -57,7 +57,6 @@ void messageHandler(QtMsgType type, const QMessageLogContext &context, const QSt
 void logger()
 {
     ConsoleAppender* con_apd;
-    freopen ("log.txt", "w", stdout);
     con_apd  = new ConsoleAppender(LoggerEngine::LevelInfo, stdout, "%d - <%l> - %m%n");
     LoggerEngine::addAppender(con_apd);
     con_apd  = new ConsoleAppender(LoggerEngine::LevelDebug     |

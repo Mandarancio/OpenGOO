@@ -3,7 +3,8 @@
 #include <cassert>
 
 #include "GameEngine/entity.h"
-
+#include "entities/ball.h"
+#include "wog_ball.h"
 
 class QString;
 class QPointF;
@@ -20,6 +21,7 @@ struct WOGButton;
 struct WOGLabel;
 struct WOGCircle;
 struct WOGRectangle;
+struct WOGLine;
 
 class OGBall;
 
@@ -64,9 +66,11 @@ public:
 
     EntityPtr CreateRadialForceField(const WOGRadialForceField& a_field);
 
-    EntityPtr CreateBall(const WOGBallInstance& a_ball);
+    std::shared_ptr<Ball> CreateBall(const WOGBallInstance& a_ball);
 
     EntityPtr CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2);
+
+    EntityPtr CreateStrand(EntityPtr aEntity1, EntityPtr aEntity2, const WOGBallStrand& aDef);
 
     EntityPtr CreateButton(const WOGButton& a_btnDef);
 
@@ -75,4 +79,6 @@ public:
     EntityPtr CreateCircle(const WOGCircle& aDef);
 
     EntityPtr CreateRect(const WOGRectangle &aDef);
+
+    EntityPtr CreateLine(const WOGLine &aDef);
 };

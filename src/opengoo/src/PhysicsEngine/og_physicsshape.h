@@ -1,19 +1,18 @@
 #pragma once
 
 #include <QVector2D>
+#include <QLineF>
 
 #include "common.h"
+
+#include "OGLib/size.h"
 
 namespace og
 {
 namespace physics
 {
-class PhysicsEngine;
-
 class Shape
 {
-    typedef std::unique_ptr<b2Shape> ShapeUPtr;
-
 public:
     struct Transform
     {
@@ -24,43 +23,42 @@ public:
 public:
     enum Type
     {
+        e_unknown,
         e_circle,
         e_polygon,
         e_edge,
         e_chain
     };
 
-    Shape(Type a_type);
+    Shape(b2Shape* aShape)
+        : mShape(aShape)
+    {
+        if (aShape->GetType() == b2Shape::e_circle)
+        {
+            m_type = e_circle;
+        }
+        else if (aShape->GetType() == b2Shape::e_polygon)
+        {
+            m_type = e_polygon;
+        }
+        else if (aShape->GetType() == b2Shape::e_edge)
+        {
+            m_type = e_edge;
+        }
+        else
+        {
+            assert(false);
+            m_type = e_unknown;
+        }
+    }
 
     virtual ~Shape()
     {
     }
 
-    b2Vec2 GetP1() const; // Get the line's start point
-    b2Vec2 GetP2() const; // Get the line's end point
-
-    float32 GetRadius() const
+    float GetRadius() const
     {
-        return m_shape->m_radius;
-    }
-
-    void SetAsBox(float32 width, float32 height); // Create the box
-    void SetAsBox(float32 width, float32 height, const b2Vec2 &center
-                  , float32 angle);
-
-    void SetPosition(float32 x, float32 y);
-    void SetPosition(const QPointF &pos);
-
-    void SetRadius(float32 radius)
-    {
-        m_shape->m_radius = radius;
-    }
-
-    void Set(float32 x1, float32 y1, float32 x2, float y2);
-
-    b2Shape* GetShape() const
-    {
-        return m_shape.get();
+        return mShape->m_radius;
     }
 
     Type GetType() const
@@ -68,16 +66,43 @@ public:
         return m_type;
     }
 
-    bool IsPolygon() const
-    {
-        return (GetType() == e_polygon);
-    }
-
     bool TestPoint(const Transform& a_transform, const QVector2D& a_point) const;
 
+protected:
+    const b2Shape* GetShape() const
+    {
+        return mShape;
+    }
+
+    b2Shape* GetShape()
+    {
+        return mShape;
+    }
+
 private:
-    ShapeUPtr m_shape;
     Type m_type;
+    b2Shape* mShape;
+};
+
+struct ShapeDef
+{
+    typedef Shape::Type Type;
+    typedef oglib::SizeF Size;
+    typedef QLineF Line;
+
+    Type type;
+
+    union
+    {
+        float radius;
+        Size size;
+        Line line;
+    };
+
+    ShapeDef()
+        : type(Shape::e_unknown)
+    {
+    }
 };
 }
 }

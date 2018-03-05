@@ -34,9 +34,9 @@ public:
         return file_.fileName();
     }
 
-    void SetRootTag(const QString& root)
+    void SetRootTag(const QString& aTag)
     {
-        rootTag_ = root;
+        rootTag_ = aTag;
     }
 
     static QPointF StringToPointF(const QString& aPosition);
@@ -72,12 +72,20 @@ public:
 
     static void WriteValue(QStringList& aData, const QDomAttr& aAttribute)
     {
-        aData = aAttribute.value().split(",");
+        aData = aAttribute.value().split(',');
     }
 
     static void WriteValue(QString& aData, const QDomAttr& aAttribute)
     {
         aData = aAttribute.value();
+    }
+
+    static void WriteValue(std::vector<float>& aData, const QDomAttr& aAttribute)
+    {
+        foreach (const auto& val, aAttribute.value().split(','))
+        {
+            aData.push_back(val.toFloat());
+        }
     }
 
     static void WriteValue(oglib::Optional<bool>& aData, const QDomAttr& aAttribute)
@@ -117,6 +125,11 @@ public:
         WriteValue(aData.second, aAttribute);
     }
 
+    static void WriteValue(float& aData, const QString& aValue)
+    {
+        aData = aValue.toFloat();
+    }
+
 protected:
     OGXmlConfig()
     {
@@ -135,5 +148,5 @@ protected:
 private:
     QFile file_;
     QDomDocument domDoc_;
-    QString rootTag_;   
+    QString rootTag_;
 };

@@ -3,15 +3,19 @@
 #include "og_pcircle.h"
 
 #include "circle.h"
+#include "shapefactory.h"
+#include "fixturebuilder.h"
 
 namespace og
 {
 namespace physics
 {
 
-PhysicsEngine::PhysicsEngine(float a_x, float a_y, bool a_sleep)
+PhysicsEngine::PhysicsEngine(float a_x, float a_y, bool a_sleep, float aRatio)
     : m_contactListener(new ContactListener)
     , m_world(new b2World(b2Vec2(a_x, a_y)))
+    , mRatio(aRatio)
+    , mJointFactory(m_world.get())
 {
     m_world->SetAllowSleeping(a_sleep);
     m_world->SetContactListener(m_contactListener.get());
@@ -34,31 +38,100 @@ void PhysicsEngine::Simulate()
     m_world->Step(m_timeStep, m_velocityIterations, m_positionIterations);
 }
 
-void PhysicsEngine::CreateBody(PhysicsBody* a_body)
+bool PhysicsEngine::InitBodyType(BodyDef::Type aType, b2BodyDef* aOut)
 {
-    a_body->body = m_world->CreateBody(&a_body->bodydef);
+    if (aType == BodyDef::e_dynamic)
+    {
+        aOut->type = b2_dynamicBody;
+    }
+    else if (aType == BodyDef::e_kinematic)
+    {
+        aOut->type = b2_kinematicBody;
+    }
+    else if (aType == BodyDef::e_static)
+    {
+        aOut->type = b2_staticBody;
+    }
+    else
+    {
+        return false;
+    }
+
+    return true;
 }
 
-void PhysicsEngine::CreateJoint(Joint* a_joint)
+std::unique_ptr<PhysicsBody> PhysicsEngine::CreateBody(const BodyDef& aDef)
 {
-    a_joint->m_joint = m_world->CreateJoint(a_joint->m_jointdef);
+    b2BodyDef bodyDef;
+    if (!InitBodyType(aDef.type, &bodyDef))
+    {
+        return nullptr;
+    }
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = ShapeFactory::CreateShape(aDef.shape);
+    if (!fixtureDef.shape)
+    {
+        return nullptr;
+    }
+
+    bodyDef.position.Set(aDef.position.x(), aDef.position.y());
+    bodyDef.angle = aDef.angle;
+    auto body = m_world->CreateBody(&bodyDef);
+    body->SetUserData(this);
+
+    FixtureBuilder builder(body);
+    auto fixture = builder.SetShape(fixtureDef.shape).Build();
+
+    return std::unique_ptr<PhysicsBody>(new PhysicsBody(body, fixture));
 }
 
-void PhysicsEngine::DestroyJoint(Joint* a_joint)
+void PhysicsEngine::DestroyBody(b2Body* aBody)
 {
-    m_world->DestroyJoint(a_joint->m_joint);
-    a_joint->m_joint = nullptr;
+    m_world->DestroyBody(aBody);
 }
 
-OGPCircle* PhysicsEngine::CreateCircle(const Circle& a_circle)
+std::unique_ptr<Joint> PhysicsEngine::CreateJoint(PhysicsBody* aB1, PhysicsBody* aB2, const JointDef& aDef)
 {
-    auto body = new OGPCircle(a_circle);
-    CreateBody(body);
-    body->CreateShape(Shape::e_circle);
-    body->SetRadius(a_circle.radius());
-    body->CreateFixture();
+    if (auto j = mJointFactory.CreateJoint(aB1->body, aB2->body, aDef))
+    {
+        j->SetUserData(this);
+        return std::unique_ptr<Joint>(new Joint(j));
+    }
 
-    return body;
+    return nullptr;
+}
+
+void PhysicsEngine::DestroyJoint(b2Joint *aJoint)
+{
+    m_world->DestroyJoint(aJoint);
+}
+
+std::unique_ptr<OGPCircle> PhysicsEngine::CreateCircle(const Circle& a_circle, bool aDynamic)
+{
+//    std::unique_ptr<OGPCircle> body(new OGPCircle);
+
+//    {
+//        auto pos = a_circle.center() * GetRatio();
+//        PhysicsBodyBuilder builder(this);
+
+//        if (aDynamic)
+//        {
+//            builder.SetType(PhysicsBodyBuilder::e_dynamic);
+//        }
+//        else
+//        {
+//            builder.SetType(PhysicsBodyBuilder::e_static);
+//        }
+
+//        body->body = SetPosition(pos.x(), pos.y()).Build();
+//    }
+
+//    body->CreateShape(Shape::e_circle);
+//    body->SetRadius(a_circle.radius());
+//    body->CreateFixture();
+
+    return nullptr;
 }
 
 void PhysicsEngine::AddSensor(Sensor* a_sensor)
@@ -70,6 +143,5 @@ void PhysicsEngine::RemoveSensor(Sensor* a_sensor)
 {
     m_contactListener->RemoveSensor(a_sensor);
 }
-
 }
 }

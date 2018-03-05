@@ -3,15 +3,12 @@
 #include <list>
 #include <map>
 
-#include "../OGLib/size.h"
 #include "entity.h"
 
-namespace og {
-namespace physics
-{
-class PhysicsEngine;
-}
+#include "PhysicsEngine/og_physicsengine.h"
 
+namespace og
+{
 class IScene
 {
 public:
@@ -53,8 +50,9 @@ class Scene : public IScene
     typedef std::list<EntityPtr> EntityPtrList;
 
 public:
-    Scene(const QString& a_name)
+    Scene(const QString& a_name, std::unique_ptr<physics::PhysicsEngine> aPhysicsEngine)
         : m_name(a_name)
+        , mPhysicsEngine(std::move(aPhysicsEngine))
     {
     }
 
@@ -100,7 +98,7 @@ public:
 
     physics::PhysicsEngine* GetPhysicsEngine()
     {
-        return nullptr;
+        return mPhysicsEngine.get();
     }
 
     float GetWidth() const
@@ -119,12 +117,12 @@ public:
     }
 
 private:
-
     QString m_name;
     EntityPtrList m_add;
     EntityPtrList m_remove;
     EntityPtrList m_update;
     std::map<float, EntityPtrList> m_render;
-    oglib::Size<float> mSceneSize;
+    oglib::SizeF mSceneSize;
+    std::unique_ptr<physics::PhysicsEngine> mPhysicsEngine;
 };
 }

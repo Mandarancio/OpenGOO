@@ -53,6 +53,7 @@ og::PhysicsBody* PhysicsFactory::createCircle(og::physics::PhysicsEngine& a_phys
                                             float mass,
                                             OGUserData* data)
 {
+#if 0
     b2Filter filter;
 
     auto circle = new og::PhysicsBody(x * PixelsToMeters, y * PixelsToMeters, dynamic, angle);
@@ -85,6 +86,9 @@ og::PhysicsBody* PhysicsFactory::createCircle(og::physics::PhysicsEngine& a_phys
     }
 
     return circle;
+#else
+    return nullptr;
+#endif
 }
 
 og::PhysicsBody* PhysicsFactory::createLine(og::physics::PhysicsEngine& a_physicEngine,
@@ -94,6 +98,7 @@ og::PhysicsBody* PhysicsFactory::createLine(og::physics::PhysicsEngine& a_physic
                                               bool dynamic,
                                               OGUserData* data)
 {
+#if 0
     float x1, x2, y1, y2, length, angle;
 
     x1 = anchor.x() * PixelsToMeters * 0.5f;
@@ -144,6 +149,9 @@ og::PhysicsBody* PhysicsFactory::createLine(og::physics::PhysicsEngine& a_physic
     }
 
     return line;
+#else
+    return nullptr;
+#endif
 }
 
 og::PhysicsBody* PhysicsFactory::createRectangle(og::physics::PhysicsEngine& a_physicEngine,
@@ -178,6 +186,7 @@ og::PhysicsBody* PhysicsFactory::createRectangle(og::physics::PhysicsEngine& a_p
                                                  float mass,
                                                  OGUserData* data)
 {
+#if 0
     b2Filter filter;
 
     auto rect = new og::PhysicsBody(x * PixelsToMeters, y * PixelsToMeters , dynamic, angle);
@@ -208,6 +217,9 @@ og::PhysicsBody* PhysicsFactory::createRectangle(og::physics::PhysicsEngine& a_p
     }
 
     return rect;
+#else
+    return nullptr;
+#endif
 }
 
 og::physics::Joint* PhysicsFactory::createJoint(og::physics::PhysicsEngine& a_physicEngine,
@@ -215,26 +227,26 @@ og::physics::Joint* PhysicsFactory::createJoint(og::physics::PhysicsEngine& a_ph
                                                 og::PhysicsBody* b2,
                                                 OGUserData* data)
 {
-    auto joint = new og::physics::DistanceJoint(a_physicEngine, b1, b2, data);
+    //auto joint = new og::physics::DistanceJoint(a_physicEngine, b1, b2, data);
     //TODO add frequencyHz & dampingRatio
 //    jointDef->frequencyHz = 1.5f;
 //    jointDef->dampingRatio = 0.9f;
 
-    return joint;
+    return nullptr;
 }
 
 void setMass(og::PhysicsBody* b, float mass)
 {
-    b2MassData m;
+//    b2MassData m;
 
-    b->body->GetMassData(&m);
-    m.mass = mass;
-    b->body->SetMassData(&m);
+//    b->body->GetMassData(&m);
+//    m.mass = mass;
+//    b->body->SetMassData(&m);
 }
 
 void setBodyPosition(og::PhysicsBody* b, float x, float y)
 {
-    b2Vec2 pos(x, y);
-    b->body->SetTransform(pos, b->body->GetAngle());
-    b->body->SetAwake(false);
+//    b2Vec2 pos(x, y);
+//    b->body->SetTransform(pos, b->body->GetAngle());
+//    b->body->SetAwake(false);
 }

@@ -130,14 +130,24 @@ bool OGResourceManager::Load(T& a_data, const QString& a_filename)
 
 const WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
 {
-    if (auto ball = m_balls.value(a_type))
-        return ball.get();
+    if (a_type.isEmpty())
+    {
+        return nullptr;
+    }
+
+    auto it = m_balls.find(a_type);
+    if (it != m_balls.end())
+    {
+        return it.value().get();
+    }
     
     WOGBallPtr ball;
     QString path = "res/balls/" + a_type + "/balls.xml";
     Load(ball, path);
     if (!ball)
+    {
         return nullptr;
+    }
 
     ParseResourceFile("res/balls/" + a_type + "/resources.xml");
 

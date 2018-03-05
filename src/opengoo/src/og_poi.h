@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OGLib/pointf.h"
+#include "OGLib/point.h"
 #include "wog_level.h"
 
 #include <list>

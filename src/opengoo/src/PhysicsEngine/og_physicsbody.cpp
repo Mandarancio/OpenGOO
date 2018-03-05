@@ -1,49 +1,30 @@
 #include <QVector2D>
+#include <QDebug>
 
 #include "og_physicsbody.h"
+#include "og_physicsengine.h"
 
+#include "fixturebuilder.h"
+#include "shapefactory.h"
 
 namespace og
 {
-PhysicsBody::PhysicsBody(float x, float y, bool dynamic, float angle)
-{
-    if (dynamic)
-        bodydef.type = b2_dynamicBody;
-
-    bodydef.position.Set(x, y);
-    bodydef.angle = angle;
-}
-
-PhysicsBody::PhysicsBody(const QVector2D &pos, bool dynamic, float angle)
-{
-    if (dynamic)
-        bodydef.type = b2_dynamicBody;
-
-    bodydef.position.Set(pos.x() , pos.y());
-    bodydef.angle = angle;
-}
-
 void PhysicsBody::CreateFixture(float32 density)
 {
-    fixture = body->CreateFixture(shape->GetShape(), density);
+//    fixture = physics::FixtureBuilder(body)
+//            .SetDensity(density)
+//            .SetShape(shape->GetShape())
+//            .Build();
 }
 
-void PhysicsBody::CreateFixture(float32 density, float32 friction
-                                  , float32 restitution
-                                 )
+void PhysicsBody::CreateFixture(float32 density, float32 friction, float32 restitution)
 {
-    b2FixtureDef fixtureDef;
-
-    fixtureDef.shape = shape->GetShape();
-    fixtureDef.density = density;
-    fixtureDef.friction = friction;
-    fixtureDef.restitution = restitution;
-    fixture = body->CreateFixture(&fixtureDef);
-}
-
-void PhysicsBody::CreateShape(physics::Shape::Type type)
-{
-    shape = new physics::Shape(type);
+//    fixture = physics::FixtureBuilder(body)
+//            .SetDensity(density)
+//            .SetFriction(friction)
+//            .SetRestitution(restitution)
+//            .SetShape(shape->GetShape())
+//            .Build();
 }
 
 QVector2D PhysicsBody::GetVelocity() const
@@ -82,7 +63,7 @@ void PhysicsBody::ApplyForce(const QVector2D &force, const QVector2D &point)
     body->ApplyForce(f, p);
 }
 
-void PhysicsBody::ApplyForce(const b2Vec2 &force, const b2Vec2 &point)
+void PhysicsBody::ApplyForce(const b2Vec2& force, const b2Vec2& point)
 {
     body->ApplyForce(force, point);
 }
@@ -90,5 +71,12 @@ void PhysicsBody::ApplyForce(const b2Vec2 &force, const b2Vec2 &point)
 void PhysicsBody::SetSensor(bool sensor)
 {
     fixture->SetSensor(sensor);
+}
+
+void PhysicsBody::Destroy()
+{
+    static_cast<physics::PhysicsEngine*>(body->GetUserData())->DestroyBody(body);
+    body = nullptr;
+    fixture = nullptr;
 }
 }

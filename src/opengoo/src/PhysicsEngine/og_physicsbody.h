@@ -1,14 +1,26 @@
 #pragma once
 
 #include "common.h"
+
 #include "og_physicsshape.h"
 
 class QVector2D;
 
 namespace og
 {
+namespace physics
+{
+class PhysicsEngine;
+
+struct FixtureDef
+{
+};
+}
+
 class PhysicsBody
 {
+    friend class og::physics::PhysicsEngine;
+
 public:
     enum Type
     {
@@ -18,15 +30,9 @@ public:
         CHAIN
     };
 
-    b2Body* body;
-    b2BodyDef bodydef;
-    b2Fixture* fixture;
-    physics::Shape* shape;
-
-    PhysicsBody() : body(0), fixture(0), shape(0) {}
-    PhysicsBody(float x, float y, bool dynamic = false, float angle = 0);
-    PhysicsBody(const QVector2D &pos, bool dynamic = false, float angle = 0);
-    virtual ~PhysicsBody() { delete shape; }
+    virtual ~PhysicsBody()
+    {
+    }
 
     QVector2D GetPosition() const;
     float GetX() const { return body->GetPosition().x; }
@@ -38,16 +44,15 @@ public:
 
     void CreateFixture(float32 density = 0.0f);
     void CreateFixture(float32 density, float32 friction, float32 restitution);
-    void CreateShape(physics::Shape::Type shape);
 
     void ApplyForce(const QVector2D &force, const QVector2D &point);
     void ApplyForce(const b2Vec2 &force, const b2Vec2 &point);
 
     void SetSensor(bool sensor);
 
-    const physics::Shape& GetShape() const
+    const physics::Shape* GetShape() const
     {
-        return *shape;
+        return &mShape;
     }
 
     void SetActive(bool a_flag)
@@ -69,5 +74,30 @@ public:
     {
         return body->IsAwake();
     }
+
+    bool IsStatic() const
+    {
+        return body->GetType() == b2_staticBody;
+    }
+
+    float GetAngle() const
+    {
+        return body->GetAngle();
+    }
+
+    void Destroy();
+
+private:
+    PhysicsBody(b2Body* aBody, b2Fixture* aFixture)
+        : body(aBody)
+        , fixture(aFixture)
+        , mShape(aFixture->GetShape())
+    {
+    }
+
+private:
+    b2Body* body;
+    b2Fixture* fixture;
+    physics::Shape mShape;
 };
 }

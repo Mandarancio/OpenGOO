@@ -1,7 +1,6 @@
-#ifndef CIRCLEF_H
-#define CIRCLEF_H
+#pragma once
 
-#include "pointf.h"
+#include "point.h"
 
 namespace oglib
 {

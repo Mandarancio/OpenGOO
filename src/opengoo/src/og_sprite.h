@@ -67,7 +67,12 @@ public:
 
     void Paint(QPainter& aPainter, const QRectF& aTarget);
 
-    void Render(QPainter& aPainter, const QVector2D& aPosition);
+    void Render(QPainter& aPainter, float aX, float aY);
+
+    void Render(QPainter& aPainter, const QVector2D& aPosition)
+    {
+        Render(aPainter, aPosition.x(), aPosition.y());
+    }
 
     void Update()
     {
@@ -200,6 +205,11 @@ public:
     void SetColorize(const QColor& aColor)
     {
        mColorize = aColor;
+    }
+
+    og::ImageSource* GetImageSource() const
+    {
+        return mSource.get();
     }
 
     static OGSpritePtr Create(og::ImageSourceSPtr aSource)

@@ -1,8 +1,7 @@
-#ifndef VECTOR2D_H
-#define VECTOR2D_H
+#pragma once
 
-#include "OGLib/util.h"
-#include "pointf.h"
+#include "util.h"
+#include "point.h"
 
 #include <QtGlobal>
 
@@ -38,13 +37,11 @@ class Vector2D
 
         void SetZero() { x_ = 0; y_ = 0; }
 
-        Point ToPoint()
+        PointI ToPoint()
         {
             int x = RoundF(x_);
             int y = RoundF(y_);
-            return  Point(x, y);
+            return  PointI(x, y);
         }
 };
 }
-
-#endif // VECTOR2D_H

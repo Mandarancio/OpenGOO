@@ -2,7 +2,6 @@
 
 #include <QVector2D>
 
-#include "OGLib/pointf.h"
 #include "animation.h"
 
 class TranslateAnimation : public Animation

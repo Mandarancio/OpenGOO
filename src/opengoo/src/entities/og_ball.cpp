@@ -75,11 +75,10 @@ BodyBuilder::PhysicsBodyUPtr BodyBuilder::Build()
     return nullptr;
 }
 
-OGBall::OGBall(physics::PhysicsEngine *a_physicEngine,
-    const WOGBallInstance& a_data,
-    const WOGBall* a_conf,
-    BodyBuilder& a_bodyBuilder,
-    QMap<QString, std::shared_ptr<og::audio::SoundSourceList>>& a_soundMap)
+OGBall::OGBall(const WOGBallInstance& a_data,
+               const WOGBall* a_conf,
+               BodyBuilder& a_bodyBuilder,
+               QMap<QString, std::shared_ptr<og::audio::SoundSourceList>>& a_soundMap)
     : Entity(a_data.x, a_data.y)
     , m_config(a_conf)
     , pWalkBehavior_(nullptr)
@@ -126,8 +125,9 @@ OGBall::OGBall(physics::PhysicsEngine *a_physicEngine,
     }
     else
     {
-        m_body->body->SetFixedRotation(true);
-        _sensor = std::unique_ptr<BallSensor>(new BallSensor(*a_physicEngine, this));
+//        m_body->body->SetFixedRotation(true);
+//        TODO uncomment
+//        _sensor = std::unique_ptr<BallSensor>(new BallSensor(*a_physicEngine, this));
         _isSleeping = true;
     }
 
@@ -146,9 +146,10 @@ OGBall::~OGBall()
 
 const QVector2D OGBall::GetPhyPosition() const
 {
-    auto pos = GetBody()->body->GetPosition();
+//    auto pos = GetBody()->body->GetPosition();
 
-    return QVector2D(pos.x, pos.y);
+//    return QVector2D(pos.x, pos.y);
+    return QVector2D();
 }
 
 //PhysicsBody* OGBall::CreateReactangle(float x, float y, float angle
@@ -175,24 +176,24 @@ inline void OGBall::SetBodyPosition(float x, float y)
 
 void OGBall::Detache()
 {
-    b2JointEdge* joints = GetBody()->body->GetJointList();
+//    b2JointEdge* joints = GetBody()->body->GetJointList();
 
-    QList<OGStrand*> strands;
-    OGUserData* data;
+//    QList<OGStrand*> strands;
+//    OGUserData* data;
 
-    while (joints)
-    {
-        data = static_cast<OGUserData*>(joints->joint->GetUserData());
-        strands << static_cast<OGStrand*>(data->data);
-        joints = joints->next;
-    }
+//    while (joints)
+//    {
+//        data = static_cast<OGUserData*>(joints->joint->GetUserData());
+//        strands << static_cast<OGStrand*>(data->data);
+//        joints = joints->next;
+//    }
 
-    while (!strands.isEmpty())
-    {
-        _RemoveStrand(strands.takeFirst());
-    }
+//    while (!strands.isEmpty())
+//    {
+//        _RemoveStrand(strands.takeFirst());
+//    }
 
-    GetBody()->body->SetAwake(false);
+//    GetBody()->body->SetAwake(false);
 }
 
 void OGBall::Attache(OGBall* ball)
@@ -215,8 +216,8 @@ void OGBall::SetCurrentPosition(const QVector2D& a_pos)
 
 void OGBall::SetExit(bool exit)
 {
-    isExit_ = exit;
-    GetBody()->body->SetActive(!exit);
+//    isExit_ = exit;
+//    GetBody()->body->SetActive(!exit);
 }
 
 AudioSPtr OGBall::GetSound(const QString& a_id)
@@ -276,77 +277,77 @@ void OGBall::Update()
 
 void OGBall::OldUpdate()
 {   
-    if (_isSleeping)
-    {
-        if (_isTouching)
-        {
-            _sensor.reset();
-            GetBody()->body->SetFixedRotation(false);
-            _isSleeping = false;
-            _isTouching = false;
-        }
-        else
-        {
-            _sensor->update();
+//    if (_isSleeping)
+//    {
+//        if (_isTouching)
+//        {
+//            _sensor.reset();
+//            GetBody()->body->SetFixedRotation(false);
+//            _isSleeping = false;
+//            _isTouching = false;
+//        }
+//        else
+//        {
+//            _sensor->update();
 
-            return;
-        }
-    }
+//            return;
+//        }
+//    }
 
-    SetCurrentPosition(GetPhyPosition());
+//    SetCurrentPosition(GetPhyPosition());
 
-    b2ContactEdge* edge = GetBody()->body->GetContactList();
+//    b2ContactEdge* edge = GetBody()->body->GetContactList();
 
-    if (!isClimbing_ && !isDragging_)
-    {
-        if (edge == 0)
-        {
-            // The ball's falling
+//    if (!isClimbing_ && !isDragging_)
+//    {
+//        if (edge == 0)
+//        {
+//            // The ball's falling
 
-            isFalling_ = true;
-            isStanding_ = false;
-            isWalking_ = false;
-        }
-        else if (IsOnWalkableGeom(edge))
-        {
-            isFalling_ = false;
+//            isFalling_ = true;
+//            isStanding_ = false;
+//            isWalking_ = false;
+//        }
+//        else if (IsOnWalkableGeom(edge))
+//        {
+//            isFalling_ = false;
 
-            if (isAttached_)
-            {
-                // The ball's standing on a walkable geom
+//            if (isAttached_)
+//            {
+//                // The ball's standing on a walkable geom
 
-                isStanding_ = true;
-                isWalking_ = false;
-            }
-            else if (IsCanClimb())
-            {
-                // The ball should climbing
+//                isStanding_ = true;
+//                isWalking_ = false;
+//            }
+//            else if (IsCanClimb())
+//            {
+//                // The ball should climbing
 
-                isClimbing_ = true;
-                isStanding_ = false;
-                isWalking_ = false;
-                setMass(GetBody(), GetTowerMass());
-            }
-            else
-            {
-                // The ball's walking
+//                isClimbing_ = true;
+//                isStanding_ = false;
+//                isWalking_ = false;
+//                setMass(GetBody(), GetTowerMass());
+//            }
+//            else
+//            {
+//                // The ball's walking
 
-                isWalking_ = true;
-                isStanding_ = false;
-            }
-        }
-        else
-        {
-            // The ball's standing on not a walkable geom
+//                isWalking_ = true;
+//                isStanding_ = false;
+//            }
+//        }
+//        else
+//        {
+//            // The ball's standing on not a walkable geom
 
-            isFalling_ = false;
-            isStanding_ = true;
-            isWalking_ = false;
-        }
-    }
+//            isFalling_ = false;
+//            isStanding_ = true;
+//            isWalking_ = false;
+//        }
+//    }
 
-    if ((isClimbing_ || isWalking_) && !isMarked_)
-        Move();
+//    if ((isClimbing_ || isWalking_) && !isMarked_)
+//        Move();
 }
 
 inline void OGBall::Move()
@@ -382,11 +383,11 @@ inline void OGBall::Move()
 
 inline bool OGBall::IsCanClimb()
 {
-    b2Vec2 pos(GetTarget()->x(), GetTarget()->y());
+//    b2Vec2 pos(GetTarget()->x(), GetTarget()->y());
 
-    if (GetBody()->fixture->TestPoint(pos) && pTargetBall_ && pTargetBall_->IsAttached())
-        return true;
-    else
+//    if (GetBody()->fixture->TestPoint(pos) && pTargetBall_ && pTargetBall_->IsAttached())
+//        return true;
+//    else
         return false;
 }
 
@@ -441,15 +442,15 @@ void OGBall::Paint(QPainter* painter, bool debug)
 
     if (GetBody()->IsActive())
     {
-        radius = GetPhyRadius() * PhysicsFactory::MetersToPixels;
-        angle = GetPhyAngle() * DEGREE;
-        line.setP1(QPointF(posX, posY));
-        line.setP2(QPointF(posX + radius, posY));
-        line.setAngle(angle);
+//        radius = GetPhyRadius() * PhysicsFactory::MetersToPixels;
+//        angle = GetPhyAngle() * DEGREE;
+//        line.setP1(QPointF(posX, posY));
+//        line.setP2(QPointF(posX + radius, posY));
+//        line.setAngle(angle);
     }
     else
     {
-        radius = GetPhyRadius() * PhysicsFactory::MetersToPixels;
+//        radius = GetPhyRadius() * PhysicsFactory::MetersToPixels;
         angle = 0;
     }
 
@@ -679,7 +680,7 @@ bool OGBall::TestPoint(const QPoint &pos)
     float x = pos.x() * PhysicsFactory::PixelsToMeters;
     float y = pos.y() * PhysicsFactory::PixelsToMeters;
 
-    return GetBody()->fixture->TestPoint(b2Vec2(x, y));
+    return false; //GetBody()->fixture->TestPoint(b2Vec2(x, y));
 }
 
 void OGBall::Algorithm2()
@@ -776,12 +777,13 @@ void OGBall::_CreateStrand(OGBall* b1, OGBall* b2)
 
 OGUserData* OGBall::GetUserData()
 {
-    auto ud = GetBody()->body->GetUserData();
+//    auto ud = GetBody()->body->GetUserData();
 
-    if (!ud)
-       return nullptr;
+//    if (!ud)
+//       return nullptr;
 
-    return static_cast<OGUserData*>(ud);
+//    return static_cast<OGUserData*>(ud);
+    return nullptr;
 }
 
 inline void OGBall::PerformWalk()
@@ -829,9 +831,9 @@ inline void OGBall::SetClimbSpeed(float speed)
     pClimbBehavior_->SetSpeed(speed);
 }
 
-inline WOGBallShape* OGBall::GetShape() const
+inline const WOGBallShape* OGBall::GetShape() const
 {
-    return m_config->attribute.core.shape.get();
+    return &m_config->attribute.core.shape;
 }
 
 QString OGBall::GetStrandType() const

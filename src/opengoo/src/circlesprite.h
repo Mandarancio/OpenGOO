@@ -1,30 +1,14 @@
 #pragma once
 
-#include <QPainter>
-#include <QVector2D>
-
 #include "GameEngine/graphic.h"
 
 class CircleSprite : public og::Graphic
 {
 public:
-    CircleSprite(float aRadius)
+    CircleSprite(float aRadius, const QColor& aColor = Qt::green)
         : mRadius(aRadius)
-        , mColor(Qt::green)
+        , mColor(aColor)
     {
-    }
-
-private:
-    void Update()
-    {
-    }
-
-    void Render(QPainter& aPainter, const QVector2D& aPos)
-    {
-        aPainter.save();
-        aPainter.setPen(mColor);
-        aPainter.drawEllipse(aPos.toPointF(), mRadius, mRadius);
-        aPainter.restore();
     }
 
     float GetAngle() const
@@ -52,6 +36,24 @@ private:
     float GetScaleY() const
     {
         return 1;
+    }
+
+private:
+    void Update()
+    {
+    }
+
+    void Render(QPainter& aPainter, const QVector2D& aPos)
+    {
+        aPainter.save();
+        aPainter.setPen(mColor);
+        aPainter.drawEllipse(aPos.toPointF(), mRadius, mRadius);
+        aPainter.restore();
+    }
+
+    void Render(QPainter& aPainter, float aX, float aY)
+    {
+        Render(aPainter, QVector2D(aX, aY));
     }
 
 private:

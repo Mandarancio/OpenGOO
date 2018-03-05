@@ -2,11 +2,12 @@
 // Ball definition file
 // source http://goofans.com/developers/game-file-formats/balls-xml
 
-//#include <QString>
 #include <QStringList>
 #include <QColor>
 #include <QVector2D>
 #include <QMap>
+
+#include "OGLib/optional.h"
 
 struct WOGBallShape
 {
@@ -17,50 +18,27 @@ struct WOGBallShape
         e_rectangle
     };
 
-    float variation;
-
-    WOGBallShape(float variation)
-        : variation(variation)
-    {
-        type = e_unknown;
-    }
-
     Type type;
-};
-
-struct WOGCircleBall : public WOGBallShape
-{
+    float variation;
     float radius;
-
-    WOGCircleBall(float diameter=0, float variation=0)
-        : WOGBallShape(variation)
-    {
-        type = e_circle;
-        radius = diameter*0.5f;
-    }
-};
-
-struct WOGRectangleBall : public WOGBallShape
-{
     float width;
     float height;
 
-    WOGRectangleBall(float width=0, float height=0, float variation=0)
-        : WOGBallShape(variation), width(width), height(height)
+    WOGBallShape()
     {
-        type = e_rectangle;
+        type = e_unknown;
     }
 };
 
 struct WOGBallCoreAttributes
 {
     QString name;
-    std::shared_ptr<WOGBallShape> shape;
+    WOGBallShape shape;
     float mass;
     int strands;
     QString material;
     float towermass;
-    float dragmass;
+    oglib::Optional<float> dragmass;
 };
 
 struct WOGBallBehaviourAttributes
@@ -93,7 +71,6 @@ struct WOGBallLevelInteraction
 
 struct WOGBallOtherInteraction
 {
-
 };
 
 struct WOGBallCosmeticAttributes
@@ -103,14 +80,12 @@ struct WOGBallCosmeticAttributes
 
 struct WOGBallBurnAttributes
 {
-
 };
 
 // Popping / MOM Attributes
 
 struct WOGBallPoppingMOMAttributes
 {
-
 };
 
 struct WOGBallAttributes
@@ -162,37 +137,58 @@ struct WOGBallDetachstrand
 struct WOGPart
 {
     QString name;
-    QString image;
-    QVector2D origin;
+    QStringList image;
+    std::vector<float> x;
+    std::vector<float> y;
     int layer;
-    QString state;
+    QStringList state;
     float scale;
     bool rotate;
-    QString stretch;
+    QString stretch; // {speed},{direction scale},{across scale} : Default = No Stretching
     bool eye;
     QString pupil;
     int pupilinset;
-    int xrange;
-    int yrange;
+    std::vector<float> xrange;
+    std::vector<float> yrange;
+
+    WOGPart()
+        : layer(0)
+        , scale(1.0f)
+        , rotate(false)
+        , eye(false)
+        , pupilinset(0)
+    {
+    }
 };
 
-class OGBallConfig;
+struct WOGBallMarker
+{
+    QString drag;
+    QString detach;
+    float rotspeed;
+
+    WOGBallMarker()
+        : rotspeed(0)
+    {
+    }
+};
+
+template<typename TTagParser> class OGBallConfig;
+template<typename T> struct TagParser;
 
 struct WOGBall
 {
-    typedef OGBallConfig Conf;
+    typedef OGBallConfig<TagParser<WOGBall>> Conf;
 
     WOGBallAttributes attribute;
-    WOGBallStrand* strand;
-    WOGBallDetachstrand* detachstrand;
+    std::unique_ptr<WOGBallStrand> strand;
+    std::unique_ptr<WOGBallDetachstrand> detachstrand;
     QList<WOGPart> parts;
     QMap<QString, QStringList> sounds;
+    WOGBallMarker marker;
 
-    WOGBall() : strand(nullptr), detachstrand(nullptr)  {}
-    ~WOGBall()
+    static std::unique_ptr<WOGBall> Create()
     {
-        if (strand) { delete strand; }
-
-        if (detachstrand) { delete detachstrand; }
+        return std::unique_ptr<WOGBall>(new WOGBall);
     }
 };

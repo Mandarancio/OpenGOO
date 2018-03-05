@@ -1,24 +1,28 @@
 #pragma once
 
 #include "GameEngine/entity.h"
-#include "ijointbuilder.h"
+#include "PhysicsEngine/joint.h"
 
 class OGSprite;
 
 class Strand : public og::Entity
 {
 public:
-    Strand(std::shared_ptr<OGSprite> a_sprite, IJointBuilder& a_builder)
+    Strand(std::shared_ptr<OGSprite> a_sprite, std::unique_ptr<og::physics::Joint> aJoint)
         : Entity(0.0f, 0.0f, a_sprite)
-        , m_sprite(a_sprite)
-        , m_joint(a_builder.Build())
+        , mJoint(aJoint.release())
+        , mLength(0)
+        , mAngle(0)
     {
     }
 
 private:
     void Render(QPainter& a_painter);
 
+    void LastUpdate();
+
 private:
-    std::shared_ptr<OGSprite> m_sprite;
-    IJointBuilder::JointUPtr m_joint;
+    std::unique_ptr<og::physics::Joint> mJoint;
+    float  mLength;
+    float mAngle;
 };

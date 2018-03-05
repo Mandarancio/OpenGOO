@@ -9,6 +9,13 @@ void Scene::Update()
 {
     std::for_each(m_update.begin(), m_update.end(), [](EntityPtr& a_e) { a_e->Update(); });
 
+    if (GetPhysicsEngine())
+    {
+        GetPhysicsEngine()->Simulate();
+    }
+
+    std::for_each(m_update.begin(), m_update.end(), [](EntityPtr& a_e) { a_e->LastUpdate(); });
+
     while (!m_add.empty())
     {
         auto entity = m_add.front();
@@ -24,6 +31,7 @@ void Scene::Update()
         entity->m_render_iterator = entryList.insert(entryList.end(), entity);
 
         m_add.pop_front();
+        entity->m_scene = this;
         entity->Added();
     }
 
@@ -44,6 +52,8 @@ void Scene::Update()
         }
 
         m_remove.pop_front();
+        entity->DestroyPhysicsBody();
+        entity->m_scene = this;
         entity->Removed();
     }
 }

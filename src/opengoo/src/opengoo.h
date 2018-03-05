@@ -14,6 +14,8 @@
 #include "GameEngine/scene.h"
 #include "GameEngine/camera.h"
 
+#include "PhysicsEngine/og_physicsengine.h"
+
 #include "og_fpscounter.h"
 
 class OGWindowCamera;
@@ -79,77 +81,75 @@ public:
         return m_deltaTime;
     }
 
-    private:
-        OpenGOO();
+private:
+    OpenGOO();
 
-        ~OpenGOO();
+    ~OpenGOO();
 
-        static bool LevelIsExists(const QString& a_name);
+    static bool LevelIsExists(const QString& a_name);
 
-        static QLatin1String GetMainMenuName();
+    static QLatin1String GetMainMenuName();
 
-        std::shared_ptr<og::Scene> CreateScene(const QString& a_name);
+    std::shared_ptr<og::Scene> CreateScene(const QString& a_name, bool aShouldCreatePhysics = true);
 
-        std::shared_ptr<og::Scene> SetScene(std::shared_ptr<og::Scene> a_scene)
-        {
-            Q_ASSERT(a_scene && "a_scene is nullptr");
-            m_scene->OnEnd();
-            m_scene = a_scene;
-            m_scene->OnBegin();
+    std::shared_ptr<og::Scene> SetScene(std::shared_ptr<og::Scene> a_scene)
+    {
+        Q_ASSERT(a_scene && "a_scene is nullptr");
+        m_scene->OnEnd();
+        m_scene = a_scene;
+        m_scene->OnBegin();
 
-            return a_scene;
-        }
+        return a_scene;
+    }
 
-        void LoadScene(const QString &a_name);
+    void LoadScene(const QString &a_name);
 
-        void _Start();
-        void _End();
+    void _Start();
+    void _End();
 
-        void _Activate();
-        void _Deactivate();
+    void _Activate();
+    void _Deactivate();
 
-        void _Cycle();
-        void _Paint(QPainter* painter);
+    void _Cycle();
+    void _Paint(QPainter* painter);
 
-        void MouseButtonDown(const QPoint& aPos);
-        void MouseButtonUp(const QPoint& aPos);
-        void _MouseMove(QMouseEvent* ev);
-        void _MouseWheel(QWheelEvent*)
-        {
-        }
+    void MouseButtonDown(const QPoint& aPos);
+    void MouseButtonUp(const QPoint& aPos);
+    void _MouseMove(QMouseEvent* ev);
+    void _MouseWheel(QWheelEvent*)
+    {
+    }
 
-        void _KeyDown(QKeyEvent* ev);
-        void _KeyUp(QKeyEvent*)
-        {
-        }
+    void _KeyDown(QKeyEvent* ev);
+    void _KeyUp(QKeyEvent*)
+    {
+    }
 
-        void _Quit();
-
-        void Scroll();
+    void _Quit();
 
 private:
-        static OpenGOO* pInstance_;
+    static OpenGOO* pInstance_;
 
-        static const char* types[];
-        static const char* exts[];
+    static const char* types[];
+    static const char* exts[];
 
-        EntityFactoryPtr m_entityFactory;
-        std::shared_ptr<og::Scene> m_scene;
-        std::unique_ptr<OGFPSCounter> _pFPS;
-        og::Camera mCamera;
-        QPointF mCameraSpeed;
+    EntityFactoryPtr m_entityFactory;
+    std::shared_ptr<og::Scene> m_scene;
+    std::unique_ptr<OGFPSCounter> _pFPS;
+    og::Camera mCamera;
+    QPointF mCameraSpeed;
 
-        QString m_language;
-        int width_;
-        int height_;
+    QString m_language;
+    int width_;
+    int height_;
 
-        QDateTime lastTime_;
-        int m_deltaTime;
+    QDateTime lastTime_;
+    int m_deltaTime;
 
-        bool mPause;
+    bool mPause;
 
-        QString m_gotoScene;
-        QString m_previousScene;
+    QString m_gotoScene;
+    QString m_previousScene;
 };
 
 #define GAME OpenGOO::GetInstance()

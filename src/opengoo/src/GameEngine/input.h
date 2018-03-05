@@ -6,7 +6,7 @@ namespace og
 {
 class MouseInput
 {
-public:   
+public:
     static QPoint GetPosition();
 };
 }

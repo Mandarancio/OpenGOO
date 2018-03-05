@@ -44,14 +44,14 @@ void OGSprite::Paint(QPainter& aPainter, const QRectF& aTarget)
     mSource->Render(aPainter, aTarget, mClipRect);
 }
 
-void OGSprite::Render(QPainter& aPainter, const QVector2D& aPosition)
+void OGSprite::Render(QPainter& aPainter, float aX, float aY)
 {
     QPointF target(-mOffsetX, -mOffsetY);
     auto sx = mScaleX;
     auto sy = mScaleY;
 
     aPainter.save();
-    aPainter.translate(aPosition.x(), aPosition.y());
+    aPainter.translate(aX, aY);
 
     if (GetAngle() != 0.0f)
     {

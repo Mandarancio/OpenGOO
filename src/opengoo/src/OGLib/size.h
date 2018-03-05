@@ -44,5 +44,4 @@ public:
 
 typedef Size<int> SizeI;
 typedef Size<float> SizeF;
-
 }

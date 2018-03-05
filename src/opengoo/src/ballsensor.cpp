@@ -4,7 +4,7 @@
 #include "og_userdata.h"
 
 BallSensor::BallSensor(og::physics::PhysicsEngine& a_physicEngine, OGBall* b)
-    : CircleSensor(a_physicEngine, Circle(b->GetPhyPosition(), b->GetPhyRadius() + 5), nullptr)
+    : CircleSensor(a_physicEngine, Circle(b->GetPhyPosition(), /*b->GetPhyRadius() + */5), nullptr)
     , m_ball(b)
     , m_physicEngine(a_physicEngine)
 {
@@ -37,7 +37,7 @@ void BallSensor::BeginContact(Fixture* a_fixture)
 
 void BallSensor::update()
 {
-    auto p = m_ball->GetPhyPosition();
-    b2Vec2 pos(p.x(), p.y());
-    m_ball->GetBody()->body->SetTransform(pos, 0);
+//    auto p = m_ball->GetPhyPosition();
+//    b2Vec2 pos(p.x(), p.y());
+//    m_ball->GetBody()->body->SetTransform(pos, 0);
 }

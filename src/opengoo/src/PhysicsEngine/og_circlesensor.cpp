@@ -13,11 +13,11 @@ namespace og
 namespace physics
 {
 CircleSensor::CircleSensor(og::physics::PhysicsEngine& a_physicEngine, const Circle& a_circle, Entity* a_entity)
-    : m_body(a_physicEngine.CreateCircle(a_circle))
+    : m_body(a_physicEngine.CreateCircle(a_circle, false))
     , m_entity(a_entity)
 {
     assert(a_entity);
-    m_body->fixture->SetSensor(true);    
+//    m_body->fixture->SetSensor(true);
 }
 
 CircleSensor::~CircleSensor()
@@ -26,7 +26,7 @@ CircleSensor::~CircleSensor()
 
 Fixture* CircleSensor::GetFixture() const
 {
-    return m_body->fixture;
+    return nullptr;/*m_body->fixture;*/
 }
 
 QVector2D CircleSensor::GetPosition() const
@@ -36,29 +36,29 @@ QVector2D CircleSensor::GetPosition() const
 
 float CircleSensor::GetRadius() const
 {
-    return m_body->shape->GetRadius();
+    return 0;/*m_body->shape->GetRadius();*/
 }
 
 void CircleSensor::SetCategory(UShort category)
 {
-    auto filter = m_body->fixture->GetFilterData();
-    filter.categoryBits = category;
-    m_body->fixture->SetFilterData(filter);
+//    auto filter = m_body->fixture->GetFilterData();
+//    filter.categoryBits = category;
+//    m_body->fixture->SetFilterData(filter);
 }
 
 void CircleSensor::SetMask(UShort mask)
 {
-    b2Filter filter = m_body->fixture->GetFilterData();
-    filter.maskBits = mask;
-    m_body->fixture->SetFilterData(filter);
+//    b2Filter filter = m_body->fixture->GetFilterData();
+//    filter.maskBits = mask;
+//    m_body->fixture->SetFilterData(filter);
 }
 
 void CircleSensor::SetFilter(const SensorFilter& filter)
 {
-    b2Filter f;
-    f.categoryBits = filter.category;
-    f.maskBits = filter.mask;
-    m_body->fixture->SetFilterData(f);
+//    b2Filter f;
+//    f.categoryBits = filter.category;
+//    f.maskBits = filter.mask;
+//    m_body->fixture->SetFilterData(f);
 }
 
 void CircleSensor::BeginContact(Fixture* a_fixture)

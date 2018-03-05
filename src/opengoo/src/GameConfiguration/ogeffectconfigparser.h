@@ -2,12 +2,9 @@
 
 #include "GameEngine/Particles/particleemiter.h"
 
-typedef WOGEffect::WOGParticle::WOGAxialSinOffset AxialSinOffset;
+#include "enumerator.h"
 
-template <typename T> struct Enumerator
-{
-    static T ToEnum(const QString& aType);
-};
+typedef WOGEffect::WOGParticle::WOGAxialSinOffset AxialSinOffset;
 
 template <> struct Enumerator<AxialSinOffset::Axis>
 {

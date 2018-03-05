@@ -4,7 +4,6 @@ SOURCES += \
     src/PhysicsEngine/og_physicsbody.cpp \
     src/PhysicsEngine/og_circlesensor.cpp \
     src/PhysicsEngine/joint.cpp \
-    src/PhysicsEngine/distancejoint.cpp \
     src/PhysicsEngine/og_contactlistener.cpp
 
 HEADERS += \
@@ -18,4 +17,8 @@ HEADERS += \
     src/PhysicsEngine/og_contactlistener.h \
     src/PhysicsEngine/joint.h \
     src/PhysicsEngine/distancejoint.h \
-    src/PhysicsEngine/og_circlesensor.h
+    src/PhysicsEngine/og_circlesensor.h \
+    src/PhysicsEngine/circleshape.h \
+    src/PhysicsEngine/shapefactory.h \
+    src/PhysicsEngine/fixturebuilder.h \
+    src/PhysicsEngine/physicsbodybuilder.h

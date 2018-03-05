@@ -8,5 +8,5 @@ void OGCamera::_MoveTo(float posx, float posy)
 {
     int x = RoundF(posx);
     int y = RoundF(posy);
-    pos_ = Point(x, y);
+    pos_ = PointI(x, y);
 }

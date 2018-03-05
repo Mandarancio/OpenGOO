@@ -1,3 +1,5 @@
+#include <QHash>
+
 #include "OGLib/util.h"
 
 #include "sceneloader.h"
@@ -82,6 +84,7 @@ struct SceneLoaderHelper
     SceneLoaderHelper(og::Scene& aScene)
         : mScene(aScene)
     {
+        mEntityFactory.SetPhysicsEngine(aScene.GetPhysicsEngine());
     }
 
     EntityFactory& GetEntityFactory()
@@ -119,6 +122,10 @@ struct SceneLoaderHelper
 
     void Process(const WOGRadialForceField&);
 
+    void Process(const WOGBallInstance&);
+
+    void Process(const WOGStrand&);
+
     template<typename T>
     void Process(const T& aData)
     {
@@ -150,9 +157,38 @@ struct SceneLoaderHelper
         return std::make_shared<CamZoomAnimation>(duration, 1.0f / aStart, 1.0f / aEnd);
     }
 
+    void InitGlobalGravity(const QPointF& aGravity)
+    {
+        mScene.GetPhysicsEngine()->SetGravity(aGravity.x(), aGravity.y());
+    }
+
+    std::shared_ptr<Ball> AddBall(const QString& aId, std::shared_ptr<Ball> aBall)
+    {
+        assert(mBalls.count(aId) == 0);
+        mBalls[aId] = aBall;
+        return aBall;
+    }
+
+    std::shared_ptr<Ball> GetBallById(const QString& aId)
+    {
+        assert(mBalls.count(aId) == 1);
+        return mBalls.value(aId);
+    }
+
+    static WOGBallStrand* GetStrandDefByBallType(const QString& aId)
+    {
+        if (auto ballDef = GE->GetResourceManager()->GetBallByType(aId))
+        {
+            return ballDef->strand.get();
+        }
+
+        return nullptr;
+    }
+
 private:
     og::Scene& mScene;
     EntityFactory mEntityFactory;
+    QHash<QString, std::shared_ptr<Ball>> mBalls;
 };
 
 void SceneLoaderHelper::Process(const WOGCamera& aCamera)
@@ -196,6 +232,36 @@ void SceneLoaderHelper::Process(const WOGPipe& aPipe)
     }
 }
 
+void SceneLoaderHelper::Process(const WOGBallInstance& aBallInstance)
+{
+    if (auto e = GetEntityFactory().CreateBall(aBallInstance))
+    {
+        mScene.AddEntity(AddBall(aBallInstance.id, e));
+    }
+}
+
+void SceneLoaderHelper::Process(const WOGStrand& aStrand)
+{
+    auto b1 = GetBallById(aStrand.gb1);
+    auto b2 = GetBallById(aStrand.gb2);
+
+    auto strandDef = GetStrandDefByBallType(b1->GetName());
+    if (!strandDef)
+    {
+        strandDef = GetStrandDefByBallType(b2->GetName());
+    }
+
+    if (!strandDef)
+    {
+        return;
+    }
+
+    if (auto entity = GetEntityFactory().CreateStrand(b1, b2, *strandDef))
+    {
+        mScene.AddEntity(entity);
+    }
+}
+
 void SceneLoaderHelper::Process(const WOGLevel& aLevel)
 {
     auto gc = std::dynamic_pointer_cast<GameController>(GetEntityFactory().CreateGameController());
@@ -224,6 +290,10 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
     {
         Process(OptionalValue(aLevel.levelexit));
     }
+
+    Process(aLevel.ball);
+
+    Process(aLevel.strand);
 
     mScene.AddEntity(gc);
 }
@@ -412,19 +482,24 @@ void SceneLoaderHelper::Process(const WOGRectangle& aRect)
     }
 }
 
-void SceneLoaderHelper::Process(const WOGLine&)
+void SceneLoaderHelper::Process(const WOGLine& aLine)
 {
+    if (auto e = GetEntityFactory().CreateLine(aLine))
+    {
+        mScene.AddEntity(e);
+    }
 }
 
 void SceneLoaderHelper::Process(const WOGLinearForceField& aForceField)
 {
-//    std::make_shared<og::physics::PhysicsEngine>();
+    if (aForceField.width == 0)
+    {
+        InitGlobalGravity(aForceField.force);
+    }
 }
 
 void SceneLoaderHelper::Process(const WOGRadialForceField& aForceField)
 {
-
-//    std::make_shared<og::physics::PhysicsEngine>();
 }
 
 void SceneLoaderHelper::Process(const WOGScene& aScene)
@@ -449,7 +524,6 @@ void SceneLoaderHelper::Process(const WOGScene& aScene)
 
 void SceneLoader::Load(og::Scene& aScene)
 {
-    qDebug() << aScene.GetName();
     auto LoadConfig = [&aScene](const QString& aType, std::function<bool(const QString&)> aLoader)
     {
         const auto path = QString("./res/levels/%1/%1.%2").arg(aScene.GetName()).arg(aType);

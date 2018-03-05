@@ -7,6 +7,7 @@
 
 #include "og_types.h"
 #include "Colliders/collider.h"
+#include "PhysicsEngine/og_physicsbody.h"
 
 namespace og
 {
@@ -21,6 +22,7 @@ class Entity
     bool m_visible;
     QString m_name;
     float m_depth;
+    std::unique_ptr<og::PhysicsBody> mPhysicsBody;
 
     Entity(const Entity&);
     Entity& operator=(const Entity&);
@@ -57,15 +59,15 @@ public:
     {
     }
 
-    virtual void Render(QPainter& a_painter)
+    virtual void LastUpdate()
     {
-        if (m_visible)
-            m_graphic->Render(a_painter, m_position);
     }
 
-    GraphicPtr GetGraphic() const
+    virtual void Render(QPainter& a_painter);
+
+    Graphic* GetGraphic() const
     {
-        return m_graphic;
+        return m_graphic.get();
     }
 
     void SetGraphic(GraphicPtr a_g)
@@ -108,11 +110,6 @@ public:
     {
     }
 
-    void SetScene(Scene* a_scene)
-    {
-        m_scene = a_scene;
-    }
-
     Scene* GetScene() const
     {
         return m_scene;
@@ -132,6 +129,11 @@ public:
     void SetPosition(const QVector2D& a_position)
     {
         m_position = a_position;
+    }
+
+    void SetPosition(const QPointF& a_position)
+    {
+        SetPosition(QVector2D(a_position));
     }
 
     void SetPosition(float aX, float aY)
@@ -164,6 +166,18 @@ public:
     {
         return m_depth;
     }
+
+    void SetPhysicsBody(std::unique_ptr<PhysicsBody> aPhysicsBody)
+    {
+        mPhysicsBody = std::move(aPhysicsBody);
+    }
+
+    PhysicsBody* GetPhysicsBody() const
+    {
+        return mPhysicsBody.get();
+    }
+
+    void DestroyPhysicsBody();
 
 private:
     void Init()

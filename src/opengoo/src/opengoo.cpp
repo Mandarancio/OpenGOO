@@ -25,7 +25,6 @@
 #include "GameEngine/input.h"
 #include <logger.h>
 #include "og_windowcamera.h"
-#include "og_ballconfig.h"
 #include "og_sprite.h"
 #include "og_ibody.h"
 #include "og_strand.h"
@@ -91,7 +90,7 @@ void OpenGOO::_Start()
         m_language = "en";
     }
 
-    m_scene = std::make_shared<og::Scene>("");
+    m_scene = CreateScene("", false);
 
     if (m_gotoScene.isEmpty())
     {
@@ -181,14 +180,14 @@ void OpenGOO::LoadScene(const QString& a_name)
     SetPause(false);
 }
 
-std::shared_ptr<Scene> OpenGOO::CreateScene(const QString& a_name)
+std::shared_ptr<Scene> OpenGOO::CreateScene(const QString& a_name, bool aShouldCreatePhysics)
 {
 
 #if 0
     PhysicsEngineFactory pef;
     return std::make_shared<OGWorld>(pef, *m_entityFactory, m_gotoScene, m_language);
 #else
-    return std::make_shared<Scene>(a_name);
+    return std::make_shared<Scene>(a_name, aShouldCreatePhysics ? og::physics::PhysicsEngine::Create() : nullptr);
 #endif
 }
 
@@ -209,7 +208,6 @@ void OpenGOO::_Cycle()
         return;
     }
 
-    //Scroll();
     mCamera.Update();
     const auto& pos = mCamera.GetPosition();
     mCamera.SetPosition(pos.x() + mCameraSpeed.x(), pos.y() + mCameraSpeed.y());
@@ -325,43 +323,6 @@ void OpenGOO::_KeyDown(QKeyEvent* ev)
 void OpenGOO::_Quit()
 {
     GE->quit();
-}
-
-void OpenGOO::Scroll()
-{
-    static const float OFFSET = 50.0f;
-    static const int DEFAULT_H_SPEED = 4;
-    static const int DEFAULT_V_SPEED = 4;
-
-    auto pos = og::MouseInput::GetPosition();
-    float sx = pos.x();
-    float sy = pos.y();
-
-    if (sx <= OFFSET)
-    {
-        mCameraSpeed.setX(-DEFAULT_H_SPEED);
-    }
-    else if (sx >= width_ - OFFSET)
-    {
-        mCameraSpeed.setX(DEFAULT_H_SPEED);
-    }
-    else
-    {
-        mCameraSpeed.setX(0);
-    }
-
-    if (sy <= OFFSET)
-    {
-        mCameraSpeed.setY(DEFAULT_V_SPEED);
-    }
-    else if (sy >= height_ - OFFSET)
-    {
-        mCameraSpeed.setY(-DEFAULT_V_SPEED);
-    }
-    else
-    {
-        mCameraSpeed.setY(0);
-    }
 }
 
 // Main menu

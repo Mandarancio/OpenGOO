@@ -31,7 +31,7 @@ OGWorld::OGWorld(PhysicsEngineFactory& a_physicsEngineFactory,
                  EntityFactory& a_factory,
                  const QString& a_levelname,
                  const QString& a_language)
-    : Scene(a_levelname)
+    : Scene(a_levelname, a_physicsEngineFactory.Create())
     ,  m_entityFactory(a_factory)
     , m_physicsEngine(a_physicsEngineFactory.Create())
     , m_language(a_language)
@@ -721,7 +721,7 @@ void OGWorld::Update()
         for (int i = 0; i < added.size(); ++i)
         {
             m_update.push_back(std::move(added[i]));
-            m_update.back()->SetScene(this);
+//            m_update.back()->SetScene(this);
             m_update.back()->Added();
         }
 

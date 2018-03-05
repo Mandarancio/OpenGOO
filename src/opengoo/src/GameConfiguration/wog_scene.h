@@ -46,7 +46,7 @@ struct WOGRadialForceField
 
 struct WOGLinearForceField
 {
-    QString type;
+    QString type; // gravity, force
     QPointF force;
     float dampeningfactor;
     bool antigrav;

@@ -9,8 +9,8 @@ using namespace oglib;
 class OGCamera : public ICamera
 {    
 protected:
-    Point pos_;
-    Size<int> size_;
+    PointI pos_;
+    SizeI size_;
     float zoom_;
 
 public:
@@ -34,9 +34,9 @@ private:
     void _MoveDown(int posy) { pos_.SetY(posy); }
     void _MoveLeft(int posx) { pos_.SetX(posx); }
     void _MoveRight(int posx) { pos_.SetX(posx); }
-    void _MoveTo(int posx, int posy) { pos_ = Point(posx, posy); }
+    void _MoveTo(int posx, int posy) { pos_ = PointI(posx, posy); }
     void _MoveTo(float posx, float posy);
-    void _MoveTo(const Point& poi) { pos_ = poi; }
+    void _MoveTo(const PointI& poi) { pos_ = poi; }
 
     void _SetZoom(float zoom) { zoom_ = zoom; }
 
