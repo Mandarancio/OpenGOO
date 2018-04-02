@@ -1,59 +1,61 @@
 #pragma once
 
+#include "Parsers/valuewriter.h"
+
 inline void ReadAttribute(WOGLinearForceField& aData, const QDomAttr& aAttribute)
 {
     const auto name = aAttribute.name();
     if (name == QLatin1String("type"))
     {
-        OGXmlConfig::WriteValue(aData.type, aAttribute);
+        ValueWriter::WriteValue(aData.type, aAttribute);
     }
     else if (name == QLatin1String("force"))
     {
-        OGXmlConfig::WriteValue(aData.force, aAttribute);
+        ValueWriter::WriteValue(aData.force, aAttribute);
     }
     else if (name == QLatin1String("dampeningfactor"))
     {
-        OGXmlConfig::WriteValue(aData.dampeningfactor, aAttribute);
+        ValueWriter::WriteValue(aData.dampeningfactor, aAttribute);
     }
     else if (name == QLatin1String("antigrav"))
     {
-        OGXmlConfig::WriteValue(aData.antigrav, aAttribute);
+        ValueWriter::WriteValue(aData.antigrav, aAttribute);
     }
     else if (name == QLatin1String("geomonly"))
     {
-        OGXmlConfig::WriteValue(aData.geomonly, aAttribute);
+        ValueWriter::WriteValue(aData.geomonly, aAttribute);
     }
     else if (name == QLatin1String("id"))
     {
-        OGXmlConfig::WriteValue(aData.id, aAttribute);
+        ValueWriter::WriteValue(aData.id, aAttribute);
     }
     else if (name == QLatin1String("width"))
     {
-        OGXmlConfig::WriteValue(aData.width, aAttribute);
+        ValueWriter::WriteValue(aData.width, aAttribute);
     }
     else if (name == QLatin1String("height"))
     {
-        OGXmlConfig::WriteValue(aData.height, aAttribute);
+        ValueWriter::WriteValue(aData.height, aAttribute);
     }
     else if (name == QLatin1String("center"))
     {
-        OGXmlConfig::WriteValue(aData.center, aAttribute);
+        ValueWriter::WriteValue(aData.center, aAttribute);
     }
     else if (name == QLatin1String("color"))
     {
-        OGXmlConfig::WriteValue(aData.color, aAttribute);
+        ValueWriter::WriteValue(aData.color, aAttribute);
     }
     else if (name == QLatin1String("depth"))
     {
-        OGXmlConfig::WriteValue(aData.depth, aAttribute);
+        ValueWriter::WriteValue(aData.depth, aAttribute);
     }
     else if (name == QLatin1String("enabled"))
     {
-        OGXmlConfig::WriteValue(aData.enabled, aAttribute);
+        ValueWriter::WriteValue(aData.enabled, aAttribute);
     }
     else if (name == QLatin1String("water"))
     {
-        OGXmlConfig::WriteValue(aData.water, aAttribute);
+        ValueWriter::WriteValue(aData.water, aAttribute);
     }
 }
 

@@ -4,7 +4,7 @@
 
 struct WOGScene;
 
-class OGSceneConfig : public OGXmlConfig
+class OGSceneConfig : public OGXmlConfig<DefaultTagParser>
 {
 public:
     typedef std::unique_ptr<WOGScene> Type;

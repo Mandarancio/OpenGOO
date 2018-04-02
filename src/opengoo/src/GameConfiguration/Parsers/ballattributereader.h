@@ -1,8 +1,6 @@
 #pragma once
 
 #include "wog_ball.h"
-#include "og_xmlconfig.h"
-#include "enumerator.h"
 
 template <> struct Enumerator<WOGBallShape::Type>
 {
@@ -37,11 +35,11 @@ inline void WriteValue(WOGBallShape& aData, const QDomAttr& aAttribute)
             switch (i)
             {
             case 1:
-                OGXmlConfig::WriteValue(aData.radius, values[1]);
+                ValueWriter::WriteValue(aData.radius, values[1]);
                 aData.radius *= 0.5f;
                 break;
             case 2:
-                OGXmlConfig::WriteValue(aData.variation, values[2]);
+                ValueWriter::WriteValue(aData.variation, values[2]);
                 break;
             }
         }
@@ -53,43 +51,44 @@ inline void WriteValue(WOGBallShape& aData, const QDomAttr& aAttribute)
             switch (i)
             {
             case 1:
-                OGXmlConfig::WriteValue(aData.width, values[1]);
+                ValueWriter::WriteValue(aData.width, values[1]);
                 break;
             case 2:
-                OGXmlConfig::WriteValue(aData.height, values[2]);
+                ValueWriter::WriteValue(aData.height, values[2]);
                 break;
             case 3:
-                OGXmlConfig::WriteValue(aData.variation, values[3]);
+                ValueWriter::WriteValue(aData.variation, values[3]);
                 break;
             }
         }
     }
 }
 
-struct AttributeReader
+template<>
+struct AttributeReader<WOGBall>
 {
     static void Read(const QDomAttr& aAttribute, WOGPart* aOut)
     {
         const auto name = aAttribute.name();
         if (name == QLatin1String("name"))
         {
-            OGXmlConfig::WriteValue(aOut->name, aAttribute);
+            ValueWriter::WriteValue(aOut->name, aAttribute);
         }
         else if (name == QLatin1String("image"))
         {
-            OGXmlConfig::WriteValue(aOut->image, aAttribute);
+            ValueWriter::WriteValue(aOut->image, aAttribute);
         }
         else if (name == QLatin1String("layer"))
         {
-            OGXmlConfig::WriteValue(aOut->layer, aAttribute);
+            ValueWriter::WriteValue(aOut->layer, aAttribute);
         }
         else if (name == QLatin1String("scale"))
         {
-            OGXmlConfig::WriteValue(aOut->scale, aAttribute);
+            ValueWriter::WriteValue(aOut->scale, aAttribute);
         }
         else if (name == QLatin1String("rotate"))
         {
-            OGXmlConfig::WriteValue(aOut->rotate, aAttribute);
+            ValueWriter::WriteValue(aOut->rotate, aAttribute);
         }
         else if (name == QLatin1String("stretch"))
         {
@@ -97,35 +96,35 @@ struct AttributeReader
         }
         else if (name == QLatin1String("state"))
         {
-            OGXmlConfig::WriteValue(aOut->state, aAttribute);
+            ValueWriter::WriteValue(aOut->state, aAttribute);
         }
         else if (name == QLatin1String("x"))
         {
-            OGXmlConfig::WriteValue(aOut->x, aAttribute);
+            ValueWriter::WriteValue(aOut->x, aAttribute);
         }
         else if (name == QLatin1String("y"))
         {
-            OGXmlConfig::WriteValue(aOut->y, aAttribute);
+            ValueWriter::WriteValue(aOut->y, aAttribute);
         }
         else if (name == QLatin1String("xrange"))
         {
-            OGXmlConfig::WriteValue(aOut->xrange, aAttribute);
+            ValueWriter::WriteValue(aOut->xrange, aAttribute);
         }
         else if (name == QLatin1String("yrange"))
         {
-            OGXmlConfig::WriteValue(aOut->yrange, aAttribute);
+            ValueWriter::WriteValue(aOut->yrange, aAttribute);
         }
         else if (name == QLatin1String("eye"))
         {
-            OGXmlConfig::WriteValue(aOut->eye, aAttribute);
+            ValueWriter::WriteValue(aOut->eye, aAttribute);
         }
         else if (name == QLatin1String("pupilinset"))
         {
-            OGXmlConfig::WriteValue(aOut->pupilinset, aAttribute);
+            ValueWriter::WriteValue(aOut->pupilinset, aAttribute);
         }
         else if (name == QLatin1String("pupil"))
         {
-            OGXmlConfig::WriteValue(aOut->pupil, aAttribute);
+            ValueWriter::WriteValue(aOut->pupil, aAttribute);
         }
     }
 
@@ -134,15 +133,15 @@ struct AttributeReader
         const auto name = aAttribute.name();
         if (name == QLatin1String("drag"))
         {
-            OGXmlConfig::WriteValue(aOut->drag, aAttribute);
+            ValueWriter::WriteValue(aOut->drag, aAttribute);
         }
         else if (name == QLatin1String("detach"))
         {
-            OGXmlConfig::WriteValue(aOut->detach, aAttribute);
+            ValueWriter::WriteValue(aOut->detach, aAttribute);
         }
         else if (name == QLatin1String("rotspeed"))
         {
-            OGXmlConfig::WriteValue(aOut->rotspeed, aAttribute);
+            ValueWriter::WriteValue(aOut->rotspeed, aAttribute);
         }
     }
 
@@ -151,7 +150,7 @@ struct AttributeReader
         const auto name = aAttribute.name();
         if (name == QLatin1String("name"))
         {
-            OGXmlConfig::WriteValue(aOut->name, aAttribute);
+            ValueWriter::WriteValue(aOut->name, aAttribute);
         }
         else if (name == QLatin1String("shape"))
         {
@@ -159,23 +158,23 @@ struct AttributeReader
         }
         else if (name == QLatin1String("mass"))
         {
-            OGXmlConfig::WriteValue(aOut->mass, aAttribute);
+            ValueWriter::WriteValue(aOut->mass, aAttribute);
         }
         else if (name == QLatin1String("strands"))
         {
-            OGXmlConfig::WriteValue(aOut->strands, aAttribute);
+            ValueWriter::WriteValue(aOut->strands, aAttribute);
         }
         else if (name == QLatin1String("material"))
         {
-            OGXmlConfig::WriteValue(aOut->material, aAttribute);
+            ValueWriter::WriteValue(aOut->material, aAttribute);
         }
         else if (name == QLatin1String("towermass"))
         {
-            OGXmlConfig::WriteValue(aOut->towermass, aAttribute);
+            ValueWriter::WriteValue(aOut->towermass, aAttribute);
         }
         else if (name == QLatin1String("dragmass"))
         {
-            OGXmlConfig::WriteValue(aOut->dragmass, aAttribute);
+            ValueWriter::WriteValue(aOut->dragmass, aAttribute);
         }
     }
 
@@ -188,7 +187,7 @@ struct AttributeReader
         const auto name = aAttribute.name();
         if (name == QLatin1String("spawn"))
         {
-            OGXmlConfig::WriteValue(aOut->spawn, aAttribute);
+            ValueWriter::WriteValue(aOut->spawn, aAttribute);
         }
         else
         {

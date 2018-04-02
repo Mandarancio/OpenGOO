@@ -1,11 +1,7 @@
 #pragma once
 
-#include "og_gameconfig.h"
 #include "og_resourceconfig.h"
-#include "og_textconfig.h"
 #include "og_sceneconfig.h"
 #include "og_levelconfig.h"
 #include "og_materialconfig.h"
-#include "og_effectconfig.h"
-#include "og_ballconfig.h"
 #include "og_islandconfig.h"

@@ -3,7 +3,7 @@
 #include "og_xmlconfig.h"
 #include "wog_material.h"
 
-class OGMaterialConfig : public OGXmlConfig
+class OGMaterialConfig : public OGXmlConfig<DefaultTagParser>
 {
 public:
     typedef WOGMaterialList Type;

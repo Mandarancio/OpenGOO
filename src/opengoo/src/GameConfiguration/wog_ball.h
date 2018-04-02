@@ -173,13 +173,8 @@ struct WOGBallMarker
     }
 };
 
-template<typename TTagParser> class OGBallConfig;
-template<typename T> struct TagParser;
-
 struct WOGBall
 {
-    typedef OGBallConfig<TagParser<WOGBall>> Conf;
-
     WOGBallAttributes attribute;
     std::unique_ptr<WOGBallStrand> strand;
     std::unique_ptr<WOGBallDetachstrand> detachstrand;

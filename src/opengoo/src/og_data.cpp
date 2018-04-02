@@ -1,7 +1,6 @@
 #include "og_data.h"
 #include "logger.h"
 #include "wog_scene.h"
-#include "wog_text.h"
 
 template<class T> inline static typename T::Type GetData(const QString &path)
 {
@@ -46,16 +45,4 @@ WOGScene* OGData::GetScene(const QString &path)
 WOGResources* OGData::GetResources(const QString &path)
 {
     return GetData<OGResourceConfig>(path);
-}
-
-WOGText* OGData::GetText(const QString &path, const QString &lang)
-{
-    OGTextConfig config;
-    config.SetLanguage(lang);
-    return ReadConfig(config, path).release();
-}
-
-WOGEffects* OGData::GetEffects(const QString &path)
-{
-    return GetData<OGEffectConfig>(path).release();
 }

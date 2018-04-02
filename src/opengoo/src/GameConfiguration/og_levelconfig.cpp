@@ -3,6 +3,8 @@
 
 #include "../OGLib/util.h"
 
+#include "Parsers/valuewriter.h"
+
 struct OGLevelConfigHelper
 {
     static WOGCamera CreateCamera(const QDomElement& element);
@@ -25,7 +27,7 @@ inline void OptionalSetValue(TOptional& aOptional, const QDomElement& aValue)
 WOGPoi OGLevelConfigHelper::CreatePoi(const QDomElement &element)
 {
     WOGPoi obj;
-    obj.position = OGXmlConfig::StringToPointF(element.attribute("pos"));
+    obj.position = ValueWriter::StringToPointF(element.attribute("pos"));
     obj.traveltime = element.attribute("traveltime").toDouble();
     obj.pause = element.attribute("pause").toDouble();
     obj.zoom = element.attribute("zoom").toDouble();
@@ -50,7 +52,7 @@ WOGCamera OGLevelConfigHelper::CreateCamera(const QDomElement& element)
         obj.aspect = WOGCamera::Unknown;
     }
 
-    obj.endpos = OGXmlConfig::StringToPointF(element.attribute("endpos"));
+    obj.endpos = ValueWriter::StringToPointF(element.attribute("endpos"));
     obj.endzoom = element.attribute("endzoom", "1").toDouble();
 
     for (auto node = element.firstChild(); !node.isNull(); node = node.nextSibling())
@@ -70,7 +72,7 @@ WOGBallInstance OGLevelConfigHelper::CreateBallInstance(const QDomElement& eleme
 
     obj.id = element.attribute("id");
     obj.angle = element.attribute("angle").toFloat();
-    obj.discovered = OGXmlConfig::StringToBool(element.attribute("discovered", "true"));
+    obj.discovered = ValueWriter::StringToBool(element.attribute("discovered", "true"));
 
     return obj;
 }
@@ -95,7 +97,7 @@ WOGStrand OGLevelConfigHelper::CreateStrand(const QDomElement& element)
 void OGLevelConfigHelper::Load(WOGLevelExit& obj, const QDomElement &element)
 {
     obj.id = element.attribute("id");
-    obj.pos = OGXmlConfig::StringToPointF(element.attribute("pos"));
+    obj.pos = ValueWriter::StringToPointF(element.attribute("pos"));
     obj.radius = element.attribute("radius").toFloat();
     obj.filter = element.attribute("filter");
 }
@@ -118,15 +120,15 @@ OGLevelConfig::Type OGLevelConfig::Parser()
     OptionalReset(level->pipe);
 
     level->ballsrequired = rootElement.attribute("ballsrequired").toInt();
-    level->letterboxed = StringToBool(rootElement.attribute("letterboxed"));
-    level->visualdebug = StringToBool(rootElement.attribute("visualdebug"));
-    level->autobounds = StringToBool(rootElement.attribute("autobounds"));
-    level->textcolor = StringToColor(rootElement.attribute("textcolor"));
-    level->texteffects = StringToBool(rootElement.attribute("texteffects"));
+    level->letterboxed = ValueWriter::StringToBool(rootElement.attribute("letterboxed"));
+    level->visualdebug = ValueWriter::StringToBool(rootElement.attribute("visualdebug"));
+    level->autobounds = ValueWriter::StringToBool(rootElement.attribute("autobounds"));
+    level->textcolor = ValueWriter::StringToColor(rootElement.attribute("textcolor"));
+    level->texteffects = ValueWriter::StringToBool(rootElement.attribute("texteffects"));
     level->timebugprobability = rootElement.attribute("timebugprobability").toDouble();
 
-    level->strandgeom = StringToBool(rootElement.attribute("strandgeom"));
-    level->allowskip = StringToBool(rootElement.attribute("allowskip"));
+    level->strandgeom = ValueWriter::StringToBool(rootElement.attribute("strandgeom"));
+    level->allowskip = ValueWriter::StringToBool(rootElement.attribute("allowskip"));
 
     for (auto node = rootElement.firstChild(); !node.isNull(); node = node.nextSibling())
     {
@@ -154,7 +156,7 @@ OGLevelConfig::Type OGLevelConfig::Parser()
         else if (domElement.tagName() == "pipe")
         {
             if (!OptionalHasValue(level->pipe))
-            {                
+            {
                 OptionalSetValue(level->pipe, domElement);
             }
         }

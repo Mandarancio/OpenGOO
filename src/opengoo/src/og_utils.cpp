@@ -8,10 +8,12 @@
 #include "backtracer_win32.h"
 #endif
 
+#include <QDomDocument>
+
 #include "og_userdata.h"
 #include <OGPushButton>
 #include "opengoo.h"
-#include "og_gameconfig.h"
+#include "GameConfiguration/og_config.h"
 #include "uidata.h"
 
 #include <QFile>
@@ -69,30 +71,14 @@ void logger()
     qInstallMessageHandler(messageHandler);
 }
 
-bool loadConfig(OGConfig& config, const QString& filename)
+bool loadConfig(OGConfig& aConfig, const QString& aFileName)
 {
-    OGGameConfig gameConfig;
-
-    if (!gameConfig.Open(filename))
-    {
-        logWarn("Could not open file:" + filename);
-        return false;
-    }
-
-    if (!gameConfig.Read())
-    {
-        logWarn("Could not read file:" + filename);
-        return false;
-    }
-
-    config = gameConfig.Parser();
-
-    return true;
+    return aConfig.Load(aFileName);
 }
 
-void saveConfig(OGConfig& config, const QString & filename)
+void saveConfig(OGConfig& config, const QString & aFileName)
 {
-    OGGameConfig::Create(filename, config);
+    config.Write(aFileName);
 }
 
 std::unique_ptr<UIData> getUIData(const QString & id)

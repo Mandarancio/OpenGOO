@@ -3,7 +3,7 @@
 #include "og_xmlconfig.h"
 #include "wog_island.h"
 
-class OGIslandConfig : public OGXmlConfig
+class OGIslandConfig : public OGXmlConfig<DefaultTagParser>
 {
 public:
     OGIslandConfig()
@@ -17,5 +17,4 @@ private:
     QStringList StringToList(const QString & attribute);
     void StringToOCD(WOGOcd* ocd, const QString & attribute);
     wog::Level* CreateLevel(const QDomElement & element);
-
 };

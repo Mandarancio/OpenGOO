@@ -19,7 +19,6 @@
 #include <QDebug>
 
 #include "opengoo.h"
-#include "og_world.h"
 #include "flags.h"
 #include "GameEngine/og_gameengine.h"
 #include "GameEngine/input.h"

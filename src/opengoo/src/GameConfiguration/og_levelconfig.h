@@ -4,7 +4,7 @@
 
 struct WOGLevel;
 
-class OGLevelConfig : public OGXmlConfig
+class OGLevelConfig : public OGXmlConfig<DefaultTagParser>
 {
 public:
     typedef std::unique_ptr<WOGLevel> Type;

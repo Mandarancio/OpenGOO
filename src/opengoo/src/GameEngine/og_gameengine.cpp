@@ -6,7 +6,7 @@
 #include "logger.h"
 
 #include "og_game.h"
-#include "og_gameconfig.h"
+#include "og_config.h"
 #include "og_videomode.h"
 #include "iresourcemanagerfactory.h"
 #include "camera.h"

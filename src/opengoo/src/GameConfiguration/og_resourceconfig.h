@@ -6,7 +6,7 @@ class WOGResources;
 struct WOGResource;
 struct WOGResourceGroup;
 
-class OGResourceConfig : public OGXmlConfig
+class OGResourceConfig : public OGXmlConfig<DefaultTagParser>
 {
     QString defaultPath_;
     QString defaultIdPrefix_;

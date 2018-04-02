@@ -1,12 +1,10 @@
 SOURCES += \
-    src/GameConfiguration/og_gameconfig.cpp \
+    src/GameConfiguration/og_config.cpp \
     src/GameConfiguration/og_xmlconfig.cpp \
     src/GameConfiguration/og_resourceconfig.cpp \
-    src/GameConfiguration/og_textconfig.cpp \
     src/GameConfiguration/og_sceneconfig.cpp \
     src/GameConfiguration/og_levelconfig.cpp \
     src/GameConfiguration/og_materialconfig.cpp \
-    src/GameConfiguration/og_effectconfig.cpp \
     src/GameConfiguration/og_ballconfig.cpp \
     src/GameConfiguration/og_islandconfig.cpp \
     src/GameConfiguration/wog_level.cpp \
@@ -22,14 +20,12 @@ SOURCES += src/GameConfiguration/aesdecrypter.cpp
 }
 
 HEADERS += \
-    src/GameConfiguration/og_gameconfig.h \
+    src/GameConfiguration/og_config.h \
     src/GameConfiguration/og_xmlconfig.h \
     src/GameConfiguration/og_resourceconfig.h \
-    src/GameConfiguration/og_textconfig.h \
     src/GameConfiguration/og_sceneconfig.h \
     src/GameConfiguration/og_levelconfig.h \
     src/GameConfiguration/og_materialconfig.h \
-    src/GameConfiguration/og_effectconfig.h \
     src/GameConfiguration/og_ballconfig.h \
     src/GameConfiguration/og_islandconfig.h \
     src/GameConfiguration/wog_vobject.h \
@@ -54,9 +50,18 @@ HEADERS += \
     src/GameConfiguration/animationdata.h \
     src/GameConfiguration/wog_camera.h \
     src/GameConfiguration/scenereader.h \
-    src/GameConfiguration/enumerator.h \
-    ballattributereader.h \
-    balltagparser.h \
-    tagparser.h
+    src/GameConfiguration/Parsers/ballattributereader.h \
+    src/GameConfiguration/Parsers/balltagparser.h \
+    src/GameConfiguration/Parsers/enumerator.h \
+    src/GameConfiguration/Parsers/tagparser.h \
+    src/GameConfiguration/Parsers/attributereader.h \
+    src/GameConfiguration/Parsers/valuewriter.h \
+    src/GameConfiguration/Parsers/tagparsers.h \
+    src/GameConfiguration/Parsers/configtagparser.h \
+    src/GameConfiguration/Parsers/configattributereader.h \
+    src/GameConfiguration/Parsers/texttagparser.h \
+    src/GameConfiguration/Parsers/textattributereader.h \
+    src/GameConfiguration/Parsers/effecttagparser.h \
+    src/GameConfiguration/Parsers/effectattributereader.h
 
 INCLUDEPATH += ../extlibs/AES/

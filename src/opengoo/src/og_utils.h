@@ -21,8 +21,8 @@ void logger();
 
 void messageHandler(QtMsgType, const QMessageLogContext &, const QString&);
 
-bool loadConfig(OGConfig& config, const QString & filename);
-void saveConfig(OGConfig& config, const QString & filename);
+bool loadConfig(OGConfig& aConfig, const QString& aFileName);
+void saveConfig(OGConfig& config, const QString & aFileName);
 
 inline OGUserData* getUserData(void* userdata)
 {

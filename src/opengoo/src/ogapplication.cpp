@@ -6,7 +6,7 @@
 
 #include "GameEngine/og_gameengine.h"
 #include "opengoo.h"
-#include "og_gameconfig.h"
+#include "og_config.h"
 #include "resourcemanagerfactory.h"
 
 #include "flags.h"
@@ -119,8 +119,7 @@ bool OGApplication::initialize(int argc, char **argv, OGConfig& config)
     }
 
     auto path = QString("%1/%2").arg(PROPERTIES_DIR).arg(FILE_CONFIG);
-    auto isLoaded = utils::loadConfig(config, path);
-    if (!isLoaded)
+    if (!utils::loadConfig(config, path))
     {
         logWarn(QString("Could not load config file:") + FILE_CONFIG);
         config.fullscreen = false;

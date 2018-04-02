@@ -2,17 +2,18 @@
 
 #include "GameEngine/Particles/particleemiter.h"
 
-#include "enumerator.h"
+#include "Parsers/valuewriter.h"
+#include "Parsers/enumerator.h"
 
-typedef WOGEffect::WOGParticle::WOGAxialSinOffset AxialSinOffset;
+//typedef WOGEffect::WOGParticle::WOGAxialSinOffset AxialSinOffset;
 
-template <> struct Enumerator<AxialSinOffset::Axis>
-{
-    static AxialSinOffset::Axis ToEnum(const QString& aType)
-    {
-        return (aType == "y" ? AxialSinOffset::e_y : AxialSinOffset::e_x);
-    }
-};
+//template <> struct Enumerator<AxialSinOffset::Axis>
+//{
+//    static AxialSinOffset::Axis ToEnum(const QString& aType)
+//    {
+//        return (aType == "y" ? AxialSinOffset::e_y : AxialSinOffset::e_x);
+//    }
+//};
 
 template <> struct Enumerator<og::ParticleEmiter::Type>
 {
@@ -38,59 +39,59 @@ struct OGEffectConfigParser
         const auto name = aAttribute.name();
         if (name == "scale")
         {
-            OGXmlConfig::WriteValue(aParticle.scale, aAttribute);
+            ValueWriter::WriteValue(aParticle.scale, aAttribute);
         }
         else if (name == "finalscale")
         {
-            OGXmlConfig::WriteValue(aParticle.finalscale, aAttribute);
+            ValueWriter::WriteValue(aParticle.finalscale, aAttribute);
         }
         else if(name == "movedirvar")
         {
-            OGXmlConfig::WriteValue(aParticle.movedirvar, aAttribute);
+            ValueWriter::WriteValue(aParticle.movedirvar, aAttribute);
         }
         else if (name == "image")
         {
-            OGXmlConfig::WriteValue(aParticle.image, aAttribute);
+            ValueWriter::WriteValue(aParticle.image, aAttribute);
         }
         else if (name == "directed")
         {
-            OGXmlConfig::WriteValue(aParticle.directed, aAttribute);
+            ValueWriter::WriteValue(aParticle.directed, aAttribute);
         }
         else if (name == "movedir")
         {
-            OGXmlConfig::WriteValue(aParticle.movedir, aAttribute);
+            ValueWriter::WriteValue(aParticle.movedir, aAttribute);
         }
         else if (name == "acceleration")
         {
-            OGXmlConfig::WriteValue(aParticle.acceleration, aAttribute);
+            ValueWriter::WriteValue(aParticle.acceleration, aAttribute);
         }
         else if (name == "additive")
         {
-            OGXmlConfig::WriteValue(aParticle.additive, aAttribute);
+            ValueWriter::WriteValue(aParticle.additive, aAttribute);
         }
         else if (name == "lifespan")
         {
-            OGXmlConfig::WriteValue(aParticle.lifespan, aAttribute);
+            ValueWriter::WriteValue(aParticle.lifespan, aAttribute);
         }
         else if (name == "speed")
         {
-            OGXmlConfig::WriteValue(aParticle.speed, aAttribute);
+            ValueWriter::WriteValue(aParticle.speed, aAttribute);
         }
         else if (name == "dampening")
         {
-            OGXmlConfig::WriteValue(aParticle.dampening, aAttribute);
+            ValueWriter::WriteValue(aParticle.dampening, aAttribute);
         }
         else if (name == "rotation")
         {
-            OGXmlConfig::WriteValue(aParticle.rotation, aAttribute);
+            ValueWriter::WriteValue(aParticle.rotation, aAttribute);
         }
         else if (name == "rotspeed")
         {
-            OGXmlConfig::WriteValue(aParticle.rotspeed, aAttribute);
+            ValueWriter::WriteValue(aParticle.rotspeed, aAttribute);
         }
         else if (name == "fade")
         {
-            OGXmlConfig::WriteValue(aParticle.fade, aAttribute);
+            ValueWriter::WriteValue(aParticle.fade, aAttribute);
         }
     }
 
@@ -99,15 +100,15 @@ struct OGEffectConfigParser
         const auto name = aAttribute.name();
         if (name == "maxparticles")
         {
-            OGXmlConfig::WriteValue(aEffect.maxparticles, aAttribute);
+            ValueWriter::WriteValue(aEffect.maxparticles, aAttribute);
         }
         else if (name == "margin")
         {
-            OGXmlConfig::WriteValue(aEffect.margin, aAttribute);
+            ValueWriter::WriteValue(aEffect.margin, aAttribute);
         }
         else if (name == "rate")
         {
-            OGXmlConfig::WriteValue(aEffect.rate, aAttribute);
+            ValueWriter::WriteValue(aEffect.rate, aAttribute);
         }
     }
 
@@ -120,15 +121,15 @@ struct OGEffectConfigParser
         }
         else if (name == "freq")
         {
-            OGXmlConfig::WriteValue(aEffect.freq, aAttribute);
+            ValueWriter::WriteValue(aEffect.freq, aAttribute);
         }
         else if (name == "amp")
         {
-            OGXmlConfig::WriteValue(aEffect.amp, aAttribute);
+            ValueWriter::WriteValue(aEffect.amp, aAttribute);
         }
         else if (name == "phaseshift")
         {
-           OGXmlConfig::WriteValue(aEffect.phaseshift, aAttribute);
+           ValueWriter::WriteValue(aEffect.phaseshift, aAttribute);
         }
     }
 };

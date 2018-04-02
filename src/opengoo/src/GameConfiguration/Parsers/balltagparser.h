@@ -2,8 +2,6 @@
 
 #include "ballattributereader.h"
 
-#include "tagparser.h"
-
 template<>
 struct TagParser<WOGBall>
 {
@@ -90,9 +88,9 @@ private:
         aOut->springconstmin = aElement.attribute("springconstmin").toFloat();
         aOut->thickness = aElement.attribute("thickness").toFloat();
 
-        aOut->rope = OGXmlConfig::StringToBool(aElement.attribute("rope"));
-        aOut->geom = OGXmlConfig::StringToBool(aElement.attribute("geom"));
-        aOut->walkable = OGXmlConfig::StringToBool(aElement.attribute("walkable", "true"));
+        aOut->rope = ValueWriter::StringToBool(aElement.attribute("rope"));
+        aOut->geom = ValueWriter::StringToBool(aElement.attribute("geom"));
+        aOut->walkable = ValueWriter::StringToBool(aElement.attribute("walkable", "true"));
     }
 
     static void Parse(const QDomElement& aElement, WOGBallDetachstrand* aOut)
@@ -124,5 +122,5 @@ private:
     }
 
 private:
-    AttributeReader mAttributeReader;
+    AttributeReader<Type> mAttributeReader;
 };

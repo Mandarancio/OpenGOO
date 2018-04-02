@@ -1,5 +1,7 @@
 #include "og_ballconfig.h"
 
+//TODO REMOVE THIS
+
 //template<typename TTagParser>
 //inline void OGBallConfig<TTagParser>::CreateBehaviourAttributes_(WOGBall* ball)
 //{

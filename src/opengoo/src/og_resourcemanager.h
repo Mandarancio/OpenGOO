@@ -5,9 +5,9 @@
 
 #include "GameEngine/iresourcemanager.h"
 #include "GameConfiguration/wog_effects.h"
+#include "GameConfiguration/wog_text.h"
 
 class WOGResources;
-struct WOGText;
 
 class OGResourceManager : public og::IResourceManager
 {
@@ -65,6 +65,6 @@ private:
     QHash<QString, std::shared_ptr<AnimationData>> mAnimations;
     QHash<QString, og::IFontSPtr> mFonts;
     MusicEntry m_Music;
-    std::unique_ptr<WOGText> m_text;
+    WOGText::TextMap m_text;
     std::unique_ptr<WOGEffects> m_effects;
 };

@@ -5,16 +5,32 @@
 #include <QString>
 
 #include "GameConfiguration/binltlfile.h"
-#include "GameConfiguration/wog_text.h"
 #include "GameConfiguration/wog_resources.h"
 #include "GameConfiguration/animationdata.h"
 #include "GameConfiguration/binanimparser.h"
+
+#include "og_xmlconfig.h"
 
 #include <logger.h>
 
 #include "og_resourcemanager.h"
 #include "og_resourceconfig.h"
 #include "og_data.h"
+
+struct Loader
+{
+    template<typename T>
+    static void Load(T& a_data, const QString& a_filename)
+    {
+        OGXmlConfig<TagParser<typename T::element_type>> conf;
+        if (!conf.Load(a_filename))
+        {
+            return;
+        }
+
+        a_data.reset(conf.Parse().release());
+    }
+};
 
 OGResourceManager::OGResourceManager()
 {
@@ -51,13 +67,30 @@ bool OGResourceManager::ParseResourceFile(const QString& a_filename)
 
 bool OGResourceManager::ParseTextFile(const QString& a_filename, const QString& a_language)
 {
-    m_text.reset(OGData::GetText(a_filename, a_language));
-    return m_text.get();
+    m_text.clear();
+    std::unique_ptr<WOGText> text;
+    Loader::Load(text, a_filename);
+    if (!text)
+    {
+        return false;
+    }
+
+    if (text->HasLanguage(a_language))
+    {
+        m_text = text->GetTextMap(a_language);
+    }
+    else if (text->HasLanguage("text"))
+    {
+        m_text = text->GetTextMap("text");
+    }
+
+    return !m_text.empty();
 }
 
 bool OGResourceManager::ParseFxFile(const QString& a_filename)
 {
-    m_effects.reset(OGData::GetEffects(a_filename));
+    m_effects.reset();
+    Loader::Load(m_effects, a_filename);
     return m_effects.get();
 }
 
@@ -143,7 +176,7 @@ const WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
     
     WOGBallPtr ball;
     QString path = "res/balls/" + a_type + "/balls.xml";
-    Load(ball, path);
+    Loader::Load(ball, path);
     if (!ball)
     {
         return nullptr;
@@ -223,7 +256,7 @@ og::audio::Music* OGResourceManager::GetMusic(const QString& a_id)
 
 QString OGResourceManager::GetText(const QString& aId)
 {
-    return m_text->string.value(aId);
+    return m_text.value(aId);
 }
 
 WOGEffect* OGResourceManager::GetEffect(const QString& aId)

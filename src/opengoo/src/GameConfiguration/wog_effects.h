@@ -85,4 +85,10 @@ public:
     std::vector<WOGParticle> particle;
 };
 
-typedef QHash<QString, std::shared_ptr<WOGEffect>> WOGEffects;
+struct WOGEffects : public QHash<QString, std::shared_ptr<WOGEffect>>
+{
+    static std::unique_ptr<WOGEffects> Create()
+    {
+        return std::unique_ptr<WOGEffects>(new WOGEffects);
+    }
+};

@@ -2,17 +2,29 @@
 
 #include <QFile>
 #include <QDomDocument>
-#include <QResource>
-#include <QPoint>
-#include <QColor>
-#include <QSizeF>
 
-#include "OGLib/optional.h"
+#include "Parsers/tagparsers.h"
 
+struct DefaultTagParser
+{
+    typedef void Type;
 
+    constexpr static const char* rootTag = "";
+
+    void Parse(const QString&, const QDomElement&, Type*)
+    {
+    }
+};
+
+template<typename TTagParser>
 class OGXmlConfig
 {
 public:
+    OGXmlConfig()
+    {
+        SetRootTag(TTagParser::rootTag);
+    }
+
     void Close();
     bool Read();
 
@@ -39,100 +51,21 @@ public:
         rootTag_ = aTag;
     }
 
-    static QPointF StringToPointF(const QString& aPosition);
-    static QPointF StringToPointF(const QString& x, const QString& y);
-    static QPoint StringToPoint(const QString& aPosition);
-    static QColor StringToColor(const QString& color);
-    static bool StringToBool(const QString& value)
+    void Parse(typename TTagParser::Type* aOut)
     {
-        return (value == "true") ? true : false;
-    }
-
-    static QSizeF StringToSize(const QString width, const QString height);
-
-    static void WriteValue(int& aData, const QDomAttr& aAttribute)
-    {
-        aData = aAttribute.value().toInt();
-    }
-
-    static void WriteValue(float& aData, const QDomAttr& aAttribute)
-    {
-        aData = aAttribute.value().toFloat();
-    }
-
-    static void WriteValue(QPointF& aData, const QDomAttr& aAttribute)
-    {
-        aData = StringToPointF(aAttribute.value());
-    }
-
-    static void WriteValue(QPoint& aData, const QDomAttr& aAttribute)
-    {
-        aData = StringToPoint(aAttribute.value());
-    }
-
-    static void WriteValue(QStringList& aData, const QDomAttr& aAttribute)
-    {
-        aData = aAttribute.value().split(',');
-    }
-
-    static void WriteValue(QString& aData, const QDomAttr& aAttribute)
-    {
-        aData = aAttribute.value();
-    }
-
-    static void WriteValue(std::vector<float>& aData, const QDomAttr& aAttribute)
-    {
-        foreach (const auto& val, aAttribute.value().split(','))
+        mTagParser.Parse(rootElement.tagName(), rootElement, aOut);
+        parse_tags(rootElement, aOut,
+                   [this](const QString& tag, const QDomElement& element, typename TTagParser::Type* out)
         {
-            aData.push_back(val.toFloat());
-        }
+            mTagParser.Parse(tag, element, out);
+        });
     }
 
-    static void WriteValue(oglib::Optional<bool>& aData, const QDomAttr& aAttribute)
+    std::unique_ptr<typename TTagParser::Type> Parse()
     {
-        aData = StringToBool(aAttribute.value());
-    }
-
-    static void WriteValue(oglib::Optional<QPointF>& aData, const QDomAttr& aAttribute)
-    {
-        aData = StringToPointF(aAttribute.value());
-    }
-
-    static void WriteValue(oglib::Optional<QColor>& aData, const QDomAttr& aAttribute)
-    {
-        aData = StringToColor(aAttribute.value());
-    }
-
-    static void WriteValue(oglib::Optional<float>& aData, const QDomAttr& aAttribute)
-    {
-        aData = aAttribute.value().toFloat();
-    }
-
-    static void WriteValue(bool& aData, const QDomAttr& aAttribute)
-    {
-        aData = StringToBool(aAttribute.value());
-    }
-
-    static void WriteValue(std::pair<bool, float>& aData, const QDomAttr& aAttribute)
-    {
-        aData.first = true;
-        WriteValue(aData.second, aAttribute);
-    }
-
-    static void WriteValue(std::pair<bool, QPointF>& aData, const QDomAttr& aAttribute)
-    {
-        aData.first = true;
-        WriteValue(aData.second, aAttribute);
-    }
-
-    static void WriteValue(float& aData, const QString& aValue)
-    {
-        aData = aValue.toFloat();
-    }
-
-protected:
-    OGXmlConfig()
-    {
+        auto obj = TTagParser::Type::Create();
+        Parse(obj.get());
+        return obj;
     }
 
     ~OGXmlConfig()
@@ -140,6 +73,7 @@ protected:
         Close();
     }
 
+protected:
     bool OpenFile(const QString& filename);
 
 protected:
@@ -149,4 +83,83 @@ private:
     QFile file_;
     QDomDocument domDoc_;
     QString rootTag_;
+    TTagParser mTagParser;
 };
+
+#include <QFileInfo>
+#include <QTextStream>
+
+#include "decrypter.h"
+
+template<typename TTagParser>
+bool OGXmlConfig<TTagParser>::OpenFile(const QString& filename)
+{
+    file_.setFileName(filename);
+    return file_.open(QIODevice::ReadOnly);
+}
+
+template<typename TTagParser>
+bool OGXmlConfig<TTagParser>::Open(const QString& aFileName)
+{
+    if (QFile::exists(aFileName))
+    {
+        return OpenFile(aFileName);
+    }
+
+    if (QFile::exists(aFileName + ".xml"))
+    {
+        return OpenFile(aFileName + ".xml");
+    }
+
+    if (QFile::exists(aFileName + ".bin"))
+    {
+        return OpenFile(aFileName + ".bin");
+    }
+
+    return false;
+}
+
+template<typename TTagParser>
+void OGXmlConfig<TTagParser>::Close()
+{
+    file_.close();
+}
+
+template<typename TTagParser>
+bool OGXmlConfig<TTagParser>::Read()
+{
+    QFileInfo fi(file_.fileName());
+    bool status = false;
+
+    if (fi.suffix() == "bin")
+    {
+        QByteArray cryptedData = file_.readAll();
+        auto xml_data = Decrypter().decrypt(cryptedData);
+        status = domDoc_.setContent(xml_data);
+#ifdef SAVE_BIN_TO_XML
+        auto fn = file_.fileName() + QLatin1String(".xml");
+        QFile file(fn);
+        if (!file.exists() && file.open(QFile::WriteOnly | QFile::Text))
+        {
+            QTextStream ts(&file);
+            ts << xml_data;
+        }
+#endif
+    }
+    else
+    {
+        status = domDoc_.setContent(&file_);
+    }
+
+    if (status)
+    {
+        rootElement = domDoc_.documentElement();
+
+        if (rootElement.tagName() == rootTag_)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
