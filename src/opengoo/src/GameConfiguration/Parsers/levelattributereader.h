@@ -192,6 +192,31 @@ struct AttributeReader<WOGLevel::Id>
 };
 
 template<>
+struct AttributeReader<WOGSignpost>
+{
+    static void Read(const QDomAttr& aAttribute, WOGSignpost* aOut)
+    {
+        const auto name = aAttribute.name();
+        if (name == QLatin1String("name"))
+        {
+            ValueWriter::WriteValue(aOut->name, aAttribute);
+        }
+        else if (name == QLatin1String("image"))
+        {
+            ValueWriter::WriteValue(aOut->image, aAttribute);
+        }
+        else if (name == QLatin1String("text"))
+        {
+            ValueWriter::WriteValue(aOut->text, aAttribute);
+        }
+        else
+        {
+            AttributeReader<WOGVObject>::Read(aAttribute, aOut);
+        }
+    }
+};
+
+template<>
 struct AttributeReader<WOGLevel>
 {
     static void Read(const QDomAttr& aAttribute, WOGLevel* aOut)

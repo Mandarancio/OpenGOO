@@ -2,6 +2,7 @@
 
 #include "OGLib/optional.h"
 
+#include "wog_vobject.h"
 #include "wog_exit.h"
 #include "wog_pipe.h"
 #include "wog_camera.h"
@@ -29,6 +30,13 @@ struct WOGStrand
     QString gb2;
 };
 
+struct WOGSignpost : public WOGVObject
+{
+    QString name;
+    QString image;
+    QString text;
+};
+
 struct WOGLevel
 {
     typedef QString Id;
@@ -49,6 +57,7 @@ struct WOGLevel
     std::list<WOGLevelExit> levelexit;
     std::list<WOGPipe> pipe;
     std::list<Id> loopsound;
+    std::list<WOGSignpost> signpost;
 
     bool HasPipe() const
     {

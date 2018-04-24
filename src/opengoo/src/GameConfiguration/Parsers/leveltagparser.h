@@ -43,6 +43,10 @@ struct TagParser<WOGLevel>
         {
             read_attributes(aElement, &aOut->music);
         }
+        else if (aTag == QLatin1String("signpost"))
+        {
+            AddElement(aElement, aOut->signpost);
+        }
         else
         {
             qDebug() << aTag;
