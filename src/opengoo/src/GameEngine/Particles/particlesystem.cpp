@@ -3,21 +3,15 @@
 
 namespace og
 {
-ParticleSystem::ParticleSystem(const QVector2D &aPosition, float aDepth)
-    : Entity(aPosition)
+ParticleEmiter* ParticleSystem::CreateEmiter(const ParticleEmiterDefination& aDef)
 {
-    SetDepth(aDepth);
-}
-
-ParticleEmiter *ParticleSystem::CreateEmiter(ParticleEmiter::Type aType, int aMaxParticles)
-{
-    if (auto emiter = mParticleEmiterFactoryManager.GetFactory()->Create(aType, aMaxParticles, this))
+    auto emiter = mFactory->Create(aDef, this);
+    if (emiter)
     {
         emiter->mIterator = mEmiters.insert(mEmiters.end(), emiter);
-        return emiter.get();
     }
 
-    return nullptr;
+    return emiter.get();
 }
 
 void ParticleSystem::DestroyEmiter(ParticleEmiter* aEmiter)

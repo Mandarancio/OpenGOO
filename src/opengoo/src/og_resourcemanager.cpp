@@ -9,28 +9,13 @@
 #include "GameConfiguration/animationdata.h"
 #include "GameConfiguration/binanimparser.h"
 
-#include "og_xmlconfig.h"
-
 #include <logger.h>
 
 #include "og_resourcemanager.h"
 #include "og_resourceconfig.h"
 #include "og_data.h"
 
-struct Loader
-{
-    template<typename T>
-    static void Load(T& a_data, const QString& a_filename)
-    {
-        OGXmlConfig<TagParser<typename T::element_type>> conf;
-        if (!conf.Load(a_filename))
-        {
-            return;
-        }
-
-        a_data.reset(conf.Parse().release());
-    }
-};
+#include "configloader.h"
 
 OGResourceManager::OGResourceManager()
 {
@@ -69,7 +54,7 @@ bool OGResourceManager::ParseTextFile(const QString& a_filename, const QString& 
 {
     m_text.clear();
     std::unique_ptr<WOGText> text;
-    Loader::Load(text, a_filename);
+    ConfigLoader::Load(text, a_filename);
     if (!text)
     {
         return false;
@@ -90,7 +75,7 @@ bool OGResourceManager::ParseTextFile(const QString& a_filename, const QString& 
 bool OGResourceManager::ParseFxFile(const QString& a_filename)
 {
     m_effects.reset();
-    Loader::Load(m_effects, a_filename);
+    ConfigLoader::Load(m_effects, a_filename);
     return m_effects.get();
 }
 
@@ -176,7 +161,7 @@ const WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
     
     WOGBallPtr ball;
     QString path = "res/balls/" + a_type + "/balls.xml";
-    Loader::Load(ball, path);
+    ConfigLoader::Load(ball, path);
     if (!ball)
     {
         return nullptr;
@@ -259,7 +244,7 @@ QString OGResourceManager::GetText(const QString& aId)
     return m_text.value(aId);
 }
 
-WOGEffect* OGResourceManager::GetEffect(const QString& aId)
+const WOGEffect* OGResourceManager::GetEffect(const QString& aId)
 {
     auto it = m_effects->find(aId);
     return (it != m_effects->end() ? it->get() : nullptr);

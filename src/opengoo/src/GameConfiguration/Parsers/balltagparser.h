@@ -13,7 +13,7 @@ struct TagParser<WOGBall>
     {
         if (aTag == QLatin1String("ball"))
         {
-            Parse(aElement, aOut);
+            read_attributes(aElement, &aOut->attribute, mAttributeReader);
         }
         else if (aTag == QLatin1String("strand"))
         {
@@ -28,11 +28,11 @@ struct TagParser<WOGBall>
         else if (aTag == QLatin1String("part"))
         {
             aOut->parts.push_back(WOGPart());
-            Parse(aElement, &aOut->parts.last());
+            read_attributes(aElement, &aOut->parts.last(), mAttributeReader);
         }
         else if (aTag == QLatin1String("marker"))
         {
-            Parse(aElement, &aOut->marker);
+            read_attributes(aElement,&aOut->marker, mAttributeReader);
         }
         else if (aTag == QLatin1String("shadow"))
         {
@@ -53,16 +53,6 @@ struct TagParser<WOGBall>
     }
 
 private:
-    void Parse(const QDomElement& aElement, WOGPart* aOut)
-    {
-        const auto attributes = aElement.attributes();
-        for (int i = 0; i < attributes.size(); ++i)
-        {
-            auto item = attributes.item(i);
-            mAttributeReader.Read(item.toAttr(), aOut);
-        }
-    }
-
     static void Parse(const QDomElement& aElement, QMap<QString, QStringList>* aOut)
     {
         aOut->value(aElement.attribute(QLatin1String("event")), aElement.attribute(QLatin1String("id")).split(","));
@@ -97,28 +87,6 @@ private:
     {
         aOut->image = aElement.attribute("image");
         aOut->maxlen = aElement.attribute("maxlen", "0").toFloat();
-    }
-
-    void Parse(const QDomElement& aElement, WOGBallMarker* aOut)
-    {
-        const auto attributes = aElement.attributes();
-        for (int i = 0; i < attributes.size(); ++i)
-        {
-            auto item = attributes.item(i);
-            auto attr = item.toAttr();
-            mAttributeReader.Read(attr, aOut);
-        }
-    }
-
-    void Parse(const QDomElement& aElement, WOGBall* aOut)
-    {
-        const auto attributes = aElement.attributes();
-        for (int i = 0; i < attributes.size(); ++i)
-        {
-            auto item = attributes.item(i);
-            auto attr = item.toAttr();
-            mAttributeReader.Read(attr, &aOut->attribute);
-        }
     }
 
 private:

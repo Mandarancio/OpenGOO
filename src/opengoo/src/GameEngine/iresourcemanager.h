@@ -8,6 +8,7 @@
 class QString;
 struct WOGBall;
 struct AnimationData;
+class WOGEffect;
 
 namespace og
 {
@@ -40,6 +41,8 @@ struct IResourceManager
     virtual QString GetText(const QString& aId) = 0;
 
     virtual AnimationData* GetAnimation(const QString& aId) = 0;
+
+    virtual const WOGEffect* GetEffect(const QString& aId) = 0;
 };
 }
 

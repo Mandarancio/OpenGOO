@@ -2,21 +2,22 @@
 
 #include "../entity.h"
 #include "particleemiter.h"
-#include "particleemiterfactorymanager.h"
 
 namespace og
 {
+struct IParticleEmiterFactory;
+
 class ParticleSystem : public Entity
 {
-    ParticleSystem(const QVector2D& aPosition, float aDepth);
-
 public:
-    static std::shared_ptr<ParticleSystem> Create(const QVector2D& aPosition, float aDepth)
+    ParticleSystem(const QVector2D& aPosition, float aDepth, std::shared_ptr<IParticleEmiterFactory> aFactory)
+        : Entity(aPosition)
+        , mFactory(aFactory)
     {
-        return std::shared_ptr<ParticleSystem>(new ParticleSystem(aPosition, aDepth));
+        SetDepth(aDepth);
     }
 
-    ParticleEmiter* CreateEmiter(ParticleEmiter::Type aType, int aMaxParticles);
+    ParticleEmiter* CreateEmiter(const ParticleEmiterDefination& aDef);
 
     void DestroyEmiter(ParticleEmiter* aEmiter);
 
@@ -26,7 +27,7 @@ private:
     void Render(QPainter& aPainter);
 
 private:
-    std::list<ParticleEmiterSPtr> mEmiters;
-    ParticleEmiterFactoryManager mParticleEmiterFactoryManager;
+    std::list<std::shared_ptr<ParticleEmiter>> mEmiters;
+    std::shared_ptr<IParticleEmiterFactory> mFactory;
 };
 }

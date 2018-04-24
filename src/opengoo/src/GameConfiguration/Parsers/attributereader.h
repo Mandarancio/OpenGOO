@@ -13,3 +13,19 @@ inline void read_attributes(const QDomElement& aElement, T* aOut, AttributeReade
         aAttributeReader.Read(item.toAttr(), aOut);
     }
 }
+
+template<typename T>
+inline T& AddElement(const QDomElement& aElement, std::list<T>& aList)
+{
+    aList.push_back(T());
+    auto& el = aList.back();
+    AttributeReader<T> reader;
+    read_attributes(aElement, &el, reader);
+    return el;
+}
+
+template<typename T>
+inline void ReadAttribute(const QDomAttr& aAttribute, T* aOut)
+{
+    AttributeReader<T>::Read(aAttribute, aOut);
+}

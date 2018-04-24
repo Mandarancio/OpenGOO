@@ -86,17 +86,20 @@ private:
     }
 };
 
-AmbientParticleEmiter::AmbientParticleEmiter(int aMaxParticles, ParticleSystem* aSystem)
+AmbientParticleEmiter::AmbientParticleEmiter(int aMargin, int aTimeoutInterval,
+                                             int aMaxParticles, ParticleSystem *aSystem)
     : ParticleEmiter(aMaxParticles, aSystem)
     , mPositionGenerator(new PositionGenerator<10>(this))
 {
+    SetMargin(aMargin);
+    SetTimeoutInterval(aTimeoutInterval);
 }
 
 AmbientParticleEmiter::~AmbientParticleEmiter()
 {
 }
 
-void AmbientParticleEmiter::Update()
+void AmbientParticleEmiter::PreUpdate()
 {
     mTimer.Update();
     if (!mTimer.IsActive())
@@ -110,9 +113,10 @@ void AmbientParticleEmiter::Update()
 
         mTimer.Start();
     }
+}
 
-    ParticleEmiter::Update();
-
+void AmbientParticleEmiter::PostUpdate()
+{
     QRectF rect(0, 0, GE->GetCamera()->GetScaledWidth(), GE->GetCamera()->GetScaledHeight());
     rect += mMargin;
     rect.moveCenter(QPointF(GE->GetCamera()->GetPosition().x(), GE->GetCamera()->GetPosition().y()));

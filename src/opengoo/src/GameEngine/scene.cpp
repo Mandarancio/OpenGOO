@@ -4,7 +4,6 @@
 
 namespace og
 {
-
 void Scene::Update()
 {
     std::for_each(m_update.begin(), m_update.end(), [](EntityPtr& a_e) { a_e->Update(); });

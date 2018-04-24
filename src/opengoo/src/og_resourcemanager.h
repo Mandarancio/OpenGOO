@@ -21,7 +21,6 @@ public:
 
 public:
     OGResourceManager();
-    WOGEffect* GetEffect(const QString& aId);
 
 private:
     bool ParseResourceFile(const QString& a_filename);
@@ -56,6 +55,8 @@ private:
     og::ImageSourceSPtr CreateImageSource(const QString& a_filename);
 
     AnimationData* GetAnimation(const QString& aId);
+
+    const WOGEffect* GetEffect(const QString& aId);
 
 private:
     QHash<QString, WOGResourcesSPtr> m_resources;

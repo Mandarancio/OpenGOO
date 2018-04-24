@@ -72,8 +72,11 @@ public:
 
     void SetGraphic(GraphicPtr a_g)
     {
-        SetVisible(true);
-        m_graphic = a_g;
+        if (a_g)
+        {
+            SetVisible(true);
+            m_graphic = a_g;
+        }
     }
 
     void SetVisible(bool a_flag)

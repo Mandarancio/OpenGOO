@@ -1,11 +1,22 @@
 #pragma once
 
 #include "wog_pobject.h"
+#include <wogimage.h>
 
-#include <QPointF>
-
-struct WOGCircle : public WOGPObject
+struct WOGCircle : public WOGPhysicsObject
 {
-    QPointF position;
     float radius;
+    float rotspeed;
+    WOGImage image;
+
+    WOGCircle()
+        : radius(0)
+        , rotspeed(0)
+    {
+    }
+
+    bool HasImage() const
+    {
+        return !image.IsEmpty();
+    }
 };

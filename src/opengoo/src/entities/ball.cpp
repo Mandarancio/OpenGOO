@@ -19,4 +19,13 @@ void Ball::Update()
     {
         SetVisible(true);
     }
+
+    switch (GetState())
+    {
+    case e_walking:
+        Walk();
+        break;
+    default:
+        break;
+    }
 }

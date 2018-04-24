@@ -4,11 +4,9 @@
 
 namespace og
 {
-class ParticleSystem;
-
 struct ParticleEmiterFactory : public IParticleEmiterFactory
 {
 private:
-    ParticleEmiterSPtr Create(ParticleEmiter::Type aType, int aMaxParticles, ParticleSystem* aSystem);
+    std::shared_ptr<ParticleEmiter> Create(const ParticleEmiterDefination& aDef, ParticleSystem* aSystem);
 };
 }

@@ -1,17 +1,18 @@
 #pragma once
 
-#include "Particles/particleemiter.h"
-
 namespace og
 {
-class IParticleEmiterFactory
+class ParticleSystem;
+class ParticleEmiter;
+struct ParticleEmiterDefination;
+
+struct IParticleEmiterFactory
 {
-public:
     virtual ~IParticleEmiterFactory()
     {
     }
 
-    virtual ParticleEmiterSPtr Create(ParticleEmiter::Type aType, int aMaxParticles, ParticleSystem* aSystem) = 0;
+    virtual std::shared_ptr<ParticleEmiter> Create(const ParticleEmiterDefination& aDef, ParticleSystem* aSystem) = 0;
 };
 }
 

@@ -182,6 +182,35 @@ struct AttributeReader<WOGBall>
     {
     }
 
+    static void Read(const QDomAttr& aAttribute, WOGBallMovementAttributes* aOut)
+    {
+        const auto name = aAttribute.name();
+        if (name == QLatin1String("walkspeed"))
+        {
+            ValueWriter::WriteValue(aOut->walkspeed, aAttribute);
+        }
+        else if (name == QLatin1String("climbspeed"))
+        {
+            ValueWriter::WriteValue(aOut->climbspeed, aAttribute);
+        }
+        else if (name == QLatin1String("speedvariance"))
+        {
+            ValueWriter::WriteValue(aOut->speedvariance, aAttribute);
+        }
+        else if (name == QLatin1String("dampening"))
+        {
+            ValueWriter::WriteValue(aOut->dampening, aAttribute);
+        }
+        else if (name == QLatin1String("walkforce"))
+        {
+            ValueWriter::WriteValue(aOut->walkforce, aAttribute);
+        }
+        else if (name == QLatin1String("thrust"))
+        {
+            ValueWriter::WriteValue(aOut->thrust, aAttribute);
+        }
+    }
+
     static void Read(const QDomAttr& aAttribute, WOGBallAttributes* aOut)
     {
         const auto name = aAttribute.name();
@@ -193,6 +222,7 @@ struct AttributeReader<WOGBall>
         {
             Read(aAttribute, &aOut->core);
             Read(aAttribute, &aOut->behaviour);
+            Read(aAttribute, &aOut->movement);
         }
     }
 };

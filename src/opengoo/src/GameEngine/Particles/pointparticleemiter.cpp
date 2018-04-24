@@ -11,7 +11,7 @@ void PointParticleEmiter::SetRate(float aRate)
     mRate.second = modf(aRate, reinterpret_cast<float*>(&mRate.first));
 }
 
-void PointParticleEmiter::Update()
+void PointParticleEmiter::PreUpdate()
 {
     mAccumulatedRate += mRate.second;
     if (mAccumulatedRate > (1 - MinRate))
@@ -23,7 +23,5 @@ void PointParticleEmiter::Update()
             Emit(pos);
         }
     }
-
-    ParticleEmiter::Update();
 }
 }

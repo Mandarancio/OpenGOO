@@ -1,7 +1,6 @@
 SOURCES += \
     src/GameConfiguration/og_config.cpp \
     src/GameConfiguration/og_resourceconfig.cpp \
-    src/GameConfiguration/og_sceneconfig.cpp \
     src/GameConfiguration/og_levelconfig.cpp \
     src/GameConfiguration/og_materialconfig.cpp \
     src/GameConfiguration/og_islandconfig.cpp \
@@ -20,7 +19,6 @@ HEADERS += \
     src/GameConfiguration/og_config.h \
     src/GameConfiguration/og_xmlconfig.h \
     src/GameConfiguration/og_resourceconfig.h \
-    src/GameConfiguration/og_sceneconfig.h \
     src/GameConfiguration/og_levelconfig.h \
     src/GameConfiguration/og_materialconfig.h \
     src/GameConfiguration/og_islandconfig.h \
@@ -44,7 +42,7 @@ HEADERS += \
     src/GameConfiguration/binanimparser.h \
     src/GameConfiguration/animationdata.h \
     src/GameConfiguration/wog_camera.h \
-    src/GameConfiguration/scenereader.h \
+    src/GameConfiguration/wogimage.h \
     src/GameConfiguration/Parsers/ballattributereader.h \
     src/GameConfiguration/Parsers/balltagparser.h \
     src/GameConfiguration/Parsers/enumerator.h \
@@ -57,6 +55,8 @@ HEADERS += \
     src/GameConfiguration/Parsers/texttagparser.h \
     src/GameConfiguration/Parsers/textattributereader.h \
     src/GameConfiguration/Parsers/effecttagparser.h \
-    src/GameConfiguration/Parsers/effectattributereader.h
+    src/GameConfiguration/Parsers/effectattributereader.h \
+    src/GameConfiguration/Parsers/scenetagparser.h \
+    src/GameConfiguration/Parsers/sceneattributereader.h
 
 INCLUDEPATH += ../extlibs/AES/

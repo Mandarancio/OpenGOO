@@ -51,7 +51,16 @@ struct WOGBallMovementAttributes
     float walkspeed;
     float climbspeed;
     float speedvariance;
-    float walkforce;
+    oglib::Optional<float> dampening;
+    oglib::Optional<float> walkforce;
+    oglib::Optional<float> thrust;
+
+    WOGBallMovementAttributes()
+        : walkspeed(0)
+        , climbspeed(0)
+        , speedvariance(0)
+    {
+    }
 };
 
 struct WOGBallPlayerInteraction

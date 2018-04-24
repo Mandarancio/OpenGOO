@@ -1,20 +1,20 @@
+#include <memory>
+
 #include "particleemiterfactory.h"
 #include "pointparticleemiter.h"
 #include "ambientparticleemiter.h"
 
 namespace og
 {
-ParticleEmiterSPtr ParticleEmiterFactory::Create(
-        ParticleEmiter::Type aType,
-        int aMaxParticles,
-        ParticleSystem* aSystem)
+std::shared_ptr<ParticleEmiter> ParticleEmiterFactory::Create(const ParticleEmiterDefination& aDef,
+                                                              ParticleSystem* aSystem)
 {
-    switch (aType)
+    switch (aDef.type)
     {
     case ParticleEmiter::e_point:
-        return std::make_shared<PointParticleEmiter>(aMaxParticles, aSystem);
+        return std::make_shared<PointParticleEmiter>(aDef.rate, aDef.maxparticles, aSystem);
     case ParticleEmiter::e_ambient:
-        return std::make_shared<AmbientParticleEmiter>(aMaxParticles, aSystem);
+        return std::make_shared<AmbientParticleEmiter>(aDef.margin, aDef.timeoutInterval, aDef.maxparticles, aSystem);
     case ParticleEmiter::e_unknown:
     case ParticleEmiter::e_user:
         return nullptr;

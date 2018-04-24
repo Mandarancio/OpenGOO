@@ -37,11 +37,6 @@ static typename T::Type ReadConfig(T& config, const QString &path)
     return config.Parser();
 }
 
-WOGScene* OGData::GetScene(const QString &path)
-{
-    return GetData<OGSceneConfig>(path).release();
-}
-
 WOGResources* OGData::GetResources(const QString &path)
 {
     return GetData<OGResourceConfig>(path);

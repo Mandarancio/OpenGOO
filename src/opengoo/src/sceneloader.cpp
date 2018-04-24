@@ -6,6 +6,7 @@
 
 #include "GameEngine/og_gameengine.h"
 #include "GameEngine/scene.h"
+#include "GameEngine/Particles/particleemiterfactory.h"
 #include "GameEngine/Particles/particlesystem.h"
 #include "GameEngine/Particles/particle.h"
 #include "GameEngine/Particles/pointparticleemiter.h"
@@ -19,7 +20,6 @@
 #include "wog_level.h"
 #include "wog_scene.h"
 #include "og_levelconfig.h"
-#include "og_sceneconfig.h"
 
 #include "entities/og_ball.h"
 #include "entities/scenelayer.h"
@@ -37,6 +37,8 @@
 #include "og_windowcamera.h"
 #include "og_resourcemanager.h"
 #include "og_sprite.h"
+
+#include "configloader.h"
 
 template<>
 inline void OptionalSetValue(std::pair<bool, og::ParticleDefination::AxialSinOffset>& aOptional,
@@ -83,6 +85,7 @@ struct SceneLoaderHelper
 {
     SceneLoaderHelper(og::Scene& aScene)
         : mScene(aScene)
+        , mFactory(CreateFactory())
     {
         mEntityFactory.SetPhysicsEngine(aScene.GetPhysicsEngine());
     }
@@ -185,10 +188,21 @@ struct SceneLoaderHelper
         return nullptr;
     }
 
+    std::shared_ptr<og::IParticleEmiterFactory> CreateFactory()
+    {
+        return std::make_shared<og::ParticleEmiterFactory>();
+    }
+
+    std::shared_ptr<og::ParticleSystem> CreateParticleSystem(const QVector2D& aPosition, float aDepth)
+    {
+        return std::make_shared<og::ParticleSystem>(aPosition, aDepth, mFactory);
+    }
+
 private:
     og::Scene& mScene;
     EntityFactory mEntityFactory;
     QHash<QString, std::shared_ptr<Ball>> mBalls;
+    std::shared_ptr<og::IParticleEmiterFactory> mFactory;
 };
 
 void SceneLoaderHelper::Process(const WOGCamera& aCamera)
@@ -303,12 +317,13 @@ void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
     auto src = GE->GetResourceManager()->GetImageSourceById(aSceneLayer.image);
     auto spr = std::make_shared<OGSprite>(src);
     spr->CenterOrigin();
-    spr->SetScale(aSceneLayer.scale);
+    spr->SetScaleX(aSceneLayer.scalex);
+    spr->SetScaleY(aSceneLayer.scaley);
     spr->SetAngle(-aSceneLayer.rotation);
     spr->SetColorize(aSceneLayer.colorize);
     spr->SetAlpha(aSceneLayer.alpha);
 
-    auto e = std::make_shared<SceneLayer>(aSceneLayer.position.x(), -aSceneLayer.position.y(), spr);
+    auto e = std::make_shared<SceneLayer>(aSceneLayer.x, -aSceneLayer.y, spr);
     e->SetDepth(aSceneLayer.depth);
 
     if (!aSceneLayer.anim.isEmpty())
@@ -400,25 +415,19 @@ void SceneLoaderHelper::Process(const WOGLabel& aLabel)
 
 void SceneLoaderHelper::Process(const WOGScene::WOGParticle& aParticle)
 {
-    assert(dynamic_cast<OGResourceManager*>(GE->GetResourceManager()));
-
-    if (auto effect = static_cast<OGResourceManager*>(GE->GetResourceManager())->GetEffect(aParticle.effect))
+    if (auto effect = GE->GetResourceManager()->GetEffect(aParticle.effect))
     {
-        const auto pos = QVector2D(aParticle.position.x(), -aParticle.position.y());
-        auto ps = og::ParticleSystem::Create(pos, aParticle.depth);
-        if (auto emiter = ps->CreateEmiter(effect->GetType(), effect->maxparticles))
+        const QVector2D pos(aParticle.position.x(), -aParticle.position.y());
+        auto ps = CreateParticleSystem(pos, aParticle.depth);
+
+        og::ParticleEmiterDefination ped;
+        ped.type = effect->GetType();
+        ped.maxparticles = effect->maxparticles;
+        ped.margin = effect->margin;
+        ped.rate = effect->rate;
+        ped.timeoutInterval = 0.5f * GE->getFrameRate();
+        if (auto emiter = ps->CreateEmiter(ped))
         {
-            if (auto em = dynamic_cast<og::PointParticleEmiter*>(emiter))
-            {
-                em->SetRate(effect->rate);
-            }
-
-            if (auto em = dynamic_cast<og::AmbientParticleEmiter*>(emiter))
-            {
-                em->SetMargin(effect->margin);
-                em->SetTimeoutInterval(0.5f * GE->getFrameRate());
-            }
-
             og::ParticleDefination pd;
 
             foreach (const auto& particle, effect->particle)
@@ -498,7 +507,7 @@ void SceneLoaderHelper::Process(const WOGLinearForceField& aForceField)
     }
 }
 
-void SceneLoaderHelper::Process(const WOGRadialForceField& aForceField)
+void SceneLoaderHelper::Process(const WOGRadialForceField& /*aForceField*/)
 {
 }
 
@@ -535,15 +544,18 @@ void SceneLoader::Load(og::Scene& aScene)
 
     LoadConfig("resrc", [](const QString& aPath){ return GE->GetResourceManager()->ParseResourceFile(aPath); });
 
-    OGSceneConfig sc;
-    LoadConfig("scene", [&sc](const QString& aPath){ return sc.Load(aPath); });
+    std::unique_ptr<WOGScene> scene;
+    LoadConfig("scene", [&scene](const QString& aPath)
+    {
+        ConfigLoader::Load(scene, aPath);
+        return scene.get();
+    });
 
     OGLevelConfig lc;
     LoadConfig("level", [&lc](const QString& aPath){ return lc.Load(aPath); });
 
     SceneLoaderHelper helper(aScene);
 
-    auto scene = sc.Parser();
     helper.Process(*scene);
 
     auto level = lc.Parser();

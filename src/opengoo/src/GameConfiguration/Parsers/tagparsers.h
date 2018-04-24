@@ -9,3 +9,4 @@
 #include "configtagparser.h"
 #include "texttagparser.h"
 #include "effecttagparser.h"
+#include "scenetagparser.h"

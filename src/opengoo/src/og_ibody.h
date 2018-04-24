@@ -3,13 +3,13 @@
 #include <OGPhysicsBody>
 
 struct WOGMaterial;
-struct WOGPObject;
+struct WOGPhysicsObject;
 
 class QPainter;
 
 class OGIBody : public og::PhysicsBody
 {
-    const WOGPObject& data_;
+    const WOGPhysicsObject& data_;
     const WOGMaterial& material_;
 
     bool walkable_;    
@@ -31,11 +31,11 @@ protected:
     OGBodyType m_type;
     bool debug_;
 
-    const WOGPObject& GetData() const { return data_; }
+    const WOGPhysicsObject& GetData() const { return data_; }
     const WOGMaterial& GetMaterial() const { return material_; }
 
 public:
-    OGIBody(const WOGPObject& data, const WOGMaterial& material);
+    OGIBody(const WOGPhysicsObject& data, const WOGMaterial& material);
     virtual ~OGIBody() {}       
 
     bool walkable() const { return walkable_; }

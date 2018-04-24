@@ -10,16 +10,16 @@ public:
     static const float MinRate;
 
 public:
-    PointParticleEmiter(int aMaxParticles, ParticleSystem* aSystem)
+    PointParticleEmiter(float aRate, int aMaxParticles, ParticleSystem* aSystem)
         : ParticleEmiter(aMaxParticles, aSystem)
     {
-        SetRate(MinRate);
+        SetRate(aRate);
     }
 
     void SetRate(float aRate);
 
 private:
-    void Update();
+    void PreUpdate();
 
 private:
     std::pair<int, float> mRate;

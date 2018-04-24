@@ -80,6 +80,11 @@ public:
         return body->GetType() == b2_staticBody;
     }
 
+    bool IsDynamic() const
+    {
+        return body->GetType() == b2_dynamicBody;
+    }
+
     float GetAngle() const
     {
         return body->GetAngle();

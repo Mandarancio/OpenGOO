@@ -39,6 +39,185 @@
 
 #include "flags.h"
 
+static OGSpritePtr CreateOGSprite(const WOGImage& aDef)
+{
+    OGSpritePtr spr;
+    if (auto src = GE->GetResourceManager()->GetImageSourceById(aDef.id))
+    {
+        spr = OGSprite::Create(src);
+        spr->CenterOrigin();
+        spr->SetScaleX(aDef.imagescale.x());
+        spr->SetScaleY(aDef.imagescale.y());
+        spr->SetAngle(qRadiansToDegrees(-aDef.imagerot));
+    }
+
+    return spr;
+}
+
+static std::shared_ptr<og::Graphic> CreateGraphic(const WOGCircle& aDef)
+{
+    return std::make_shared<CircleSprite>(aDef.radius, aDef.dynamic ? Qt::blue : Qt::green);
+}
+
+static std::shared_ptr<og::Graphic> CreateGraphic(const WOGRectangle& aDef)
+{
+    QSizeF size(aDef.width, aDef.height);
+    auto spr = std::make_shared<RectSprite>(size, aDef.dynamic ? Qt::blue : Qt::green);
+    spr->SetAngle(qRadiansToDegrees(-aDef.rotation));
+    return spr;
+}
+
+static std::shared_ptr<LineSprite> CreateLineSprite(const QLine& aLine, bool aDynamic)
+{
+    return std::make_shared<LineSprite>(aLine, aDynamic ? Qt::blue : Qt::green);
+}
+
+template<typename T>
+struct GeomBuilder
+{
+    GeomBuilder(og::physics::PhysicsEngine* aEngine)
+        : mEngine(aEngine)
+    {
+    }
+
+    template<typename D>
+    void CreateEntity(const D& aDef)
+    {
+        mEntity = std::make_shared<og::Entity>(aDef.x, -aDef.y);
+    }
+
+    virtual void Init(const T& /*aDef*/)
+    {
+    }
+
+    virtual void InitPhysicsBodyBuilder(const T& /*aDef*/, og::physics::PhysicsBodyBuilder& /*aBuilder*/)
+    {
+    }
+
+    void BuildPhysicsBody(const T& aDef)
+    {
+        og::physics::PhysicsBodyBuilder builder(mEngine);
+        InitPhysicsBodyBuilder(aDef, builder);
+        mEntity->SetPhysicsBody(builder.Build());
+    }
+
+    template<typename D>
+    typename std::enable_if<!std::is_same<D, WOGLine>::value>::type BuildGraphic(const D& aDef)
+    {
+        if (aDef.HasImage())
+        {
+            mEntity->SetPosition(aDef.image.imagepos.x(), -aDef.image.imagepos.y());
+            mEntity->SetGraphic(CreateOGSprite(aDef.image));
+        }
+        else if (flag & DEBUG)
+        {
+            mEntity->SetGraphic(CreateGraphic(aDef));
+            mEntity->SetDepth(1000);
+        }
+    }
+
+    std::shared_ptr<og::Entity> GetEntity()
+    {
+        return mEntity;
+    }
+
+protected:
+    ~GeomBuilder()
+    {
+    }
+
+protected:
+    std::shared_ptr<og::Entity> mEntity;
+    og::physics::PhysicsEngine* mEngine;
+};
+
+class RectGeomBuilder : public GeomBuilder<WOGRectangle>
+{
+public:
+    RectGeomBuilder(og::physics::PhysicsEngine* aEngine)
+        : GeomBuilder(aEngine)
+    {
+    }
+
+private:
+    void InitPhysicsBodyBuilder(const WOGRectangle& aDef, og::physics::PhysicsBodyBuilder& aBuilder)
+    {
+        using namespace og::physics;
+        aBuilder.SetBodyType(aDef.dynamic ? BodyDef::e_dynamic : BodyDef::e_static);
+        aBuilder.SetPosition(aDef.x, aDef.y).SetAngle(aDef.rotation).SetShapeType(Shape::e_polygon)
+                .SetSize(aDef.width, aDef.height);
+    }
+};
+
+class LineGeomBuilder : public GeomBuilder<WOGLine>
+{
+public:
+    LineGeomBuilder(og::physics::PhysicsEngine* aEngine)
+        : GeomBuilder(aEngine)
+    {
+        mX1 = mY1 = mX2 = mY2 = 0;
+    }
+
+    void Init(const WOGLine& aDef)
+    {
+        static const auto MAX_LENGTH = 2000.0f;
+        auto normal = aDef.normal * MAX_LENGTH;
+        mX1 = aDef.x + -normal.y();
+        mY1 = aDef.y + normal.x();
+        mX2 = aDef.x + normal.y();
+        mY2 = aDef.y + -normal.x();
+    }
+
+    void BuildGraphic(const WOGLine& aDef)
+    {
+        if (flag & DEBUG)
+        {
+            mEntity->SetGraphic(CreateLineSprite(QLine(mX1, -mY1, mX2, -mY2), aDef.dynamic));
+            mEntity->SetDepth(1000);
+        }
+    }
+
+private:
+    void InitPhysicsBodyBuilder(const WOGLine& /*aDef*/, og::physics::PhysicsBodyBuilder& aBuilder)
+    {
+        using namespace og::physics;
+        aBuilder.SetBodyType(BodyDef::e_static).SetShapeType(Shape::e_edge).SetLine(mX1, mY1, mX2, mY2);
+    }
+
+private:
+    float mX1, mY1, mX2, mY2;
+};
+
+class CircleGeomBuilder : public GeomBuilder<WOGCircle>
+{
+public:
+    CircleGeomBuilder( og::physics::PhysicsEngine* aEngine)
+        : GeomBuilder(aEngine)
+    {
+    }
+
+private:
+    void InitPhysicsBodyBuilder(const WOGCircle& aDef, og::physics::PhysicsBodyBuilder& aBuilder)
+    {
+        using namespace og::physics;
+        aBuilder.SetBodyType(aDef.dynamic ? BodyDef::e_kinematic : BodyDef::e_static);
+        aBuilder.SetPosition(aDef.x, aDef.y).SetShapeType(Shape::e_circle).SetRadius(aDef.radius);
+    }
+};
+
+struct GeomDirector
+{
+    template<typename D, typename B>
+    std::shared_ptr<og::Entity> CreateEntity(const D& aDef, B& aBuilder)
+    {
+        aBuilder.Init(aDef);
+        aBuilder.CreateEntity(aDef);
+        aBuilder.BuildPhysicsBody(aDef);
+        aBuilder.BuildGraphic(aDef);
+        return aBuilder.GetEntity();
+    }
+};
+
 inline static og::ImageSourceSPtr GetImageSourceById(const QString& aId)
 {
     return GE->GetResourceManager()->GetImageSourceById(aId);
@@ -173,7 +352,13 @@ std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
         multiSpr->AddSprite(std::move(spr), part.layer);
     }
 
-    auto entity = std::make_shared<Ball>(multiSpr);
+    auto walkSpeed = ballDef->attribute.movement.walkspeed;
+    walkSpeed += walkSpeed * GE->GetRandomGenerator()->Range(0.0f, ballDef->attribute.movement.speedvariance);
+
+    auto climbSpeed = ballDef->attribute.movement.climbspeed;
+    climbSpeed += climbSpeed * GE->GetRandomGenerator()->Range(0.0f, ballDef->attribute.movement.speedvariance);
+
+    auto entity = std::make_shared<Ball>(multiSpr, walkSpeed, climbSpeed);
     entity->SetName(a_ball.type);
 
     {
@@ -245,7 +430,7 @@ std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
 //    og::physics::PhysicsEngine* m_physicEngine;
 //};
 
-EntityPtr EntityFactory::CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2)
+EntityPtr EntityFactory::CreateStrand(EntityPtr /*a_ball1*/, EntityPtr /*a_ball2*/)
 {
 //    auto& ball1 = static_cast<OGBall&>(*a_ball1);
 //    auto& ball2 = static_cast<OGBall&>(*a_ball2);
@@ -475,10 +660,10 @@ EntityPtr EntityFactory::CreateButton(const WOGButton& a_btnDef)
 {
     ButtonBuilder builder;
     builder.SetId(a_btnDef.id)
-            .SetPosition(a_btnDef.position)
+            .SetPosition(QPointF(a_btnDef.x, a_btnDef.y))
             .SetUp(a_btnDef.up)
             .SetOver(a_btnDef.over)
-            .SetScale(a_btnDef.scale)
+            .SetScale(QPointF(a_btnDef.scalex, a_btnDef.scaley))
             .SetRotation(a_btnDef.rotation);
 
     if (a_btnDef.id == QLatin1String("quit"))
@@ -509,7 +694,7 @@ EntityPtr EntityFactory::CreateLabel(const WOGLabel& a_label)
 {
     if (auto fnt = GE->GetResourceManager()->GetFont(a_label.font))
     {
-        return std::make_shared<og::Entity>(a_label.position.x(), a_label.position.y());
+        return std::make_shared<og::Entity>(a_label.x, a_label.y);
     }
 
     return nullptr;
@@ -517,85 +702,21 @@ EntityPtr EntityFactory::CreateLabel(const WOGLabel& a_label)
 
 EntityPtr EntityFactory::CreateCircle(const WOGCircle& aDef)
 {
-    auto entity = std::make_shared<og::Entity>(aDef.position.x(), -aDef.position.y());
-    if (flag & DEBUG)
-    {
-        auto spr = std::make_shared<CircleSprite>(aDef.radius);
-        entity->SetGraphic(spr);
-        entity->SetDepth(1000);
-    }
-
-    {
-        using namespace og::physics;
-        PhysicsBodyBuilder builder(GetPhysicsEngine());
-        aDef.dynamic ? builder.SetBodyType(BodyDef::e_dynamic) : builder.SetBodyType(BodyDef::e_static);
-        builder.SetPosition(aDef.position).SetShapeType(Shape::e_circle).SetRadius(aDef.radius);
-        entity->SetPhysicsBody(builder.Build());
-    }
-
-    return entity;
+    CircleGeomBuilder builder(GetPhysicsEngine());
+    GeomDirector dir;
+    return dir.CreateEntity(aDef, builder);
 }
 
 EntityPtr EntityFactory::CreateRect(const WOGRectangle& aDef)
 {
-    auto entity = std::make_shared<og::Entity>(0, 0);
-    if (!aDef.image.image.isEmpty())
-    {
-        const auto& image = aDef.image;
-        entity->SetPosition(image.imagepos.x(), -image.imagepos.y());
-        auto src = GetImageSourceById(image.image);
-        auto spr = OGSprite::Create(src);
-        spr->CenterOrigin();
-        spr->SetAngle(qRadiansToDegrees(-image.imagerot));
-        spr->SetScale(image.imagescale);
-        entity->SetGraphic(spr);
-    }
-    else
-    {
-        entity->SetPosition(aDef.position.x(), -aDef.position.y());
-        if (flag & DEBUG)
-        {
-            auto spr = std::make_shared<RectSprite>(aDef.size);
-            spr->SetAngle(qRadiansToDegrees(-aDef.rotation));
-            entity->SetGraphic(spr);
-            entity->SetDepth(1000);
-        }
-    }
-
-    {
-        using namespace og::physics;
-        PhysicsBodyBuilder builder(GetPhysicsEngine());
-        aDef.dynamic ? builder.SetBodyType(BodyDef::e_dynamic) : builder.SetBodyType(BodyDef::e_static);
-        builder.SetPosition(aDef.position).SetAngle(aDef.rotation).SetShapeType(Shape::e_polygon).SetSize(aDef.size);
-        entity->SetPhysicsBody(builder.Build());
-    }
-
-    return entity;
+    RectGeomBuilder builder(GetPhysicsEngine());
+    GeomDirector dir;
+    return dir.CreateEntity(aDef, builder);
 }
 
 EntityPtr EntityFactory::CreateLine(const WOGLine& aDef)
 {
-    const auto MAX_LENGTH = 2000.0f;
-    auto normal = aDef.normal * MAX_LENGTH;
-    auto x1 = aDef.anchor.x() + -normal.y();
-    auto y1 = aDef.anchor.y() + normal.x();
-    auto x2 = aDef.anchor.x() + normal.y();
-    auto y2 = aDef.anchor.y() + -normal.x();
-
-    auto entity = std::make_shared<og::Entity>(aDef.anchor.x(), -aDef.anchor.y());
-    if (flag & DEBUG)
-    {
-        auto spr = std::make_shared<LineSprite>(QLine(x1, -y1, x2, -y2));
-        entity->SetGraphic(spr);
-        entity->SetDepth(1000);
-    }
-
-    {
-        using namespace og::physics;
-        PhysicsBodyBuilder builder(GetPhysicsEngine());
-        builder.SetBodyType(BodyDef::e_static).SetShapeType(Shape::e_edge).SetLine(x1, y1, x2, y2);
-        entity->SetPhysicsBody(builder.Build());
-    }
-
-    return entity;
+    LineGeomBuilder builder(GetPhysicsEngine());
+    GeomDirector dir;
+    return dir.CreateEntity(aDef, builder);
 }

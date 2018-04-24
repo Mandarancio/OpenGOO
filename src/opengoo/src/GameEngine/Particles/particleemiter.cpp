@@ -103,6 +103,8 @@ void ParticleEmiter::Emit(const QPointF& aPosition)
 
 void ParticleEmiter::Update()
 {
+    PreUpdate();
+
     for (auto it = mUpdate.begin(); it != mUpdate.end();)
     {
         auto particle = *it;
@@ -117,5 +119,7 @@ void ParticleEmiter::Update()
 
         ++it;
     }
+
+    PostUpdate();
 }
 }

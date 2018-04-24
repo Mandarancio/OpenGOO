@@ -7,14 +7,9 @@
 #include "wog_circle.h"
 #include "wog_vobject.h"
 
-struct WOGLabel
+struct WOGLabel : public WOGVObject
 {
-    QString id;
-    float depth;
-    QPointF position;
     QString align;
-    float rotation;
-    float scale;
     bool overlay;
     bool screenspace;
     QString font;
@@ -23,11 +18,15 @@ struct WOGLabel
 
 struct WOGSceneLayer : public WOGVObject
 {
-    QString id;
     QString name;
     QString image;
     QString anim;
     float animspeed;
+
+    WOGSceneLayer()
+        : animspeed(1)
+    {
+    }
 };
 
 struct WOGRadialForceField
@@ -42,16 +41,24 @@ struct WOGRadialForceField
     bool antigrav;
     bool geomonly;
     bool enabled;
+
+    WOGRadialForceField()
+        : radius(0)
+        , forceatcenter(0)
+        , forceatedge(0)
+        , dampeningfactor(0)
+    {
+    }
 };
 
 struct WOGLinearForceField
 {
+    QString id;
     QString type; // gravity, force
     QPointF force;
     float dampeningfactor;
     bool antigrav;
     bool geomonly;
-    QString id;
     float width;
     float height;
     oglib::Optional<QPointF> center;
@@ -72,7 +79,6 @@ struct WOGLinearForceField
 
 struct WOGButton : public WOGVObject
 {
-    QString id;
     QString up;
     QString over;
     QString disabled;
@@ -86,37 +92,53 @@ struct WOGButtonGroup
 {
     QString id;
     QPointF osx;
-    std::vector<WOGButton> button;
+    std::list<WOGButton> button;
 };
 
-struct WOGLine : public WOGPObject
+struct WOGLine : public WOGPhysicsObject
 {
-    QPointF anchor;
     QPointF normal;
 };
 
-struct WOGRectangle : public WOGPObject
+struct WOGRectangle : public WOGPhysicsObject
 {
-    struct Image
-    {
-        QPointF imagepos;
-        QPointF imagescale;
-        float imagerot;
-        QString image;
-    };
+    float width;
+    float height;
+    WOGImage image;
 
-    QPointF position;
-    QSizeF size;
-    float rotation;
-    Image image;
+    WOGRectangle()
+        : width(0)
+        , height(0)
+    {
+    }
+
+    bool HasImage() const
+    {
+        return !image.IsEmpty();
+    }
 };
 
-struct WOGCompositeGeom : public WOGPObject
+struct WOGCompositeGeom : public WOGPhysicsObject
 {
-    QPointF position;
-    float rotation;
-    std::vector<WOGCircle> circle;
-    std::vector<WOGRectangle> rectangle;
+    std::list<WOGCircle> circle;
+    std::list<WOGRectangle> rectangle;
+};
+
+struct WOGHinge
+{
+    QString body1;
+    QString body2;
+    QPointF anchor;
+    oglib::Optional<float> lostop;
+    oglib::Optional<float> histop;
+    oglib::Optional<float> bounce;
+};
+
+struct WOGMotor
+{
+    QString body;
+    float speed;
+    float maxforce;
 };
 
 struct WOGScene
@@ -127,6 +149,12 @@ struct WOGScene
         float depth;
         QPointF position;
         float pretick;
+
+        WOGParticle()
+            : depth(0)
+            , pretick(0)
+        {
+        }
     };
 
     float minx;
@@ -134,15 +162,30 @@ struct WOGScene
     float maxx;
     float maxy;
     QColor backgroundcolor;
-    std::vector<WOGButton> button;
-    std::vector<WOGButtonGroup> buttongroup;
-    std::vector<WOGSceneLayer> sceneLayer;
-    std::vector<WOGLabel> label;
-    std::vector<WOGCircle> circle;
-    std::vector<WOGLine> line;
-    std::vector<WOGRectangle> rectangle;
-    std::vector<WOGLinearForceField> linearforcefield;
-    std::vector<WOGRadialForceField> radialforcefield;
-    std::vector<WOGParticle> particle;
-    std::vector<WOGCompositeGeom> compositegeom;
+    std::list<WOGButton> button;
+    std::list<WOGButtonGroup> buttongroup;
+    std::list<WOGSceneLayer> sceneLayer;
+    std::list<WOGLabel> label;
+    std::list<WOGCircle> circle;
+    std::list<WOGLine> line;
+    std::list<WOGRectangle> rectangle;
+    std::list<WOGLinearForceField> linearforcefield;
+    std::list<WOGRadialForceField> radialforcefield;
+    std::list<WOGParticle> particle;
+    std::list<WOGCompositeGeom> compositegeom;
+    std::list<WOGHinge> hinge;
+    std::list<WOGMotor> motor;
+
+    WOGScene()
+        : minx(0)
+        , miny(0)
+        , maxx(0)
+        , maxy(0)
+    {
+    }
+
+    static std::unique_ptr<WOGScene> Create()
+    {
+        return std::unique_ptr<WOGScene>(new WOGScene);
+    }
 };

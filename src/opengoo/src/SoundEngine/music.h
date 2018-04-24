@@ -6,42 +6,42 @@ namespace og
 {
 namespace audio
 {
-    class Music
+class Music
+{
+public:
+    Music()
     {
-    public:
-        void SetLoop(bool a_flag);
+    }
 
-        void Play(bool aLoop = false);
+    Music(const std::string& a_filename);
 
-        void Stop();
+    void SetLoop(bool a_flag);
 
-        bool OpenFile(const std::string& a_filename);
+    void Play(bool aLoop = false);
 
-        static std::shared_ptr<Music> Create(const std::string& a_filename)
-        {
-            return std::shared_ptr<Music>(new Music(a_filename));
-        }
+    void Stop();
 
-        static std::shared_ptr<Music> Create()
-        {
-            return std::shared_ptr<Music>(new Music);
-        }
+    bool OpenFile(const std::string& a_filename);
 
+    static std::shared_ptr<Music> Create(const std::string& a_filename)
+    {
+        return std::make_shared<Music>(a_filename);
+    }
 
-    private:
-        Music()
-        {
-        }
+    static std::shared_ptr<Music> Create()
+    {
+        return std::make_shared<Music>();
+    }
 
-        Music(const std::string& a_filename);
-        Music(const Music&);
-        Music(Music&&);
-        Music& operator=(const Music&);
-        Music& operator=(Music&&);
+private:
+    Music(const Music&);
+    Music(Music&&);
+    Music& operator=(const Music&);
+    Music& operator=(Music&&);
 
-    private:
-        sf::Music m_music;
-    };
+private:
+    sf::Music m_music;
+};
 }
 }
 

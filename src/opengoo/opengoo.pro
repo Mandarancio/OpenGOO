@@ -118,7 +118,8 @@ HEADERS += \
     src/circlesprite.h \
     src/rectsprite.h \
     src/linesprite.h \
-    src/camzoomanimation.h
+    src/camzoomanimation.h \
+    src/configloader.h
 
 SOURCES += \
     src/main.cpp \

@@ -36,7 +36,14 @@ int OGApplication::run(int argc, char **argv)
         OGGameEngine engine(game, config, factory);
         if (engine.initialize())
         {
-            app.exec();
+            try
+            {
+                app.exec();
+            }
+            catch (const std::exception& ex)
+            {
+                logException(ex.what());
+            }
         }
 
         game->Destroy();

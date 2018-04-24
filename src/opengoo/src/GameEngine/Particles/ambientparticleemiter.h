@@ -13,7 +13,7 @@ class AmbientParticleEmiter : public ParticleEmiter
     template<int Precision> class PositionGenerator;
 
 public:
-    AmbientParticleEmiter(int aMaxParticles, ParticleSystem* aSystem);
+    AmbientParticleEmiter(int aMargin, int aTimeoutInterval, int aMaxParticles, ParticleSystem* aSystem);
 
     ~AmbientParticleEmiter();
 
@@ -27,8 +27,13 @@ public:
         mTimer.SetInterval(aInterval);
     }
 
+    static std::shared_ptr<AmbientParticleEmiter> Create(int aMargin, int aTimeoutInterval,
+                                                         int aMaxParticles, ParticleSystem* aSystem);
+
 private:
-    void Update();
+    void PreUpdate();
+
+    void PostUpdate();
 
 private:
     QMarginsF mMargin;

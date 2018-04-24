@@ -30,9 +30,14 @@ struct ValueWriter
         return pos;
     }
 
-    static QPointF StringToPointF(const QString & x, const QString & y)
+    static QPointF StringToPointF(const QString& x, const QString& y)
     {
         return QPointF(x.toDouble(), y.toDouble());
+    }
+
+    static QPointF StringToPointF(const QDomAttr& aAttribute)
+    {
+        return StringToPointF(aAttribute.value());
     }
 
     static QPoint StringToPoint(const QString& aPosition)
@@ -56,7 +61,7 @@ struct ValueWriter
         return pos;
     }
 
-    static QColor StringToColor(const QString & color)
+    static QColor StringToColor(const QString& color)
     {
         QStringList list = color.split(",");
 
@@ -116,6 +121,11 @@ struct ValueWriter
         {
             aData.push_back(val.toFloat());
         }
+    }
+
+    static void WriteValue(QColor& aData, const QDomAttr& aAttribute)
+    {
+        aData = StringToColor(aAttribute.value());
     }
 
     static void WriteValue(oglib::Optional<bool>& aData, const QDomAttr& aAttribute)

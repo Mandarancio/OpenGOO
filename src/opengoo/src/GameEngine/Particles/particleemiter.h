@@ -7,6 +7,8 @@
 
 class QPainter;
 
+class WOGEffect;
+
 namespace og
 {
 class ParticleSystem;
@@ -97,6 +99,8 @@ private:
     }
 };
 
+struct ParticleEmiterDefination;
+
 class ParticleEmiter
 {
 public:
@@ -121,7 +125,15 @@ public:
     {
     }
 
-    virtual void Update();
+    virtual void PreUpdate()
+    {
+    }
+
+    void Update();
+
+    virtual void PostUpdate()
+    {
+    }
 
     void Render(QPainter& aPainter)
     {
@@ -180,5 +192,14 @@ protected:
     std::list<ParticleEmiterSPtr>::iterator mIterator;
     ParticleSystem* mParticleSystem;
     std::vector<ParticleDefination> mParticleDefinations;
+};
+
+struct ParticleEmiterDefination
+{
+    ParticleEmiter::Type type;
+    int maxparticles;
+    int margin;
+    int  timeoutInterval;
+    float rate;
 };
 } // ns:og

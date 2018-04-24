@@ -68,7 +68,7 @@ public:
 
     std::shared_ptr<Ball> CreateBall(const WOGBallInstance& a_ball);
 
-    EntityPtr CreateStrand(EntityPtr a_ball1, EntityPtr a_ball2);
+    EntityPtr CreateStrand(EntityPtr, EntityPtr);
 
     EntityPtr CreateStrand(EntityPtr aEntity1, EntityPtr aEntity2, const WOGBallStrand& aDef);
 
