@@ -1,6 +1,5 @@
 #include "og_data.h"
 #include "logger.h"
-#include "wog_scene.h"
 
 template<class T> inline static typename T::Type GetData(const QString &path)
 {

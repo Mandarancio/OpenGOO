@@ -14,7 +14,7 @@ inline void parse_tags(const QDomElement& aElement, T* aOut, Parser aParser)
         }
 
         auto element = node.toElement();
-        const auto tag = element.tagName();
+        const auto tag = element.tagName().toLower();
         aParser(tag, element, aOut);
     }
 }

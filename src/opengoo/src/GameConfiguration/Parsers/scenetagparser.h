@@ -15,7 +15,7 @@ struct TagParser<WOGScene>
         {
             read_attributes(aElement, aOut, mAttributeReader);
         }
-        else if (aTag == QLatin1String("SceneLayer"))
+        else if (aTag == QLatin1String("scenelayer"))
         {
             AddElement(aElement, aOut->sceneLayer);
         }

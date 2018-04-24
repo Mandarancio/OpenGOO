@@ -20,7 +20,7 @@ public:
 
     bool HasValue() const
     {
-        return mValue.first;
+        return mValue.second;
     }
 
     T& Value()
@@ -30,7 +30,7 @@ public:
 
     const T& Value() const
     {
-        return mValue.second;
+        return mValue.first;
     }
 
     Optional& operator=(T&& aValue)

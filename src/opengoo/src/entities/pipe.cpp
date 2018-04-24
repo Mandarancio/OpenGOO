@@ -156,7 +156,7 @@ public:
 };
 
 Pipe::Pipe(const WOGPipe& aDef)
-    : Entity(aDef.vertex.front().x(), -aDef.vertex.front().y())
+    : Entity(aDef.vertex.front().x, -aDef.vertex.front().y)
 {
     SetDepth(aDef.depth);
 
@@ -170,7 +170,9 @@ Pipe::Pipe(const WOGPipe& aDef)
 
         for (int i = 1; i < vertex.size(); ++i)
         {
-            pipe->AddSprite(builder.SetVertices(vertex[i - 1], vertex[i]).Build());
+            QPoint p1(vertex[i - 1].x, vertex[i - 1].y);
+            QPoint p2(vertex[i].x, vertex[i].y);
+            pipe->AddSprite(builder.SetVertices(p1, p2).Build());
         }
     }
 
@@ -180,14 +182,19 @@ Pipe::Pipe(const WOGPipe& aDef)
 
         for (int i = 2; i < vertex.size(); ++i)
         {
-            pipe->AddSprite((builder.SetVertices(vertex[i - 2], vertex[i - 1], vertex[i]).Build()));
+            QPoint p1(vertex[i - 2].x, vertex[i - 2].y);
+            QPoint p2(vertex[i - 1].x, vertex[i - 1].y);
+            QPoint p3(vertex[i].x, vertex[i].y);
+            pipe->AddSprite((builder.SetVertices(p1, p2, p3).Build()));
         }
     }
 
     mPipe = pipe;
 
     CapBuilder builder;
-    builder.SetVertices(aDef.vertex[0], aDef.vertex[1]);
+    QPoint p1(aDef.vertex[0].x, aDef.vertex[0].y);
+    QPoint p2(aDef.vertex[1].x,aDef.vertex[1].y);
+    builder.SetVertices(p1, p2);
 
     builder.SetType(QLatin1String("OPEN_") + type);
     mCap[0] = builder.Build();

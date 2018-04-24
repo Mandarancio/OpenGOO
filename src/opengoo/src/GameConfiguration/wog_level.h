@@ -1,14 +1,12 @@
 #pragma once
 
+#include "OGLib/optional.h"
+
 #include "wog_exit.h"
 #include "wog_pipe.h"
 #include "wog_camera.h"
 
 #include <QColor>
-
-struct WOGMusic { QString id; };
-
-typedef WOGMusic WOGLoopSound;
 
 struct WOGBallInstance
 {
@@ -18,6 +16,11 @@ struct WOGBallInstance
     float y;
     float angle;
     bool discovered;
+
+    WOGBallInstance()
+        : discovered(true)
+    {
+    }
 };
 
 struct WOGStrand
@@ -28,6 +31,8 @@ struct WOGStrand
 
 struct WOGLevel
 {
+    typedef QString Id;
+
     QColor textcolor;
     int ballsrequired;
     bool letterboxed;
@@ -37,10 +42,36 @@ struct WOGLevel
     float timebugprobability;
     bool strandgeom;
     bool allowskip;
-    WOGMusic music;
-    QVector<WOGStrand> strand;
-    QVector<WOGCamera> camera;
-    QVector<WOGBallInstance> ball;
-    std::pair<bool, WOGLevelExit> levelexit;
-    std::pair<bool, WOGPipe> pipe;
+    Id music;
+    std::list<WOGStrand> strand;
+    std::list<WOGCamera> camera;
+    std::list<WOGBallInstance> ball;
+    std::list<WOGLevelExit> levelexit;
+    std::list<WOGPipe> pipe;
+    std::list<Id> loopsound;
+
+    bool HasPipe() const
+    {
+        return !pipe.empty();
+    }
+
+    bool HasLevelExit() const
+    {
+        return !levelexit.empty();
+    }
+
+    const WOGLevelExit& GetLevelExit() const
+    {
+        return levelexit.front();
+    }
+
+    const WOGPipe& GetPipe() const
+    {
+        return pipe.front();
+    }
+
+    static std::unique_ptr<WOGLevel> Create()
+    {
+        return std::unique_ptr<WOGLevel>(new WOGLevel);
+    }
 };

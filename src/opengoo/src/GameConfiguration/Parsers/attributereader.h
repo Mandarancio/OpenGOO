@@ -15,11 +15,23 @@ inline void read_attributes(const QDomElement& aElement, T* aOut, AttributeReade
 }
 
 template<typename T>
-inline T& AddElement(const QDomElement& aElement, std::list<T>& aList)
+inline void read_attributes(const QDomElement& aElement, T* aOut)
 {
-    aList.push_back(T());
+    const auto attributes = aElement.attributes();
+    for (int i = 0; i < attributes.size(); ++i)
+    {
+        auto item = attributes.item(i);
+        AttributeReader<T>::Read(item.toAttr(), aOut);
+    }
+}
+
+template<typename T>
+inline typename T::value_type& AddElement(const QDomElement& aElement, T& aList)
+{
+    typedef typename T::value_type type;
+    aList.push_back(type());
     auto& el = aList.back();
-    AttributeReader<T> reader;
+    AttributeReader<type> reader;
     read_attributes(aElement, &el, reader);
     return el;
 }

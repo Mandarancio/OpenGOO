@@ -23,4 +23,10 @@ struct WOGCamera
     float endzoom;
     Aspect aspect;
     QVector<WOGPoi> poi;
+
+    WOGCamera()
+        : endzoom(1)
+        , aspect(Normal)
+    {
+    }
 };

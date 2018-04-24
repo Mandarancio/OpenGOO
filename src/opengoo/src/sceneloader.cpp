@@ -17,9 +17,6 @@
 #include "PhysicsEngine/og_physicsengine.h"
 
 #include "og_utils.h"
-#include "wog_level.h"
-#include "wog_scene.h"
-#include "og_levelconfig.h"
 
 #include "entities/og_ball.h"
 #include "entities/scenelayer.h"
@@ -280,7 +277,7 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
 {
     auto gc = std::dynamic_pointer_cast<GameController>(GetEntityFactory().CreateGameController());
     assert(gc.get());
-    gc->SetMusic(aLevel.music.id);
+    gc->SetMusic(aLevel.music);
 
     if (!aLevel.camera.empty())
     {
@@ -295,14 +292,14 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
         }
     }
 
-    if (OptionalHasValue(aLevel.pipe))
+    if (aLevel.HasPipe())
     {
-        Process(OptionalValue(aLevel.pipe));
+        Process(aLevel.GetPipe());
     }
 
-    if (OptionalHasValue(aLevel.levelexit))
+    if (aLevel.HasLevelExit())
     {
-        Process(OptionalValue(aLevel.levelexit));
+        Process(aLevel.GetLevelExit());
     }
 
     Process(aLevel.ball);
@@ -551,13 +548,16 @@ void SceneLoader::Load(og::Scene& aScene)
         return scene.get();
     });
 
-    OGLevelConfig lc;
-    LoadConfig("level", [&lc](const QString& aPath){ return lc.Load(aPath); });
-
     SceneLoaderHelper helper(aScene);
 
     helper.Process(*scene);
 
-    auto level = lc.Parser();
+    std::unique_ptr<WOGLevel> level;
+    LoadConfig("level", [&level](const QString& aPath)
+    {
+        ConfigLoader::Load(level, aPath);
+        return level.get();
+    });
+
     helper.Process(*level);
 }
