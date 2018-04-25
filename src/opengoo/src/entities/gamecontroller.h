@@ -2,6 +2,7 @@
 
 #include "GameEngine/entity.h"
 #include "SoundEngine/sound.h"
+#include "SoundEngine/music.h"
 
 class Animator;
 
@@ -11,7 +12,7 @@ public:
     GameController();
     ~GameController();
 
-    void SetMusic(const QString& aMusic)
+    void SetMusic(og::audio::Music* aMusic)
     {
         mMusic = aMusic;
     }
@@ -31,6 +32,6 @@ private:
     void Render(QPainter& a_painter);
 
 private:
-    QString mMusic;
+    og::audio::Music* mMusic;
     std::list<SoundSPtr> mLoopSounds;
 };

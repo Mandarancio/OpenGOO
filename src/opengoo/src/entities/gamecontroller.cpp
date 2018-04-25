@@ -4,6 +4,7 @@
 
 GameController::GameController()
     : Entity(0, 0)
+    , mMusic(nullptr)
 {
 }
 
@@ -13,9 +14,9 @@ GameController::~GameController()
 
 void GameController::Added()
 {
-    if (auto snd = GE->GetResourceManager()->GetMusic(mMusic))
+    if (mMusic)
     {
-        snd->Play(true);
+        mMusic->Play(true);
     }
 
     foreach (auto& snd, mLoopSounds)

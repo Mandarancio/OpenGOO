@@ -277,7 +277,10 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
 {
     auto gc = std::dynamic_pointer_cast<GameController>(GetEntityFactory().CreateGameController());
     assert(gc.get());
-    gc->SetMusic(aLevel.music);
+    if (auto music = GE->GetResourceManager()->GetMusic(aLevel.music))
+    {
+        gc->SetMusic(music);
+    }
 
     foreach (const auto& id, aLevel.loopsound)
     {
