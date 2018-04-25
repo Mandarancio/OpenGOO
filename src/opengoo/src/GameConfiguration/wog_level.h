@@ -37,6 +37,16 @@ struct WOGSignpost : public WOGVObject
     QString text;
 };
 
+struct WOGTargetHeight
+{
+    int y;
+
+    WOGTargetHeight()
+        : y(0)
+    {
+    }
+};
+
 struct WOGLevel
 {
     typedef QString Id;
@@ -58,6 +68,7 @@ struct WOGLevel
     std::list<WOGPipe> pipe;
     std::list<Id> loopsound;
     std::list<WOGSignpost> signpost;
+    std::list<WOGTargetHeight> targetheight;
 
     bool HasPipe() const
     {
@@ -67,6 +78,16 @@ struct WOGLevel
     bool HasLevelExit() const
     {
         return !levelexit.empty();
+    }
+
+    bool HasTargetHeight() const
+    {
+        return !targetheight.empty();
+    }
+
+    const WOGTargetHeight& GetTargetHeight() const
+    {
+        return targetheight.front();
     }
 
     const WOGLevelExit& GetLevelExit() const

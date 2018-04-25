@@ -2,6 +2,11 @@
 
 #include "levelattributereader.h"
 
+// TODO add tags
+// fire
+// endoncollision
+// endonmessage
+
 template<>
 struct TagParser<WOGLevel>
 {
@@ -47,9 +52,9 @@ struct TagParser<WOGLevel>
         {
             AddElement(aElement, aOut->signpost);
         }
-        else
+        else if (aTag == QLatin1String("targetheight"))
         {
-            qDebug() << aTag;
+            AddElement(aElement, aOut->targetheight);
         }
     }
 
