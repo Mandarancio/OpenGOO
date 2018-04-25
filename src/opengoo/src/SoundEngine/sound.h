@@ -30,6 +30,8 @@ public:
 
     void Play();
 
+    void SetLoop(bool aLoop);
+
 private:
     sf::Sound m_sound;
 };

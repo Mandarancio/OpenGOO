@@ -17,6 +17,11 @@ void GameController::Added()
     {
         snd->Play(true);
     }
+
+    foreach (auto& snd, mLoopSounds)
+    {
+        snd->Play();
+    }
 }
 
 void GameController::Removed()

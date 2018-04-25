@@ -22,6 +22,11 @@ void Sound::Play()
     m_sound.play();
 }
 
+void Sound::SetLoop(bool aLoop)
+{
+    m_sound.setLoop(aLoop);
+}
+
 SoundSourceList::SoundSourceList()
     : m_currentBuffer(0)
 {

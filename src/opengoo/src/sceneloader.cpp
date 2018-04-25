@@ -279,6 +279,15 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
     assert(gc.get());
     gc->SetMusic(aLevel.music);
 
+    foreach (const auto& id, aLevel.loopsound)
+    {
+        if (auto snd = GE->GetResourceManager()->GetSound(id))
+        {
+            snd->SetLoop(true);
+            gc->AddLoopSound(snd);
+        }
+    }
+
     if (!aLevel.camera.empty())
     {
         auto aspect = (!(GE->getWidth() % 4) && !(GE->getHeight() % 3)) ? WOGCamera::Normal : WOGCamera::WideScreen;
