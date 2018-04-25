@@ -1,5 +1,6 @@
-#ifndef WOG_ISLAND_H
-#define WOG_ISLAND_H
+#pragma once
+
+#include <QStringList>
 
 struct WOGOcd
 {
@@ -33,5 +34,3 @@ struct WOGIsland
 
     ~WOGIsland() { while (!level.isEmpty()) { delete level.takeFirst(); } }
 };
-
-#endif // WOG_ISLANDCONFIG_H

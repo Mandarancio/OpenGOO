@@ -1,18 +1,12 @@
 #pragma once
 
-#include "og_xmlconfig.h"
+#include <QDomElement>
+
 #include "wog_material.h"
 
-class OGMaterialConfig : public OGXmlConfig<DefaultTagParser>
+// root tag materials
+class OGMaterialConfig
 {
 public:
-    typedef WOGMaterialList Type;
-
-public:
-    OGMaterialConfig()
-    {
-        SetRootTag("materials");
-    }
-
-    WOGMaterialList Parser();
+    static void Parser(const QDomElement& aElement, WOGMaterialList* obj);
 };

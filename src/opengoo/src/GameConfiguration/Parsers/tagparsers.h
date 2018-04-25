@@ -11,3 +11,4 @@
 #include "effecttagparser.h"
 #include "scenetagparser.h"
 #include "leveltagparser.h"
+#include "resourcetagparser.h"

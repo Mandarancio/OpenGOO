@@ -22,7 +22,7 @@
 
 #include "entityfactory.h"
 
-
+// TODO Remove file
 typedef std::unique_ptr<ForceField> ForceFieldPtr;
 typedef std::unique_ptr<LinearForceField> LinearForceFieldPtr;
 

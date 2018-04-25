@@ -1,17 +1,13 @@
 #pragma once
 
-#include "og_xmlconfig.h"
+#include <QDomElement>
 #include "wog_island.h"
 
-class OGIslandConfig : public OGXmlConfig<DefaultTagParser>
+// root tag: island
+class OGIslandConfig
 {
 public:
-    OGIslandConfig()
-    {
-        SetRootTag("island");
-    }
-
-    WOGIsland* Parser();
+    void Parser(const QDomElement& aElement, WOGIsland* obj);
 
 private:
     QStringList StringToList(const QString & attribute);

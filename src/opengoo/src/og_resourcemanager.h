@@ -48,8 +48,6 @@ private:
 
     QString GetText(const QString& aId);
 
-    template<typename T> bool Load(T& a_ball, const QString& a_filename);
-
     og::audio::SoundSource* AddSoundSource(const QString a_id);
 
     og::ImageSourceSPtr CreateImageSource(const QString& a_filename);

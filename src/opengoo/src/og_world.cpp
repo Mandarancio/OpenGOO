@@ -6,7 +6,6 @@
 
 #include "og_world.h"
 #include "logger.h"
-#include "og_data.h"
 #include "og_circle.h"
 #include "og_rectangle.h"
 #include "og_line.h"

@@ -1,6 +1,5 @@
 SOURCES += \
     src/GameConfiguration/og_config.cpp \
-    src/GameConfiguration/og_resourceconfig.cpp \
     src/GameConfiguration/og_materialconfig.cpp \
     src/GameConfiguration/og_islandconfig.cpp \
     src/GameConfiguration/wog_resources.cpp \
@@ -17,7 +16,6 @@ SOURCES += src/GameConfiguration/aesdecrypter.cpp
 HEADERS += \
     src/GameConfiguration/og_config.h \
     src/GameConfiguration/og_xmlconfig.h \
-    src/GameConfiguration/og_resourceconfig.h \
     src/GameConfiguration/og_materialconfig.h \
     src/GameConfiguration/og_islandconfig.h \
     src/GameConfiguration/wog_vobject.h \
@@ -57,6 +55,8 @@ HEADERS += \
     src/GameConfiguration/Parsers/scenetagparser.h \
     src/GameConfiguration/Parsers/sceneattributereader.h \
     src/GameConfiguration/Parsers/leveltagparser.h \
-    src/GameConfiguration/Parsers/levelattributereader.h
+    src/GameConfiguration/Parsers/levelattributereader.h \
+    src/GameConfiguration/Parsers/resourcetagparser.h \
+    src/GameConfiguration/Parsers/resourceattributereader.h
 
 INCLUDEPATH += ../extlibs/AES/

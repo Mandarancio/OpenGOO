@@ -2,15 +2,13 @@
 
 using namespace wog;
 
-WOGIsland* OGIslandConfig::Parser()
+void OGIslandConfig::Parser(const QDomElement& aElement, WOGIsland* obj)
 {
-    WOGIsland* obj = new WOGIsland;
+    obj->name = aElement.attribute("name");
+    obj->map = aElement.attribute("map");
+    obj->icon = aElement.attribute("icon");
 
-    obj->name = rootElement.attribute("name");
-    obj->map = rootElement.attribute("map");
-    obj->icon = rootElement.attribute("icon");
-
-    QDomNode node = rootElement.firstChild();
+    QDomNode node = aElement.firstChild();
 
     while (!node.isNull())
     {
@@ -23,8 +21,6 @@ WOGIsland* OGIslandConfig::Parser()
 
         node = node.nextSibling();
     }
-
-    return obj;
 }
 
 Level* OGIslandConfig::CreateLevel(const QDomElement & element)

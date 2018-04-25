@@ -1,5 +1,0 @@
-#pragma once
-
-#include "og_resourceconfig.h"
-#include "og_materialconfig.h"
-#include "og_islandconfig.h"

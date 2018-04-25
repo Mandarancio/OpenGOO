@@ -1,34 +1,84 @@
 #pragma once
 
+#include <list>
+
 #include <QString>
-#include <QList>
 
 struct WOGResource
 {
-    enum Type {IMAGE, SOUND, FONT};
+    enum Type
+    {
+        IMAGE,
+        SOUND,
+        FONT
+    };
 
     Type type;
     QString id;
     QString path;
+    QString jp;
+
+    WOGResource()
+    {
+    }
+
+    WOGResource(Type aType)
+        : type(aType)
+    {
+    }
 };
 
 struct WOGResourceGroup
 {
+    typedef std::list<WOGResource> ResourceList;
+
     QString id;
-    QList<WOGResource*> resource;
+    ResourceList resource[3];
 
-    ~WOGResourceGroup();
+    const WOGResource* FindResource(WOGResource::Type aType, const QString& aId) const;
+
+    void AddResource(WOGResource&& aRes)
+    {
+        if (CheckResourceType(aRes.type))
+        {
+            resource[aRes.type].push_back(aRes);
+        }
+    }
+
+    WOGResource* CreateImage()
+    {
+        return Create(WOGResource::IMAGE);
+    }
+
+    WOGResource* CreateSound()
+    {
+        return Create(WOGResource::SOUND);
+    }
+
+    WOGResource* CreateFont()
+    {
+        return Create(WOGResource::FONT);
+    }
+
+    WOGResource* Create(WOGResource::Type aType)
+    {
+        if (CheckResourceType(aType))
+        {
+            resource[aType].push_back(WOGResource(aType));
+            return &resource[aType].back();
+        }
+
+        return nullptr;
+    }
+
+private:
+    bool CheckResourceType(WOGResource::Type aType) const;
 };
-
-class OGResourceConfig;
 
 class WOGResources
 {
 public:
-    typedef OGResourceConfig Conf;
-
-public:
-    QList<WOGResourceGroup*> group;
+    std::list<WOGResourceGroup> group;
 
     QString GetResource(WOGResource::Type type, const QString& id, const QString& groupid=QString()) const;
 
@@ -42,5 +92,18 @@ public:
         return GetResource(WOGResource::SOUND, id, groupid);
     }
 
-    ~WOGResources();
+    void AddGroup(WOGResourceGroup&& aGrp)
+    {
+        group.push_back(aGrp);
+    }
+
+    static std::unique_ptr<WOGResources> Create()
+    {
+        return std::unique_ptr<WOGResources>(new WOGResources);
+    }
+
+private:
+    QString FindPath(WOGResource::Type aType, const QString& aResId) const;
+
+    QString FindPath(WOGResource::Type aType, const QString& aResId, const QString& aGroupId) const;
 };

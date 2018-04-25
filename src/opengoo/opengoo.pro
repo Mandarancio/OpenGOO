@@ -77,7 +77,6 @@ HEADERS += \
     src/og_line.h \
     src/og_userdata.h \
     src/og_uibutton.h \
-    src/og_data.h \
     src/og_poi.h \
     src/og_fpscounter.h \
     src/og_utils.h \
@@ -135,7 +134,6 @@ SOURCES += \
 #    src/og_rectangle.cpp \
 #    src/og_line.cpp \
 #    src/og_uibutton.cpp \
-    src/og_data.cpp \
     src/og_camera.cpp \
     src/fpscounter.cpp \
     src/og_fpscounter.cpp \

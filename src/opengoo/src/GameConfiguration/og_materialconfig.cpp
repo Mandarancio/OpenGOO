@@ -14,13 +14,12 @@ void OGMaterialConfigHelper::LoadMaterial(WOGMaterial& aMaterial, const QDomElem
     aMaterial.stickiness = element.attribute("stickiness").toInt();
 }
 
-WOGMaterialList OGMaterialConfig::Parser()
+void OGMaterialConfig::Parser(const QDomElement &aElement, WOGMaterialList *obj)
 {    
     QDomNode node;
     QDomElement element;
 
-    WOGMaterialList obj;
-    node = rootElement.firstChild();
+    node = aElement.firstChild();
 
     while(!node.isNull())
     {
@@ -28,12 +27,10 @@ WOGMaterialList OGMaterialConfig::Parser()
 
         if (element.tagName() == "material")
         {
-            obj.push_back(WOGMaterial());
-            OGMaterialConfigHelper::LoadMaterial(obj.back(), element);
+            obj->push_back(WOGMaterial());
+            OGMaterialConfigHelper::LoadMaterial(obj->back(), element);
         }
 
         node = node.nextSibling();
     }
-
-    return obj;
 }

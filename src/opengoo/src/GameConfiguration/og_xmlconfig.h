@@ -53,7 +53,7 @@ public:
 
     void Parse(typename TTagParser::Type* aOut)
     {
-        mTagParser.Parse(rootElement.tagName(), rootElement, aOut);
+        mTagParser.Parse(rootElement.tagName().toLower(), rootElement, aOut);
         parse_tags(rootElement, aOut,
                    [this](const QString& tag, const QDomElement& element, typename TTagParser::Type* out)
         {

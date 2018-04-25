@@ -1,5 +1,3 @@
-#include <fstream>
-
 #include <QFile>
 #include <QImage>
 #include <QString>
@@ -12,8 +10,6 @@
 #include <logger.h>
 
 #include "og_resourcemanager.h"
-#include "og_resourceconfig.h"
-#include "og_data.h"
 
 #include "configloader.h"
 
@@ -39,7 +35,8 @@ bool OGResourceManager::ParseResourceFile(const QString& a_filename)
     }
 
     WOGResourcesSPtr res;
-    if (!Load(res, filename))
+    ConfigLoader::Load(res, filename);
+    if (!res)
     {
         logWarn("Could not load file:" + filename);
         return false;
@@ -123,27 +120,6 @@ og::ImageSourceSPtr OGResourceManager::GetImageSourceById(const QString& a_id)
     auto is = CreateImageSource(filename);
     m_imageSources[a_id] = is;
     return is;
-}
-
-template<typename T>
-bool OGResourceManager::Load(T& a_data, const QString& a_filename)
-{
-    typename T::element_type::Conf conf;
-    if (!conf.Open(a_filename))
-    {
-        logWarn("Could not open file:" + a_filename);
-        return false;
-    }
-
-    if (!conf.Read())
-    {
-        logWarn("Could not read file:" + a_filename);
-        return false;
-    }
-
-    a_data.reset(conf.Parser());
-
-    return true;
 }
 
 const WOGBall* OGResourceManager::GetBallByType(const QString& a_type)
