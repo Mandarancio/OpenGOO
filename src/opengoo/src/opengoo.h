@@ -115,7 +115,7 @@ private:
 
     void MouseButtonDown(const QPoint& aPos);
     void MouseButtonUp(const QPoint& aPos);
-    void _MouseMove(QMouseEvent* ev);
+    void MouseMove(const QPoint& aPos);
     void _MouseWheel(QWheelEvent*)
     {
     }

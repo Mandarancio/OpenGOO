@@ -5,9 +5,8 @@
 class Animation
 {
 public:
-    Animation(og::Entity* aEntity, int aDuration)
-        : mEntity(aEntity)
-        , mDuration(aDuration)
+    Animation(int aDuration)
+        : mDuration(aDuration)
     {
     }
 
@@ -27,7 +26,6 @@ public:
     virtual void Update(int aDt) = 0;
 
 protected:
-    og::Entity* mEntity;
     int mDuration;
     int mRemainingTime;
     bool mIsActive;

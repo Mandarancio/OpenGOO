@@ -10,7 +10,6 @@ namespace og
 {
 namespace physics
 {
-
 PhysicsEngine::PhysicsEngine(float a_x, float a_y, bool a_sleep, float aRatio)
     : m_contactListener(new ContactListener)
     , m_world(new b2World(b2Vec2(a_x, a_y)))
@@ -93,7 +92,7 @@ void PhysicsEngine::DestroyBody(b2Body* aBody)
 
 std::unique_ptr<Joint> PhysicsEngine::CreateJoint(PhysicsBody* aB1, PhysicsBody* aB2, const JointDef& aDef)
 {
-    if (auto j = mJointFactory.CreateJoint(aB1->body, aB2->body, aDef))
+    if (auto j = mJointFactory.CreateJoint(aB1->mBody, aB2->mBody, aDef))
     {
         j->SetUserData(this);
         return std::unique_ptr<Joint>(new Joint(j));
@@ -107,7 +106,7 @@ void PhysicsEngine::DestroyJoint(b2Joint *aJoint)
     m_world->DestroyJoint(aJoint);
 }
 
-std::unique_ptr<OGPCircle> PhysicsEngine::CreateCircle(const Circle& a_circle, bool aDynamic)
+std::unique_ptr<OGPCircle> PhysicsEngine::CreateCircle(const Circle& /*a_circle*/, bool /*aDynamic*/)
 {
 //    std::unique_ptr<OGPCircle> body(new OGPCircle);
 

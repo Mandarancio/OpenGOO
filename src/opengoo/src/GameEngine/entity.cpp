@@ -21,6 +21,8 @@ void Entity::Render(QPainter& a_painter)
         if (mPhysicsBody)
         {
             auto pos = mPhysicsBody->GetPosition() / GetScene()->GetPhysicsEngine()->GetRatio();
+            auto a = qRadiansToDegrees(mPhysicsBody->GetAngle());
+            m_graphic->SetAngle(-a);
             m_graphic->Render(a_painter, pos.x(), -pos.y());
         }
         else

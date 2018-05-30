@@ -3,10 +3,86 @@
 #include "og_widget.h"
 #include "og_game.h"
 #include "og_gameengine.h"
+#include "mouselistener.h"
 
-using namespace og;
+namespace og
+{
+class OGWidget::Input : public MouseListener
+{
+public:
+    Input()
+    {
+        mMouseButton.fill(false);
+    }
+
+    bool IsButtonPressed(MouseInput::MouseButton aButton)
+    {
+        switch (aButton)
+        {
+        case MouseInput::e_left:
+        case MouseInput::e_middle:
+        case MouseInput::e_right:
+            return mMouseButton[aButton];
+        case MouseInput::e_none:
+            return std::none_of(mMouseButton.begin(), mMouseButton.end(), [](bool btn) { return btn; });
+        case MouseInput::e_any:
+            return std::any_of(mMouseButton.begin(), mMouseButton.end(), [](bool btn) { return btn; });
+        }
+
+        return false;
+    }
+
+    void OnMouseDown(QMouseEvent* aEv)
+    {
+        switch (aEv->button())
+        {
+        case Qt::LeftButton:
+            mMouseButton[MouseInput::e_left] = true;
+            break;
+        case Qt::MiddleButton:
+            mMouseButton[MouseInput::e_middle] = true;
+            break;
+        case Qt::RightButton:
+            mMouseButton[MouseInput::e_right] = true;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void OnMouseUp(QMouseEvent* aEv)
+    {
+        switch (aEv->button())
+        {
+        case Qt::LeftButton:
+            mMouseButton[MouseInput::e_left] = false;
+            break;
+        case Qt::MiddleButton:
+            mMouseButton[MouseInput::e_middle] = false;
+            break;
+        case Qt::RightButton:
+            mMouseButton[MouseInput::e_right] = false;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void OnMouseMove(QMouseEvent* /*aEv*/)
+    {
+    }
+
+private:
+     std::array<bool, 3> mMouseButton;
+};
+
+void OGWidget::InputDeleter::operator()(Input* ptr) const
+{
+    delete ptr;
+}
 
 OGWidget::OGWidget(OGGame* game)
+    : mInput(new Input)
 {
     _pGame = game;
 
@@ -91,67 +167,29 @@ void OGWidget::resizeEvent(QResizeEvent*)
 {
 }
 
-void OGWidget::mousePressEvent(QMouseEvent* ev)
+void OGWidget::mousePressEvent(QMouseEvent* aEv)
 {
-    if (!uiList().isEmpty())
-    {
-        for (int i = uiList().size() - 1; i >= 0; i--)
-        {
-            if (uiList().at(i)->isVisible())
-            {
-                uiList().at(i)->onMouseDown(ev);
+    mInput->OnMouseDown(aEv);
 
-                if (ev->isAccepted())
-                    return;
-            }
-        }
-    }
+    getGame()->MouseButtonDown(GE->windowToLogical(aEv->pos()));
 
-    getGame()->MouseButtonDown(GE->windowToLogical(ev->pos()));
-
-    ev->accept();
+    aEv->accept();
 }
 
-void OGWidget::mouseReleaseEvent(QMouseEvent* ev)
+void OGWidget::mouseReleaseEvent(QMouseEvent* aEv)
 {
-    if (!uiList().isEmpty())
-    {
-        for (int i = uiList().size() - 1; i >= 0; i--)
-        {
-            if (uiList().at(i)->isVisible())
-            {
-                uiList().at(i)->onMouseUp(ev);
+    mInput->OnMouseUp(aEv);
 
-                if (ev->isAccepted())
-                    return;
-            }
-        }
-    }
+    getGame()->MouseButtonUp(GE->windowToLogical(aEv->pos()));
 
-    getGame()->MouseButtonUp(GE->windowToLogical(ev->pos()));
-
-    ev->accept();
+    aEv->accept();
 }
 
-void OGWidget::mouseMoveEvent(QMouseEvent* ev)
+void OGWidget::mouseMoveEvent(QMouseEvent* aEv)
 {
-    if (!uiList().isEmpty())
-    {
-        for (int i = uiList().size() - 1; i >= 0; i--)
-        {
-            if (uiList().at(i)->isVisible())
-            {
-                uiList().at(i)->mouseMove(ev);
+    getGame()->MouseMove(GE->windowToLogical(aEv->pos()));
 
-                if (ev->isAccepted())
-                    return;
-            }
-        }
-    }
-
-    getGame()->MouseMove(ev);
-
-    ev->accept();
+    aEv->accept();
 }
 
 void OGWidget::wheelEvent(QWheelEvent* ev)
@@ -189,4 +227,15 @@ void OGWidget::setBackgroundColor(const QColor& col, bool show)
     p.setBrush(QPalette::Window, col);
     setPalette(p);
     setAutoFillBackground(show);
+}
+
+bool OGWidget::IsButtonPressed(MouseInput::MouseButton aButton) const
+{
+    return mInput->IsButtonPressed(aButton);
+}
+
+QPoint OGWidget::GetMousePosition() const
+{
+    return mapFromGlobal(cursor().pos());
+}
 }

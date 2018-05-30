@@ -1,11 +1,13 @@
 #pragma once
 
+#include <array>
+
 #include <QGLWidget>
 #include <QHash>
 #include <QTimer>
 
 #include "og_iui.h"
-
+#include "input.h"
 
 class QString;
 
@@ -17,6 +19,13 @@ namespace og
     {
             Q_OBJECT
 
+        class Input;
+
+        struct InputDeleter
+        {
+            void operator()(Input* ptr) const;
+        };
+
         public:
             explicit OGWidget(OGGame* game);
 
@@ -27,15 +36,19 @@ namespace og
 
             void setBackgroundColor(const QColor& col, bool show);
 
+            bool IsButtonPressed(MouseInput::MouseButton aButton) const;
+
+            QPoint GetMousePosition() const;
+
         protected:
             void keyReleaseEvent(QKeyEvent* ev);
             void keyPressEvent(QKeyEvent* ev);
 
             void showEvent(QShowEvent*);
             void resizeEvent(QResizeEvent*);
-            void mousePressEvent(QMouseEvent* ev);
-            void mouseReleaseEvent(QMouseEvent* ev);
-            void mouseMoveEvent(QMouseEvent* ev);
+            void mousePressEvent(QMouseEvent* aEv);
+            void mouseReleaseEvent(QMouseEvent* aEv);
+            void mouseMoveEvent(QMouseEvent* aEv);
             void wheelEvent(QWheelEvent* ev);
 
             void paintEvent(QPaintEvent*);
@@ -55,6 +68,6 @@ namespace og
             OGGame* _pGame;
             QTimer _timer;
             ui::UIList _uiList;
+            std::unique_ptr<Input, InputDeleter> mInput;
     };
-
 } // namespace og

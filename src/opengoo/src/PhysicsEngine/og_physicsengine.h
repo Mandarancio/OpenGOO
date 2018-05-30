@@ -28,6 +28,7 @@ class CircleShape;
 struct BodyDef
 {
     typedef oglib::PointF Position;
+
     enum Type
     {
         e_unknown,
@@ -116,7 +117,7 @@ public:
 
     void DestroyBody(b2Body* aBody);
 
-    std::unique_ptr<OGPCircle> CreateCircle(const Circle& a_circle, bool aDynamic);
+    std::unique_ptr<OGPCircle> CreateCircle(const Circle&, bool);
 
     std::unique_ptr<Joint> CreateJoint(PhysicsBody* aB1, PhysicsBody* aB2, const JointDef& aDef);
 

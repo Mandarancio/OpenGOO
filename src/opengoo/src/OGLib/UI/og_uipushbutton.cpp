@@ -84,7 +84,7 @@ void PushButton::_Paint(QPainter *painter)
     painter->restore();
 }
 
-void PushButton::_onMouseDown(QMouseEvent* ev)
+void PushButton::OnMouseDown(QMouseEvent* ev)
 {
     if (hitButton(ev->pos()))
     {
@@ -98,7 +98,7 @@ void PushButton::_onMouseDown(QMouseEvent* ev)
     }
 }
 
-void PushButton::_onMouseUp(QMouseEvent* ev)
+void PushButton::OnMouseUp(QMouseEvent* ev)
 {
     if (!isDown())
     {
@@ -119,7 +119,7 @@ void PushButton::_onMouseUp(QMouseEvent* ev)
     }
 }
 
-void PushButton::_mouseMove(QMouseEvent* ev)
+void PushButton::OnMouseMove(QMouseEvent* ev)
 {
     if (hitButton(ev->pos()) != isOver())
     {

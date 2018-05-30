@@ -44,17 +44,17 @@ inline void UI::_setSize(int width, int height)
 inline bool UI::_isVisible() const { return _pImpl->visible; }
 inline void UI::_setVisible(bool visible) { _pImpl->visible = visible; }
 
-inline void UI::_onMouseDown(QMouseEvent* ev)
+inline void UI::OnMouseDown(QMouseEvent* ev)
 {
     ev->ignore();
 }
 
-inline void UI::_onMouseUp(QMouseEvent* ev)
+inline void UI::OnMouseUp(QMouseEvent* ev)
 {
     ev->ignore();
 }
 
-inline void UI::_mouseMove(QMouseEvent *ev)
+inline void UI::OnMouseMove(QMouseEvent *ev)
 {
     ev->ignore();
 }

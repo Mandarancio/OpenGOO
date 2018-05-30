@@ -4,6 +4,7 @@
 
 #include "GameEngine/scene.h"
 
+#include "ball.h"
 #include "strand.h"
 
 void Strand::Render(QPainter& a_painter)
@@ -24,4 +25,14 @@ void Strand::LastUpdate()
     auto v = p1 - p2;
     mLength = v.length();
     mAngle = qRadiansToDegrees(atan2f(v.x(), v.y()));
+}
+
+Ball* Strand::GetBallA() const
+{
+    return static_cast<Ball*>(mJoint->GetBodyA());
+}
+
+Ball* Strand::GetBallB() const
+{
+    return static_cast<Ball*>(mJoint->GetBodyB());
 }

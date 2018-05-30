@@ -1,45 +1,69 @@
 #pragma once
 
-#include "animation.h"
+#include "GameEngine/entity.h"
 
-class RotationAnimation : public Animation
+#include "graphicanimation.h"
+
+class RotationAnimation : public GraphicAnimation
 {
 public:
     RotationAnimation(og::Entity* aEntity, int aDuration, float aStartAngle, float aEndAngle, bool aIsNegative)
-        : Animation(aEntity, aDuration)
+        : GraphicAnimation(aDuration)
     {
         mAngleSpeed = aIsNegative ? ((aEndAngle - aStartAngle) / mDuration) : -((aEndAngle - aStartAngle) / mDuration);
-        mStartAngle = mEntity->GetGraphic()->GetAngle();
+        Init(aEntity->GetGraphic());
+    }
+
+    RotationAnimation(float aAngleSpeed)
+        : GraphicAnimation(-1)
+    {
+        mAngleSpeed = aAngleSpeed;
     }
 
 private:
     void Restart()
     {
-        mEntity->GetGraphic()->SetAngle(mStartAngle);
+        GetGraphic()->SetAngle(mStartAngle);
         Start();
     }
 
     void Start()
     {
-        mAngle = mEntity->GetGraphic()->GetAngle();
+        mAngle = GetGraphic()->GetAngle();
         mDeltaAngle = 0.0f;
         mRemainingTime = mDuration;
-        mIsActive = mRemainingTime > 0;
+        if (mDuration != -1)
+        {
+            mIsActive = mRemainingTime > 0;
+        }
+        else
+        {
+            mIsActive = true;
+        }
     }
 
     void Update(int aDt)
     {
         if (IsActive())
         {
-            mEntity->GetGraphic()->SetAngle(mAngle + mDeltaAngle);
+            GetGraphic()->SetAngle(mAngle + mDeltaAngle);
             mDeltaAngle += mAngleSpeed * aDt;
 
-            mRemainingTime -= aDt;
-            if (!(mRemainingTime > 0))
+            if (mRemainingTime != -1)
             {
-                mIsActive = false;
+                mRemainingTime -= aDt;
+                if (!(mRemainingTime > 0))
+                {
+                    mIsActive = false;
+                }
             }
         }
+    }
+
+    void Init(og::Graphic* aGraphic)
+    {
+        SetGraphic(aGraphic);
+        mStartAngle = GetGraphic()->GetAngle();
     }
 
 private:

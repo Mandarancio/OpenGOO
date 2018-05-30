@@ -113,6 +113,11 @@ public:
     {
     }
 
+    virtual bool OnMouseMove(const QPoint& /*aPosition*/)
+    {
+        return false;
+    }
+
     Scene* GetScene() const
     {
         return m_scene;
@@ -145,6 +150,26 @@ public:
         m_position.setY(aY);
     }
 
+    float GetX() const
+    {
+        return m_position.x();
+    }
+
+    float GetY() const
+    {
+        return m_position.y();
+    }
+
+    void SetX(float aX)
+    {
+        m_position.setX(aX);
+    }
+
+    void SetY(float aY)
+    {
+        m_position.setY(aY);
+    }
+
     const QVector2D& GetPosition() const
     {
         return m_position;
@@ -173,6 +198,7 @@ public:
     void SetPhysicsBody(std::unique_ptr<PhysicsBody> aPhysicsBody)
     {
         mPhysicsBody = std::move(aPhysicsBody);
+        mPhysicsBody->SetUserData(this);
     }
 
     PhysicsBody* GetPhysicsBody() const

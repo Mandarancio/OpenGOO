@@ -120,6 +120,11 @@ void OpenGOO::_Start()
         logError("Could not load fx");
     }
 
+    if (!rm->ParseMaterialsFile("./properties/materials.xml"))
+    {
+        logError("Could not load materials");
+    }
+
     mCamera.SetSize(width_, height_);
     mCamera.SetPosition(0.0f, 0.0f);
     mCamera.SetZoom(1.0f);
@@ -208,8 +213,32 @@ void OpenGOO::_Cycle()
     }
 
     mCamera.Update();
-    const auto& pos = mCamera.GetPosition();
-    mCamera.SetPosition(pos.x() + mCameraSpeed.x(), pos.y() + mCameraSpeed.y());
+    if (flag & !DEBUG)
+    {
+        float hh = mCamera.GetScaledHeight() * 0.5f;
+        float top = GetScene()->GetPosition().y() + GetScene()->GetHeight() - hh;
+        float bottom = GetScene()->GetPosition().y() + hh;
+        if (mCamera.GetY() > top)
+        {
+            mCamera.SetY(top);
+        }
+        else if (mCamera.GetY() < bottom)
+        {
+            mCamera.SetY(bottom);
+        }
+
+        float hw = mCamera.GetScaledWidth() * 0.5f;
+        float left = GetScene()->GetPosition().x() + hw;
+        float right = GetScene()->GetPosition().x() + GetScene()->GetWidth() - hw;
+        if (mCamera.GetX() < left)
+        {
+            mCamera.SetX(left);
+        }
+        else if (mCamera.GetX() > right)
+        {
+            mCamera.SetX(right);
+        }
+    }
 
     GetScene()->Update();
 
@@ -225,8 +254,8 @@ void OpenGOO::_Paint(QPainter* painter)
 {
     int w = qRound(mCamera.GetScaledWidth());
     int h = qRound(mCamera.GetScaledHeight());
-    int x = qRound(mCamera.GetPosition().x() + -(w * 0.5));
-    int y = qRound(-mCamera.GetPosition().y() + -(h * 0.5));
+    int x = qRound(mCamera.GetPosition().x() - (w * 0.5));
+    int y = qRound(-mCamera.GetPosition().y() - (h * 0.5));
     painter->setWindow(x, y, w, h);
 
     if (m_scene)
@@ -255,51 +284,14 @@ void OpenGOO::MouseButtonUp(const QPoint& aPos)
     m_scene->OnMouseUp(aPos);
 }
 
-void OpenGOO::_MouseMove(QMouseEvent* /*ev*/)
+void OpenGOO::MouseMove(const QPoint& aPos)
 {
-//    if (isPause() || !pCamera_ || pProgressWnd_)
-//        return;
+    if (isPause())
+    {
+        return;
+    }
 
-//    curMousePos_ = ev->pos();
-
-//    QPoint pos = pCamera_->windowToLogical(ev->pos());
-//    lastMousePos_ = pos;
-
-//    Q_FOREACH(OGButton * button, pWorld_->buttons())
-//    {
-//        if (button->TestPoint(pos))
-//        {
-//            button->up()->SetVisible(false);
-//            button->over()->SetVisible(true);
-//        }
-//        else
-//        {
-//            button->up()->SetVisible(true);
-//            button->over()->SetVisible(false);
-//        }
-//    }
-
-//    if (!_pSelectedBall)
-//    {
-//        Q_FOREACH(OGBall * ball, pWorld_->balls())
-//        {
-//            if (ball->TestPoint(pos))
-//            {
-//                _pSelectedBall = ball;
-//                _pSelectedBall->SetMarked(true);
-//                break;
-//            }
-//        }
-//    }
-//    else if (_pSelectedBall->IsDragging())
-//    {
-//        _pSelectedBall->MouseMove(pos);
-//    }
-//    else if (!_pSelectedBall->TestPoint(pos))
-//    {
-//        _pSelectedBall->SetMarked(false);
-//        _ClearSelectedBall();
-//    }
+    GetScene()->OnMouseMove(aPos);
 }
 
 void OpenGOO::_KeyDown(QKeyEvent* ev)

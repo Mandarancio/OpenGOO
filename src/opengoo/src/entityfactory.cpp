@@ -5,7 +5,6 @@
 
 #include "OGLib/util.h"
 
-//#include "PhysicsEngine/distancejoint.h"
 #include "PhysicsEngine/physicsbodybuilder.h"
 
 #include "GameEngine/og_gameengine.h"
@@ -23,6 +22,7 @@
 #include "wog_scene.h"
 #include "wog_level.h"
 #include "wog_ball.h"
+#include "wog_material.h"
 
 #include "physics.h"
 
@@ -34,6 +34,7 @@
 #include "entities/strand.h"
 #include "entities/button.h"
 #include "entities/pipe.h"
+#include "entities/geom.h"
 
 #include "ijointbuilder.h"
 
@@ -83,7 +84,7 @@ struct GeomBuilder
     template<typename D>
     void CreateEntity(const D& aDef)
     {
-        mEntity = std::make_shared<og::Entity>(aDef.x, -aDef.y);
+        mEntity = std::make_shared<Geom>(aDef.x, -aDef.y, aDef.tag);
     }
 
     virtual void Init(const T& /*aDef*/)
@@ -99,6 +100,9 @@ struct GeomBuilder
         og::physics::PhysicsBodyBuilder builder(mEngine);
         InitPhysicsBodyBuilder(aDef, builder);
         mEntity->SetPhysicsBody(builder.Build());
+
+        auto m = GE->GetResourceManager()->GetMaterial(aDef.material);
+        mEntity->GetPhysicsBody()->SetFriction(m->friction / 100.0f);
     }
 
     template<typename D>
@@ -116,7 +120,7 @@ struct GeomBuilder
         }
     }
 
-    std::shared_ptr<og::Entity> GetEntity()
+    std::shared_ptr<Geom> GetEntity()
     {
         return mEntity;
     }
@@ -127,7 +131,7 @@ protected:
     }
 
 protected:
-    std::shared_ptr<og::Entity> mEntity;
+    std::shared_ptr<Geom> mEntity;
     og::physics::PhysicsEngine* mEngine;
 };
 
@@ -223,19 +227,26 @@ inline static og::ImageSourceSPtr GetImageSourceById(const QString& aId)
     return GE->GetResourceManager()->GetImageSourceById(aId);
 }
 
-EntityPtr EntityFactory::CreatePipe(const WOGPipe& a_pipe)
+std::shared_ptr<Pipe> EntityFactory::CreatePipe(const WOGPipe& a_pipe)
 {
     return std::make_shared<Pipe>(a_pipe);
 }
 
-EntityPtr EntityFactory::CreateGameController()
+std::shared_ptr<GameController> EntityFactory::CreateGameController()
 {
     return std::make_shared<GameController>();
 }
 
-EntityPtr EntityFactory::CreateExit(const WOGLevelExit& a_exit, ExitEventListener* a_listener)
+std::shared_ptr<Exit> EntityFactory::CreateExit(const WOGLevelExit& a_exit)
 {
-    return std::make_shared<Exit>(*GetPhysicsEngine(), a_exit, a_listener);
+    using namespace og::physics;
+    auto body = PhysicsBodyBuilder(GetPhysicsEngine()).SetBodyType(BodyDef::e_static).SetAngle(0)
+            .SetPosition(a_exit.pos.x(), a_exit.pos.y()).SetShapeType(Shape::e_circle)
+            .SetRadius(a_exit.radius).Build();
+
+    body->SetSensor(true);
+
+    return std::make_shared<Exit>(std::move(body));
 }
 
 EntityPtr EntityFactory::CreateRadialForceField(const WOGRadialForceField& a_field)
@@ -354,13 +365,12 @@ std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
 
     auto walkSpeed = ballDef->attribute.movement.walkspeed;
     walkSpeed += walkSpeed * GE->GetRandomGenerator()->Range(0.0f, ballDef->attribute.movement.speedvariance);
+    walkSpeed *= GE->getFrameRate();
 
-    auto climbSpeed = ballDef->attribute.movement.climbspeed;
+    auto climbSpeed = ballDef->attribute.movement.climbspeed * GetPhysicsEngine()->GetRatio();
     climbSpeed += climbSpeed * GE->GetRandomGenerator()->Range(0.0f, ballDef->attribute.movement.speedvariance);
 
-    auto entity = std::make_shared<Ball>(multiSpr, walkSpeed, climbSpeed);
-    entity->SetName(a_ball.type);
-
+    std::unique_ptr<og::PhysicsBody> body;
     {
         using namespace og::physics;
         PhysicsBodyBuilder builder(GetPhysicsEngine());
@@ -369,19 +379,22 @@ std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
         if (ballDef->attribute.core.shape.type == WOGBallShape::e_circle)
         {
             builder.SetShapeType(Shape::e_circle).SetRadius(ballDef->attribute.core.shape.radius);
+            body = builder.Build();
         }
         else if (ballDef->attribute.core.shape.type == WOGBallShape::e_rectangle)
         {
             builder.SetShapeType(Shape::e_polygon)
                     .SetSize(ballDef->attribute.core.shape.width, ballDef->attribute.core.shape.height);
+            body = builder.Build();
         }
-        else
-        {
-            return entity;
-        }
-
-        entity->SetPhysicsBody(builder.Build());
     }
+
+    BallDefination bd;
+    bd.climbSpeed = climbSpeed;
+    bd.walkSpeed = walkSpeed;
+    bd.isSleeping = !a_ball.discovered;
+    auto entity = std::make_shared<Ball>(std::move(body), multiSpr, bd);
+    entity->SetName(a_ball.type);
 
     return entity;
 #endif
@@ -455,7 +468,7 @@ EntityPtr EntityFactory::CreateStrand(EntityPtr /*a_ball1*/, EntityPtr /*a_ball2
     return nullptr;
 }
 
-EntityPtr EntityFactory::CreateStrand(EntityPtr aEntity1, EntityPtr aEntity2, const WOGBallStrand& aDef)
+std::shared_ptr<Strand> EntityFactory::CreateStrand(EntityPtr aEntityA, EntityPtr aEntityB, const WOGBallStrand& aDef)
 {
     using namespace og::physics;
     JointDef jointDef;
@@ -469,7 +482,7 @@ EntityPtr EntityFactory::CreateStrand(EntityPtr aEntity1, EntityPtr aEntity2, co
         return nullptr;
     }
 
-    auto joint = GetPhysicsEngine()->CreateJoint(aEntity1->GetPhysicsBody(), aEntity2->GetPhysicsBody(), jointDef);
+    auto joint = GetPhysicsEngine()->CreateJoint(aEntityA->GetPhysicsBody(), aEntityB->GetPhysicsBody(), jointDef);
     if (!joint)
     {
         return nullptr;

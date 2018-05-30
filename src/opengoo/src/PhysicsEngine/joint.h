@@ -5,6 +5,8 @@
 
 namespace og
 {
+class Entity;
+
 namespace physics
 {
 class PhysicsEngine;
@@ -52,6 +54,10 @@ public:
     {
         return m_joint;
     }
+
+    og::Entity* GetBodyA() const;
+
+    og::Entity* GetBodyB() const;
 
 private:
     Joint(const Joint&);

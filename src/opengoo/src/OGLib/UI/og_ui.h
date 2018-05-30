@@ -33,9 +33,9 @@ private:
     bool _isVisible() const;
     void _setVisible(bool visible);
 
-    void _onMouseDown(QMouseEvent* ev);
-    void _onMouseUp(QMouseEvent* ev);
-    void _mouseMove(QMouseEvent *ev);
+    void OnMouseDown(QMouseEvent* ev);
+    void OnMouseUp(QMouseEvent* ev);
+    void OnMouseMove(QMouseEvent *ev);
 };
 
 } // namespace ui

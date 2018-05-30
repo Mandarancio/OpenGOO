@@ -2,9 +2,11 @@
 
 #include <array>
 
-#include "animation.h"
+#include "GameEngine/entity.h"
 
-class ScaleAnimation : public Animation
+#include "graphicanimation.h"
+
+class ScaleAnimation : public GraphicAnimation
 {
     enum
     {
@@ -19,27 +21,26 @@ public:
                    float aStartHeight,
                    float aEndWidth,
                    float aEndHeight)
-        : Animation(aEntity, aDuration)
+        : GraphicAnimation(aDuration)
     {
         mWidthSpeed = (aEndWidth - aStartWidth) / mDuration;
         mHeightSpeed = (aEndHeight - aStartHeight) / mDuration;
 
-        mStartScale[e_width] = mEntity->GetGraphic()->GetScaleX();
-        mStartScale[e_height] = mEntity->GetGraphic()->GetScaleY();
+        Init(aEntity->GetGraphic());
     }
 
 private:
     void Restart()
     {
-        mEntity->GetGraphic()->SetScaleX(mStartScale[e_width]);
-        mEntity->GetGraphic()->SetScaleY(mStartScale[e_height]);
+        GetGraphic()->SetScaleX(mStartScale[e_width]);
+        GetGraphic()->SetScaleY(mStartScale[e_height]);
         Start();
     }
 
     void Start()
     {
-        mScale[e_width] = mEntity->GetGraphic()->GetScaleX();
-        mScale[e_height] = mEntity->GetGraphic()->GetScaleY();
+        mScale[e_width] = GetGraphic()->GetScaleX();
+        mScale[e_height] = GetGraphic()->GetScaleY();
         mWidth = 0.0f;
         mHeight = 0.0f;
         mRemainingTime = mDuration;
@@ -50,8 +51,8 @@ private:
     {
         if (IsActive())
         {
-            mEntity->GetGraphic()->SetScaleX(mScale[e_width] + mWidth);
-            mEntity->GetGraphic()->SetScaleY(mScale[e_height] + mHeight);
+            GetGraphic()->SetScaleX(mScale[e_width] + mWidth);
+            GetGraphic()->SetScaleY(mScale[e_height] + mHeight);
 
             mWidth += mWidthSpeed * aDt;
             mHeight += mHeightSpeed * aDt;
@@ -62,6 +63,13 @@ private:
                 mIsActive = false;
             }
         }
+    }
+
+    void Init(og::Graphic* aGraphic)
+    {
+        SetGraphic(aGraphic);
+        mStartScale[e_width] = GetGraphic()->GetScaleX();
+        mStartScale[e_height] = GetGraphic()->GetScaleY();
     }
 
 private:

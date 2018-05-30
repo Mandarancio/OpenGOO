@@ -68,6 +68,8 @@ public:
 
     bool TestPoint(const Transform& a_transform, const QVector2D& a_point) const;
 
+    static bool Collide(const Shape& aShapeA, const Transform& aTransformA, const Shape& aShapeB, const Transform& aTransformB);
+
 protected:
     const b2Shape* GetShape() const
     {

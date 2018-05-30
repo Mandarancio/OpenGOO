@@ -8,7 +8,7 @@ class CamZoomAnimation : public Animation
 {
 public:
     CamZoomAnimation(int aDuration, float aStartZoom, float aEndZoom)
-        : Animation(nullptr, aDuration)
+        : Animation(aDuration)
     {
         mZoomSpeed = (aEndZoom - aStartZoom) / mDuration;
         mStartZoom = GE->GetCamera()->GetZoom();

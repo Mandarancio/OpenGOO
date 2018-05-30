@@ -4,12 +4,14 @@
 #include <QList>
 #include <QRect>
 
+#include "mouselistener.h"
+
 class QPainter;
 class QMouseEvent;
 
 namespace og {
 namespace ui {
-class IUI
+class IUI : public og::MouseListener
 {
 public:
     virtual ~IUI() {}
@@ -30,10 +32,6 @@ public:
 
     void Paint(QPainter* painter) { _Paint(painter); }
 
-    void onMouseDown(QMouseEvent* ev) { _onMouseDown(ev); }
-    void onMouseUp(QMouseEvent* ev) { _onMouseUp(ev); }
-    void mouseMove(QMouseEvent* ev) { _mouseMove(ev); }
-
 private:
     virtual int _x() const = 0;
     virtual int _y() const = 0;
@@ -49,10 +47,6 @@ private:
     virtual void _setVisible(bool visible) = 0;
 
     virtual void _Paint(QPainter *painter) = 0 ;
-
-    virtual void _onMouseDown(QMouseEvent* ev) = 0;
-    virtual void _onMouseUp(QMouseEvent* ev) = 0;
-    virtual void _mouseMove(QMouseEvent* ev) = 0;
 };
 
     typedef QList<IUI*> UIList;

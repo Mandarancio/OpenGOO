@@ -26,5 +26,15 @@ void Joint::Destroy()
     m_joint = nullptr;
     mType = e_unknown;
 }
+
+og::Entity* Joint::GetBodyA() const
+{
+    return static_cast<og::Entity*>(m_joint->GetBodyA()->GetUserData());
+}
+
+og::Entity* Joint::GetBodyB() const
+{
+    return static_cast<og::Entity*>(m_joint->GetBodyB()->GetUserData());
+}
 }
 }

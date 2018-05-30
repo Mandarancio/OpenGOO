@@ -12,4 +12,10 @@ struct WOGMaterial
     int stickiness;
 };
 
-typedef QList<WOGMaterial> WOGMaterialList;
+struct WOGMaterialList : public QList<WOGMaterial>
+{
+    static std::unique_ptr<WOGMaterialList> Create()
+    {
+        return std::unique_ptr<WOGMaterialList>(new WOGMaterialList);
+    }
+};

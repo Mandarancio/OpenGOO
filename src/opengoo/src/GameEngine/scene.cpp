@@ -98,6 +98,17 @@ void Scene::OnMouseUp(const QPoint& a_point)
     }
 }
 
+void Scene::OnMouseMove(const QPoint& a_point)
+{
+    for (auto it = m_update.cbegin(); it != m_update.cend(); ++it)
+    {
+        if ((*it)->OnMouseMove(a_point))
+        {
+            break;
+        }
+    }
+}
+
 void Scene::OnBegin()
 {
     SceneLoader sl;

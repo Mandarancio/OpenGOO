@@ -9,6 +9,7 @@ class QString;
 struct WOGBall;
 struct AnimationData;
 class WOGEffect;
+struct WOGMaterial;
 
 namespace og
 {
@@ -23,6 +24,8 @@ struct IResourceManager
     virtual bool ParseTextFile(const QString& a_filename, const QString& a_language) = 0;
 
     virtual bool ParseFxFile(const QString& a_filename) = 0;
+
+    virtual bool ParseMaterialsFile(const QString& a_filename) = 0;
 
     virtual const WOGBall* GetBallByType(const QString& a_type) = 0;
 
@@ -43,6 +46,8 @@ struct IResourceManager
     virtual AnimationData* GetAnimation(const QString& aId) = 0;
 
     virtual const WOGEffect* GetEffect(const QString& aId) = 0;
+
+    virtual const WOGMaterial* GetMaterial(const QString& aId) = 0;
 };
 }
 

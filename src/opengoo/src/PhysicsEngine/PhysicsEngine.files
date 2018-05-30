@@ -21,4 +21,6 @@ HEADERS += \
     src/PhysicsEngine/circleshape.h \
     src/PhysicsEngine/shapefactory.h \
     src/PhysicsEngine/fixturebuilder.h \
-    src/PhysicsEngine/physicsbodybuilder.h
+    src/PhysicsEngine/physicsbodybuilder.h \
+    src/PhysicsEngine/polygonshape.h \
+    src/PhysicsEngine/edgeshape.h

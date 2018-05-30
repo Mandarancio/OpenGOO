@@ -10,7 +10,8 @@ SOURCES += \
     src/GameEngine/input.cpp \
     src/GameEngine/imagesource.cpp \
     src/GameEngine/scene.cpp \
-    src/GameEngine/entity.cpp
+    src/GameEngine/entity.cpp \
+    src/GameEngine/mouseinputimpl.cpp
 
 HEADERS += \
     src/GameEngine/og_gameengine.h \
@@ -31,4 +32,6 @@ HEADERS += \
     src/GameEngine/iresourcemanager.h \
     src/GameEngine/camera.h \
     src/GameEngine/ifont.h \
-    src/GameEngine/timer.h
+    src/GameEngine/timer.h \
+    src/GameEngine/mouseinputimpl.h \
+    src/GameEngine/mouselistener.h

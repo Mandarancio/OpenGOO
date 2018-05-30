@@ -76,6 +76,24 @@ bool OGResourceManager::ParseFxFile(const QString& a_filename)
     return m_effects.get();
 }
 
+bool OGResourceManager::ParseMaterialsFile(const QString& a_filename)
+{
+    mMaterials.clear();
+    std::unique_ptr<WOGMaterialList> materials;
+    ConfigLoader::Load(materials, a_filename);
+    if (!materials)
+    {
+        return false;
+    }
+
+    foreach (const auto& m, *materials)
+    {
+        mMaterials[m.id] = m;
+    }
+
+    return true;
+}
+
 og::ImageSourceSPtr OGResourceManager::CreateImageSource(const QString& a_filename)
 {
 #ifdef Q_OS_MAC
@@ -250,4 +268,15 @@ const og::IFont* OGResourceManager::GetFont(const QString& aId)
 
     it = mFonts.insert(aId, nullptr);
     return it.value().get();
+}
+
+const WOGMaterial* OGResourceManager::GetMaterial(const QString& aId)
+{
+    auto it = mMaterials.find(aId);
+    if (it == mMaterials.end())
+    {
+        return nullptr;
+    }
+
+    return &(*it);
 }

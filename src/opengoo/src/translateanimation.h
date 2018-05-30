@@ -14,7 +14,8 @@ class TranslateAnimation : public Animation
 
 public:
     TranslateAnimation(og::Entity* aEntity, int aDuration, const QPointF& aStart, const QPointF& aEnd)
-            : Animation(aEntity, aDuration)
+            : Animation(aDuration)
+            , mEntity(aEntity)
             , mSpeed((aEnd - aStart) / mDuration)
     {
         mStartPosition = mEntity->GetPosition();
@@ -50,6 +51,7 @@ private:
     }
 
 private:
+    og::Entity* mEntity;
     QVector2D mStartPosition;
     QVector2D mPosition;
     QVector2D mSpeed;

@@ -7,7 +7,8 @@ SOURCES += \
     src/entities/strand.cpp \
     src/entities/button.cpp \
     src/entities/pipe.cpp \
-    src/entities/ball.cpp
+    src/entities/ball.cpp \
+    src/entities/geom.cpp
 
 HEADERS += \
     src/entities/cap.h \
@@ -19,4 +20,6 @@ HEADERS += \
     src/entities/button.h \
     src/entities/scenelayer.h \
     src/entities/pipe.h \
-    src/entities/ball.h
+    src/entities/ball.h \
+    src/entities/geom.h \
+    src/entities/balllistener.h

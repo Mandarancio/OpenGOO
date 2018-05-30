@@ -11,6 +11,7 @@ class MultiSprite : public og::Graphic
 public:
     MultiSprite(bool aFixed = true)
         : mIsFixed(aFixed)
+        , mAngle(0)
     {
     }
 
@@ -22,11 +23,20 @@ public:
 
     float GetAngle() const
     {
-        return  0;
+        return mAngle;
     }
 
-    void SetAngle(float)
+    void SetAngle(float aAngle)
     {
+        for (size_t i = 0; i < mRender.size(); ++i)
+        {
+            for (auto it = mRender[i].begin(); it != mRender[i].end(); ++it)
+            {
+                (*it)->SetAngle(aAngle);
+            }
+        }
+
+        mAngle = aAngle;
     }
 
     void SetScaleX(float)
@@ -73,5 +83,6 @@ private:
 private:
     std::array<std::vector<OGSpritePtr>, 5> mRender;
     bool mIsFixed;
+    float mAngle;
 };
 

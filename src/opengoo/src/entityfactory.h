@@ -9,9 +9,6 @@
 class QString;
 class QPointF;
 
-struct GameData;
-struct ExitEventListener;
-
 struct WOGPipe;
 struct WOGLevelExit;
 struct WOGRadialForceField;
@@ -24,6 +21,10 @@ struct WOGRectangle;
 struct WOGLine;
 
 class OGBall;
+class GameController;
+class Exit;
+class Pipe;
+class Strand;
 
 namespace og
 {
@@ -58,11 +59,11 @@ public:
 
     EntityPtr CreateCap(const WOGPipe& a_pipe, const QString& a_type);
 
-    EntityPtr CreatePipe(const WOGPipe& a_pipe);
+    std::shared_ptr<Pipe> CreatePipe(const WOGPipe& a_pipe);
 
-    EntityPtr CreateGameController();
+    std::shared_ptr<GameController> CreateGameController();
 
-    EntityPtr CreateExit(const WOGLevelExit& a_exit, ExitEventListener* a_listener);
+    std::shared_ptr<Exit> CreateExit(const WOGLevelExit &a_exit);
 
     EntityPtr CreateRadialForceField(const WOGRadialForceField& a_field);
 
@@ -70,7 +71,7 @@ public:
 
     EntityPtr CreateStrand(EntityPtr, EntityPtr);
 
-    EntityPtr CreateStrand(EntityPtr aEntity1, EntityPtr aEntity2, const WOGBallStrand& aDef);
+    std::shared_ptr<Strand> CreateStrand(EntityPtr aEntityA, EntityPtr aEntityB, const WOGBallStrand& aDef);
 
     EntityPtr CreateButton(const WOGButton& a_btnDef);
 

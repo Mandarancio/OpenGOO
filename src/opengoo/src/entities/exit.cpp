@@ -1,154 +1,110 @@
 #include "exit.h"
-#include "wog_exit.h"
-
-#include <OGPhysicsEngine>
-#include "circle.h"
-#include "physics.h"
-
-#include "opengoo.h"
-#include "og_world.h"
-#include "og_userdata.h"
 
 #include "exiteventlistener.h"
-#include "PhysicsEngine/og_circlesensor.h"
+#include "ball.h"
 
-
-using namespace og;
-
-Exit::Exit(og::physics::PhysicsEngine& a_physicEngine, const WOGLevelExit& a_exit, ExitEventListener* a_listener)
+Exit::Exit(std::unique_ptr<og::PhysicsBody> aPhysicsBody)
     : Entity(0, 0)
-    , m_listener(a_listener)
-    , m_physicEngine(a_physicEngine)
-{       
-    Circle c = Circle(a_exit.pos, a_exit.radius) / 10.0f;
-    og::physics::SensorFilter f;
-    f.category = PhysicsFactory::EXIT;
-    f.mask = PhysicsFactory::BALL;
-
-    m_sensor.reset(new og::physics::CircleSensor(m_physicEngine, c, this));
-    m_sensor->SetFilter(f);
-    m_physicEngine.AddSensor(m_sensor.get());
-
-    m_isClosed = true;
+    , mListener(nullptr)
+    , mIsClosed(true)
+{
+    SetPhysicsBody(std::move(aPhysicsBody));
 }
 
-Exit::~Exit()
+void Exit::CollideWith(Ball* aBall)
 {
-    m_physicEngine.RemoveSensor(m_sensor.get());
-}
-
-void Exit::Update()
-{
-    if (m_isClosed)
-        return;
-
-    auto center = m_sensor->GetPosition();
-
-    for (int i = 0; i < m_balls.size(); ++i)
+    if (aBall->IsClimbing())
     {
-        auto userData = GetBall(i)->GetUserData();
+        aBall->OnSuction();
+    }
+    const float force = 40.0f;
+    auto v = GetPhysicsBody()->GetPosition() - aBall->GetPosition();
+    if (v.length() < std::numeric_limits<float>::epsilon())
+    {
+        return;
+    }
 
-        if (userData && userData->isTouching)
+    v.normalize();
+    v *= force;
+    aBall->GetPhysicsBody() ->ApplyForce(v);
+}
+
+void Exit::LastUpdate()
+{
+    bool isOpen = false;
+    for (auto ce = GetPhysicsBody()->GetContactEdge(); !ce.IsEmpty(); ce = ce.GetNext())
+    {
+        auto e = static_cast<og::Entity*>(ce.GetUserData());
+        if (auto ball = dynamic_cast<Ball*>(e))
         {
-            auto position = GetBall(i)->GetPhyPosition();
-            auto v = center - position;
-
-            float force = 40.0f;
-
-            if (v.lengthSquared() < FLT_EPSILON * FLT_EPSILON)
-                continue;
-
-            v.normalize();
-            v *= force;
-            GetBall(i)->GetBody()->ApplyForce(v, position);
-        }
-
-        if (GetBall(i)->isSuction())
-        {
-            auto position = GetBall(i)->GetPhyPosition();
-            float lq = (center - position).lengthSquared();
-
-            if (lq <= 1.0f)
+            if (!isOpen && ball->IsAttached())
             {
-                GetBall(i)->SetExit(true);
-                m_listener->OnBallExit();
-                m_remove.push_back(GetBall(i));
+                isOpen = true;
+                ce = GetPhysicsBody()->GetContactEdge();
+            }
+
+            if (isOpen)
+            {
+                CollideWith(ball);
             }
         }
     }
 
-    if (!m_remove.isEmpty())
+    if (IsClosed() && isOpen)
     {
-        for (int i = 0; i < m_remove.size(); ++i)
+        mIsClosed = false;
+        if (mListener)
         {
-            m_balls.removeOne(m_remove[i]);
+            mListener->OnOpen();
         }
-
-        m_remove.clear();
+    }
+    else if (IsOpen() && !isOpen)
+    {
+        mIsClosed = true;
+        if (mListener)
+        {
+            mListener->OnClosed();
+        }
     }
 }
 
-void Exit::AddBall(OGUserData& a_data, OGBall* a_ball)
+void Exit::Update()
 {
-    assert(a_ball);
+//    if (mIsClosed)
+//        return;
 
-    if (a_ball->IsAttached() && !a_data.isAttachedOnEnter)
-    {
-        a_data.isAttachedOnEnter = true;
+//    auto center = m_sensor->GetPosition();
 
-        if (m_isClosed)
-        {
-            m_listener->OnOpen();
-            m_isClosed = false;
-        }
+//    for (int i = 0; i < m_balls.size(); ++i)
+//    {
+//        auto userData = GetBall(i)->GetUserData();
 
-        a_data.isTouching = true;
+//        if (userData && userData->isTouching)
+//        {
+//            auto position = GetBall(i)->GetPhyPosition();
+//            auto v = center - position;
 
-    }
-    else if (!m_isClosed && a_ball->IsSuckable())
-    {
-        a_data.isTouching = true;
-        a_ball->SetSuction(true);
-    }
+//            float force = 40.0f;
 
-    assert(m_balls.indexOf(a_ball) == -1);
-    m_balls.push_back(a_ball);
-}
+//            if (v.lengthSquared() < FLT_EPSILON * FLT_EPSILON)
+//                continue;
 
-void Exit::RemoveBall(OGUserData& a_data, OGBall* a_ball)
-{
-    assert(a_ball);
+//            v.normalize();
+//            v *= force;
+//            GetBall(i)->GetBody()->ApplyForce(v, position);
+//        }
 
-    if (a_data.isAttachedOnEnter)
-    {
-        a_data.isAttachedOnEnter = false;
+//        if (GetBall(i)->isSuction())
+//        {
+//            auto position = GetBall(i)->GetPhyPosition();
+//            float lq = (center - position).lengthSquared();
 
-        if ((m_balls.size() - 1) == 0)
-        {
-            m_listener->OnClosed();
-            m_isClosed = true;
-        }
-
-        a_data.isTouching = false;
-    }
-    else if (a_ball->IsSuckable())
-    {
-        a_data.isTouching = false;
-        a_ball->SetSuction(false);
-    }
-
-    m_remove.push_back(a_ball);
-}
-
-void Exit::ProcessFixture(Fixture* a_fixture, ExitMemFn a_callback)
-{
-    auto userdata = a_fixture->GetBody()->GetUserData();
-
-    if (!userdata)
-        return;
-
-    auto data = static_cast<OGUserData*>(userdata);
-
-    if (data->IsBall())
-        CALL_MEMBER_FN(*this, a_callback)(*data, data->ToBall());
+//            if (lq <= 1.0f)
+//            {
+//                GetBall(i)->SetExit(true);
+//                mListener->OnBallExit();
+//                m_remove.push_back(GetBall(i));
+//            }
+//        }
+//    }
 }

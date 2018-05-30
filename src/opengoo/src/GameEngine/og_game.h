@@ -21,12 +21,12 @@ namespace og
             virtual void _Cycle() = 0;
             virtual void _KeyDown(QKeyEvent* ev) = 0;
             virtual void _KeyUp(QKeyEvent* ev) = 0;
-            virtual void _MouseMove(QMouseEvent* ev) = 0;
             virtual void _MouseWheel(QWheelEvent* ev) = 0;
 
         public:
-            OGGame() {}
-            virtual ~OGGame() {}
+            virtual ~OGGame()
+            {
+            }
 
             void Start() { _Start(); }
             void End() { _End(); }
@@ -38,7 +38,7 @@ namespace og
             void KeyUp(QKeyEvent* ev) { _KeyUp(ev); }
             virtual void MouseButtonDown(const QPoint& aPos) = 0;
             virtual void MouseButtonUp(const QPoint& aPos) = 0;
-            void MouseMove(QMouseEvent* ev) { _MouseMove(ev); }
+            virtual void MouseMove(const QPoint& aPos) = 0;
             void MouseWheel(QWheelEvent* ev) { _MouseWheel(ev); }
             virtual Camera* GetCamera() = 0;
     };

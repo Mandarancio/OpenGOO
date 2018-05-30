@@ -3,7 +3,9 @@
 #include "GameEngine/entity.h"
 #include "PhysicsEngine/joint.h"
 
-class OGSprite;
+#include "og_sprite.h"
+
+class Ball;
 
 class Strand : public og::Entity
 {
@@ -15,6 +17,10 @@ public:
         , mAngle(0)
     {
     }
+
+    Ball* GetBallA() const;
+
+    Ball* GetBallB() const;
 
 private:
     void Render(QPainter& a_painter);

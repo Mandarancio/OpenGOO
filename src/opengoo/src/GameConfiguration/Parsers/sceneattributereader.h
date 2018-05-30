@@ -523,11 +523,11 @@ struct AttributeReader<WOGScene>
         }
         else if (name == QLatin1String("maxx"))
         {
-            ValueWriter::WriteValue(aOut->miny, aAttribute);
+            ValueWriter::WriteValue(aOut->maxx, aAttribute);
         }
         else if (name == QLatin1String("maxy"))
         {
-            ValueWriter::WriteValue(aOut->miny, aAttribute);
+            ValueWriter::WriteValue(aOut->maxy, aAttribute);
         }
         else if (name == QLatin1String("backgroundcolor"))
         {

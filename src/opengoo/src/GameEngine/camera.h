@@ -56,7 +56,7 @@ public:
 
     void SetZoom(float aZoom)
     {
-        Q_ASSERT_X(aZoom != 0.0f, "SetZoom", "aZoom equal to zero");
+        Q_ASSERT_X(aZoom != 0, "SetZoom", "aZoom equal to zero");
         mZoom = aZoom;
     }
 
@@ -96,6 +96,11 @@ private:
     void Scroll()
     {
         auto pos = og::MouseInput::GetPosition();
+        if (pos.x() < 0 || pos.x() > mSize.width() || pos.y() < 0 ||pos.y() > mSize.height())
+        {
+            return;
+        }
+
         auto speedX = 0.0f;
         if (pos.x() <= OFFSET)
         {

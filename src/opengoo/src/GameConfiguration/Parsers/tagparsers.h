@@ -12,3 +12,4 @@
 #include "scenetagparser.h"
 #include "leveltagparser.h"
 #include "resourcetagparser.h"
+#include "materialtagparser.h"

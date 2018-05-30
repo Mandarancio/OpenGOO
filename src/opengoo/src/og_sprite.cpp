@@ -1,4 +1,5 @@
 #include "og_sprite.h"
+#include "opengoo.h"
 
 void OGSprite::Paint(QPainter* aPainter)
 {
@@ -70,4 +71,12 @@ void OGSprite::CenterOrigin()
 {
     mOffsetX = mSource->GetWidth() / 2.0f;
     mOffsetY = mSource->GetHeight() / 2.0f;
+}
+
+void OGSprite::Update()
+{
+    if (mAnimation)
+    {
+        mAnimation->Update(GAME->GetDeltaTime());
+    }
 }

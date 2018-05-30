@@ -10,6 +10,8 @@
 #include "GameEngine/imagesource.h"
 #include "GameEngine/graphic.h"
 
+#include "graphicanimation.h"
+
 class QPainter;
 
 class OGSprite;
@@ -30,6 +32,7 @@ class OGSprite : public og::Graphic
     float mDepth;
     QRectF mClipRect;
     QColor mColorize;
+    std::shared_ptr<GraphicAnimation> mAnimation;
 
     void Init()
     {
@@ -74,9 +77,7 @@ public:
         Render(aPainter, aPosition.x(), aPosition.y());
     }
 
-    void Update()
-    {
-    }
+    void Update();
 
     void SetAngle(float aAngle)
     {
@@ -210,6 +211,13 @@ public:
     og::ImageSource* GetImageSource() const
     {
         return mSource.get();
+    }
+
+    std::shared_ptr<GraphicAnimation>& SetAnimation(std::shared_ptr<GraphicAnimation> aAnimation)
+    {
+        mAnimation = aAnimation;
+        mAnimation->Init(this);
+        return mAnimation;
     }
 
     static OGSpritePtr Create(og::ImageSourceSPtr aSource)

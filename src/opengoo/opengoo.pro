@@ -118,7 +118,8 @@ HEADERS += \
     src/rectsprite.h \
     src/linesprite.h \
     src/camzoomanimation.h \
-    src/configloader.h
+    src/configloader.h \
+    src/graphicanimation.h
 
 SOURCES += \
     src/main.cpp \
@@ -126,7 +127,7 @@ SOURCES += \
     src/opengoo.cpp \
     src/physics.cpp \
     src/og_world.cpp \
-    src/visualdebug.cpp \
+#    src/visualdebug.cpp \
     src/og_windowcamera.cpp \
     src/og_strand.cpp \
 #    src/og_circle.cpp \

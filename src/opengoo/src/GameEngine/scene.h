@@ -3,6 +3,8 @@
 #include <list>
 #include <map>
 
+#include <QSizeF>
+
 #include "entity.h"
 
 #include "PhysicsEngine/og_physicsengine.h"
@@ -43,6 +45,10 @@ public:
     virtual float GetWidth() const = 0;
 
     virtual float GetHeight() const = 0;
+
+    virtual void SetPosition(int aTop, int aLeft) = 0;
+
+    virtual const QPointF& GetPosition() const = 0;
 };
 
 class Scene : public IScene
@@ -76,9 +82,7 @@ public:
 
     void OnMouseUp(const QPoint& a_point);
 
-    void OnMouseMove(const QPoint& /*a_point*/)
-    {
-    }
+    void OnMouseMove(const QPoint& a_point);
 
     void OnBegin();
 
@@ -116,6 +120,17 @@ public:
         mSceneSize.Set(aWidth, aHeight);
     }
 
+    const QPointF& GetPosition() const
+    {
+        return mPosition;
+    }
+
+    void SetPosition(int aTop, int aLeft)
+    {
+        mPosition.setX(aTop);
+        mPosition.setY(aLeft);
+    }
+
 private:
     QString m_name;
     EntityPtrList m_add;
@@ -123,6 +138,7 @@ private:
     EntityPtrList m_update;
     std::map<float, EntityPtrList> m_render;
     oglib::SizeF mSceneSize;
+    QPointF mPosition;
     std::unique_ptr<physics::PhysicsEngine> mPhysicsEngine;
 };
 }

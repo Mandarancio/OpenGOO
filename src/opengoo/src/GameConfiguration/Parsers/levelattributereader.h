@@ -10,7 +10,7 @@ template <> struct Enumerator<WOGCamera::Aspect>
         {
             return WOGCamera::Normal;
         }
-        else if (aType == QLatin1String("widescreen"))
+        if (aType == QLatin1String("widescreen"))
         {
             return WOGCamera::WideScreen;
         }

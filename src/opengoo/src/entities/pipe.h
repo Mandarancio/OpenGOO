@@ -3,16 +3,27 @@
 #include <array>
 
 #include "GameEngine/entity.h"
+#include "exiteventlistener.h"
 
-class MultiSprite;
+struct WOGPipe;
 
-class Pipe : public og::Entity
+class Pipe : public og::Entity, public ExitEventListener
 {
+    enum CapType
+    {
+        e_open,
+        e_closed
+    };
+
 public:
     Pipe(const WOGPipe& aDef);
 
 private:
     void Render(QPainter& aPainter);
+
+    void OnOpen();
+
+    void OnClosed();
 
 private:
     std::array<GraphicPtr, 2> mCap;

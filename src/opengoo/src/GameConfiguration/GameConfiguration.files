@@ -57,6 +57,7 @@ HEADERS += \
     src/GameConfiguration/Parsers/leveltagparser.h \
     src/GameConfiguration/Parsers/levelattributereader.h \
     src/GameConfiguration/Parsers/resourcetagparser.h \
-    src/GameConfiguration/Parsers/resourceattributereader.h
+    src/GameConfiguration/Parsers/resourceattributereader.h \
+    src/GameConfiguration/Parsers/materialtagparser.h
 
 INCLUDEPATH += ../extlibs/AES/

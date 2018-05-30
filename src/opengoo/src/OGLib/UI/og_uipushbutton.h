@@ -43,9 +43,9 @@ private:
 
     void _Paint(QPainter *painter);
 
-    void _onMouseDown(QMouseEvent* ev);
-    void _onMouseUp(QMouseEvent* ev);
-    void _mouseMove(QMouseEvent* ev);
+    void OnMouseDown(QMouseEvent* ev);
+    void OnMouseUp(QMouseEvent* ev);
+    void OnMouseMove(QMouseEvent* ev);
 };
 } // ns:ui
 } // ns:og

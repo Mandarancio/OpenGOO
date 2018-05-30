@@ -197,16 +197,26 @@ Pipe::Pipe(const WOGPipe& aDef)
     builder.SetVertices(p1, p2);
 
     builder.SetType(QLatin1String("OPEN_") + type);
-    mCap[0] = builder.Build();
+    mCap[e_open] = builder.Build();
 
     builder.SetType(QLatin1String("CLOSED_") + type);
-    mCap[1] = builder.Build();
+    mCap[e_closed] = builder.Build();
 
-    SetGraphic(mCap.front());
+    SetGraphic(mCap[e_closed]);
 }
 
 void Pipe::Render(QPainter& aPainter)
 {
     mPipe->Render(aPainter, GetPosition());
     Entity::Render(aPainter);
+}
+
+void Pipe::OnOpen()
+{
+    SetGraphic(mCap[e_open]);
+}
+
+void Pipe::OnClosed()
+{
+    SetGraphic(mCap[e_closed]);
 }

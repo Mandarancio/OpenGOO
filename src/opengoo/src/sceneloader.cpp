@@ -17,10 +17,15 @@
 #include "PhysicsEngine/og_physicsengine.h"
 
 #include "og_utils.h"
+#include "og_sprite.h"
 
 #include "entities/og_ball.h"
 #include "entities/scenelayer.h"
 #include "entities/gamecontroller.h"
+#include "entities/exit.h"
+#include "entities/pipe.h"
+#include "entities/strand.h"
+
 #include "entityfactory.h"
 
 #include "animator.h"
@@ -33,7 +38,6 @@
 #include "opengoo.h"
 #include "og_windowcamera.h"
 #include "og_resourcemanager.h"
-#include "og_sprite.h"
 
 #include "configloader.h"
 
@@ -113,10 +117,6 @@ struct SceneLoaderHelper
     void Process(const WOGRectangle&);
 
     void Process(const WOGLine&);
-
-    void Process(const WOGPipe&);
-
-    void Process(const WOGLevelExit&);
 
     void Process(const WOGLinearForceField&);
 
@@ -231,23 +231,12 @@ void SceneLoaderHelper::Process(const WOGCamera& aCamera)
     }
 }
 
-void SceneLoaderHelper::Process(const WOGLevelExit& /*aExit*/)
-{
-}
-
-void SceneLoaderHelper::Process(const WOGPipe& aPipe)
-{
-    if (auto e = GetEntityFactory().CreatePipe(aPipe))
-    {
-        mScene.AddEntity(e);
-    }
-}
-
 void SceneLoaderHelper::Process(const WOGBallInstance& aBallInstance)
 {
     if (auto e = GetEntityFactory().CreateBall(aBallInstance))
     {
-        mScene.AddEntity(AddBall(aBallInstance.id, e));
+        auto b = AddBall(aBallInstance.id, e);
+        mScene.AddEntity(b);
     }
 }
 
@@ -255,6 +244,8 @@ void SceneLoaderHelper::Process(const WOGStrand& aStrand)
 {
     auto b1 = GetBallById(aStrand.gb1);
     auto b2 = GetBallById(aStrand.gb2);
+    b1->SetAttached(true);
+    b2->SetAttached(true);
 
     auto strandDef = GetStrandDefByBallType(b1->GetName());
     if (!strandDef)
@@ -269,14 +260,15 @@ void SceneLoaderHelper::Process(const WOGStrand& aStrand)
 
     if (auto entity = GetEntityFactory().CreateStrand(b1, b2, *strandDef))
     {
+        b1->AddStrand(entity.get());
+        b2->AddStrand(entity.get());
         mScene.AddEntity(entity);
     }
 }
 
 void SceneLoaderHelper::Process(const WOGLevel& aLevel)
 {
-    auto gc = std::dynamic_pointer_cast<GameController>(GetEntityFactory().CreateGameController());
-    assert(gc.get());
+    auto gc = GetEntityFactory().CreateGameController();
     if (auto music = GE->GetResourceManager()->GetMusic(aLevel.music))
     {
         gc->SetMusic(music);
@@ -304,19 +296,30 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
         }
     }
 
-    if (aLevel.HasPipe())
     {
-        Process(aLevel.GetPipe());
-    }
+        std::shared_ptr<Pipe> pipe;
+        if (aLevel.HasPipe())
+        {
+            pipe = GetEntityFactory().CreatePipe(aLevel.GetPipe());
+            mScene.AddEntity(pipe);
+        }
 
-    if (aLevel.HasLevelExit())
-    {
-        Process(aLevel.GetLevelExit());
+        if (aLevel.HasLevelExit())
+        {
+            auto exit = GetEntityFactory().CreateExit(aLevel.GetLevelExit());
+            exit->SetListener(pipe.get());
+            gc->SetExitPosition(aLevel.GetLevelExit().pos);
+            mScene.AddEntity(exit);
+        }
     }
 
     Process(aLevel.ball);
-
     Process(aLevel.strand);
+
+    foreach (auto& b, mBalls)
+    {
+        gc->AddBall(b);
+    }
 
     mScene.AddEntity(gc);
 }
@@ -522,9 +525,11 @@ void SceneLoaderHelper::Process(const WOGRadialForceField& /*aForceField*/)
 
 void SceneLoaderHelper::Process(const WOGScene& aScene)
 {
-    auto w = aScene.maxx - aScene.minx;
-    auto h = aScene.maxy - aScene.miny;
+    auto w = std::abs(aScene.maxx) + std::abs(aScene.minx);
+    auto h = std::abs(aScene.maxy) + std::abs(aScene.miny);
+
     mScene.SetSize(w, h);
+    mScene.SetPosition(aScene.minx, aScene.miny);
 
     GE->setBackgroundColor(aScene.backgroundcolor);
 

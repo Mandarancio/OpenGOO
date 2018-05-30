@@ -6,6 +6,7 @@
 #include "GameEngine/iresourcemanager.h"
 #include "GameConfiguration/wog_effects.h"
 #include "GameConfiguration/wog_text.h"
+#include "GameConfiguration/wog_material.h"
 
 class WOGResources;
 
@@ -28,6 +29,8 @@ private:
     bool ParseTextFile(const QString& a_filename, const QString& a_language);
 
     bool ParseFxFile(const QString& a_filename);
+
+    bool ParseMaterialsFile(const QString& a_filename);
 
     const WOGBall* GetBallByType(const QString& a_type);
 
@@ -56,6 +59,8 @@ private:
 
     const WOGEffect* GetEffect(const QString& aId);
 
+    const WOGMaterial* GetMaterial(const QString& aId);
+
 private:
     QHash<QString, WOGResourcesSPtr> m_resources;
     QHash<QString, WOGBallSPtr> m_balls;
@@ -63,6 +68,7 @@ private:
     QHash<QString, og::audio::SoundSource> m_soundSources;
     QHash<QString, std::shared_ptr<AnimationData>> mAnimations;
     QHash<QString, og::IFontSPtr> mFonts;
+    QHash<QString, WOGMaterial> mMaterials;
     MusicEntry m_Music;
     WOGText::TextMap m_text;
     std::unique_ptr<WOGEffects> m_effects;
