@@ -44,5 +44,5 @@ Geom::Geom(float aX, float aY, const QString& aTag)
 
 bool Geom::IsLine() const
 {
-    return GetPhysicsBody()->GetShape()->GetType() == og::physics::Shape::e_edge;
+    return GetPhysicsBody()->GetShape().GetType() == og::physics::Shape::e_edge;
 }

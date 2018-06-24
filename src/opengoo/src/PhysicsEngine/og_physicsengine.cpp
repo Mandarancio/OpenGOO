@@ -59,17 +59,25 @@ bool PhysicsEngine::InitBodyType(BodyDef::Type aType, b2BodyDef* aOut)
     return true;
 }
 
-std::unique_ptr<PhysicsBody> PhysicsEngine::CreateBody(const BodyDef& aDef)
+b2Fixture* PhysicsEngine::CreateFixture(const FixtureDef& aDef, PhysicsBody* aBody)
 {
-    b2BodyDef bodyDef;
-    if (!InitBodyType(aDef.type, &bodyDef))
+    b2FixtureDef fixtureDef;
+    fixtureDef.friction = aDef.friction;
+    fixtureDef.restitution = aDef.restitution;
+    auto shape = ShapeFactory::CreateShape(aDef.shape);
+    fixtureDef.shape = shape.get();
+    if (!fixtureDef.shape)
     {
         return nullptr;
     }
 
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = ShapeFactory::CreateShape(aDef.shape);
-    if (!fixtureDef.shape)
+    return aBody->mBody->CreateFixture(&fixtureDef);
+}
+
+std::unique_ptr<PhysicsBody> PhysicsEngine::CreateBody(const BodyDef& aDef)
+{
+    b2BodyDef bodyDef;
+    if (!InitBodyType(aDef.type, &bodyDef))
     {
         return nullptr;
     }
@@ -79,10 +87,10 @@ std::unique_ptr<PhysicsBody> PhysicsEngine::CreateBody(const BodyDef& aDef)
     auto body = m_world->CreateBody(&bodyDef);
     body->SetUserData(this);
 
-    FixtureBuilder builder(body);
-    auto fixture = builder.SetShape(fixtureDef.shape).Build();
+    std::unique_ptr<PhysicsBody> pb(new PhysicsBody(body));
+    pb->CreateFixture(aDef.fixture);
 
-    return std::unique_ptr<PhysicsBody>(new PhysicsBody(body, fixture));
+    return pb;
 }
 
 void PhysicsEngine::DestroyBody(b2Body* aBody)
@@ -108,28 +116,6 @@ void PhysicsEngine::DestroyJoint(b2Joint *aJoint)
 
 std::unique_ptr<OGPCircle> PhysicsEngine::CreateCircle(const Circle& /*a_circle*/, bool /*aDynamic*/)
 {
-//    std::unique_ptr<OGPCircle> body(new OGPCircle);
-
-//    {
-//        auto pos = a_circle.center() * GetRatio();
-//        PhysicsBodyBuilder builder(this);
-
-//        if (aDynamic)
-//        {
-//            builder.SetType(PhysicsBodyBuilder::e_dynamic);
-//        }
-//        else
-//        {
-//            builder.SetType(PhysicsBodyBuilder::e_static);
-//        }
-
-//        body->body = SetPosition(pos.x(), pos.y()).Build();
-//    }
-
-//    body->CreateShape(Shape::e_circle);
-//    body->SetRadius(a_circle.radius());
-//    body->CreateFixture();
-
     return nullptr;
 }
 

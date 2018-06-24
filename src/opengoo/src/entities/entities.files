@@ -8,7 +8,8 @@ SOURCES += \
     src/entities/button.cpp \
     src/entities/pipe.cpp \
     src/entities/ball.cpp \
-    src/entities/geom.cpp
+    src/entities/geom.cpp \
+    src/entities/guibutton.cpp
 
 HEADERS += \
     src/entities/cap.h \
@@ -22,4 +23,6 @@ HEADERS += \
     src/entities/pipe.h \
     src/entities/ball.h \
     src/entities/geom.h \
-    src/entities/balllistener.h
+    src/entities/balllistener.h \
+    src/entities/guibutton.h \
+    src/entities/compositegeom.h

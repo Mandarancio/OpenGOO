@@ -61,6 +61,11 @@ public:
         m_gotoScene = a_scene;
     }
 
+    void GotoPreviousScene()
+    {
+        GotoScene(m_previousScene);
+    }
+
     EntityFactory& GetEntityFactory()
     {
         return *m_entityFactory;

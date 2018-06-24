@@ -50,7 +50,14 @@ private:
                 ResourceAttributes attrs;
                 read_attributes(aElement, &attrs);
                 res->id = mDefaults.idprefix + attrs.id;
-                res->path = mDefaults.path + attrs.path;
+                if (!mDefaults.path.endsWith("/"))
+                {
+                    res->path = mDefaults.path + "/" + attrs.path;
+                }
+                else
+                {
+                    res->path = mDefaults.path + attrs.path;
+                }
                 res->jp = attrs.jp;
             }
         });

@@ -6,17 +6,19 @@ namespace og
 {
 namespace physics
 {
-class CircleShape : public og::physics::Shape
+class CircleShape : public Shape
 {
 public:
-    CircleShape(float aRadius)
+    CircleShape(b2CircleShape* aShape)
+        : Shape(aShape)
     {
-        m_type = Shape::e_circle;
-        mShape.m_radius = aRadius;
     }
 
-private:
-    b2CircleShape mShape;
+    QVector2D GetPosition() const
+    {
+        return QVector2D(static_cast<b2CircleShape*>(GetShape())->m_p.x,
+                         static_cast<b2CircleShape*>(GetShape())->m_p.y);
+    }
 };
 }
 }

@@ -19,12 +19,14 @@ struct WOGLabel;
 struct WOGCircle;
 struct WOGRectangle;
 struct WOGLine;
+struct WOGCompositeGeom;
 
 class OGBall;
 class GameController;
 class Exit;
 class Pipe;
 class Strand;
+class CompositeGeom;
 
 namespace og
 {
@@ -82,4 +84,8 @@ public:
     EntityPtr CreateRect(const WOGRectangle &aDef);
 
     EntityPtr CreateLine(const WOGLine &aDef);
+
+    EntityPtr CreateContinueButton();
+
+    std::shared_ptr<CompositeGeom> CreateCompositeGeom(const WOGCompositeGeom& aDef);
 };

@@ -9,19 +9,19 @@ namespace physics
 class PolygonShape : public Shape
 {
 public:
-    PolygonShape(b2Shape* aShape)
+    PolygonShape(b2PolygonShape* aShape)
         : Shape(aShape)
     {
     }
 
     float GetWidth() const
     {
-        return static_cast<const b2PolygonShape*>(GetShape())->m_vertices[2].x;
+        return static_cast<b2PolygonShape*>(GetShape())->m_vertices[2].x;
     }
 
     float GetHeight() const
     {
-        return static_cast<const b2PolygonShape*>(GetShape())->m_vertices[2].y;
+        return static_cast<b2PolygonShape*>(GetShape())->m_vertices[2].y;
     }
 };
 }

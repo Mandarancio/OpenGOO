@@ -69,11 +69,21 @@ struct WOGBallPlayerInteraction
     bool draggable;
     bool hingedrag;
     QString fling;
+
+    WOGBallPlayerInteraction()
+        : draggable(true)
+    {
+    }
 };
 
 struct WOGBallLevelInteraction
 {
     bool suckable;
+
+    WOGBallLevelInteraction()
+        : suckable(true)
+    {
+    }
 };
 
 // Other Ball Interaction

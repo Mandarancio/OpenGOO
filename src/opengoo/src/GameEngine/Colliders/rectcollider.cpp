@@ -6,13 +6,17 @@
 
 #include "rectcollider.h"
 
-#include <QDebug>
-
 namespace og
 {
-RectCollider::RectCollider(float a_width, float a_height)
+RectCollider::RectCollider(float aWidth, float aHeight)
 {
-    m_shape.SetAsBox(a_width / 2, a_height / 2);
+    m_shape.SetAsBox(aWidth * 0.5f, aHeight * 0.5f);
+}
+
+RectCollider::RectCollider(float aWidth, float aHeight, float aCenterX, float aCenterY, float aAngle)
+{
+    b2Vec2 c(aCenterX, aCenterY);
+    m_shape.SetAsBox(aWidth * 0.5f, aHeight * 0.5f, c, qDegreesToRadians(aAngle));
 }
 
 bool RectCollider::OverlapPoint(const QVector2D& a_point) const
@@ -23,6 +27,6 @@ bool RectCollider::OverlapPoint(const QVector2D& a_point) const
     b2Transform t(p, r);
     p.Set(a_point.x(), a_point.y());
 
-    return m_shape.TestPoint(t, p);
+    return TestPoint(t, p);
 }
 }

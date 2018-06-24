@@ -40,7 +40,7 @@ struct BodyDef
     Type type;
     Position position;
     float angle;
-    ShapeDef shape;
+    FixtureDef fixture;
 
     BodyDef()
         : type(e_unknown)
@@ -140,6 +140,8 @@ public:
         engine->SetSimulation(6, 2, 60);
         return engine;
     }
+
+    b2Fixture* CreateFixture(const FixtureDef &aDef, PhysicsBody* aBody);
 
 private:
     PhysicsEngine(const PhysicsEngine&);

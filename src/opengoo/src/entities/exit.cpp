@@ -5,7 +5,6 @@
 
 Exit::Exit(std::unique_ptr<og::PhysicsBody> aPhysicsBody)
     : Entity(0, 0)
-    , mListener(nullptr)
     , mIsClosed(true)
 {
     SetPhysicsBody(std::move(aPhysicsBody));
@@ -13,10 +12,6 @@ Exit::Exit(std::unique_ptr<og::PhysicsBody> aPhysicsBody)
 
 void Exit::CollideWith(Ball* aBall)
 {
-    if (aBall->IsClimbing())
-    {
-        aBall->OnSuction();
-    }
     const float force = 40.0f;
     auto v = GetPhysicsBody()->GetPosition() - aBall->GetPosition();
     if (v.length() < std::numeric_limits<float>::epsilon())
@@ -53,17 +48,17 @@ void Exit::LastUpdate()
     if (IsClosed() && isOpen)
     {
         mIsClosed = false;
-        if (mListener)
+        for (auto it = mListener.begin(); it != mListener.end(); ++it)
         {
-            mListener->OnOpen();
+            (*it)->OnOpen();
         }
     }
     else if (IsOpen() && !isOpen)
     {
         mIsClosed = true;
-        if (mListener)
+        for (auto it = mListener.begin(); it != mListener.end(); ++it)
         {
-            mListener->OnClosed();
+            (*it)->OnClosed();
         }
     }
 }

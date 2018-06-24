@@ -2,6 +2,9 @@
 
 #include "common.h"
 
+#include "polygonshape.h"
+#include "circleshape.h"
+
 namespace og
 {
 namespace physics
@@ -36,6 +39,16 @@ bool Shape::Collide(const Shape& aShapeA, const Transform& aTransformA, const Sh
     }
 
     return false;
+}
+
+PolygonShape Shape::ToPolygonShape() const
+{
+    return PolygonShape(static_cast<b2PolygonShape*>(mShape));
+}
+
+CircleShape Shape::ToCircleShape() const
+{
+    return CircleShape(static_cast<b2CircleShape*>(mShape));
 }
 }
 }

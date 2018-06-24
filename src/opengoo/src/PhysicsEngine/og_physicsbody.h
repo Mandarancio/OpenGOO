@@ -14,6 +14,16 @@ class PhysicsEngine;
 
 struct FixtureDef
 {
+    ShapeDef* shape;
+    float friction;
+    float restitution;
+
+    FixtureDef()
+        : shape(nullptr)
+        , friction(0.2f)
+        , restitution(0)
+    {
+    }
 };
 
 struct Contact
@@ -130,14 +140,14 @@ public:
 
     bool IsSensor() const
     {
-        return mFixture->IsSensor();
+        return GetFixture()->IsSensor();
     }
 
     void SetSensor(bool sensor);
 
-    const physics::Shape* GetShape() const
+    physics::Shape GetShape() const
     {
-        return mShape.get();
+        return physics::Shape(GetFixture()->GetShape());
     }
 
     void SetActive(bool a_flag)
@@ -180,6 +190,11 @@ public:
         mBody->SetAngularVelocity(aValue);
     }
 
+    float GetAngularVelocity() const
+    {
+        return mBody->GetAngularVelocity();
+    }
+
     physics::ContactEdge GetContactEdge() const
     {
         return physics::ContactEdge(mBody->GetContactList());
@@ -199,27 +214,30 @@ public:
 
     void SetCollisionGroup(short aGroup)
     {
-        auto fd = mFixture->GetFilterData();
+        auto fd = GetFixture()->GetFilterData();
         fd.groupIndex = aGroup;
-        mFixture->SetFilterData(fd);
+        GetFixture()->SetFilterData(fd);
     }
 
     short GetCollisionGroup() const
     {
-        return mFixture->GetFilterData().groupIndex;
+        return GetFixture()->GetFilterData().groupIndex;
     }
 
     void SetFriction(float aFriction)
     {
-        mFixture->SetFriction(aFriction);
+        GetFixture()->SetFriction(aFriction);
     }
 
+    b2Fixture* CreateFixture(const physics::FixtureDef& aDef);
+
+    b2Fixture* GetFixture() const;
+
 private:
-    PhysicsBody(b2Body* aBody, b2Fixture* mFixture);
+    PhysicsBody(b2Body* aBody);
 
 private:
     b2Body* mBody;
-    b2Fixture* mFixture;
     std::unique_ptr<physics::Shape> mShape;
 };
 }

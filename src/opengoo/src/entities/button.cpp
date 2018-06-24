@@ -14,15 +14,26 @@ Button::Button(float a_x, float a_y, GraphicPtr a_up, GraphicPtr a_over, const C
 {
 }
 
+QVector2D Button::GetMousePosition() const
+{
+    return QVector2D(og::MouseInput::GetWorldPosition());
+}
+
 void Button::Update()
 {
-    auto pos = QVector2D(GE->windowToLogical(og::MouseInput::GetPosition()));
-    auto isOver = GetCollider()->OverlapPoint(pos);
+    if (auto col = GetCollider())
+    {
+        auto pos = GetMousePosition();
+        auto isOver = col->OverlapPoint(pos);
+        if (!m_isOver && isOver)
+        {
+            SetGraphic(m_over);
+        }
+        else if(m_isOver && !isOver)
+        {
+            SetGraphic(m_up);
+        }
 
-    if (!m_isOver && isOver)
-        SetGraphic(m_over);
-    else if(m_isOver && !isOver)
-        SetGraphic(m_up);
-
-    m_isOver = isOver;
+        m_isOver = isOver;
+    }
 }

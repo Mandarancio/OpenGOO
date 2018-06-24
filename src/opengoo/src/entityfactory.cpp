@@ -10,6 +10,7 @@
 #include "GameEngine/og_gameengine.h"
 #include "GameEngine/Colliders/circlecollider.h"
 #include "GameEngine/Colliders/rectcollider.h"
+#include "GameEngine/Colliders/guirectcollider.h"
 
 #include "opengoo.h"
 #include "entityfactory.h"
@@ -35,6 +36,8 @@
 #include "entities/button.h"
 #include "entities/pipe.h"
 #include "entities/geom.h"
+#include "entities/guibutton.h"
+#include "entities/compositegeom.h"
 
 #include "ijointbuilder.h"
 
@@ -148,7 +151,7 @@ private:
     {
         using namespace og::physics;
         aBuilder.SetBodyType(aDef.dynamic ? BodyDef::e_dynamic : BodyDef::e_static);
-        aBuilder.SetPosition(aDef.x, aDef.y).SetAngle(aDef.rotation).SetShapeType(Shape::e_polygon)
+        aBuilder.SetPosition(aDef.x, aDef.y).SetAngle(aDef.rotation).SetShapeType(Shape::e_box)
                 .SetSize(aDef.width, aDef.height);
     }
 };
@@ -185,7 +188,7 @@ private:
     void InitPhysicsBodyBuilder(const WOGLine& /*aDef*/, og::physics::PhysicsBodyBuilder& aBuilder)
     {
         using namespace og::physics;
-        aBuilder.SetBodyType(BodyDef::e_static).SetShapeType(Shape::e_edge).SetLine(mX1, mY1, mX2, mY2);
+        aBuilder.SetBodyType(BodyDef::e_static).SetShapeType(Shape::e_line).SetLine(mX1, mY1, mX2, mY2);
     }
 
 private:
@@ -393,6 +396,8 @@ std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
     bd.climbSpeed = climbSpeed;
     bd.walkSpeed = walkSpeed;
     bd.isSleeping = !a_ball.discovered;
+    bd.isSuckable = ballDef->attribute.level.suckable;
+    bd.isDraggable = ballDef->attribute.player.draggable;
     auto entity = std::make_shared<Ball>(std::move(body), multiSpr, bd);
     entity->SetName(a_ball.type);
 
@@ -732,4 +737,78 @@ EntityPtr EntityFactory::CreateLine(const WOGLine& aDef)
     LineGeomBuilder builder(GetPhysicsEngine());
     GeomDirector dir;
     return dir.CreateEntity(aDef, builder);
+}
+
+EntityPtr EntityFactory::CreateContinueButton()
+{
+    enum
+    {
+        e_up,
+        e_over
+    };
+
+    const char* ids[] = {"IMAGE_SCENE_EOL_CONTINUE_UP", "IMAGE_SCENE_EOL_CONTINUE_OVER"};
+    std::array<OGSpritePtr, 2> spr;
+    float w = 0;
+    float h = 0;
+    for (size_t i = 0; i < spr.size(); ++i)
+    {
+        auto src = GE->GetResourceManager()->GetImageSourceById(ids[i]);
+        spr[i] = OGSprite::Create(src);
+        w = spr[i]->GetScaledWidth();
+        h = spr[i]->GetScaledHeight();
+        spr[i]->SetOffsetX(w);
+        spr[i]->SetOffsetY(h * 0.5f);
+        spr[i]->SetAngle(-90);
+    }
+
+    float centerX = w * 0.5f;
+    float centerY = 0;
+    auto col = std::make_shared<og::GUIRectCollider>(w, h, centerX, centerY, 0);
+
+    float x = GE->getWidth() - 150;
+    float y = 0;
+    return std::make_shared<GUIButton>(std::move(col), x, y, spr[e_up], spr[e_over], [](og::Entity&)
+    {
+        GAME->GotoPreviousScene();
+    });
+}
+
+#include <QDomElement>
+
+std::shared_ptr<CompositeGeom> EntityFactory::CreateCompositeGeom(const WOGCompositeGeom& aDef)
+{
+
+    using namespace og::physics;
+
+    PhysicsBodyBuilder builder(GetPhysicsEngine());
+    auto type = aDef.dynamic ? BodyDef::e_dynamic : BodyDef::e_static;
+    auto pb = builder.SetBodyType(type).SetPosition(aDef.x, aDef.y).SetAngle(aDef.rotation).Build();
+
+    auto ratio = GetPhysicsEngine()->GetRatio();
+    auto cg = std::make_shared<CompositeGeom>(aDef.x, aDef.y, aDef.tag);
+    FixtureDef fd;
+    for (auto it = aDef.circle.begin(); it != aDef.circle.end(); ++it)
+    {
+        CircleShapeDef def;
+        def.radius = it->radius * ratio;
+        def.position =  QVector2D(it->x, it->y) * ratio;
+        fd.shape = &def;
+        pb->CreateFixture(fd);
+    }
+
+    auto halfRatio = 0.5 * ratio;
+    for (auto it = aDef.rectangle.begin(); it != aDef.rectangle.end(); ++it)
+    {
+        BoxShapeDef def;
+        def.size.Set(it->width * halfRatio, it->height * halfRatio);
+        def.center = QVector2D(it->x, it->y) * ratio;
+        def.angle = it->rotation;
+        fd.shape = &def;
+        pb->CreateFixture(fd);
+    }
+
+    cg->SetPhysicsBody(std::move(pb));
+
+    return cg;
 }

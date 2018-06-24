@@ -110,6 +110,11 @@ void OpenGOO::_Start()
         logError("Could not load resources");
     }
 
+    if (!rm->ParseResourceFile("./res/scenes/EOL.resrc"))
+    {
+        logError("Could not load EOL resources");
+    }
+
     if (!rm->ParseTextFile("./properties/text.xml", m_language))
     {
         logError("Could not load texts");
@@ -305,7 +310,7 @@ void OpenGOO::_KeyDown(QKeyEvent* ev)
         }
         else if (GetScene()->GetName() != GetMainMenuName())
         {
-            GotoScene(m_previousScene);
+            GotoPreviousScene();
         }
         return;
     }

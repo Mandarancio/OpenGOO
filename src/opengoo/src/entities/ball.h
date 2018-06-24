@@ -22,6 +22,8 @@ struct BallDefination
     float walkSpeed;
     float climbSpeed;
     bool isSleeping;
+    bool isSuckable;
+    bool isDraggable;
 };
 
 class Ball;
@@ -35,6 +37,8 @@ struct PathFinder
     virtual void Init(Ball* aStart) = 0;
 
     virtual Ball* Next() = 0;
+
+    virtual Ball* Start() = 0;
 };
 
 struct BallPathFinder : public PathFinder
@@ -54,25 +58,9 @@ class Ball : public og::Entity
 public:
     Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const BallDefination& aDef);
 
-    float GetStartWalkSpeed() const
-    {
-        return mStartWalkSpeed;
-    }
-
-    void SetWalkSpeed(float aSpeed)
-    {
-        mWalkSpeed = aSpeed;
-        GetPhysicsBody()->SetAngularVelocity(mWalkSpeed);
-    }
-
-    float GetWalkSpeed() const
-    {
-        return mWalkSpeed;
-    }
-
     bool IsWalking() const
     {
-        return mWalkSpeed != 0;
+        return GetPhysicsBody()->GetAngularVelocity() != 0;
     }
 
     void SetAttached(bool aFlag)
@@ -95,6 +83,11 @@ public:
         return mIsDragging;
     }
 
+    bool IsDraggable() const
+    {
+        return mIsDraggable;
+    }
+
     bool IsStanding() const
     {
         return mIsStanding;
@@ -107,7 +100,12 @@ public:
 
     bool IsClimbing() const
     {
-        return mClimbSpeed != 0;
+        return mIsClimbing;
+    }
+
+    bool IsSuckable() const
+    {
+        return mIsSuckable;
     }
 
     void SetListener(BallListener* aListener)
@@ -115,34 +113,69 @@ public:
         mListener = aListener;
     }
 
-    void StartWalk()
+    float GetStartWalkSpeed() const
     {
-        if (IsWalking() || IsAttached() || IsSleeping() || mIsMarked)
+        return mStartWalkSpeed;
+    }
+
+    float GetStartClimbSpeed() const
+    {
+        return mStartClimbSpeed;
+    }
+
+    float GetClimbSpeed() const
+    {
+        return mClimbSpeed;
+    }
+
+    float GetWalkSpeed() const
+    {
+        return mWalkSpeed;
+    }
+
+    void StartWalk();
+
+    void StopWalk()
+    {
+        if (!IsWalking())
         {
             return;
         }
 
-        SetWalkSpeed(mStartWalkSpeed);
+        SetAngularVelocity(0);
     }
 
-    void StopWalk()
+    void SetClimb(bool aClimb)
     {
-        SetWalkSpeed(0);
+        mIsClimbing = aClimb;
     }
 
     void StartClimb(Ball *aBall);
 
+    void StopClimb()
+    {
+        SetClimb(false);
+    }
+
     void UnMark()
     {
         mIsMarked = false;
+        if (GetWalkSpeed() != 0)
+        {
+            StartWalk();
+        }
+        else if (GetClimbSpeed() != 0)
+        {
+            SetClimb(true);
+        }
         mMarkerGraphic.reset();
     }
 
     void Mark(std::shared_ptr<og::Graphic> aGraphic)
     {
-        mIsMarked = true;
         StopWalk();
-        mClimbSpeed = 0;
+        StopClimb();
+        mIsMarked = true;
         mMarkerGraphic = aGraphic;
     }
 
@@ -184,7 +217,7 @@ public:
         GetPhysicsBody()->SetPosition(aPosition);
     }
 
-    const og::physics::Shape* GetShape() const
+    og::physics::Shape GetShape() const
     {
         return GetPhysicsBody()->GetShape();
     }
@@ -201,8 +234,29 @@ public:
 
     void OnSuction()
     {
-        GetPhysicsBody()->SetActive(true);
-        SetWalkSpeed(0);
+        StopClimb();
+    }
+
+    void OnExit();
+
+    bool IsActive() const
+    {
+        return GetPhysicsBody()->IsActive();
+    }
+
+    void SetActive(bool aActive)
+    {
+        GetPhysicsBody()->SetActive(aActive);
+    }
+
+    void PhyMoveBy(const QVector2D& aOffset)
+    {
+        SetPhyPosition(GetPhyPosition() + aOffset);
+    }
+
+    bool GetWalkDirection() const
+    {
+        return mWalkDirection;
     }
 
 private:
@@ -212,7 +266,7 @@ private:
 
     void Debug(QPainter& aPainter);
 
-    void Reverse();
+    void ReverseWalk();
 
     void Collide(og::Entity* aEntity, const og::physics::Contact& aContact);
 
@@ -224,6 +278,35 @@ private:
 
     void BuildPath(Ball* aBall, bool aCheckNearest);
 
+    void SetClimbSpeed(float aSpeed)
+    {
+        mClimbSpeed = aSpeed;
+    }
+
+    void SetWalkSpeed(float aSpeed)
+    {
+        mWalkSpeed = aSpeed;
+    }
+
+    void SetAngularVelocity(float aSpeed);
+
+    void SetWalkDirection(bool aDirection)
+    {
+        if (mWalkDirection == aDirection)
+        {
+            return;
+        }
+
+        mWalkDirection = aDirection;
+        if (GetWalkSpeed() != 0)
+        {
+            auto speed = mWalkDirection ? GetWalkSpeed() : -GetWalkSpeed();
+            SetAngularVelocity(speed);
+        }
+    }
+
+    QVector2D NextClimbPosition();
+
 private:
     float mStartWalkSpeed;
     float mStartClimbSpeed;
@@ -234,6 +317,9 @@ private:
     bool mIsDragging;
     bool mIsMarked;
     bool mIsStanding;
+    bool mIsSuckable;
+    bool mIsClimbing;
+    bool mIsDraggable;
 
     QVector2D mPrevPosition;
     BallListener* mListener;
@@ -246,4 +332,7 @@ private:
     bool mIsNearest;
     std::queue<Ball*> mPath;
     std::unique_ptr<BallPathFinder> mPathFinder;
+    int mDelay;
+    bool mWalkDirection;
+    float mPassedPath;
 };

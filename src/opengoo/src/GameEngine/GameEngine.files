@@ -7,6 +7,7 @@ SOURCES += \
     src/GameEngine/og_videomode_native.cpp \
     src/GameEngine/Colliders/circlecollider.cpp \
     src/GameEngine/Colliders/rectcollider.cpp \
+    src/GameEngine/Colliders/guirectcollider.cpp \
     src/GameEngine/input.cpp \
     src/GameEngine/imagesource.cpp \
     src/GameEngine/scene.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     src/GameEngine/Colliders/collider.h \
     src/GameEngine/Colliders/circlecollider.h \
     src/GameEngine/Colliders/rectcollider.h \
+    src/GameEngine/Colliders/guirectcollider.h \
     src/GameEngine/input.h \
     src/GameEngine/scene.h \
     src/GameEngine/iresourcemanagerfactory.h \

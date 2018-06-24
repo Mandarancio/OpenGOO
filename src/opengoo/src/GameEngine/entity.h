@@ -130,7 +130,7 @@ public:
 
     void SetCollider(std::shared_ptr<Collider> a_collider)
     {
-        m_collider = a_collider;
+        m_collider = std::move(a_collider);
         m_collider->SetEntity(this);
     }
 

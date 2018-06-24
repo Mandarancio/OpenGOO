@@ -45,20 +45,20 @@ struct PhysicsBodyBuilder
 
     PhysicsBodyBuilder& SetShapeType(Shape::Type aShapeType)
     {
-        mBodyDef.shape.type = aShapeType;
+        mShapeType = aShapeType;
         return *this;
     }
 
     PhysicsBodyBuilder& SetRadius(float aRadius)
     {
-        mBodyDef.shape.radius = aRadius * mEngine->GetRatio();
+        mRadius = aRadius * mEngine->GetRatio();
         return *this;
     }
 
     PhysicsBodyBuilder& SetSize(float aWidth, float aHeight)
     {
         auto k = 0.5f * mEngine->GetRatio();
-        mBodyDef.shape.size.Set(aWidth * k, aHeight * k);
+        mSize.Set(aWidth * k, aHeight * k);
         return *this;
     }
 
@@ -73,17 +73,46 @@ struct PhysicsBodyBuilder
         auto y1 = aY1 * mEngine->GetRatio();
         auto x2 = aX2 * mEngine->GetRatio();
         auto y2 = aY2 * mEngine->GetRatio();
-        mBodyDef.shape.line.setLine(x1, y1, x2, y2);
+        mLine.setLine(x1, y1, x2, y2);
         return *this;
     }
 
     std::unique_ptr<PhysicsBody> Build()
     {
-        return mEngine->CreateBody(mBodyDef);
+        if (mShapeType == Shape::e_circle)
+        {
+            CircleShapeDef def;
+            def.radius = mRadius;
+            mBodyDef.fixture.shape = &def;
+            return mEngine->CreateBody(mBodyDef);
+        }
+        if (mShapeType == Shape::e_box)
+        {
+            BoxShapeDef def;
+            def.size = mSize;
+            mBodyDef.fixture.shape = &def;
+            return mEngine->CreateBody(mBodyDef);
+        }
+        if (mShapeType == Shape::e_line)
+        {
+            LineShapeDef def;
+            def.x1 = mLine.x1();
+            def.y1 = mLine.y1();
+            def.x2 = mLine.x2();
+            def.y2 = mLine.y2();
+            mBodyDef.fixture.shape = &def;
+            return mEngine->CreateBody(mBodyDef);
+        }
+
+        return mEngine->CreateBody(mBodyDef);;
     }
 
 private:
     PhysicsEngine* mEngine;
+    float mRadius;
+    ShapeDef::Type mShapeType;
+    ShapeDef::Size mSize;
+    ShapeDef::Line mLine;
     BodyDef mBodyDef;
 };
 }

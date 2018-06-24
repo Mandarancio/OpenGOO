@@ -4,31 +4,35 @@
 #include "og_physicsbody.h"
 #include "og_physicsengine.h"
 
+#include "shapefactory.h"
 #include "polygonshape.h"
 #include "edgeshape.h"
+#include "circleshape.h"
 
 namespace og
 {
-struct PhysicsBody::ShapeFactory
-{
-    static std::unique_ptr<physics::Shape> Create(b2Shape* aShape)
-    {
-        switch (aShape->GetType())
-        {
-        case b2Shape::e_polygon:
-            return std::unique_ptr<physics::PolygonShape>(new physics::PolygonShape(aShape));
-        case b2Shape::e_edge:
-            return std::unique_ptr<physics::EdgeShape>(new physics::EdgeShape(aShape));
-        }
+//struct PhysicsBody::ShapeFactory
+//{
+//    static std::unique_ptr<physics::Shape> Create(b2Shape* aShape)
+//    {
+//        switch (aShape->GetType())
+//        {
+//        case b2Shape::e_polygon:
+//            return std::unique_ptr<physics::PolygonShape>(new physics::PolygonShape(static_cast<b2PolygonShape*>(aShape)));
+//        case b2Shape::e_edge:
+//            return std::unique_ptr<physics::EdgeShape>(new physics::EdgeShape(static_cast<b2EdgeShape*>(aShape)));
+//        case b2Shape::e_circle:
+//            return std::unique_ptr<physics::CircleShape>(new physics::CircleShape(static_cast<b2CircleShape*>(aShape)));
+//        case b2Shape::e_chain:
+//        case b2Shape::e_typeCount:
+//            assert(false);
+//            return std::unique_ptr<physics::Shape>(new physics::Shape(aShape));
+//        }
+//    }
+//};
 
-        return std::unique_ptr<physics::Shape>(new physics::Shape(aShape));
-    }
-};
-
-PhysicsBody::PhysicsBody(b2Body* aBody, b2Fixture* aFixture)
+PhysicsBody::PhysicsBody(b2Body* aBody)
     : mBody(aBody)
-    , mFixture(aFixture)
-    , mShape(ShapeFactory::Create(aFixture->GetShape()))
 {
 }
 
@@ -75,13 +79,37 @@ void PhysicsBody::ApplyForce(const b2Vec2& force, const b2Vec2& point)
 
 void PhysicsBody::SetSensor(bool sensor)
 {
-    mFixture->SetSensor(sensor);
+    GetFixture()->SetSensor(sensor);
 }
 
 void PhysicsBody::Destroy()
 {
     static_cast<physics::PhysicsEngine*>(mBody->GetUserData())->DestroyBody(mBody);
     mBody = nullptr;
-    mFixture = nullptr;
+}
+
+b2Fixture* PhysicsBody::CreateFixture(const physics::FixtureDef& aDef)
+{
+    if (!aDef.shape)
+    {
+        return nullptr;
+    }
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.friction = aDef.friction;
+    fixtureDef.restitution = aDef.restitution;
+    auto shape = physics::ShapeFactory::CreateShape(aDef.shape);
+    fixtureDef.shape = shape.get();
+    if (!fixtureDef.shape)
+    {
+        return nullptr;
+    }
+
+    return mBody->CreateFixture(&fixtureDef);
+}
+
+b2Fixture* PhysicsBody::GetFixture() const
+{
+    return mBody->GetFixtureList();
 }
 }

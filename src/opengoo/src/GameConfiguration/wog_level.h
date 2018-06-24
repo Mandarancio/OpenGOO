@@ -70,6 +70,11 @@ struct WOGLevel
     std::list<WOGSignpost> signpost;
     std::list<WOGTargetHeight> targetheight;
 
+    WOGLevel()
+        : ballsrequired(1)
+    {
+    }
+
     bool HasPipe() const
     {
         return !pipe.empty();

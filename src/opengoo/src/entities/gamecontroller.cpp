@@ -6,12 +6,128 @@
 
 #include "GameConfiguration/wog_ball.h"
 
+#include "PhysicsEngine/circleshape.h"
+
 #include "og_sprite.h"
 #include "gamecontroller.h"
 #include "ball.h"
 #include "entityfactory.h"
 #include "rotationanimation.h"
 #include "strand.h"
+
+inline OGSpritePtr CreateSprite(const QString& aId)
+{
+    auto src = GE->GetResourceManager()->GetImageSourceById(aId);
+    return OGSprite::Create(src);
+}
+
+class GameController::Exit
+{
+public:
+    static const int SuckSpeed = 8;
+
+    class CircleSensor
+    {
+    public:
+        typedef og::physics::Shape Shape;
+        typedef og::physics::CircleShape CircleShape;
+
+    public:
+        CircleSensor(float aRadius, float aX, float aY)
+            : mPosition(aX, aY)
+            , mRadius(aRadius)
+        {
+        }
+
+        bool IsTouching(const Shape& aShape, const QVector2D aPosition, float aRadius) const
+        {
+            b2CircleShape shape;
+            shape.m_radius = mRadius;
+            shape.m_p.Set(mPosition.x(), mPosition.y());
+            CircleShape s(&shape);
+            Shape::Transform tA;
+            tA.angle = 0;
+            Shape::Transform tB;
+            tB.position = aPosition;
+            tB.angle = aRadius;
+            return Shape::Collide(s, tA, aShape, tB);
+        }
+
+        const QVector2D& GetPosition() const
+        {
+            return mPosition;
+        }
+
+    private:
+        QVector2D mPosition;
+        float mRadius;
+    };
+
+public:
+    Exit(float aX, float aY, float aSuckRadius, std::vector<std::shared_ptr<Ball>>& aBalls, float aRatio)
+        : mPosition(aX, aY)
+        , mSensor(aSuckRadius * aRatio, aX * aRatio, -aY * aRatio)
+        , mBalls(aBalls)
+        , mSuckedBalls(0)
+    {
+        mSpeed = (float)SuckSpeed / GE->getFrameRate();
+        mExitRadius = SuckSpeed * aRatio;
+    }
+
+    static bool IsSuckable(const Ball* aBall)
+    {
+        return (aBall->IsSuckable() && aBall->GetVisible() && !(aBall->IsSleeping() || aBall->IsMarker() || aBall->IsAttached()));
+    }
+
+    void Update()
+    {
+        for (auto it = mBalls.begin(); it != mBalls.end(); ++it)
+        {
+            if (!IsSuckable((*it).get()))
+            {
+                continue;
+            }
+
+            if (mSensor.IsTouching((*it)->GetShape(), (*it)->GetPhyPosition(), 0))
+            {
+                if ((*it)->IsClimbing())
+                {
+                    (*it)->OnSuction();
+                }
+
+                auto v = mSensor.GetPosition() - (*it)->GetPhyPosition();
+                if (v.length() < mExitRadius)
+                {
+                    (*it)->OnExit();
+                    ++mSuckedBalls;
+                }
+                else
+                {
+                    v.normalize();
+                    (*it)->PhyMoveBy(v * mSpeed);
+                }
+            }
+        }
+    }
+
+    const QVector2D& GetPosition() const
+    {
+        return mPosition;
+    }
+
+    int GetSuckedBalls() const
+    {
+        return mSuckedBalls;
+    }
+
+private:
+    QVector2D mPosition;
+    CircleSensor mSensor;
+    std::vector<std::shared_ptr<Ball>>& mBalls;
+    float mSpeed;
+    float mExitRadius;
+    int mSuckedBalls;
+};
 
 GameController::GameController()
     : Entity(0, 0)
@@ -20,7 +136,15 @@ GameController::GameController()
     , mBallDef(nullptr)
     , mState(e_finding_marker)
     , mNearestBall(nullptr)
+    , mShouldSuckingBalls(false)
+    , mBallsRequired(0)
+    , mIsWon(false)
 {
+}
+
+void GameController::Deleter::operator()(Exit* aPtr) const
+{
+    delete aPtr;
 }
 
 void GameController::Added()
@@ -40,9 +164,14 @@ void GameController::Removed()
 {
 }
 
-void GameController::FillNearsBalls(int aNum, int aLen, const QVector2D& aPos)
+void GameController::FillNearsAttachedBalls(int aNum, int aLen, const QVector2D& aPos)
 {
-    mNearestBalls.clear();
+    mNearestAttachedBalls.clear();
+    if (aNum == 0)
+    {
+        return;
+    }
+
     auto begin = mAttachedBall.begin();
     auto lengthSquared = aLen * aLen;
     for (int i = 0; i< aNum; ++i)
@@ -58,7 +187,7 @@ void GameController::FillNearsBalls(int aNum, int aLen, const QVector2D& aPos)
             return;
         }
 
-        mNearestBalls.push_back(*b);
+        mNearestAttachedBalls.push_back(*b);
         begin = ++b;
     }
 }
@@ -67,7 +196,7 @@ void GameController::ResetMarker()
 {
     mMarker.reset();
     mBallDef = nullptr;
-    mNearestBalls.clear();
+    mNearestAttachedBalls.clear();
 }
 
 void GameController::MarkBall(std::shared_ptr<Ball>& aBall)
@@ -102,6 +231,7 @@ void GameController::AttachMarker()
 {
     CreateStrands();
     mMarker->OnAttach();
+    mAttachedBall.push_back(mMarker);
     ResetMarker();
 }
 
@@ -110,9 +240,7 @@ void GameController::CreateStrands()
     EntityFactory ef;
     ef.SetPhysicsEngine(GetScene()->GetPhysicsEngine());
 
-    mMarker->SetAttached(true);
-    mAttachedBall.push_back(mMarker);
-    for (auto it = mNearestBalls.begin(); it != mNearestBalls.end(); ++it)
+    for (auto it = mNearestAttachedBalls.begin(); it != mNearestAttachedBalls.end(); ++it)
     {
         if (auto entity = ef.CreateStrand(mMarker, (*it).get(), *mBallDef->strand))
         {
@@ -123,16 +251,18 @@ void GameController::CreateStrands()
     }
 }
 
-std::list<std::shared_ptr<Ball>>::iterator GameController::FindMarker(const QVector2D& aPosition)
+EntityPtr GameController::CreateContinueButton()
+{
+    EntityFactory ef;
+    ef.SetPhysicsEngine(GetScene()->GetPhysicsEngine());
+    return ef.CreateContinueButton();
+}
+
+std::vector<std::shared_ptr<Ball>>::iterator GameController::FindMarker(const QVector2D& aPosition)
 {
     return std::find_if(mBall.begin(), mBall.end(), [&aPosition](std::shared_ptr<Ball>& ball)
     {
-        if (!ball->IsAttached() && !ball->IsSleeping() && ball->GetCollider()->OverlapPoint(aPosition))
-        {
-            return true;
-        }
-
-        return false;
+        return (!ball->IsAttached() && !ball->IsSleeping() && ball->GetCollider()->OverlapPoint(aPosition));
     });
 }
 
@@ -153,8 +283,11 @@ void GameController::Update()
     case e_marker_is_found:
         if (og::MouseInput::IsButtonPressed(og::MouseInput::e_left))
         {
-            mMarker->OnPickUp();
-            mState = e_marker_is_dragging;
+            if (mMarker->IsDraggable())
+            {
+                mMarker->OnPickUp();
+                mState = e_marker_is_dragging;
+            }
         }
         else
         {
@@ -175,7 +308,7 @@ void GameController::Update()
     case e_marker_is_dragging:
         if (!og::MouseInput::IsButtonPressed(og::MouseInput::e_left))
         {
-            if (mNearestBalls.size() > 1)
+            if (!mNearestAttachedBalls.empty())
             {
                 AttachMarker();
             }
@@ -192,56 +325,84 @@ void GameController::Update()
             QVector2D pos(og::MouseInput::GetWorldPosition());
             pos *= GetScene()->GetPhysicsEngine()->GetRatio();
             mMarker->GetPhysicsBody()->SetPosition(pos);
-            FillNearsBalls(mBallDef->attribute.core.strands, mBallDef->strand->maxlen2, mMarker->GetPosition());
+            FillNearsAttachedBalls(mBallDef->attribute.core.strands, mBallDef->strand->maxlen2, mMarker->GetPosition());
+            if (mBallDef->attribute.core.strands > 1 && mNearestAttachedBalls.size() < 2)
+            {
+                mNearestAttachedBalls.clear();
+            }
         }
         break;
     }
 
-    Ball* nearestBall = nullptr;
-    float minLength = 0;
-    for(auto it = mAttachedBall.begin(); it != mAttachedBall.end(); ++it)
     {
-        auto len = (mExitPosition - (*it)->GetPosition()).length();
-        if (!nearestBall)
+        Ball* nearestBall = nullptr;
+        float minLength = 0;
+        for(auto it = mAttachedBall.begin(); it != mAttachedBall.end(); ++it)
         {
-            nearestBall = it->get();
-            minLength= len;
+            auto len = (mExitPosition - (*it)->GetPosition()).length();
+            if (!nearestBall)
+            {
+                nearestBall = it->get();
+                minLength= len;
+            }
+            else if (len < minLength)
+            {
+                minLength = len;
+                nearestBall = it->get();
+            }
         }
-        else if (len < minLength)
+
+        if (nearestBall != mNearestBall)
         {
-            minLength = len;
-            nearestBall = it->get();
+            if (mNearestBall)
+            {
+                mNearestBall->SetIsNearest(false);
+            }
+
+            mNearestBall = nearestBall;
+
+            if (mNearestBall)
+            {
+                mNearestBall->SetIsNearest(true);
+            }
         }
     }
 
-    if (nearestBall != mNearestBall)
+    if (mShouldSuckingBalls)
     {
-        if (mNearestBall)
+        mExit->Update();
+        if (!mIsWon && mExit->GetSuckedBalls() >= mBallsRequired)
         {
-            mNearestBall->SetIsNearest(false);
-        }
-
-        mNearestBall = nearestBall;
-
-        if (mNearestBall)
-        {
-            mNearestBall->SetIsNearest(true);
+            mIsWon = true;
+            auto btn = CreateContinueButton();
+            GetScene()->AddEntity(btn);
         }
     }
 }
 
 void GameController::Render(QPainter& a_painter)
 {
-    if (mNearestBalls.size() > 1)
+    if (!mNearestAttachedBalls.empty())
     {
         a_painter.save();
         a_painter.setPen(Qt::red);
 
-        for (auto it = mNearestBalls.begin(); it != mNearestBalls.end(); ++it)
+        for (auto it = mNearestAttachedBalls.begin(); it != mNearestAttachedBalls.end(); ++it)
         {
             a_painter.drawLine(mMarker->GetPosition().toPointF(), (*it).get()->GetPosition().toPointF());
         }
 
+        a_painter.restore();
+    }
+
+    if (mExit)
+    {
+        a_painter.save();
+        a_painter.resetTransform();
+        auto fnt = a_painter.font();
+        fnt.setPointSize(18);
+        a_painter.setFont(fnt);
+        a_painter.drawText(10, 20, QString::number(mExit->GetSuckedBalls()));
         a_painter.restore();
     }
 }
@@ -253,4 +414,9 @@ void GameController::AddBall(std::shared_ptr<Ball> aBall)
     {
         mAttachedBall.push_back(aBall);
     }
+}
+
+void GameController::InitExit(const QPointF &aPosition, float aRadius, float aRatio)
+{
+    mExit.reset(new Exit(aPosition.x(), -aPosition.y(), aRadius, mBall, aRatio));
 }

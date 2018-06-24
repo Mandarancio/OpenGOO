@@ -9,10 +9,17 @@
 
 namespace og
 {
+class PhysicsBody;
+
 namespace physics
 {
+class PolygonShape;
+class CircleShape;
+
 class Shape
 {
+    friend class og::PhysicsBody;
+
 public:
     struct Transform
     {
@@ -27,9 +34,36 @@ public:
         e_circle,
         e_polygon,
         e_edge,
-        e_chain
+        e_chain,
+        e_box,
+        e_line
     };
 
+    Shape()
+        : mShape(nullptr)
+        , m_type(e_unknown)
+    {
+    }
+
+    float GetRadius() const
+    {
+        return mShape->m_radius;
+    }
+
+    Type GetType() const
+    {
+        return m_type;
+    }
+
+    bool TestPoint(const Transform& a_transform, const QVector2D& a_point) const;
+
+    static bool Collide(const Shape& aShapeA, const Transform& aTransformA, const Shape& aShapeB, const Transform& aTransformB);
+
+    PolygonShape ToPolygonShape() const;
+
+    CircleShape ToCircleShape() const;
+
+protected:
     Shape(b2Shape* aShape)
         : mShape(aShape)
     {
@@ -52,38 +86,14 @@ public:
         }
     }
 
-    virtual ~Shape()
+    b2Shape* GetShape() const
     {
+        return mShape;
     }
-
-    float GetRadius() const
-    {
-        return mShape->m_radius;
-    }
-
-    Type GetType() const
-    {
-        return m_type;
-    }
-
-    bool TestPoint(const Transform& a_transform, const QVector2D& a_point) const;
-
-    static bool Collide(const Shape& aShapeA, const Transform& aTransformA, const Shape& aShapeB, const Transform& aTransformB);
 
 protected:
-    const b2Shape* GetShape() const
-    {
-        return mShape;
-    }
-
-    b2Shape* GetShape()
-    {
-        return mShape;
-    }
-
-private:
-    Type m_type;
     b2Shape* mShape;
+    Type m_type;
 };
 
 struct ShapeDef
@@ -92,19 +102,54 @@ struct ShapeDef
     typedef oglib::SizeF Size;
     typedef QLineF Line;
 
-    Type type;
-
-    union
-    {
-        float radius;
-        Size size;
-        Line line;
-    };
-
     ShapeDef()
-        : type(Shape::e_unknown)
+        : mType(Shape::e_unknown)
     {
     }
+
+    Type GetType() const
+    {
+        return mType;
+    }
+
+protected:
+    Type mType;
+};
+
+struct CircleShapeDef : public ShapeDef
+{
+    CircleShapeDef()
+        : radius(0)
+    {
+        mType = Shape::e_circle;
+    }
+
+    float radius;
+    QVector2D position;
+};
+
+struct BoxShapeDef : public ShapeDef
+{
+    BoxShapeDef()
+        : angle(0)
+    {
+        mType = Shape::e_box;
+    }
+
+    Size size;
+    QVector2D center;
+    float angle;
+};
+
+struct LineShapeDef : public ShapeDef
+{
+    LineShapeDef()
+    {
+        mType = Shape::e_line;
+        x1 = y1 = x2 = y2 = 0;
+    }
+
+    float x1, y1, x2, y2;
 };
 }
 }

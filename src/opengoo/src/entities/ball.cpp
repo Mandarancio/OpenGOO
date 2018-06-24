@@ -18,11 +18,13 @@
 
 #include <QtMath>
 
+#include "OGLib/util.h"
+
 bool PhysicsCollider::OverlapPoint(const QVector2D& a_point) const
 {
     auto pb = GetEntity().GetPhysicsBody();
     og::physics::Shape::Transform t = {pb->GetPosition(), 0};
-    return pb->GetShape()->TestPoint(t, a_point * GetEntity().GetScene()->GetPhysicsEngine()->GetRatio());
+    return pb->GetShape().TestPoint(t, a_point * GetEntity().GetScene()->GetPhysicsEngine()->GetRatio());
 }
 
 struct BallNode
@@ -37,7 +39,7 @@ struct BallNode
     }
 };
 
-template<typename T, size_t Size=1024>
+template<typename T, size_t Size=2048>
 class stack_allocator
 {
 public:
@@ -80,6 +82,11 @@ private:
 
 class DFSPathFinder : public BallPathFinder
 {
+    Ball* Start()
+    {
+        return Next();
+    }
+
     Ball* Next()
     {
         if (mPath.empty())
@@ -197,110 +204,6 @@ private:
     std::queue<BallNode*> mData;
 };
 
-class BFSPathFinder : public BallPathFinder
-{
-    typedef std::unordered_set<Ball*> Set;
-
-    Ball* Next()
-    {
-        if (mPath.empty())
-        {
-            return nullptr;
-        }
-
-        auto ball = mPath.back();
-        mPath.pop_back();
-        return ball;
-    }
-
-    void Init(Ball* aStart)
-    {
-        mNodes.clear();
-        FindPath(aStart);
-    }
-
-    BallNode* Create(Ball* aBall)
-    {
-        mNodes.push_back(BallNode(aBall));
-        return &mNodes.back();
-    }
-
-    void FindPath(Ball* aStart)
-    {
-        Queue queue;
-        Set discovered;
-
-        BallNode* tail = nullptr;
-        size_t depth = 0;
-
-        queue.Push(Create(aStart));
-        while (!queue.IsEmpty())
-        {
-            auto v = queue.Pop();
-            if (discovered.count(v->data) == 0)
-            {
-                tail = v;
-                if ((ShoulCheckNearest && v->data->IsNearest()))
-                {
-                    break;
-                }
-                if (Depth != 0 && depth == Depth)
-                {
-                    break;
-                }
-
-                if (size_t size = v->data->StrandCount())
-                {
-                    Ball* balls[size];
-                    for (size_t i = 0; i < size ; ++i)
-                    {
-                        auto strand = v->data->GetStrand(i);
-                        auto ball = strand->GetBallA();
-                        if (ball == v->data)
-                        {
-                            ball = strand->GetBallB();
-                        }
-
-                        if (discovered.count(v->data) != 0)
-                        {
-                            continue;
-                        }
-
-                        balls[i] = ball;
-                    }
-
-                    Randomize(balls, size, v, &queue);
-                }
-
-                discovered.insert(v->data);
-
-                ++depth;
-            }
-        }
-
-        while (tail)
-        {
-            mPath.push_back(tail->data);
-            tail = tail->parent;
-        }
-    }
-
-    void Randomize(Ball** aBalls, size_t aSize, BallNode* aNode, Queue* aOutStack)
-    {
-        std::random_shuffle(aBalls, aBalls + aSize);
-        for (size_t i = 0; i < aSize; ++i)
-        {
-            auto node = Create(aBalls[i]);
-            node->parent = aNode;
-            aOutStack->Push(node);
-        }
-    }
-
-private:
-    std::list<BallNode> mNodes;
-    std::list<Ball*> mPath;
-};
-
 Ball::Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const BallDefination& aDef)
     : Entity(0, 0, aGraphic)
     , mStartWalkSpeed(aDef.walkSpeed)
@@ -312,18 +215,24 @@ Ball::Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const Ba
     , mIsDragging(false)
     , mIsMarked(false)
     , mIsStanding(false)
+    , mIsSuckable(aDef.isSuckable)
+    , mIsClimbing(false)
+    , mIsDraggable(aDef.isDraggable)
     , mListener(nullptr)
     , mCollideWith(nullptr)
     , mIsNearest(false)
     , mPathFinder(new DFSPathFinder)
+    , mDelay(0)
+    , mWalkDirection(true)
+    , mPassedPath(0)
 {
     SetPhysicsBody(std::move(aBody));
     SetCollider(std::make_shared<PhysicsCollider>());
 }
 
-void Ball::Reverse()
+void Ball::ReverseWalk()
 {
-    SetWalkSpeed(GetWalkSpeed() * -1);
+    SetWalkDirection(!GetWalkDirection());
 }
 
 void Ball::OnAttach()
@@ -332,13 +241,20 @@ void Ball::OnAttach()
     mIsDragging = false;
     mIsMarked = false;
     mMarkerGraphic.reset();
+    SetAttached(true);
 }
 
 void Ball::OnPickUp()
 {
-    StopWalk();
+    SetWalkSpeed(0);
+    SetClimbSpeed(0);
     GetPhysicsBody()->SetActive(false);
     mIsDragging = true;
+}
+
+void Ball::OnExit()
+{
+    SetVisible(false);
 }
 
 void Ball::Drop()
@@ -347,6 +263,11 @@ void Ball::Drop()
     mIsDragging = false;
     mIsMarked = false;
     mMarkerGraphic.reset();
+}
+
+void Ball::SetAngularVelocity(float aSpeed)
+{
+    GetPhysicsBody()->SetAngularVelocity(aSpeed);
 }
 
 void Ball::Collide(Geom* aEntity, const og::physics::Contact& aContact)
@@ -359,10 +280,10 @@ void Ball::Collide(Geom* aEntity, const og::physics::Contact& aContact)
     case Geom::e_detaching:
         break;
     case Geom::e_stopsign:
-        Reverse();
+        ReverseWalk();
         break;
     case Geom::e_unwalkable:
-        SetWalkSpeed(0);
+        StopWalk();
         break;
     case Geom::e_deadly:
         SetVisible(false);
@@ -371,7 +292,7 @@ void Ball::Collide(Geom* aEntity, const og::physics::Contact& aContact)
         break;
     }
 
-    if (IsWalking())
+    if (mDelay == 0 && IsWalking())
     {
         if (aEntity->IsLine())
         {
@@ -380,12 +301,14 @@ void Ball::Collide(Geom* aEntity, const og::physics::Contact& aContact)
             {
                 if (normal.x() > 0)
                 {
-                    SetWalkSpeed(-mStartWalkSpeed);
+                    SetWalkDirection(false);
                 }
                 else
                 {
-                    SetWalkSpeed(mStartWalkSpeed);
+                    SetWalkDirection(true);
                 }
+
+                mDelay = 5;
             }
         }
     }
@@ -398,12 +321,13 @@ void Ball::Collide(Ball* aEntity, const og::physics::Contact& /*aContact*/)
         if (aEntity->IsAttached())
         {
             StopWalk();
+            SetWalkSpeed(0);
             GetPhysicsBody()->SetActive(false);
             StartClimb(aEntity);
         }
-        else
+        else if (mDelay == 0)
         {
-            Reverse();
+            SetWalkDirection(aEntity->GetWalkDirection());
         }
     }
 }
@@ -435,6 +359,32 @@ void Ball::LastUpdate()
     SetPosition(pos.x(), -pos.y());
 }
 
+QVector2D Ball::NextClimbPosition()
+{
+    mPassedPath += GetClimbSpeed();
+    auto v = mEndBall->GetPhyPosition() - mStartBall->GetPhyPosition();
+    if (mPassedPath > v.length())
+    {
+        mStartBall = mEndBall;
+        mEndBall = mPathFinder->Next();
+        if (!mEndBall)
+        {
+            mPathFinder->ShoulCheckNearest = !mStartBall->IsNearest();
+            mPathFinder->Depth = mStartBall->IsNearest() ? 5 : 0;
+            mPathFinder->Init(mStartBall);
+            mStartBall = mPathFinder->Start();
+            mEndBall = mPathFinder->Next();
+        }
+
+        mPassedPath = 0;
+        return mStartBall->GetPhyPosition();
+    }
+
+    v.normalize();
+    v *= mPassedPath;
+    return mStartBall->GetPhyPosition() + v;
+}
+
 void Ball::Update()
 {
     if (mMarkerGraphic)
@@ -442,12 +392,17 @@ void Ball::Update()
         mMarkerGraphic->Update();
     }
 
+    if (mDelay != 0)
+    {
+        --mDelay;
+    }
+
     if (mCollideWith)
     {
         using namespace og::physics;
         Shape::Transform tA = {GetPhyPosition(), 0};
         Shape::Transform tB = {mCollideWith->GetPosition(), 0};
-        if (!Shape::Collide(*GetPhysicsBody()->GetShape(), tA, *mCollideWith->GetShape(), tB))
+        if (!Shape::Collide(GetShape(), tA, mCollideWith->GetShape(), tB))
         {
             mCollideWith = nullptr;
         }
@@ -455,46 +410,31 @@ void Ball::Update()
 
     if (IsClimbing())
     {
-        auto v = mEndBall->GetPhyPosition() - mStartBall->GetPhyPosition();
-        auto pos = GetPhyPosition() + v.normalized() * mClimbSpeed;
-        SetPhyPosition(pos);
-
-        using namespace og::physics;
-        Shape::Transform tA = {pos, 0};
-        Shape::Transform tB = {mEndBall->GetPhyPosition(), 0};
-        if (Shape::Collide(*GetShape(), tA, *mEndBall->GetShape(), tB))
-        {
-            mStartBall = mEndBall;
-            mEndBall = mPathFinder->Next();
-            if (!mEndBall)
-            {
-                mPathFinder->ShoulCheckNearest = !mStartBall->IsNearest();
-                mPathFinder->Depth = mStartBall->IsNearest() ? 5 : 0;
-                mPathFinder->Init(mStartBall);
-                mStartBall = mPathFinder->Next();
-                mEndBall = mPathFinder->Next();
-            }
-
-            SetPhyPosition(mStartBall->GetPhyPosition());
-        }
+        SetPhyPosition(NextClimbPosition());
     }
 }
 
 void Ball::Debug(QPainter& aPainter)
 {
+    if (!GetVisible())
+    {
+        return;
+    }
+
     using namespace og::physics;
     auto& pos = GetPosition();
-    auto a = GetPhysicsBody()->GetAngle();
+    auto a = -GetPhysicsBody()->GetAngle();
     float radius = 0;
-    if (GetPhysicsBody()->GetShape()->GetType() == Shape::e_polygon)
+    if (GetShape().GetType() == Shape::e_polygon)
     {
-        radius = static_cast<const og::physics::PolygonShape*>(
-                    GetPhysicsBody()->GetShape())->GetWidth() / GetScene()->GetPhysicsEngine()->GetRatio();
+        radius = GetShape().ToPolygonShape().GetWidth();
     }
     else
     {
-        radius = GetPhysicsBody()->GetShape()->GetRadius() / GetScene()->GetPhysicsEngine()->GetRatio();
+        radius = GetShape().GetRadius();
     }
+
+    radius /= GetScene()->GetPhysicsEngine()->GetRatio();
 
     float x1 = pos.x();
     float y1 = pos.y();
@@ -503,10 +443,9 @@ void Ball::Debug(QPainter& aPainter)
 
     aPainter.save();
     aPainter.setPen(Qt::green);
-    if (GetPhysicsBody()->GetShape()->GetType() == Shape::e_polygon)
+    if (GetShape().GetType() == Shape::e_polygon)
     {
-        auto h = static_cast<const og::physics::PolygonShape*>(
-                            GetPhysicsBody()->GetShape())->GetHeight() / GetScene()->GetPhysicsEngine()->GetRatio();
+        auto h = GetShape().ToPolygonShape().GetHeight() / GetScene()->GetPhysicsEngine()->GetRatio();
         aPainter.save();
         aPainter.translate(x1, y1);
         aPainter.rotate(-qRadiansToDegrees(a));
@@ -539,13 +478,10 @@ void Ball::Render(QPainter& aPainter)
 
 void Ball::StartClimb(Ball* aBall)
 {
-    StopWalk();
-    mClimbSpeed = mStartClimbSpeed;
-    mPathFinder->Init(aBall);
-    mStartBall = mPathFinder->Next();
-    mEndBall = mPathFinder->Next();
-
-    SetPhyPosition(aBall->GetPhyPosition());
+    SetClimbSpeed(GetStartClimbSpeed());
+    SetClimb(true);
+    mStartBall = this;
+    mEndBall = aBall;
 }
 
 void Ball::RemoveStrand(Strand* aStrand)
@@ -587,4 +523,20 @@ void Ball::BuildPath(Ball* aBall, bool aCheckNearest)
             }
         }
     }
+}
+
+void Ball::StartWalk()
+{
+    if (IsWalking() || IsAttached() || IsSleeping() || mIsMarked || IsClimbing())
+    {
+        return;
+    }
+
+    if (GetWalkSpeed() == 0)
+    {
+        SetWalkSpeed(GetStartWalkSpeed());
+    }
+
+    auto speed = GetWalkDirection() ? GetWalkSpeed() :-GetWalkSpeed();
+    SetAngularVelocity(speed);
 }

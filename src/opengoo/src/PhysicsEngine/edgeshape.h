@@ -9,7 +9,7 @@ namespace physics
 class EdgeShape : public Shape
 {
 public:
-    EdgeShape(b2Shape* aShape)
+    EdgeShape(b2EdgeShape* aShape)
         : Shape(aShape)
     {
     }

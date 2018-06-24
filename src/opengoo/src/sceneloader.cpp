@@ -25,6 +25,7 @@
 #include "entities/exit.h"
 #include "entities/pipe.h"
 #include "entities/strand.h"
+#include "entities/compositegeom.h"
 
 #include "entityfactory.h"
 
@@ -125,6 +126,8 @@ struct SceneLoaderHelper
     void Process(const WOGBallInstance&);
 
     void Process(const WOGStrand&);
+
+    void Process(const WOGCompositeGeom&);
 
     template<typename T>
     void Process(const T& aData)
@@ -307,8 +310,11 @@ void SceneLoaderHelper::Process(const WOGLevel& aLevel)
         if (aLevel.HasLevelExit())
         {
             auto exit = GetEntityFactory().CreateExit(aLevel.GetLevelExit());
-            exit->SetListener(pipe.get());
+            exit->AddListener(pipe.get());
+            exit->AddListener(gc.get());
             gc->SetExitPosition(aLevel.GetLevelExit().pos);
+            gc->InitExit(aLevel.GetLevelExit().pos, aLevel.GetLevelExit().radius, mScene.GetPhysicsEngine()->GetRatio());
+            gc->SetBallsRequired(aLevel.ballsrequired);
             mScene.AddEntity(exit);
         }
     }
@@ -511,6 +517,14 @@ void SceneLoaderHelper::Process(const WOGLine& aLine)
     }
 }
 
+void SceneLoaderHelper::Process(const WOGCompositeGeom& aDef)
+{
+    if (auto e = GetEntityFactory().CreateCompositeGeom(aDef))
+    {
+        mScene.AddEntity(e);
+    }
+}
+
 void SceneLoaderHelper::Process(const WOGLinearForceField& aForceField)
 {
     if (aForceField.width == 0)
@@ -543,6 +557,7 @@ void SceneLoaderHelper::Process(const WOGScene& aScene)
     Process(aScene.circle);
     Process(aScene.line);
     Process(aScene.rectangle);
+    Process(aScene.compositegeom);
 }
 
 void SceneLoader::Load(og::Scene& aScene)
