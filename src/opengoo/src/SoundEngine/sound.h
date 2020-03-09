@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QStringList>
 
 #include <SFML/Audio.hpp>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "OGLib/optional.h"
 
 #include "wog_vobject.h"

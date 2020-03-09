@@ -2,6 +2,8 @@
 // Ball definition file
 // source http://goofans.com/developers/game-file-formats/balls-xml
 
+#include <memory>
+
 #include <QStringList>
 #include <QColor>
 #include <QVector2D>

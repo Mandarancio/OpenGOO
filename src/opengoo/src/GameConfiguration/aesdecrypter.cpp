@@ -20,7 +20,7 @@ QByteArray AesDecrypter::decrypt(const QByteArray& aInData)
     QByteArray outData(size, 0x0);
     unsigned long numBlocks = size / 16;
 
-    _crypt.Decrypt(reinterpret_cast<uchar*>(aInData.data()), reinterpret_cast<uchar*>(outData.data()), numBlocks);
+    _crypt.Decrypt(reinterpret_cast<const uchar*>(aInData.data()), reinterpret_cast<uchar*>(outData.data()), numBlocks);
 
     int i = outData.indexOf(0xFD);
     outData.remove(i, size);

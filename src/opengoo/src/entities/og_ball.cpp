@@ -37,7 +37,7 @@ using namespace og;
 
 BodyBuilder::PhysicsBodyUPtr BodyBuilder::CreateCircle()
 {
-    float radius = (m_variation > 0) ? m_radius * (1.0f + (qrand() % (int)std::floorf(m_variation * 100)) * 0.01f) : m_radius;
+    float radius = (m_variation > 0) ? m_radius * (1.0f + (qrand() % (int)std::floor(m_variation * 100)) * 0.01f) : m_radius;
 
     auto data = new OGUserData(OGUserData::BALL, m_entity);
     data->isTouching = false;

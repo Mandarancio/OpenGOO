@@ -1,6 +1,8 @@
 #include "pointparticleemiter.h"
 #include "particlesystem.h"
 
+#include <cmath>
+
 namespace og
 {
 const float PointParticleEmiter::MinRate = 0.00001;
@@ -8,7 +10,9 @@ const float PointParticleEmiter::MinRate = 0.00001;
 void PointParticleEmiter::SetRate(float aRate)
 {
     mAccumulatedRate = 0;
-    mRate.second = modf(aRate, reinterpret_cast<float*>(&mRate.first));
+    float intpart;
+    mRate.second = std::modf(aRate, &intpart);
+    mRate.first = intpart;
 }
 
 void PointParticleEmiter::PreUpdate()
