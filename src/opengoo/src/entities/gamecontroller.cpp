@@ -201,6 +201,10 @@ void GameController::ResetMarker()
 
 void GameController::MarkBall(std::shared_ptr<Ball>& aBall)
 {
+    if (!aBall->IsDraggable()) {
+        return;
+    }
+
     mMarker = aBall;
     mBallDef = GE->GetResourceManager()->GetBallByType(mMarker->GetName());
     if (!mBallDef)

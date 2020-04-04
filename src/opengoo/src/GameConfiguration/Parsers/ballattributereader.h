@@ -211,6 +211,27 @@ struct AttributeReader<WOGBall>
         }
     }
 
+    static void Read(const QDomAttr& aAttribute, WOGBallPlayerInteraction* aOut)
+    {
+        const auto name = aAttribute.name();
+        if (name == QLatin1String("draggable"))
+        {
+            ValueWriter::WriteValue(aOut->draggable, aAttribute);
+        }
+        else if (name == QLatin1String("detachable"))
+        {
+            ValueWriter::WriteValue(aOut->detachable, aAttribute);
+        }
+        else if (name == QLatin1String("hingedrag"))
+        {
+            ValueWriter::WriteValue(aOut->hingedrag, aAttribute);
+        }
+        else if (name == QLatin1String("fling"))
+        {
+            ValueWriter::WriteValue(aOut->fling, aAttribute);
+        }
+    }
+
     static void Read(const QDomAttr& aAttribute, WOGBallAttributes* aOut)
     {
         const auto name = aAttribute.name();
@@ -223,6 +244,7 @@ struct AttributeReader<WOGBall>
             Read(aAttribute, &aOut->core);
             Read(aAttribute, &aOut->behaviour);
             Read(aAttribute, &aOut->movement);
+            Read(aAttribute, &aOut->player);
         }
     }
 };
