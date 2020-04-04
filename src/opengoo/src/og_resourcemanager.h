@@ -61,6 +61,8 @@ private:
 
     const WOGMaterial* GetMaterial(const QString& aId);
 
+    static std::unique_ptr<AnimationData> ReadAnimation(const QString& aId);
+
 private:
     QHash<QString, WOGResourcesSPtr> m_resources;
     QHash<QString, WOGBallSPtr> m_balls;

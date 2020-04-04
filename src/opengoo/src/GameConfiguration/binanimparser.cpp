@@ -1,6 +1,9 @@
 #include "binanimparser.h"
 
+#include <type_traits>
+
 #include <QFile>
+#include <QFileInfo>
 #include <QString>
 #include <QDebug>
 
@@ -34,6 +37,7 @@ private:
     }
 };
 
+template<typename T>
 struct BinImageAnimation
 {
     int hasColor;
@@ -43,13 +47,13 @@ struct BinImageAnimation
     int numTransforms;
     int numFrames;
 
-    int transformTypesOffset;
-    int frameTimesOffset;
-    int xformFramesOffset;
-    int alphaFramesOffset;
-    int colorFramesOffset;
-    int soundFramesOffset;
-    int stringTableOffset;
+    T transformTypesOffset;
+    T frameTimesOffset;
+    T xformFramesOffset;
+    T alphaFramesOffset;
+    T colorFramesOffset;
+    T soundFramesOffset;
+    T stringTableOffset;
 };
 
 template<typename T>
@@ -58,9 +62,12 @@ inline int VectorSize(const std::vector<T>& aData)
     return sizeof(T) * aData.size();
 }
 
-std::unique_ptr<AnimationData> BinAnimParser::Parse(const char* aData, int aSize)
+template<typename T>
+std::unique_ptr<AnimationData> BinAnimParser::Parse(const QByteArray& aArray)
 {
-    BinImageAnimation anim;
+    BinImageAnimation<T> anim;
+    auto aData = aArray.data();
+    int aSize = aArray.size();
 
     auto Checker = [](const char* aEnd)
     {
@@ -79,7 +86,7 @@ std::unique_ptr<AnimationData> BinAnimParser::Parse(const char* aData, int aSize
     {
         return [aData, aNumFrames, CheckSourceSize](int aOffset, std::vector<AnimationData::KeyFrame>* aFrame)
         {
-            std::vector<int> framePointer(aNumFrames);
+            std::vector<T> framePointer(aNumFrames);
             {
                 auto const begin = aData + aOffset;
                 CheckSourceSize(begin, VectorSize(framePointer));
@@ -97,8 +104,8 @@ std::unique_ptr<AnimationData> BinAnimParser::Parse(const char* aData, int aSize
         };
     };
 
-    CheckSourceSize(aData, sizeof(anim));
-    DataReader::Read(aData, &anim);
+    CheckSourceSize(aData + (std::is_same<T, long long>::value ? 8 : 0), sizeof(anim));
+    DataReader::Read(aData + (std::is_same<T, long long>::value ? 8 : 0), &anim);
 
     std::unique_ptr<AnimationData> animData(new AnimationData);
 
@@ -128,7 +135,7 @@ std::unique_ptr<AnimationData> BinAnimParser::Parse(const char* aData, int aSize
             }
         }
 
-        std::vector<int> frameOffset(anim.numTransforms);
+        std::vector<T> frameOffset(anim.numTransforms);
         {
             auto const begin = aData + anim.xformFramesOffset;
             CheckSourceSize(begin, VectorSize(frameOffset));
@@ -164,18 +171,20 @@ std::unique_ptr<AnimationData> BinAnimParser::Parse(const char* aData, int aSize
     return animData;
 }
 
-std::unique_ptr<AnimationData> BinAnimParser::Parse(const QByteArray& aData)
-{
-    return Parse(aData.data(), aData.size());
-}
-
 std::unique_ptr<AnimationData> BinAnimParser::Parse(const QString& aFileName)
 {
     QFile file(aFileName);
     if (!file.open(QFile::ReadOnly))
     {
+        auto msg = QString("Could not open file '%1'").arg(aFileName);
+        qWarning() << msg;
         return nullptr;
     }
 
-    return Parse(file.readAll());
+    QFileInfo fi(aFileName);
+    if (fi.suffix() == "binuni") {
+        return Parse<long long>(file.readAll());
+    }
+
+    return Parse<int>(file.readAll());
 }

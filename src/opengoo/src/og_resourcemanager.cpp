@@ -252,8 +252,7 @@ AnimationData* OGResourceManager::GetAnimation(const QString& aId)
         return (*it).get();
     }
 
-    auto path = QString("res/anim/%1.anim.binltl").arg(aId);
-    auto anim = BinAnimParser::Parse(path);
+    auto anim = ReadAnimation(aId);
     it = mAnimations.insert(aId, std::move(anim));
     return it->get();
 }
@@ -279,4 +278,16 @@ const WOGMaterial* OGResourceManager::GetMaterial(const QString& aId)
     }
 
     return &(*it);
+}
+
+std::unique_ptr<AnimationData> OGResourceManager::ReadAnimation(const QString& aId)
+{
+    if (auto anim = BinAnimParser::Parse(QString("res/anim/%1.anim.bin%2").arg(aId, "ltl"))) {
+        return anim;
+    }
+    if (auto anim = BinAnimParser::Parse(QString("res/anim/%1.anim.bin%2").arg(aId, "uni"))) {
+        return anim;
+    }
+
+    return nullptr;
 }

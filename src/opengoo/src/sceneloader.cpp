@@ -347,8 +347,12 @@ void SceneLoaderHelper::Process(const WOGSceneLayer& aSceneLayer)
     if (!aSceneLayer.anim.isEmpty())
     {
         AnimationData* ad = GE->GetResourceManager()->GetAnimation(aSceneLayer.anim);
+        if (!ad) {
+            qCritical() << QString("animation '%1' not found").arg(aSceneLayer.anim);
+            abort();
+        }
         auto anim = std::make_shared<Animator>();
-        foreach (const auto& entry, ad->transformFrame)
+        for (const auto& entry : ad->transformFrame)
         {
             auto ag = std::make_shared<SequentialAnimationGroup>();
             const auto& frame = entry.frame;

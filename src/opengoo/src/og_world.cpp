@@ -715,7 +715,7 @@ void OGWorld::Update()
     if (!m_added[m_num_added].isEmpty())
     {
         auto& added = m_added[m_num_added];
-        m_num_added = ++m_num_added % 2;
+        m_num_added = (++m_num_added) % 2;
 
         for (int i = 0; i < added.size(); ++i)
         {

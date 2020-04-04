@@ -215,6 +215,8 @@ struct AttributeReader<WOGVObject>
         else if (name == QLatin1String("colorize"))
         {
             ValueWriter::WriteValue(aOut->colorize, aAttribute);
+        } else {
+            qCritical() << name << aAttribute.value();
         }
     }
 };

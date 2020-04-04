@@ -12,7 +12,6 @@ class BinAnimParser
 public:
     static std::unique_ptr<AnimationData> Parse(const QString& aFileName);
 
+    template<typename T>
     static std::unique_ptr<AnimationData> Parse(const QByteArray& aData);
-
-    static std::unique_ptr<AnimationData> Parse(const char* aData, int aSize);
 };
