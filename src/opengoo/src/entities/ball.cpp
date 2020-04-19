@@ -225,6 +225,7 @@ Ball::Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const Ba
     , mDelay(0)
     , mWalkDirection(true)
     , mPassedPath(0)
+    , mIsSucked(false)
 {
     SetPhysicsBody(std::move(aBody));
     SetCollider(std::make_shared<PhysicsCollider>());
@@ -255,6 +256,7 @@ void Ball::OnPickUp()
 void Ball::OnExit()
 {
     SetVisible(false);
+    mIsSucked = true;
 }
 
 void Ball::Drop()

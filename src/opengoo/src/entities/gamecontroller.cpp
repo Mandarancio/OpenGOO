@@ -266,7 +266,7 @@ std::vector<std::shared_ptr<Ball>>::iterator GameController::FindMarker(const QV
 {
     return std::find_if(mBall.begin(), mBall.end(), [&aPosition](std::shared_ptr<Ball>& ball)
     {
-        return (!ball->IsAttached() && !ball->IsSleeping() && ball->GetCollider()->OverlapPoint(aPosition));
+        return (!ball->IsAttached() && !ball->IsSleeping() && !ball->IsSucked() && ball->GetCollider()->OverlapPoint(aPosition));
     });
 }
 

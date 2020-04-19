@@ -108,6 +108,11 @@ public:
         return mIsSuckable;
     }
 
+    bool IsSucked() const
+    {
+        return mIsSucked;
+    }
+
     void SetListener(BallListener* aListener)
     {
         mListener = aListener;
@@ -320,6 +325,7 @@ private:
     bool mIsSuckable;
     bool mIsClimbing;
     bool mIsDraggable;
+    bool mIsSucked;
 
     QVector2D mPrevPosition;
     BallListener* mListener;
