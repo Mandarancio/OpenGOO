@@ -14,6 +14,7 @@
 #include "entityfactory.h"
 #include "rotationanimation.h"
 #include "strand.h"
+#include "opengoo.h"
 
 inline OGSpritePtr CreateSprite(const QString& aId)
 {
@@ -407,6 +408,20 @@ void GameController::Render(QPainter& a_painter)
         fnt.setPointSize(18);
         a_painter.setFont(fnt);
         a_painter.drawText(10, 20, QString::number(mExit->GetSuckedBalls()));
+        a_painter.restore();
+    }
+
+    if (GAME->IsDebugMode()) {
+        auto s = GetScene();
+        a_painter.save();
+        a_painter.resetTransform();
+        auto fnt = a_painter.font();
+        fnt.setPointSize(18);
+        a_painter.setFont(fnt);
+        a_painter.setPen(Qt::white);
+        QFontMetrics fm(fnt);
+        auto x = GE->getWidth() - (fm.width(s->GetName()) + 20);
+        a_painter.drawText(x, 30, s->GetName());
         a_painter.restore();
     }
 }

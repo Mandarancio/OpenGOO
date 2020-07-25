@@ -218,7 +218,7 @@ void OpenGOO::_Cycle()
     }
 
     mCamera.Update();
-    if (flag & !DEBUG)
+    if (!IsDebugMode())
     {
         float hh = mCamera.GetScaledHeight() * 0.5f;
         float top = GetScene()->GetPosition().y() + GetScene()->GetHeight() - hh;
@@ -301,9 +301,7 @@ void OpenGOO::MouseMove(const QPoint& aPos)
 
 void OpenGOO::_KeyDown(QKeyEvent* ev)
 {
-    switch (ev->key())
-    {
-    case Qt::Key_Escape:
+    if (ev->key() == Qt::Key_Escape) {
         if (GetScene()->GetName().startsWith(QLatin1String("island")))
         {
             GotoScene(GetMainMenuName());
@@ -312,7 +310,8 @@ void OpenGOO::_KeyDown(QKeyEvent* ev)
         {
             GotoPreviousScene();
         }
-        return;
+    } else if (ev->key() == Qt::Key_D) {
+        mIsDebugMode = !mIsDebugMode;
     }
 }
 

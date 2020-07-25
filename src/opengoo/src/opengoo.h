@@ -81,9 +81,14 @@ public:
         return &mCamera;
     }
 
-    int GetDeltaTime()
+    int GetDeltaTime() const
     {
         return m_deltaTime;
+    }
+
+    bool IsDebugMode() const
+    {
+        return mIsDebugMode;
     }
 
 private:
@@ -152,6 +157,7 @@ private:
     int m_deltaTime;
 
     bool mPause;
+    bool mIsDebugMode = false;
 
     QString m_gotoScene;
     QString m_previousScene;
