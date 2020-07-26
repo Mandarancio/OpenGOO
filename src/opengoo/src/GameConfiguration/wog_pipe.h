@@ -19,7 +19,7 @@ struct WOGPipe
 
     WOGPipe()
         : id(QLatin1String("0"))
-        , depth(0)
+        , depth(0.0f)
     {
     }
 };

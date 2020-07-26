@@ -232,7 +232,7 @@ inline static og::ImageSourceSPtr GetImageSourceById(const QString& aId)
 
 std::shared_ptr<Pipe> EntityFactory::CreatePipe(const WOGPipe& a_pipe)
 {
-    return std::make_shared<Pipe>(a_pipe);
+    return std::make_shared<Pipe>(a_pipe, GAME->GetUiScale());
 }
 
 std::shared_ptr<GameController> EntityFactory::CreateGameController()

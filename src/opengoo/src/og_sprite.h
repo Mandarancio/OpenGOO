@@ -153,6 +153,12 @@ public:
         SetScaleY(aScale.y());
     }
 
+    void SetScale(float aScale)
+    {
+        SetScaleX(aScale);
+        SetScaleY(aScale);
+    }
+
     float GetScaleX() const
     {
         return mScaleX;

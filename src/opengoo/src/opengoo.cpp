@@ -43,6 +43,8 @@ const char* OpenGOO::exts[] = {".xml", ".bin"};
 OpenGOO* OpenGOO::pInstance_ = nullptr;
 
 OpenGOO::OpenGOO()
+    : mUiScale(1.0f)
+    , mIsDebugMode(false)
 {
 }
 
@@ -64,11 +66,6 @@ void OpenGOO::Destroy()
 {
     delete pInstance_;
     pInstance_ = nullptr;
-}
-
-void OpenGOO::SetLanguage(const QString &language)
-{
-    m_language = language;
 }
 
 void OpenGOO::_Start()

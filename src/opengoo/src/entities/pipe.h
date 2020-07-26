@@ -16,7 +16,7 @@ class Pipe : public og::Entity, public ExitEventListener
     };
 
 public:
-    Pipe(const WOGPipe& aDef);
+    Pipe(const WOGPipe& aDef, float aScale);
 
 private:
     void Render(QPainter& aPainter);

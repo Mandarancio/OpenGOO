@@ -14,6 +14,11 @@ static const char* IMAGE_GLOBAL_PIPE = "IMAGE_GLOBAL_PIPE_";
 class CapBuilder
 {
 public:
+    CapBuilder(float aScale)
+        : mScale(aScale)
+    {
+    }
+
     OGSpritePtr Build()
     {
         assert(!mType.isEmpty() && "Build. Type is emtpy");
@@ -23,6 +28,7 @@ public:
         auto spr = OGSprite::Create(src);
         spr->CenterOrigin();
         spr->SetAngle(angle);
+        spr->SetScale(mScale);
         return spr;
     }
 
@@ -42,6 +48,7 @@ public:
 private:
     QString mType;
     QPointF mVertex[2];
+    float mScale;
 };
 
 static inline QString BuildPrefix(const QPointF& a_p1, const QPointF& a_p2, const QPointF& a_p3)
@@ -62,6 +69,11 @@ static inline QString BuildPrefix(const QPointF& a_p1, const QPointF& a_p2, cons
 class BendBuilder
 {
 public:
+    BendBuilder(float aScale)
+        : mScale(aScale)
+    {
+    }
+
     OGSpritePtr Build()
     {
         assert(!mType.isEmpty() && "Build. Type is emtpy");
@@ -71,6 +83,7 @@ public:
         auto spr = OGSprite::Create(src);
         spr->CenterOrigin();
         spr->SetPosition(mVertex[1].x(), -mVertex[1].y());
+        spr->SetScale(mScale);
 
         return spr;
     }
@@ -92,12 +105,14 @@ public:
 private:
     QString mType;
     QPointF mVertex[3];
+    float mScale;
 };
 
 struct PipeBuilder
 {
-    PipeBuilder()
+    PipeBuilder(float aScale)
         : mShouldUpdate(false)
+        , mScale(aScale)
     {
     }
 
@@ -118,8 +133,9 @@ struct PipeBuilder
         auto v =  mVertex[1] - mVertex[0];
         spr->SetPosition(mVertex[0].x(), -mVertex[0].y());
 
-        auto sx = std::floor(v.x()) != 0 ? std::fabs(v.x() / mWidth) : std::fabs(v.y() / mWidth);
+        auto sx = v.x() != 0 ? std::fabs(v.x() / mWidth) : std::fabs(v.y() / mWidth);
         spr->SetScaleX(sx);
+        spr->SetScaleY(mScale);
 
         auto angle = qRadiansToDegrees(std::atan2(v.y(), v.x()));
         spr->SetAngle(-angle);
@@ -153,9 +169,10 @@ public:
     bool mShouldUpdate;
     float mOffset;
     int mWidth;
+    float mScale;
 };
 
-Pipe::Pipe(const WOGPipe& aDef)
+Pipe::Pipe(const WOGPipe& aDef, float aScale)
     : Entity(aDef.vertex.front().x, -aDef.vertex.front().y)
 {
     SetDepth(aDef.depth);
@@ -165,7 +182,7 @@ Pipe::Pipe(const WOGPipe& aDef)
 
     auto pipe = std::make_shared<MultiSprite>();
     {
-        PipeBuilder builder;
+        PipeBuilder builder(aScale);
         builder.SetType(type);
 
         for (int i = 1; i < vertex.size(); ++i)
@@ -177,7 +194,7 @@ Pipe::Pipe(const WOGPipe& aDef)
     }
 
     {
-        BendBuilder builder;
+        BendBuilder builder(aScale);
         builder.SetType(type);
 
         for (int i = 2; i < vertex.size(); ++i)
@@ -191,7 +208,7 @@ Pipe::Pipe(const WOGPipe& aDef)
 
     mPipe = pipe;
 
-    CapBuilder builder;
+    CapBuilder builder(aScale);
     QPoint p1(aDef.vertex[0].x, aDef.vertex[0].y);
     QPoint p2(aDef.vertex[1].x,aDef.vertex[1].y);
     builder.SetVertices(p1, p2);

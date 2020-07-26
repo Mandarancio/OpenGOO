@@ -28,5 +28,9 @@ struct AttributeReader<OGConfig>
         {
             ValueWriter::WriteValue(aOut->refreshrate, aAttribute);
         }
+        else if (name == QLatin1String("ui_scale"))
+        {
+            ValueWriter::WriteValue(aOut->uiScale, aAttribute);
+        }
     }
 };

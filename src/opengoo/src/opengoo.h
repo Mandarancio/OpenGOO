@@ -39,7 +39,20 @@ public:
 
     void Destroy();
 
-    void SetLanguage(const QString &language);
+    void SetLanguage(const QString &language)
+    {
+        m_language = language;
+    }
+
+    void SetUiScale(float aScale)
+    {
+        mUiScale = aScale;
+    }
+
+    float GetUiScale() const
+    {
+        return mUiScale;
+    }
 
     void Quit()
     {
@@ -152,12 +165,13 @@ private:
     QString m_language;
     int width_;
     int height_;
+    float mUiScale;
 
     QDateTime lastTime_;
     int m_deltaTime;
 
     bool mPause;
-    bool mIsDebugMode = false;
+    bool mIsDebugMode;
 
     QString m_gotoScene;
     QString m_previousScene;

@@ -2,6 +2,9 @@
 
 #include "configattributereader.h"
 
+#include <QDebug>
+#include <QDomAttr>
+
 template<>
 struct TagParser<OGConfig>
 {
@@ -23,11 +26,12 @@ struct TagParser<OGConfig>
 private:
     QDomAttr BuildAttribute(const QString& aName, const QString& aValue)
     {
-        QDomElement el;
-        el.setAttribute(aName, aValue);
-        return el.attributeNode(aName);
+        auto attr = mDoc.createAttribute(aName);
+        attr.setValue(aValue);
+        return attr;
     }
 
 private:
     AttributeReader<Type> mAttributeReader;
+    QDomDocument mDoc;
 };

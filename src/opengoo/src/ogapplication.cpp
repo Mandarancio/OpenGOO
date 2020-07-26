@@ -14,8 +14,8 @@
 
 using namespace og;
 
-const char* OGApplication::DEFAUL_LANGUAGE = "en";
-const char* OGApplication::DEFAUL_LEVEL_NAME = "MapWorldView";
+const char* OGApplication::DEFAULT_LANGUAGE = "en";
+const char* OGApplication::DEFAULT_LEVEL_NAME = "MapWorldView";
 
 const char* OGApplication::RESOURCES_DIR = "res";
 const char* OGApplication::PROPERTIES_DIR = "properties";
@@ -28,12 +28,12 @@ int OGApplication::run(int argc, char **argv)
     {
         QApplication app(argc, argv);
 
-        auto game = OpenGOO::GetInstance();
-        game->GotoScene(config.levelName);
-        game->SetLanguage(config.language);
+        GAME->GotoScene(config.levelName);
+        GAME->SetLanguage(config.language);
+        GAME->SetUiScale(1.0f / config.uiScale);
 
         ResourceManagerFactory factory;
-        OGGameEngine engine(game, config, factory);
+        OGGameEngine engine(GAME, config, factory);
         if (engine.initialize())
         {
             try
@@ -46,7 +46,7 @@ int OGApplication::run(int argc, char **argv)
             }
         }
 
-        game->Destroy();
+        GAME->Destroy();
     }
 
     return 0;
@@ -125,15 +125,15 @@ bool OGApplication::initialize(int argc, char **argv, OGConfig& config)
         return false;
     }
 
-    auto path = QString("%1/%2").arg(PROPERTIES_DIR).arg(FILE_CONFIG);
+    auto path = QString("%1/%2").arg(PROPERTIES_DIR, FILE_CONFIG);
     if (!utils::loadConfig(config, path))
     {
         logWarn(QString("Could not load config file:") + FILE_CONFIG);
         config.fullscreen = false;
-        config.screen_width = DEFAUL_SCREEN_WIDTH;
-        config.screen_height = DEFAUL_SCREEN_HEIGHT;
-        config.refreshrate = DEFAUL_FRAMERATE;
-        config.language = DEFAUL_LANGUAGE;
+        config.screen_width = DEFAULT_SCREEN_WIDTH;
+        config.screen_height = DEFAULT_SCREEN_HEIGHT;
+        config.refreshrate = DEFAULT_FRAMERATE;
+        config.language = DEFAULT_LANGUAGE;
 
         logInfo("Saving config file...");
         utils::saveConfig(config, path);
@@ -141,7 +141,7 @@ bool OGApplication::initialize(int argc, char **argv, OGConfig& config)
 
     if (config.refreshrate == 0)
     {
-        config.refreshrate = DEFAUL_FRAMERATE;
+        config.refreshrate = DEFAULT_FRAMERATE;
     }
 
     if (isFullScreen)
@@ -151,7 +151,7 @@ bool OGApplication::initialize(int argc, char **argv, OGConfig& config)
 
     if (config.levelName.isEmpty())
     {
-        config.levelName = DEFAUL_LEVEL_NAME;
+        config.levelName = DEFAULT_LEVEL_NAME;
     }
 
     return true;

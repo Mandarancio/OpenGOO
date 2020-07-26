@@ -11,6 +11,7 @@ struct OGConfig
     bool isCrt;
     QString language;
     QString levelName;
+    float uiScale;
 
     OGConfig()
         : screen_width(800)
@@ -19,6 +20,7 @@ struct OGConfig
         , fullscreen(false)
         , isCrt(false)
         , language("en")
+        , uiScale(1.0)
     {
     }
 
