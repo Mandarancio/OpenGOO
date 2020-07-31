@@ -112,4 +112,11 @@ b2Fixture* PhysicsBody::GetFixture() const
 {
     return mBody->GetFixtureList();
 }
+
+void PhysicsBody::SetMass(float aMass)
+{
+    b2MassData m = { .mass=aMass, .center={0.0f, 0.0f}, 0.0f};
+    mBody->SetMassData(&m);
+}
+
 }

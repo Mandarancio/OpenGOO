@@ -89,6 +89,7 @@ std::unique_ptr<PhysicsBody> PhysicsEngine::CreateBody(const BodyDef& aDef)
 
     std::unique_ptr<PhysicsBody> pb(new PhysicsBody(body));
     pb->CreateFixture(aDef.fixture);
+    pb->SetMass(aDef.mass);
 
     return pb;
 }

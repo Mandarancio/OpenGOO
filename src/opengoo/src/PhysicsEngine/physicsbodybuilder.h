@@ -77,6 +77,12 @@ struct PhysicsBodyBuilder
         return *this;
     }
 
+    PhysicsBodyBuilder& SetMass(float aMass)
+    {
+        mBodyDef.mass = aMass;
+        return *this;
+    }
+
     std::unique_ptr<PhysicsBody> Build()
     {
         if (mShapeType == Shape::e_circle)
@@ -104,7 +110,7 @@ struct PhysicsBodyBuilder
             return mEngine->CreateBody(mBodyDef);
         }
 
-        return mEngine->CreateBody(mBodyDef);;
+        return mEngine->CreateBody(mBodyDef);
     }
 
 private:

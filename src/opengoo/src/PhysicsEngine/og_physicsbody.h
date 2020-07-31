@@ -233,6 +233,8 @@ public:
 
     b2Fixture* GetFixture() const;
 
+    void SetMass(float aMass);
+
 private:
     PhysicsBody(b2Body* aBody);
 

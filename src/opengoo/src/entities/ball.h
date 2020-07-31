@@ -24,6 +24,7 @@ struct BallDefination
     bool isSleeping;
     bool isSuckable;
     bool isDraggable;
+    float mass;
 };
 
 class Ball;
@@ -56,7 +57,7 @@ struct BallPathFinder : public PathFinder
 class Ball : public og::Entity
 {
 public:
-    Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const BallDefination& aDef);
+    Ball(const QString& aType, std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const BallDefination& aDef);
 
     bool IsWalking() const
     {

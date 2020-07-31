@@ -41,10 +41,12 @@ struct BodyDef
     Position position;
     float angle;
     FixtureDef fixture;
+    float mass;
 
     BodyDef()
         : type(e_unknown)
         , angle(0)
+        , mass(1)
     {
     }
 };

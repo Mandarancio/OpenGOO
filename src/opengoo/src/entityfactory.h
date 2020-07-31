@@ -69,7 +69,7 @@ public:
 
     EntityPtr CreateRadialForceField(const WOGRadialForceField& a_field);
 
-    std::shared_ptr<Ball> CreateBall(const WOGBallInstance& a_ball);
+    std::shared_ptr<Ball> CreateBall(const WOGBallInstance& aBall);
 
     EntityPtr CreateStrand(EntityPtr, EntityPtr);
 

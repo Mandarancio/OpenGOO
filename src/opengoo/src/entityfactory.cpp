@@ -264,11 +264,13 @@ EntityPtr EntityFactory::CreateRadialForceField(const WOGRadialForceField& a_fie
             .Build();
 }
 
-std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
+std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& aBall)
 {
-    auto ballDef = GE->GetResourceManager()->GetBallByType(a_ball.type);
+    auto ballDef = GE->GetResourceManager()->GetBallByType(aBall.type);
     if (!ballDef)
+    {
         return nullptr;
+    }
 
 #if 0
     BodyBuilder builder(GetPhysicsEngine());
@@ -377,7 +379,10 @@ std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
     {
         using namespace og::physics;
         PhysicsBodyBuilder builder(GetPhysicsEngine());
-        builder.SetBodyType(BodyDef::e_dynamic).SetAngle(a_ball.angle).SetPosition(a_ball.x, a_ball.y);
+        builder.SetBodyType(BodyDef::e_dynamic)
+                .SetAngle(aBall.angle)
+                .SetPosition(aBall.x, aBall.y)
+                .SetMass(ballDef->attribute.core.mass);
 
         if (ballDef->attribute.core.shape.type == WOGBallShape::e_circle)
         {
@@ -395,11 +400,10 @@ std::shared_ptr<Ball> EntityFactory::CreateBall(const WOGBallInstance& a_ball)
     BallDefination bd;
     bd.climbSpeed = climbSpeed;
     bd.walkSpeed = walkSpeed;
-    bd.isSleeping = !a_ball.discovered;
+    bd.isSleeping = !aBall.discovered;
     bd.isSuckable = ballDef->attribute.level.suckable;
     bd.isDraggable = ballDef->attribute.player.draggable;
-    auto entity = std::make_shared<Ball>(std::move(body), multiSpr, bd);
-    entity->SetName(a_ball.type);
+    auto entity = std::make_shared<Ball>(aBall.type, std::move(body), multiSpr, bd);
 
     return entity;
 #endif

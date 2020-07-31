@@ -4,6 +4,8 @@
 #include "GameEngine/input.h"
 #include "GameEngine/og_gameengine.h"
 
+#include "GameConfiguration/wog_ball.h"
+
 #include "flags.h"
 
 #include "scene.h"
@@ -204,7 +206,7 @@ private:
     std::queue<BallNode*> mData;
 };
 
-Ball::Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const BallDefination& aDef)
+Ball::Ball(const QString &aType, std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const BallDefination& aDef)
     : Entity(0, 0, aGraphic)
     , mStartWalkSpeed(aDef.walkSpeed)
     , mStartClimbSpeed(aDef.climbSpeed)
@@ -218,6 +220,7 @@ Ball::Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const Ba
     , mIsSuckable(aDef.isSuckable)
     , mIsClimbing(false)
     , mIsDraggable(aDef.isDraggable)
+    , mIsSucked(false)
     , mListener(nullptr)
     , mCollideWith(nullptr)
     , mIsNearest(false)
@@ -225,10 +228,10 @@ Ball::Ball(std::unique_ptr<og::PhysicsBody> aBody, GraphicPtr aGraphic, const Ba
     , mDelay(0)
     , mWalkDirection(true)
     , mPassedPath(0)
-    , mIsSucked(false)
 {
     SetPhysicsBody(std::move(aBody));
     SetCollider(std::make_shared<PhysicsCollider>());
+    SetName(aType);
 }
 
 void Ball::ReverseWalk()
@@ -484,6 +487,8 @@ void Ball::StartClimb(Ball* aBall)
     SetClimb(true);
     mStartBall = this;
     mEndBall = aBall;
+    auto def = GE->GetResourceManager()->GetBallByType(GetName());
+    GetPhysicsBody()->SetMass(def->attribute.core.towermass);
 }
 
 void Ball::RemoveStrand(Strand* aStrand)
